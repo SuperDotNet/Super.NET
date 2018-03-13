@@ -1,0 +1,17 @@
+using Super.ExtensionMethods;
+using Super.Model.Sources;
+
+namespace Super.Model.Collections
+{
+	class MetadataGroupName<T> : SpecificationSource<T, GroupName>, IGroupName<T>
+	{
+		public MetadataGroupName(ISpecification<string, GroupName> names)
+			: this(DeclaredGroupNames<T>.Default, names) {}
+
+		public MetadataGroupName(ISpecification<T, string> name, ISpecification<string, GroupName> names)
+			: this(name, names.In(name)) {}
+
+		public MetadataGroupName(ISpecification<T, string> name, ISpecification<T, GroupName> names) :
+			base(name.And(names), names) {}
+	}
+}
