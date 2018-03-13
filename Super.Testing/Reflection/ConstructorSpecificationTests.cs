@@ -3,6 +3,7 @@ using Super.Reflection;
 using Super.Runtime;
 using System;
 using Xunit;
+// ReSharper disable All
 
 namespace Super.Testing.Reflection
 {
