@@ -34,6 +34,27 @@ namespace Super.Testing.Runtime.Activation
 			sut.Should().BeSameAs(Subject<string, string>.Default);
 		}
 
+		[Fact]
+		void VerifyNew()
+		{
+			Activate<Activated>.New().Should().NotBeSameAs(Activate<Activated>.New());
+		}
+
+		[Fact]
+		void VerifyGet()
+		{
+			Activate<Singleton>.Get().Should().BeSameAs(Singleton.Default);
+		}
+
+		sealed class Activated {}
+
+		sealed class Singleton
+		{
+			public static Singleton Default { get; } = new Singleton();
+
+			Singleton() {}
+		}
+
 		sealed class Subject<TParameter, TResult> : ISource<TParameter, TResult>
 		{
 			public static Subject<TParameter, TResult> Default { get; } = new Subject<TParameter, TResult>();
