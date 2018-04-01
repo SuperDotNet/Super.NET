@@ -1,6 +1,6 @@
 ﻿namespace Super.Runtime.Environment
 {
-	sealed class Locate<T> : Component<T>
+	sealed class Locate<T> : Ambient<T>
 	{
 		public static Locate<T> Default { get; } = new Locate<T>();
 

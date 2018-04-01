@@ -1,11 +1,11 @@
-﻿using System;
-using System.Reflection;
-using Super.Model.Sources;
+﻿using Super.Model.Sources;
 using Super.Model.Sources.Coercion;
 using Super.Model.Sources.Tables;
 using Super.Model.Specifications;
 using Super.Reflection;
 using Super.Runtime;
+using System;
+using System.Reflection;
 
 namespace Super.ExtensionMethods
 {
@@ -51,8 +51,8 @@ namespace Super.ExtensionMethods
 			=> coercer.Out(AssignedSpecification<TTo>.Default.If(@this, Defaults<TTo, TResult>.Default.Get(@this)));
 
 		public static ISource<TTo, TResult> In<TFrom, TTo, TResult>(this ISource<TFrom, TResult> @this,
-		                                                            ISource<TTo, TFrom> factory)
-			=> @this.In(factory.ToDelegate());
+		                                                            ISource<TTo, TFrom> coercer)
+			=> @this.In(coercer.ToDelegate());
 
 		public static ISource<TFrom, TResult> In<TFrom, TTo, TResult>(this ISource<TTo, TResult> @this,
 		                                                              Func<TFrom, TTo> coercer)

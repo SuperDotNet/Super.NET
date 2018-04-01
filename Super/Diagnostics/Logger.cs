@@ -8,6 +8,10 @@ namespace Super.Diagnostics
 	{
 		public static Logger Default { get; } = new Logger();
 
-		Logger() : base(DefaultLoggingConfiguration.Default.Adapt(LoggerCoercer.Default)) {}
+		Logger() : base(LoggingConfiguration.Default
+		                                    .Adapt()
+		                                    .Reduce()
+		                                    .Out(LoggerCoercer.Default)
+		                                    .ToInstance()) {}
 	}
 }

@@ -5,13 +5,13 @@ namespace Super.Model.Instances
 {
 	public class Instance<T> : IInstance<T>
 	{
+		public static implicit operator T(Instance<T> instance) => instance.Get();
+
 		readonly T _instance;
 
 		public Instance(T instance) => _instance = instance;
 
 		public T Get() => _instance;
-
-		public static implicit operator T(Instance<T> instance) => instance.Get();
 	}
 
 	public class Instance<TParameter, TResult> : DecoratedInstance<TResult>

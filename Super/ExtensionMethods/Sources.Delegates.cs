@@ -39,6 +39,10 @@ namespace Super.ExtensionMethods
 		                                                          TParameter parameter)
 			=> new FixedParameterSource<TParameter, TResult>(@this, parameter);
 
+		public static IInstance<TResult> Fix<TParameter, TResult>(this ISource<TParameter, TResult> @this,
+		                                                          I<TResult> _)
+			=> new DelegatedParameterSource<TParameter, TResult>(@this);
+
 		public static Func<T> ToDelegate<T>(this IInstance<T> @this) => @this.Adapt().Get;
 	}
 }

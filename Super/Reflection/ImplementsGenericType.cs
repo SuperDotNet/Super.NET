@@ -11,7 +11,7 @@ namespace Super.Reflection
 		public ImplementsGenericType(Type definition)
 			: base(I<HasGenericInterface>.Default.Infer(default(TypeInfo))
 			                             .Adapt()
-			                             .Out(new FixedValueCoercer<TypeInfo, bool>(definition.GetTypeInfo()))
+			                             .Out(new FixedParameterCoercer<TypeInfo, bool>(definition.GetTypeInfo()))
 			                             .Get) {}
 	}
 }

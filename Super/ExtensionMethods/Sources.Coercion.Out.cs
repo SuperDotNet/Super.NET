@@ -8,6 +8,7 @@ using Super.Model.Specifications;
 using Super.Reflection;
 using Super.Runtime;
 using Super.Runtime.Activation;
+using Super.Runtime.Invocation;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -28,11 +29,7 @@ namespace Super.ExtensionMethods
 
 		public static ISource<TParameter, TTo> Out<TParameter, TResult, TTo>(
 			this ISource<TParameter, TResult> @this, I<TTo> _, ISource<TResult, TTo> fallback)
-			=> @this.Out(AssignedSpecification<TResult>
-			             .Default
-			             .And(IsAssignableSpecification<TTo>.Default.Adapt(TypeMetadataCoercer
-			                                                               .Default.In(InstanceTypeCoercer<TResult>.Default)))
-			             .If(CastCoercer<TResult, TTo>.Default, fallback));
+			=> @this.Out(CanCast<TResult, TTo>.Default.If(CastCoercer<TResult, TTo>.Default, fallback));
 
 		public static ISource<TParameter, TResult> Invoke<TParameter, TResult>(
 			this ISource<TParameter, Func<TResult>> @this) => @this.Out(DelegateCoercer<TResult>.Default);
@@ -45,6 +42,9 @@ namespace Super.ExtensionMethods
 			this ISource<TParameter, TResult> @this,
 			I<TInstance> _)
 			where TInstance : IActivateMarker<TResult> => @this.Out(Instances<TResult, TInstance>.Default);
+
+		public static ISource<TParameter, TResult> Reduce<TParameter, TResult>(this ISource<TParameter, ISource<TResult, TResult>> @this)
+			=> @this.Out(DelegatedParameterCoercer<TResult, TResult>.Default);
 
 		public static ISource<TParameter, TTo> Out<TParameter, TResult, TTo>(this ISource<TParameter, TResult> @this,
 		                                                                     ISource<TResult, TTo> coercer)
@@ -107,9 +107,8 @@ namespace Super.ExtensionMethods
 			ISource<TParameter, TResult> fallback)
 			=> new ValidatedResult<TParameter, TResult>(specification, @this, fallback);
 
-		public static ISource<TParameter, TResult> Out<TParameter, TResult>(this ISource<TParameter, TResult> @this,
-		                                                                    ICommand<(TParameter Parameter, TResult Result)>
-			                                                                    command)
+		public static ISource<TParameter, TResult> Out<TParameter, TResult>(
+			this ISource<TParameter, TResult> @this, ICommand<(TParameter Parameter, TResult Result)> command)
 			=> new ConfiguringSource<TParameter, TResult>(@this, command);
 
 		public static ISource<TParameter, TResult> Out<TParameter, TResult>(this ISource<TParameter, TResult> @this,

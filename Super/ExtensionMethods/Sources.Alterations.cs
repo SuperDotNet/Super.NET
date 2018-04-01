@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Super.Model.Sources;
+using Super.Model.Sources.Alterations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Super.Model.Sources;
-using Super.Model.Sources.Alterations;
 
 namespace Super.ExtensionMethods
 {
