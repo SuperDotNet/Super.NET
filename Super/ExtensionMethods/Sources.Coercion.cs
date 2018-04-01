@@ -26,12 +26,12 @@ namespace Super.ExtensionMethods
 		public static ISource<TParameter, TResult> Unless<TParameter, TResult, TOther>(
 			this ISource<TParameter, TResult> @this, I<TOther> _) where TOther : IInstance<TResult>
 			=> @this.Unless(IsTypeSpecification<TParameter, TOther>.Default,
-			                SourceCoercer<TResult>.Default.In(I<TParameter>.Default));
+			                InstanceCoercer<TResult>.Default.In(I<TParameter>.Default));
 
 		public static ISource<TParameter, TResult> Unless<TParameter, TResult>(
 			this ISource<TParameter, TResult> @this, ISpecification<TParameter> specification,
 			TResult other)
-			=> @this.Unless(specification, new Instance<TParameter, TResult>(other));
+			=> @this.Unless(specification, new Model.Sources.Instance<TParameter, TResult>(other));
 
 		public static ISource<TParameter, TResult> Unless<TParameter, TResult>(
 			this ISource<TParameter, TResult> @this, ISpecification<TParameter> specification,

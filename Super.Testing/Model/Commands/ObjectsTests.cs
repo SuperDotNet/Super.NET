@@ -11,7 +11,7 @@ namespace Super.Testing.Model.Commands
 		[Fact]
 		public void Execute()
 		{
-			var count = 0;
+			var count   = 0;
 			var command = new DelegatedCommand<(int, int)>(tuple => count = tuple.Item1 + tuple.Item2);
 			command.Execute(1, 2);
 			count.Should()
@@ -19,21 +19,21 @@ namespace Super.Testing.Model.Commands
 		}
 
 		[Fact]
-		public void ExecuteTriple()
+		public void ExecuteItems()
 		{
-			var count = 0;
-			var command = new DelegatedCommand<(int, int, int)>(tuple => count = tuple.Item1 + tuple.Item2 + tuple.Item3);
-			command.Execute(1, 2, 3);
+			var count   = 0;
+			var command = new DelegatedCommand<ImmutableArray<int>>(items => count = items.Length);
+			command.Execute(1, 2, 3, 4, 5, 6);
 			count.Should()
 			     .Be(6);
 		}
 
 		[Fact]
-		public void ExecuteItems()
+		public void ExecuteTriple()
 		{
-			var count = 0;
-			var command = new DelegatedCommand<ImmutableArray<int>>(items => count = items.Length);
-			command.Execute(1, 2, 3, 4, 5, 6);
+			var count   = 0;
+			var command = new DelegatedCommand<(int, int, int)>(tuple => count = tuple.Item1 + tuple.Item2 + tuple.Item3);
+			command.Execute(1, 2, 3);
 			count.Should()
 			     .Be(6);
 		}

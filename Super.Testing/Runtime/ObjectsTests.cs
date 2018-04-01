@@ -1,55 +1,30 @@
-﻿using System;
-using AutoFixture.Xunit2;
+﻿using AutoFixture.Xunit2;
 using FluentAssertions;
 using Super.ExtensionMethods;
 using Super.Runtime;
 using Super.Runtime.Activation;
+using System;
 using Xunit;
 
 namespace Super.Testing.Runtime
 {
 	public class ObjectsTests
 	{
-		[Fact]
-		public void AsInvalid()
-		{
-			Assert.Throws<InvalidOperationException>(() => 2.To<string>());
-		}
-
-		[Theory, AutoData]
+		[Theory]
+		[AutoData]
 		void AsTo(string message)
 		{
 			1.AsTo<string, object>(x => x, () => message).Should().Be(message);
 			1.AsTo<string, object>(x => x).Should().BeNull();
 		}
 
-		[Fact]
-		public void With()
+		[Theory]
+		[AutoData]
+		public void AsToDefault(char[] expected)
 		{
-			var count = 0;
-			count.With(x =>
-			           {
-				           count++;
-			           });
-			count.Should()
-			     .Be(1);
-		}
-
-
-
-		[Fact]
-		public void ToDictionary()
-		{
-			var dictionary = new[] {Pairs.Create("Hello", "World")}.ToDictionary();
-			dictionary["Hello"]
-				.Should()
-				.Be("World");
-		}
-
-		[Fact]
-		public void GetValid()
-		{
-			Assert.Throws<InvalidOperationException>(() => Objects.To<int>(new ServiceProvider()));
+			3.AsTo<string, char[]>(x => x.ToCharArray(), expected.Self)
+			 .Should()
+			 .BeSameAs(expected);
 		}
 
 		[Fact]
@@ -62,12 +37,15 @@ namespace Super.Testing.Runtime
 		}
 
 		[Fact]
-		public void Self()
+		public void AsInvalid()
 		{
-			var o = new object();
-			o.Self()
-			 .Should()
-			 .BeSameAs(o);
+			Assert.Throws<InvalidOperationException>(() => 2.To<string>());
+		}
+
+		[Fact]
+		public void GetValid()
+		{
+			Assert.Throws<InvalidOperationException>(() => new ServiceProvider().To<int>());
 		}
 
 		[Fact]
@@ -83,6 +61,33 @@ namespace Super.Testing.Runtime
 		}
 
 		[Fact]
+		public void Self()
+		{
+			var o = new object();
+			o.Self()
+			 .Should()
+			 .BeSameAs(o);
+		}
+
+		[Fact]
+		public void ToDictionary()
+		{
+			var dictionary = new[] {Pairs.Create("Hello", "World")}.ToDictionary();
+			dictionary["Hello"]
+				.Should()
+				.Be("World");
+		}
+
+		[Fact]
+		public void With()
+		{
+			var count = 0;
+			count.With(x => { count++; });
+			count.Should()
+			     .Be(1);
+		}
+
+		[Fact]
 		public void YieldMetadata()
 		{
 			GetType()
@@ -92,15 +97,5 @@ namespace Super.Testing.Runtime
 				.Should()
 				.Be(GetType());
 		}
-
-		[Theory, AutoData]
-		public void AsToDefault(char[] expected)
-		{
-
-			3.AsTo<string, char[]>(x => x.ToCharArray(), expected.Self)
-			 .Should()
-			 .BeSameAs(expected);
-		}
-
 	}
 }

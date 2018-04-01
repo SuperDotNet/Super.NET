@@ -1,7 +1,7 @@
-﻿using System;
-using Super.Model.Sources;
+﻿using Super.Model.Sources;
 using Super.Model.Sources.Coercion;
 using Super.Model.Specifications;
+using System;
 
 namespace Super.ExtensionMethods
 {
@@ -15,6 +15,12 @@ namespace Super.ExtensionMethods
 		public static ISource<TParameter, ISource<T, bool>> Adapt<TParameter, T>(
 			this ISource<TParameter, ISpecification<T>> @this)
 			=> @this.Out(SpecificationSourceCoercer<T>.Default);
+
+		public static ISpecification<TTo> Adapt<TFrom, TTo>(this ISpecification<TFrom> @this, ISource<TTo, TFrom> coercer)
+			=> @this.Adapt(coercer.ToDelegate());
+
+		public static ISpecification<TTo> Adapt<TFrom, TTo>(this ISpecification<TFrom> @this, Func<TTo, TFrom> coercer)
+			=> @this.Adapt().In(coercer).ToSpecification();
 
 		public static ISource<T, bool> Adapt<T>(this ISpecification<T> @this)
 			=> Model.Specifications.Adapters<T>.Default.Get(@this);

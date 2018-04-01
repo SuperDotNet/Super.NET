@@ -1,14 +1,20 @@
-﻿using Super.ExtensionMethods;
+﻿using System;
+using Super.ExtensionMethods;
 using Super.Reflection;
 using Super.Runtime;
-using System;
 using Xunit;
+
 // ReSharper disable All
 
 namespace Super.Testing.Reflection
 {
 	public sealed class ConstructorSpecificationTests
 	{
+		sealed class Optional
+		{
+			public Optional(int number = 123) {}
+		}
+
 		[Fact]
 		void Verify()
 		{
@@ -19,11 +25,6 @@ namespace Super.Testing.Reflection
 		void VerifyOptional()
 		{
 			ConstructorSpecification.Default.IsSatisfiedBy(Types<Optional>.Identity.GetConstructors().Only());
-		}
-
-		sealed class Optional
-		{
-			public Optional(int number = 123) {}
 		}
 	}
 }

@@ -1,8 +1,8 @@
 ﻿using Super.Expressions;
 using Super.ExtensionMethods;
-using Super.Model.Instances;
 using Super.Model.Sources;
 using Super.Reflection;
+using System;
 
 namespace Super.Runtime.Activation
 {
@@ -18,10 +18,12 @@ namespace Super.Runtime.Activation
 		             .Get(Types<TResult>.Key)) {}
 	}
 
-	public sealed class New<T> : Unwrap<T>, IActivator<T>
+	public sealed class New<T> : FixedParameterSource<Type, T>, IActivator<T>
 	{
-		public static IInstance<T> Default { get; } = new New<T>();
+		public static New<T> Default { get; } = new New<T>();
 
-		New() : base(Constructors<T>.Default.In(ConstructorLocator.Default).Fix(Types<T>.Key).ToDelegate()) {}
+		New() : base(Constructors<T>.Default.In(ConstructorLocator.Default)
+		                            .In(TypeMetadataCoercer.Default)
+		                            .Out(DelegateCoercer<T>.Default), Types<T>.Identity) {}
 	}
 }

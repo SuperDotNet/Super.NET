@@ -1,8 +1,8 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using Super.Expressions;
 using Super.Reflection;
 using Super.Runtime;
-using System;
 using Xunit;
 
 namespace Super.Testing.Expressions

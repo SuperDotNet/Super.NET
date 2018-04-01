@@ -8,7 +8,7 @@ using Super.Runtime;
 
 namespace Super.ExtensionMethods
 {
-	static class Commands
+	public static class Commands
 	{
 		public static void Execute<T>(this ICommand<ImmutableArray<T>> @this, params T[] parameters) =>
 			@this.Execute(parameters.ToImmutableArray());

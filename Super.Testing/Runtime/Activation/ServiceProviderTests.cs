@@ -9,7 +9,8 @@ namespace Super.Testing.Runtime.Activation
 {
 	public class ServiceProviderTests
 	{
-		[Theory, AutoData]
+		[Theory]
+		[AutoData]
 		public void Verify(int number)
 		{
 			var sut = new ServiceProvider(number);

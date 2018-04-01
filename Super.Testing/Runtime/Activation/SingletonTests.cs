@@ -8,6 +8,15 @@ namespace Super.Testing.Runtime.Activation
 {
 	public sealed class SingletonTests
 	{
+		sealed class Subject
+		{
+			public static Subject Default { get; } = new Subject();
+
+			Subject() {}
+		}
+
+		sealed class Class {}
+
 		[Fact]
 		public void Reference()
 		{
@@ -23,14 +32,5 @@ namespace Super.Testing.Runtime.Activation
 		{
 			Singleton<Class>.Default.Get().Should().BeNull();
 		}
-
-		sealed class Subject
-		{
-			public static Subject Default { get; } = new Subject();
-
-			Subject() {}
-		}
-
-		sealed class Class {}
 	}
 }

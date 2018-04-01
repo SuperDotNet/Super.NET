@@ -12,9 +12,8 @@ namespace Super.Reflection
 	{
 		public InstanceMetadata() : this(new TypeMetadataValue<TAttribute, TResult>()) {}
 
-		public InstanceMetadata(ISpecification<TypeInfo, TResult> metadata) : this(metadata.ToStore()
-		                                                                                   .In(InstanceMetadataCoercer<
-			                                                                                       TParameter>.Default)) {}
+		public InstanceMetadata(ISpecification<TypeInfo, TResult> metadata)
+			: this(metadata.ToStore().In(InstanceMetadataCoercer<TParameter>.Default)) {}
 
 		public InstanceMetadata(ISpecification<TParameter, TResult> source) : base(source, source) {}
 	}

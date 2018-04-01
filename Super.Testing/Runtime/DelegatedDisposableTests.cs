@@ -15,6 +15,7 @@ namespace Super.Testing.Runtime
 				called.Should()
 				      .BeFalse();
 			}
+
 			called.Should()
 			      .BeTrue();
 		}

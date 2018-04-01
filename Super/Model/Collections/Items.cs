@@ -8,6 +8,8 @@ namespace Super.Model.Collections
 		readonly ImmutableArray<T> _items;
 		readonly int               _length;
 
+		public Items(IEnumerable<T> items) : this(items.ToImmutableArray()) {}
+
 		public Items(params T[] items) : this(items.ToImmutableArray()) {}
 
 		public Items(ImmutableArray<T> items) : this(items, items.Length) {}

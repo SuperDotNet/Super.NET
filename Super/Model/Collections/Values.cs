@@ -11,9 +11,4 @@ namespace Super.Model.Collections
 		public override IEnumerator<TValue> GetEnumerator()
 			=> _dictionary.Values.GetEnumerator();
 	}
-
-	public class ManyValues<TKey, TEnumerable, TValue> : Values<TKey, TEnumerable> where TEnumerable : IEnumerable<TValue>
-	{
-		public ManyValues(IDictionary<TKey, TEnumerable> dictionary) : base(dictionary) {}
-	}
 }

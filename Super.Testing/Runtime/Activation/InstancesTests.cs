@@ -12,21 +12,6 @@ namespace Super.Testing.Runtime.Activation
 {
 	public class InstancesTests
 	{
-		[Fact]
-		public void VerifyValues()
-		{
-			var source = StartValues.Default.OutAs(I<Values>.Default);
-			const string parameter = "First";
-			source.Get(parameter).Should().NotBeSameAs(source.Get(parameter));
-		}
-
-		[Fact]
-		public void VerifyReferences()
-		{
-			var          source    = StartReferences.Default.OutAs(I<References>.Default);
-			source.Get(123).Should().BeSameAs(source.Get(123));}
-
-
 		sealed class StartValues : ISource<string, int>
 		{
 			public static StartValues Default { get; } = new StartValues();
@@ -61,6 +46,21 @@ namespace Super.Testing.Runtime.Activation
 			public References(string message) => _message = message;
 
 			public Type Get(int parameter) => GetType();
+		}
+
+		[Fact]
+		public void VerifyReferences()
+		{
+			var source = StartReferences.Default.OutAs(I<References>.Default);
+			source.Get(123).Should().BeSameAs(source.Get(123));
+		}
+
+		[Fact]
+		public void VerifyValues()
+		{
+			var          source    = StartValues.Default.OutAs(I<Values>.Default);
+			const string parameter = "First";
+			source.Get(parameter).Should().NotBeSameAs(source.Get(parameter));
 		}
 	}
 }

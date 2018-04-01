@@ -22,7 +22,7 @@ namespace Super.Testing.Model.Specifications
 		public void Object()
 		{
 			var source = new object();
-			var sut = new EqualitySpecification<object>(source);
+			var sut    = new EqualitySpecification<object>(source);
 			sut.IsSatisfiedBy(new object())
 			   .Should()
 			   .BeFalse();
@@ -30,6 +30,5 @@ namespace Super.Testing.Model.Specifications
 			   .Should()
 			   .BeTrue();
 		}
-
 	}
 }

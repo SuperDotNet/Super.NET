@@ -1,6 +1,7 @@
 ﻿using System;
 using Serilog;
 
-namespace Super.Diagnostics {
+namespace Super.Diagnostics
+{
 	public interface IApplicationLogger : ILogger, IDisposable {}
 }

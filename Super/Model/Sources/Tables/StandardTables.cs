@@ -4,7 +4,7 @@ using Super.Runtime.Activation;
 
 namespace Super.Model.Sources.Tables
 {
-	public sealed class StandardTables<TParameter, TResult>
+	public class StandardTables<TParameter, TResult>
 		: ISource<IDictionary<TParameter, TResult>, ITable<TParameter, TResult>>, IActivateMarker<Func<TParameter, TResult>>
 	{
 		readonly Func<TParameter, TResult> _source;

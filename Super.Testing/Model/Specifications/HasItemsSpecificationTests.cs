@@ -14,8 +14,7 @@ namespace Super.Testing.Model.Specifications
 
 		[Fact]
 		public void HasNot() => HasItemsSpecification.Default.IsSatisfiedBy(Empty<object>.Array)
-		                                          .Should()
-		                                          .BeFalse();
-
+		                                             .Should()
+		                                             .BeFalse();
 	}
 }

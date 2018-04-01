@@ -13,7 +13,7 @@ namespace Super.Testing.Model.Commands
 		{
 			var count = 0;
 			var inner = new DelegatedCommand<Unit>(x => count++);
-			var sut = new DecoratedCommand<Unit>(inner);
+			var sut   = new DecoratedCommand<Unit>(inner);
 			sut.Execute();
 			count.Should()
 			     .Be(1);

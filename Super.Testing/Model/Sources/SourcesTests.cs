@@ -7,6 +7,15 @@ namespace Super.Testing.Model.Sources
 {
 	public sealed class SourcesTests
 	{
+		sealed class Subject<TParameter, TResult> : ISource<TParameter, TResult>
+		{
+			public static Subject<TParameter, TResult> Default { get; } = new Subject<TParameter, TResult>();
+
+			Subject() {}
+
+			public TResult Get(TParameter parameter) => default;
+		}
+
 		[Fact]
 		public void Verify()
 		{
@@ -15,14 +24,6 @@ namespace Super.Testing.Model.Sources
 			       .BeSameAs(Subject<string, int>.Default.ToDelegate());
 
 			subject.ToSource().Should().BeSameAs(subject.ToSource());
-		}
-
-		sealed class Subject<TParameter, TResult> : ISource<TParameter, TResult>
-		{
-			public static Subject<TParameter, TResult> Default { get; } = new Subject<TParameter, TResult>();
-			Subject() {}
-
-			public TResult Get(TParameter parameter) => default;
 		}
 	}
 }

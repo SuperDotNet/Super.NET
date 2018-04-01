@@ -1,5 +1,5 @@
-﻿using System;
-using Super.Runtime.Activation;
+﻿using Super.Runtime.Activation;
+using System;
 
 namespace Super.Model.Sources
 {

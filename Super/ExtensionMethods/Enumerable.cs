@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Super.Model.Collections;
+using Super.Reflection;
+using Super.Runtime;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using Super.Model.Collections;
-using Super.Reflection;
-using Super.Runtime;
 
 namespace Super.ExtensionMethods
 {
@@ -123,15 +123,9 @@ namespace Super.ExtensionMethods
 			return true;
 		}
 
-		public static T Only<T>(this IEnumerable<T> @this) => Only(@this, Where<T>.Always);
+		public static T Only<T>(this IEnumerable<T> @this) => OnlyCoercer<T>.Default.Get(@this);
 
-		public static T Only<T>(this IEnumerable<T> @this, Func<T, bool> where)
-		{
-			var enumerable = @this.Where(where)
-			                      .ToArray();
-			var result = enumerable.Length == 1 ? enumerable[0] : default;
-			return result;
-		}
+		public static T Only<T>(this IEnumerable<T> @this, Func<T, bool> where) => new OnlyCoercer<T>(where).Get(@this);
 
 		public static void ForEach<TIn, TOut>(this IEnumerable<TIn> @this, Func<TIn, TOut> select)
 		{

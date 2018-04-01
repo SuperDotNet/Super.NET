@@ -20,9 +20,9 @@ namespace Super.Testing.Model.Specifications
 		public void IsNot()
 		{
 			NeverSpecification<object>.Default.Or(NeverSpecification<object>.Default)
-			                           .IsSatisfiedBy(null)
-			                           .Should()
-			                           .BeFalse();
+			                          .IsSatisfiedBy(null)
+			                          .Should()
+			                          .BeFalse();
 		}
 	}
 }

@@ -1,15 +1,10 @@
-﻿using System;
-using Super.Model.Sources;
+﻿using Super.Model.Sources;
+using System;
 
 namespace Super.Runtime
 {
-	sealed class Message<TParameter, TResult> : DelegatedSource<TParameter, string>, IMessage<TParameter>
+	class Message<T> : DelegatedSource<T, string>, IMessage<T>
 	{
-		public static Message<TParameter, TResult> Default { get; } = new Message<TParameter, TResult>();
-
-		Message() :
-			this(x => $"Expected instance of type {typeof(TResult)} to be assigned, but an operation using an instance of {x.GetType()} did not produce this.") {}
-
-		public Message(Func<TParameter, string> source) : base(source) {}
+		public Message(Func<T, string> source) : base(source) {}
 	}
 }

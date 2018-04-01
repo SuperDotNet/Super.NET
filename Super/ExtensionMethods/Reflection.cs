@@ -23,6 +23,12 @@ namespace Super.ExtensionMethods
 			=> @this.YieldMetadata(specification)
 			        .ToImmutableArray();
 
+		public static IEnumerable<Type> YieldTypes(this IEnumerable<TypeInfo> @this) => @this.Select(x => x.GetTypeInfo());
+
+		public static ImmutableArray<Type> ToTypes(this IEnumerable<TypeInfo> @this)
+			=> @this.YieldTypes()
+			        .ToImmutableArray();
+
 		public static T Get<T>(this ISource<Type, object> @this, I<T> parameter) => @this.Get(parameter.Get()).To<T>();
 
 		public static T Get<T>(this ISource<TypeInfo, object> @this, I<T> parameter) => @this.Get(parameter.Get()).To<T>();

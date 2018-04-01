@@ -1,6 +1,6 @@
-﻿using System.Reactive;
-using Super.ExtensionMethods;
+﻿using Super.ExtensionMethods;
 using Super.Model.Sources;
+using System.Reactive;
 
 namespace Super.Model.Instances
 {

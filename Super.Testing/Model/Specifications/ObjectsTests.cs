@@ -11,7 +11,7 @@ namespace Super.Testing.Model.Specifications
 		[Fact]
 		public void Coverage()
 		{
-			TypeInfo typeInfo = GetType().GetTypeInfo();
+			var typeInfo = GetType().GetTypeInfo();
 			AlwaysSpecification<Type>.Default.IsSatisfiedBy(typeInfo).Should().BeTrue();
 		}
 	}

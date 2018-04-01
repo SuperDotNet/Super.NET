@@ -7,51 +7,36 @@ namespace Super.Testing.Runtime.Activation
 {
 	public class NewTests
 	{
-		[Theory, AutoData]
+		[Theory]
+		[AutoData]
 		public void Verify(int number)
 		{
-			var subject = Activate<Subject>.New(number);
+			var subject = Locator<Subject>.New(number);
 			subject.Number.Should()
 			       .Be(number)
 			       .And.Subject.Should()
 			       .NotBeSameAs(New<int, Subject>.Default.Get(number));
 		}
 
-		[Theory, AutoData]
+		[Theory]
+		[AutoData]
 		public void Default(int number)
 		{
-			Activate<Subject>.New(number).Number.Should().Be(number);
+			Locator<Subject>.New(number).Number.Should().Be(number);
 		}
 
-		[Fact]
-		public void References()
-		{
-			var first = Activate<SubjectWithoutConstructor>.New(6776);
-			var second = Activate<SubjectWithoutConstructor>.New(6776);
-			first.Should().NotBeSameAs(second);
-		}
-
-		[Fact]
-		public void NoParameters()
-		{
-			Activate<SubjectWithoutConstructor>.New(6776).Should().NotBeNull();
-		}
-
-
-		[Theory, AutoData]
+		[Theory]
+		[AutoData]
 		public void MultipleParameters(int number)
 		{
-			var subject = Activate<SubjectWithMultipleParameters>.New(number);
+			var subject = Locator<SubjectWithMultipleParameters>.New(number);
 			subject.Another.Should().Be(4);
 			subject.Number.Should().Be(number);
 		}
 
 		sealed class Subject
 		{
-			public Subject(int number)
-			{
-				Number = number;
-			}
+			public Subject(int number) => Number = number;
 
 			public int Number { get; }
 		}
@@ -62,13 +47,27 @@ namespace Super.Testing.Runtime.Activation
 		{
 			public SubjectWithMultipleParameters(int number, int another = 4)
 			{
-				Number = number;
+				Number  = number;
 				Another = another;
 			}
 
 			public int Number { get; }
 
 			public int Another { get; }
+		}
+
+		[Fact]
+		public void NoParameters()
+		{
+			Locator<SubjectWithoutConstructor>.New(6776).Should().NotBeNull();
+		}
+
+		[Fact]
+		public void References()
+		{
+			var first  = Locator<SubjectWithoutConstructor>.New(6776);
+			var second = Locator<SubjectWithoutConstructor>.New(6776);
+			first.Should().NotBeSameAs(second);
 		}
 	}
 }

@@ -26,7 +26,7 @@ namespace Super.ExtensionMethods
 			return result;
 		}
 
-		public static TResult Shift<T, TResult>(this T @this, Func<T, TResult> @select) => @select(@this);
+		public static TResult Shift<T, TResult>(this T @this, Func<T, TResult> select) => select(@this);
 
 		public static (T1, T2) Pair<T1, T2>(this T1 @this, T2 other) => ValueTuple.Create(@this, other);
 

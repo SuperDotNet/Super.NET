@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Super.Model.Collections;
+using Super.Model.Commands;
+using Super.Model.Instances;
 using Super.Model.Sources;
 using Super.Model.Sources.Alterations;
 using Super.Model.Sources.Coercion;
@@ -6,15 +8,31 @@ using Super.Model.Specifications;
 using Super.Reflection;
 using Super.Runtime;
 using Super.Runtime.Activation;
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Super.ExtensionMethods
 {
 	partial class Sources
 	{
+		public static ISource<TParameter, TTo> OutOrInstance<TParameter, TTo>(this ISource<TParameter, object> @this,
+		                                                                      I<TTo> _)
+			=> @this.Out(_)
+			        .Or(@this.Out(I<IInstance<TTo>>.Default)
+			                 .Assigned(InstanceCoercer<TTo>.Default));
+
+		public static ISource<TParameter, TTo> Out<TParameter, TResult, TTo>(this ISource<TParameter, TResult> @this,
+		                                                                     I<TTo> _)
+			=> Out(@this, _, Default<TResult, TTo>.Instance);
+
 		public static ISource<TParameter, TTo> Out<TParameter, TResult, TTo>(
-			this ISource<TParameter, TResult> @this, I<TTo> _)
-			=> @this.Out(AssignedSpecification<TResult>.Default.If(CastCoercer<TResult, TTo>.Default,
-			                                                       Default<TResult, TTo>.Instance));
+			this ISource<TParameter, TResult> @this, I<TTo> _, ISource<TResult, TTo> fallback)
+			=> @this.Out(AssignedSpecification<TResult>
+			             .Default
+			             .And(IsAssignableSpecification<TTo>.Default.Adapt(TypeMetadataCoercer
+			                                                               .Default.In(InstanceTypeCoercer<TResult>.Default)))
+			             .If(CastCoercer<TResult, TTo>.Default, fallback));
 
 		public static ISource<TParameter, TResult> Invoke<TParameter, TResult>(
 			this ISource<TParameter, Func<TResult>> @this) => @this.Out(DelegateCoercer<TResult>.Default);
@@ -49,7 +67,7 @@ namespace Super.ExtensionMethods
 
 		public static ISource<TParameter, TResult> Guard<TParameter, TResult>(
 			this ISource<TParameter, TResult> @this, Func<TParameter, string> message)
-			=> Guard(@this, new Message<TParameter, TResult>(message));
+			=> Guard(@this, new Message<TParameter>(message));
 
 		public static ISource<TParameter, TResult> Guard<TParameter, TResult>(
 			this ISource<TParameter, TResult> @this, IMessage<TParameter> message)
@@ -59,6 +77,15 @@ namespace Super.ExtensionMethods
 			this ISource<TParameter, TResult> @this, ISource<TParameter, TResult> fallback)
 			=> @this.Out(AssignedSpecification<TResult>.Default, fallback);
 
+		public static ISource<TParameter, TResult> Try<TException, TParameter, TResult>(
+			this ISource<TParameter, TResult> @this, I<TException> _) where TException : Exception
+			=> Try(@this, _, Defaults<TParameter, TResult>.Default.Get(@this));
+
+		public static ISource<TParameter, TResult> Try<TException, TParameter, TResult>(
+			this ISource<TParameter, TResult> @this, I<TException> _, ISource<TParameter, TResult> fallback)
+			where TException : Exception
+			=> new Try<TException, TParameter, TResult>(@this.ToDelegate(), fallback.ToDelegate());
+
 		public static ISource<TParameter, TResult> Out<TParameter, TResult>(
 			this ISource<TParameter, TResult> @this, ISpecification<TResult> specification)
 			=> @this.Out(specification, Defaults<TParameter, TResult>.Default.Get(@this));
@@ -67,9 +94,26 @@ namespace Super.ExtensionMethods
 			this ISource<TParameter, TResult> @this, ISource<TParameter, TResult> fallback)
 			=> Out(@this, AssignedSpecification<TResult>.Default, fallback);
 
+		public static ISource<TParameter, ImmutableArray<TTo>> Out<TParameter, TFrom, TTo>(
+			this ISource<TParameter, IEnumerable<TFrom>> @this, ISource<TFrom, TTo> select)
+			=> @this.Out(ImmutableArrayCoercer<TFrom>.Default).Out(select);
+
+		public static ISource<TParameter, ImmutableArray<TTo>> Out<TParameter, TFrom, TTo>(
+			this ISource<TParameter, ImmutableArray<TFrom>> @this, ISource<TFrom, TTo> select)
+			=> @this.Out(new SelectCoercer<TFrom, TTo>(select.ToDelegate()));
+
 		public static ISource<TParameter, TResult> Out<TParameter, TResult>(
 			this ISource<TParameter, TResult> @this, ISpecification<TResult> specification,
 			ISource<TParameter, TResult> fallback)
 			=> new ValidatedResult<TParameter, TResult>(specification, @this, fallback);
+
+		public static ISource<TParameter, TResult> Out<TParameter, TResult>(this ISource<TParameter, TResult> @this,
+		                                                                    ICommand<(TParameter Parameter, TResult Result)>
+			                                                                    command)
+			=> new ConfiguringSource<TParameter, TResult>(@this, command);
+
+		public static ISource<TParameter, TResult> Out<TParameter, TResult>(this ISource<TParameter, TResult> @this,
+		                                                                    ICommand<TResult> command)
+			=> @this.Out(new ConfiguringAlteration<TResult>(command));
 	}
 }

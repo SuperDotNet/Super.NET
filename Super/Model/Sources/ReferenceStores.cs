@@ -3,7 +3,7 @@ using Super.Model.Sources.Tables;
 
 namespace Super.Model.Sources
 {
-	sealed class ReferenceStores<TParameter, TResult>
+	public sealed class ReferenceStores<TParameter, TResult>
 		: DelegatedSource<Func<TParameter, TResult>, ISource<TParameter, TResult>>
 		where TParameter : class
 	{

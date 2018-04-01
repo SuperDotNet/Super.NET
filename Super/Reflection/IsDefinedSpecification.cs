@@ -4,7 +4,7 @@ using Super.Model.Specifications;
 
 namespace Super.Reflection
 {
-	sealed class IsDefinedSpecification<T> : ISpecification<MemberInfo>
+	sealed class IsDefinedSpecification<T> : ISpecification<ICustomAttributeProvider>
 	{
 		readonly static Type Type = Types<T>.Identity;
 
@@ -16,6 +16,6 @@ namespace Super.Reflection
 
 		public IsDefinedSpecification(bool inherit) => _inherit = inherit;
 
-		public bool IsSatisfiedBy(MemberInfo parameter) => parameter.IsDefined(Type, _inherit);
+		public bool IsSatisfiedBy(ICustomAttributeProvider parameter) => parameter.IsDefined(Type, _inherit);
 	}
 }

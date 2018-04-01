@@ -4,7 +4,7 @@ using Super.Model.Sources;
 
 namespace Super.Runtime
 {
-	sealed class FirstOrDefaultCoercer<T> : ISource<IEnumerable<T>, T>
+	public sealed class FirstOrDefaultCoercer<T> : ISource<IEnumerable<T>, T>
 	{
 		public static FirstOrDefaultCoercer<T> Default { get; } = new FirstOrDefaultCoercer<T>();
 

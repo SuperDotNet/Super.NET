@@ -1,14 +1,13 @@
-﻿using System;
-using Serilog;
+﻿using Serilog;
 using Super.ExtensionMethods;
+using Super.Model.Instances;
 
 namespace Super.Diagnostics
 {
-	public static class Log
+	public sealed class Log<T> : DeferredInstance<ILogger>
 	{
-		public static ILogger For<T>() => Logger.Default.Get().ForContext<T>();
+		public static ILogger Default { get; } = new Log<T>().Get();
 
-		public static Action Dispose() => Logger.Default.Get()
-		                                        .To<IDisposable>().Dispose;
+		Log() : base(Logger.Default.Adapt(ContextCoercer<T>.Default)) {}
 	}
 }

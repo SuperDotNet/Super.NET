@@ -1,16 +1,16 @@
-﻿using System;
-using Super.ExtensionMethods;
+﻿using Super.ExtensionMethods;
 using Super.Model.Sources.Tables;
 using Super.Runtime.Activation;
+using System;
 
 namespace Super.Model.Sources
 {
-	class ReferenceStore<TParameter, TResult> : DecoratedSource<TParameter, TResult>
+	public class ReferenceStore<TParameter, TResult> : DecoratedSource<TParameter, TResult>
 		where TParameter : class
 	{
-		public ReferenceStore() : this(New<TParameter, TResult>.Default.ToDelegate()) {}
+		protected ReferenceStore() : this(New<TParameter, TResult>.Default.ToDelegate()) {}
 
-		public ReferenceStore(Func<TParameter, TResult> source) :
-			base(ReferenceTables<TParameter, TResult>.Default.Get(source)) {}
+		protected ReferenceStore(Func<TParameter, TResult> source)
+			: base(ReferenceTables<TParameter, TResult>.Default.Get(source)) {}
 	}
 }

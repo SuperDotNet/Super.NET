@@ -42,6 +42,7 @@ namespace Super.Testing.Framework
 					return transformed;
 				}
 			}
+
 			return current;
 		}
 	}

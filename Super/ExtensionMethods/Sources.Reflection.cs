@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Reflection;
-using Super.Model.Sources;
+﻿using Super.Model.Sources;
 using Super.Model.Sources.Coercion;
 using Super.Model.Specifications;
 using Super.Reflection;
+using System;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Reflection;
 
 namespace Super.ExtensionMethods
 {
@@ -52,12 +52,12 @@ namespace Super.ExtensionMethods
 
 		public static T Get<T>(this ISource<Type, object> @this) => (T)@this.Get(typeof(T));
 
-		public static AssemblyName Get<T>(this ISource<AssemblyName, AssemblyName> @this)
+		/*public static AssemblyName Get<T>(this ISource<AssemblyName, AssemblyName> @this)
 			=> @this.Get(typeof(T).GetTypeInfo()
 			                      .Assembly
 			                      .GetName());
 
 		public static AssemblyName Get(this ISource<AssemblyName, AssemblyName> @this)
-			=> @this.Get<ISource<object, object>>();
+			=> @this.Get<ISource<object, object>>();*/
 	}
 }

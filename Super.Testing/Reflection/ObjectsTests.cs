@@ -11,12 +11,12 @@ namespace Super.Testing.Reflection
 		public void AccountForNullable()
 		{
 			AccountForUnassignedAlteration.Default.Get(typeof(int?))
-			            .Should()
-			            .Be<int>();
+			                              .Should()
+			                              .Be<int>();
 
 			AccountForUnassignedAlteration.Default.Get(GetType())
-				.Should()
-				.Be(GetType());
+			                              .Should()
+			                              .Be(GetType());
 		}
 	}
 }

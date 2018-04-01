@@ -14,33 +14,9 @@ namespace Super.Testing.Reflection
 {
 	public class ImplementsGenericEnumerableTests
 	{
-		[Fact]
-		public void Are() => new[]
-		                     {
-			                     typeof(Subject),
-			                     typeof(Subject<int>),
-			                     typeof(Integers)
-		                     }.ToMetadata()
-		                      .All(ImplementsGenericEnumerable.Default.IsSatisfiedBy)
-		                      .Should()
-		                      .BeTrue();
-
-		[Fact]
-		public void AreNot() => new[]
-		                        {
-			                        typeof(Instance),
-			                        typeof(Command)
-		                        }.ToMetadata()
-		                         .All(ImplementsGenericEnumerable.Default.IsSatisfiedBy)
-		                         .Should()
-		                         .BeFalse();
-
 		sealed class Instance : IInstance<object>
 		{
-			public object Get()
-			{
-				throw new NotImplementedException();
-			}
+			public object Get() => throw new NotImplementedException();
 		}
 
 		sealed class Command : ICommand<Unit>
@@ -71,5 +47,26 @@ namespace Super.Testing.Reflection
 
 			IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 		}
+
+		[Fact]
+		public void Are() => new[]
+			{
+				typeof(Subject),
+				typeof(Subject<int>),
+				typeof(Integers)
+			}.ToMetadata()
+			 .All(ImplementsGenericEnumerable.Default.IsSatisfiedBy)
+			 .Should()
+			 .BeTrue();
+
+		[Fact]
+		public void AreNot() => new[]
+			{
+				typeof(Instance),
+				typeof(Command)
+			}.ToMetadata()
+			 .All(ImplementsGenericEnumerable.Default.IsSatisfiedBy)
+			 .Should()
+			 .BeFalse();
 	}
 }

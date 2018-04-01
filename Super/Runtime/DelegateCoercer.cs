@@ -9,6 +9,6 @@ namespace Super.Runtime
 
 		DelegateCoercer() {}
 
-		public T Get(Func<T> parameter) => parameter.Invoke();
+		public T Get(Func<T> parameter) => parameter();
 	}
 }

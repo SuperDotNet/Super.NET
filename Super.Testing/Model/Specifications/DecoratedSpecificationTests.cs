@@ -12,7 +12,6 @@ namespace Super.Testing.Model.Specifications
 			new DecoratedSpecification<object>(AlwaysSpecification<object>.Default).IsSatisfiedBy(new object())
 			                                                                       .Should()
 			                                                                       .BeTrue();
-
 		}
 	}
 }

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Super.Testing.Platform</AssemblyName>
+    <RootNamespace>Super.Testing.Platform</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Super.Testing.Objects\Super.Testing.Objects.csproj" />
+    <ProjectReference Include="..\Super\Super.csproj" />
+  </ItemGroup>
+
+</Project>
