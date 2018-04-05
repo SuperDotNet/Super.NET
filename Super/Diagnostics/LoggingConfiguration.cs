@@ -2,10 +2,10 @@
 
 namespace Super.Diagnostics
 {
-	sealed class LoggingConfiguration : Ambient<ILoggingConfiguration>
+	sealed class LoggingConfiguration : Component<ILoggingConfiguration>
 	{
 		public static LoggingConfiguration Default { get; } = new LoggingConfiguration();
 
-		LoggingConfiguration() : base(DefaultLoggingConfigurations.Default) {}
+		LoggingConfiguration() : base(DefaultLoggingConfiguration.Default) {}
 	}
 }

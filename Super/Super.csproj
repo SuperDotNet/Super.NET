@@ -10,16 +10,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Humanizer.Core" Version="2.2.0" />
     <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
     <PackageReference Include="LightInject" Version="5.1.2" />
     <PackageReference Include="Polly" Version="5.8.0" />
-    <PackageReference Include="Serilog.Sinks.ColoredConsole" Version="3.0.1" />
     <PackageReference Include="Serilog.Sinks.Seq" Version="4.0.0" />
     <PackageReference Include="Serilog.Sinks.Trace" Version="2.1.0" />
     <PackageReference Include="System.Collections.Immutable" Version="1.4.0" />
     <PackageReference Include="System.Collections.NonGeneric" Version="4.3.0" />
     <PackageReference Include="System.Interactive" Version="3.1.1" />
     <PackageReference Include="System.Reactive" Version="3.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Aspects\" />
   </ItemGroup>
 
 </Project>

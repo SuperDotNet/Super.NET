@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using Super.Aspects;
 using Super.ExtensionMethods;
 using Super.Model.Sources;
 using Super.Reflection;
@@ -15,7 +14,7 @@ namespace Super.Testing.Aspects
 		[Theory, AutoData]
 		void Verify(I<Subject> sut)
 		{
-			sut.From(Source.Infer).Should().BeSameAs(I<ISource<int, int>>.Default);
+			sut.Source(x => x).Should().BeSameAs(Source<Subject, int, int>.Default);
 		}
 
 		sealed class Subject : ISource<int, int>

@@ -4,6 +4,7 @@ using Super.Model.Sources.Tables;
 using Super.Model.Specifications;
 using Super.Reflection;
 using Super.Runtime;
+using Super.Runtime.Activation;
 using System;
 using System.Reflection;
 
@@ -43,8 +44,11 @@ namespace Super.ExtensionMethods
 		                                                                   ISource<TParameter, TResult> @false)
 			=> new ValidatedSource<TParameter, TResult>(specification, @this, @false);
 
+		public static ISource<TFrom, TResult> In<TFrom, TTo, TResult>(this ISource<TTo, TResult> @this, Cast<TFrom> _)
+			=> @this.In(CastCoercer<TFrom, TTo>.Default);
+
 		public static ISource<TFrom, TResult> In<TFrom, TTo, TResult>(this ISource<TTo, TResult> @this, I<TFrom> _)
-			=> In(@this, CastCoercer<TFrom, TTo>.Default);
+			where TTo : IActivateMarker<TFrom> => @this.In(Activations<TFrom, TTo>.Default);
 
 		public static ISource<TFrom, TResult> Assigned<TFrom, TTo, TResult>(
 			this ISource<TTo, TResult> @this, ISource<TFrom, TTo> coercer)
@@ -54,8 +58,8 @@ namespace Super.ExtensionMethods
 		                                                            ISource<TTo, TFrom> coercer)
 			=> @this.In(coercer.ToDelegate());
 
-		public static ISource<TFrom, TResult> In<TFrom, TTo, TResult>(this ISource<TTo, TResult> @this,
-		                                                              Func<TFrom, TTo> coercer)
+		public static ISource<TTo, TResult> In<TFrom, TTo, TResult>(this ISource<TFrom, TResult> @this,
+		                                                              Func<TTo, TFrom> coercer)
 			=> @this.ToDelegate().In(coercer);
 
 		public static ISource<TTo, TResult> In<TFrom, TTo, TResult>(this Func<TFrom, TResult> @this,

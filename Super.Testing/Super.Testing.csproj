@@ -14,6 +14,7 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Super.Application.Console\Super.Application.Console.csproj" />
     <ProjectReference Include="..\Super.Testing.Environment.Development\Super.Testing.Environment.Development.csproj" Condition="'$(Configuration)' == 'Debug'" />
     <ProjectReference Include="..\Super.Testing.Environment\Super.Testing.Environment.csproj" Condition="'$(Configuration)' == 'Release'" />
     <ProjectReference Include="..\Super.Testing.Framework\Super.Testing.Framework.csproj" />

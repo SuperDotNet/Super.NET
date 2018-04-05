@@ -1,7 +1,7 @@
-﻿using System;
-using Super.ExtensionMethods;
+﻿using Super.ExtensionMethods;
 using Super.Model.Specifications;
 using Super.Reflection;
+using System;
 
 namespace Super.Model.Sources.Tables
 {

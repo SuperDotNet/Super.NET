@@ -6,7 +6,7 @@ namespace Super.Model.Specifications
 	public class HasResult<TParameter, TResult> : DelegatedSpecification<TParameter>
 	{
 		readonly static Func<TResult, bool> Assigned =
-			new SpecificationSourceAdapter<TResult>(AssignedSpecification<TResult>.Default).Get;
+			new SpecificationAdapter<TResult>(AssignedSpecification<TResult>.Default).Get;
 
 		public HasResult(Func<TParameter, TResult> source) : this(source, Assigned) {}
 

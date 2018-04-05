@@ -1,6 +1,6 @@
-﻿using System;
-using Super.ExtensionMethods;
+﻿using Super.ExtensionMethods;
 using Super.Reflection;
+using System;
 
 namespace Super.Model.Sources
 {

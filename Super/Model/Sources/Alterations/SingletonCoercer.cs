@@ -8,6 +8,6 @@ namespace Super.Model.Sources.Alterations
 
 		SingletonCoercer() {}
 
-		public IInstance<T> Get(IInstance<T> parameter) => new DeferredInstance<T>(parameter);
+		public IInstance<T> Get(IInstance<T> parameter) => new DeferredSingleton<T>(parameter);
 	}
 }

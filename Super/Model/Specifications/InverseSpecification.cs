@@ -1,6 +1,6 @@
 ﻿namespace Super.Model.Specifications
 {
-	class InverseSpecification<T> : ISpecification<T>
+	public class InverseSpecification<T> : ISpecification<T>
 	{
 		readonly ISpecification<T> _specification;
 

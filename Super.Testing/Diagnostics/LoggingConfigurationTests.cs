@@ -9,7 +9,7 @@ namespace Super.Testing.Diagnostics
 		[Fact]
 		void Verify()
 		{
-			LoggingConfiguration.Default.Get().Should().BeSameAs(DefaultLoggingConfigurations.Default);
+			LoggingConfiguration.Default.Get().Should().BeSameAs(DefaultLoggingConfiguration.Default);
 		}
 	}
 }

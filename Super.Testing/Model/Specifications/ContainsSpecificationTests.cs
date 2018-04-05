@@ -1,12 +1,12 @@
-﻿using System.Linq;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Super.ExtensionMethods;
-using Super.Model.Specifications;
+using Super.Model.Collections;
+using System.Linq;
 using Xunit;
 
 namespace Super.Testing.Model.Specifications
 {
-	public class ContainsSpecificationTests
+	public class HasTests
 	{
 		[Fact]
 		public void Verify()
@@ -14,7 +14,7 @@ namespace Super.Testing.Model.Specifications
 			var item = new object();
 			var items = item.Yield()
 			                .ToList();
-			new ContainsSpecification<object>(items).IsSatisfiedBy(item)
+			new Has<object>(items).IsSatisfiedBy(item)
 			                                        .Should()
 			                                        .BeTrue();
 		}

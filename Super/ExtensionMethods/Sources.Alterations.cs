@@ -1,5 +1,6 @@
 ﻿using Super.Model.Sources;
 using Super.Model.Sources.Alterations;
+using Super.Runtime.Invocation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,5 +18,11 @@ namespace Super.ExtensionMethods
 		public static IAlteration<T> ToAlteration<T>(this ISource<T, T> @this) => @this.ToDelegate().ToAlteration();
 
 		public static IAlteration<T> ToAlteration<T>(this Func<T, T> @this) => Alterations<T>.Default.Get(@this);
+
+		public static ISource<TParameter, TResult> Protect<TParameter, TResult>(this ISource<TParameter, TResult> @this)
+			=> @this.To(ProtectAlteration<TParameter, TResult>.Default);
+
+		public static ISource<TParameter, TResult> Stripe<TParameter, TResult>(this ISource<TParameter, TResult> @this)
+			=> @this.To(StripedAlteration<TParameter, TResult>.Default);
 	}
 }

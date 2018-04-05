@@ -12,7 +12,8 @@ namespace Super.Runtime.Environment
 	{
 		public static ComponentTypeCandidates Default { get; } = new ComponentTypeCandidates();
 
-		ComponentTypeCandidates() : base(ComponentAssemblies.Default.SelectMany(Activation.Locator<PublicAssemblyTypes>.New)
+		ComponentTypeCandidates() : base(ComponentAssemblies.Default
+		                                                    .SelectMany(Activate<PublicAssemblyTypes>.New)
 		                                                    .Where(CanActivate.Default.IsSatisfiedBy)
 		                                                    .ToImmutableArray()) {}
 	}

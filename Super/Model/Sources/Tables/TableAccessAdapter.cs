@@ -14,6 +14,6 @@ namespace Super.Model.Sources.Tables
 			_create  = create;
 		}
 
-		public TResult Get(TParameter parameter) => _factory.Invoke(parameter, _create);
+		public TResult Get(TParameter parameter) => _factory(parameter, _create);
 	}
 }

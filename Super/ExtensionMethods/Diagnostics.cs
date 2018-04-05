@@ -1,7 +1,8 @@
-﻿using System;
-using Polly;
+﻿using Polly;
 using Super.Diagnostics;
 using Super.Model.Commands;
+using System;
+// ReSharper disable TooManyArguments
 
 namespace Super.ExtensionMethods
 {

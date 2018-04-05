@@ -11,7 +11,7 @@ namespace Super.Testing.Reflection
 		{
 			Delegates.Empty.Should()
 			         .BeSameAs(Delegates.Empty);
-			Delegates.Empty.Invoke();
+			Delegates.Empty();
 		}
 
 		[Fact]

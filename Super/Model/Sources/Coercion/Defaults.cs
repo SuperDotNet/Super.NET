@@ -10,7 +10,7 @@ namespace Super.Model.Sources.Coercion
 		public static Defaults<TParameter, TResult> Default { get; } = new Defaults<TParameter, TResult>();
 
 		Defaults() : base(IsTypeSpecification<ISource<TParameter, TResult>, IAlteration<TParameter>>.Default,
-		                  Self<TParameter>.Default.Out(I<TResult>.Default),
+		                  Self<TParameter>.Default.Out(Cast<TResult>.Default),
 		                  Default<TParameter, TResult>.Instance) {}
 	}
 }

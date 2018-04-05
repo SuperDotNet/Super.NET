@@ -9,7 +9,7 @@ namespace Super.Testing.Reflection
 		[Fact]
 		public void New()
 		{
-			Types<object>.New.Invoke()
+			Types<object>.New()
 			             .Should()
 			             .NotBeNull();
 		}

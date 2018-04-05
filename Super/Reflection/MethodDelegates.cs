@@ -1,7 +1,7 @@
-﻿using System;
-using System.Reflection;
-using Super.ExtensionMethods;
+﻿using Super.ExtensionMethods;
 using Super.Model.Sources;
+using System;
+using System.Reflection;
 
 namespace Super.Reflection
 {
@@ -18,6 +18,6 @@ namespace Super.Reflection
 	{
 		public static MethodDelegates<T> Default { get; } = new MethodDelegates<T>();
 
-		MethodDelegates() : base(new MethodDelegates(Types<T>.Identity).Out(I<T>.Default)) {}
+		MethodDelegates() : base(new MethodDelegates(Types<T>.Identity).Out(Cast<T>.Default)) {}
 	}
 }

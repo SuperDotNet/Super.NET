@@ -1,6 +1,10 @@
-using System.Collections.Generic;
-using System.Reflection;
+using Super.ExtensionMethods;
 using Super.Model.Sources;
+using Super.Model.Sources.Alterations;
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Reflection;
 
 namespace Super.Runtime.Environment
 {
@@ -8,12 +12,29 @@ namespace Super.Runtime.Environment
 	{
 		public static ComponentAssemblyNames Default { get; } = new ComponentAssemblyNames();
 
-		ComponentAssemblyNames() {}
+		ComponentAssemblyNames() : this(EnvironmentAssemblyName.Default, PlatformAssemblyName.Default) {}
+
+		readonly Func<AssemblyName, IEnumerable<AssemblyName>> _expand;
+		readonly ImmutableArray<IAlteration<AssemblyName>> _names;
+
+		public ComponentAssemblyNames(params IAlteration<AssemblyName>[] names)
+			: this(ComponentAssemblyCandidates.Default.ToDelegate(), names.ToImmutableArray()) {}
+
+		public ComponentAssemblyNames(Func<AssemblyName, IEnumerable<AssemblyName>> expand, ImmutableArray<IAlteration<AssemblyName>> names)
+		{
+			_expand = expand;
+			_names = names;
+		}
 
 		public IEnumerable<AssemblyName> Get(AssemblyName parameter)
 		{
-			yield return EnvironmentAssemblyName.Default.Get(parameter);
-			yield return PlatformAssemblyName.Default.Get(parameter);
+			foreach (var name in _expand(parameter))
+			{
+				foreach (var alteration in _names)
+				{
+					yield return alteration.Get(name);
+				}
+			}
 		}
 	}
 }

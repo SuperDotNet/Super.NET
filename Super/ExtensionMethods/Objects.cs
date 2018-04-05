@@ -41,6 +41,13 @@ namespace Super.ExtensionMethods
 			yield return @this;
 		}
 
+		public static IEnumerable<T> Yield<T>(this T @this, T other)
+		{
+			yield return @this;
+
+			yield return other;
+		}
+
 		public static T To<T>(this object @this)
 			=> To<T>(@this, $"'{@this.GetType().FullName}' is not of type {typeof(T).FullName}.");
 

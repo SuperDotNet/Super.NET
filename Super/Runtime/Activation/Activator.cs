@@ -14,10 +14,10 @@ namespace Super.Runtime.Activation
 
 		Activator() : base(TypeMetadataCoercer.Default
 		                                      .Out(YieldCoercer<TypeInfo>.Default)
-		                                      .Out(ImmutableArrayCoercer<TypeInfo>.Default)
+		                                      .Out(ImmutableArraySelector<TypeInfo>.Default)
 		                                      .Out(new Generic<IInstance<object>>(typeof(ActivatorInstance<>)))
 		                                      .Invoke()
-		                                      .Out(InstanceCoercer<object>.Default)) {}
+		                                      .Out(InstanceValueCoercer<object>.Default)) {}
 	}
 
 	public sealed class Activator<T> : DecoratedInstance<T>, IActivator<T>

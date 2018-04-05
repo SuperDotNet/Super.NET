@@ -1,6 +1,7 @@
-﻿using System;
-using Super.ExtensionMethods;
+﻿using Super.ExtensionMethods;
 using Super.Model.Sources;
+using Super.Runtime.Invocation;
+using System;
 
 namespace Super.Runtime.Activation
 {
@@ -11,7 +12,7 @@ namespace Super.Runtime.Activation
 		Singletons() : base(HasSingletonProperty.Default
 		                                        .If(SingletonProperty.Default
 		                                                             .Out(SingletonPropertyDelegates.Default)
-		                                                             .Out(DelegateCoercer<object>.Default))
+		                                                             .Out(InvokeCoercer<object>.Default))
 		                                        .ToReferenceStore()) {}
 	}
 }

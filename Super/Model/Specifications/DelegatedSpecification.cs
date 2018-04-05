@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Super.Runtime.Activation;
+using System;
 
 namespace Super.Model.Specifications
 {
@@ -8,6 +9,15 @@ namespace Super.Model.Specifications
 
 		public DelegatedSpecification(Func<T, bool> @delegate) => _delegate = @delegate;
 
-		public virtual bool IsSatisfiedBy(T parameter) => _delegate.Invoke(parameter);
+		public bool IsSatisfiedBy(T parameter) => _delegate(parameter);
+	}
+
+	public class FixedDelegatedSpecification<T> : ISpecification<T>, IActivateMarker<Func<bool>>
+	{
+		readonly Func<bool> _delegate;
+
+		public FixedDelegatedSpecification(Func<bool> @delegate) => _delegate = @delegate;
+
+		public bool IsSatisfiedBy(T _) => _delegate();
 	}
 }

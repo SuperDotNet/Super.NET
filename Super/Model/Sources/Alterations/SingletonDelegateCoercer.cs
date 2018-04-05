@@ -9,6 +9,6 @@ namespace Super.Model.Sources.Alterations
 
 		SingletonDelegateCoercer() {}
 
-		public Func<T> Get(Func<T> parameter) => new DeferredInstance<T>(parameter).Get;
+		public Func<T> Get(Func<T> parameter) => new DeferredSingleton<T>(parameter).Get;
 	}
 }

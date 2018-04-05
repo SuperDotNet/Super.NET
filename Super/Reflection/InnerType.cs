@@ -1,10 +1,9 @@
-using System;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Reflection;
 using Super.ExtensionMethods;
 using Super.Model.Sources.Alterations;
 using Super.Model.Specifications;
+using System;
+using System.Collections.Immutable;
+using System.Reflection;
 
 namespace Super.Reflection
 {
@@ -18,7 +17,8 @@ namespace Super.Reflection
 		readonly Func<Type[], TypeInfo>                   _select;
 		readonly ISpecification<TypeInfo>                 _specification;
 
-		public InnerType(ISpecification<TypeInfo> specification) : this(specification, TypeHierarchy.Default.Get,
+		public InnerType(ISpecification<TypeInfo> specification) : this(HasGenericArguments.Default.And(specification),
+		                                                                TypeHierarchy.Default.Get,
 		                                                                x => x.Only()?.GetTypeInfo()) {}
 
 		public InnerType(ISpecification<TypeInfo> specification, Func<TypeInfo, ImmutableArray<TypeInfo>> hierarchy,
@@ -34,7 +34,7 @@ namespace Super.Reflection
 			var hierarchy = _hierarchy(parameter);
 			foreach (var info in hierarchy)
 			{
-				var result = info.IsGenericType && info.GenericTypeArguments.Any() && _specification.IsSatisfiedBy(info)
+				var result = _specification.IsSatisfiedBy(info)
 					             ? _select(info.GenericTypeArguments)
 					             : info.IsArray
 						             ? info.GetElementType()
@@ -48,7 +48,5 @@ namespace Super.Reflection
 
 			return null;
 		}
-
-		//public Type GetEnumerableType() => InnerType(GetHierarchy(), types => types.Only(), i => i.Adapt().IsGenericOf(typeof(IEnumerable<>)));
 	}
 }

@@ -1,10 +1,10 @@
-﻿using Serilog;
-using Super.ExtensionMethods;
-using Super.Model.Instances;
+﻿using Super.ExtensionMethods;
+using Super.Reflection;
+using Super.Runtime;
 
 namespace Super.Diagnostics
 {
-	public sealed class Logger : DeferredInstance<ILogger>
+	public sealed class Logger : Ambient<IPrimaryLogger>
 	{
 		public static Logger Default { get; } = new Logger();
 
@@ -12,6 +12,7 @@ namespace Super.Diagnostics
 		                                    .Adapt()
 		                                    .Reduce()
 		                                    .Out(LoggerCoercer.Default)
+		                                    .Out(I<PrimaryLogger>.Default)
 		                                    .ToInstance()) {}
 	}
 }

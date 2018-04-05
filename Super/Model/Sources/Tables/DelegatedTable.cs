@@ -1,6 +1,6 @@
+using Super.ExtensionMethods;
 using System;
 using System.Collections.Generic;
-using Super.ExtensionMethods;
 
 namespace Super.Model.Sources.Tables
 {
@@ -11,6 +11,7 @@ namespace Super.Model.Sources.Tables
 		readonly Func<TParameter, TResult>     _get;
 		readonly Func<TParameter, bool>        _remove;
 
+		// ReSharper disable once TooManyDependencies
 		public DelegatedTable(Func<TParameter, bool> contains, Action<(TParameter, TResult)> assign,
 		                      Func<TParameter, TResult> get,
 		                      Func<TParameter, bool> remove)

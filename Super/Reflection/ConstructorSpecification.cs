@@ -1,23 +1,19 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-using Super.ExtensionMethods;
+﻿using Super.ExtensionMethods;
+using Super.Model.Collections;
 using Super.Model.Specifications;
+using System;
+using System.Reflection;
 
 namespace Super.Reflection
 {
-	sealed class ConstructorSpecification : ISpecification<ConstructorInfo>
+	sealed class ConstructorSpecification : DecoratedSpecification<ConstructorInfo>
 	{
 		public static ConstructorSpecification Default { get; } = new ConstructorSpecification();
 
-		ConstructorSpecification() {}
-
-		public bool IsSatisfiedBy(ConstructorInfo parameter)
-		{
-			var parameters = parameter.GetParameters();
-			var result = parameters.Length == 0 ||
-			             parameters.All(x => x.IsOptional || x.Has<ParamArrayAttribute>());
-			return result;
-		}
+		ConstructorSpecification()
+			: base(HasNone<ParameterInfo>.Default
+			                             .Or(new AllItemsAre<ParameterInfo>(x => x.IsOptional ||
+			                                                                     x.Has<ParamArrayAttribute>()))
+			                             .Adapt(Parameters.Default)) {}
 	}
 }

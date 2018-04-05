@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Super.ExtensionMethods;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
-using Super.ExtensionMethods;
+// ReSharper disable ComplexConditionExpression
 
 namespace Super.Model.Collections
 {

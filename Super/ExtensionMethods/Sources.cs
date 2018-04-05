@@ -9,7 +9,7 @@ namespace Super.ExtensionMethods
 	partial class Sources
 	{
 		public static Func<TParameter, TResult> ToDelegate<TParameter, TResult>(this ISource<TParameter, TResult> @this)
-			=> SourceDelegates<TParameter, TResult>.Default.Get(@this);
+			=> Delegates<TParameter, TResult>.Default.Get(@this);
 
 		public static ISource<TParameter, TResult> ToStore<TParameter, TResult>(this ISource<TParameter, TResult> @this)
 			where TParameter : class => @this.ToDelegate().ToStore();

@@ -1,7 +1,8 @@
-﻿using System;
-using System.Collections.Immutable;
-using Polly;
+﻿using Polly;
 using Super.Model.Commands;
+using System;
+using System.Collections.Immutable;
+// ReSharper disable TooManyArguments
 
 namespace Super.Diagnostics
 {

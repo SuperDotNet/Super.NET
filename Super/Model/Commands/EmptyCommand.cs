@@ -1,3 +1,5 @@
+using System.Reactive;
+
 namespace Super.Model.Commands
 {
 	public sealed class EmptyCommand<T> : ICommand<T>
@@ -7,5 +9,14 @@ namespace Super.Model.Commands
 		EmptyCommand() {}
 
 		public void Execute(T parameter) {}
+	}
+
+	public sealed class EmptyCommand : ICommand<Unit>
+	{
+		public static EmptyCommand Default { get; } = new EmptyCommand();
+
+		EmptyCommand() {}
+
+		public void Execute(Unit parameter) {}
 	}
 }

@@ -1,6 +1,8 @@
-﻿using Super.Model.Sources;
+﻿using Super.Model.Instances;
+using Super.Model.Sources;
 using Super.Model.Sources.Coercion;
 using Super.Model.Specifications;
+using Super.Reflection;
 using System;
 
 namespace Super.ExtensionMethods
@@ -12,6 +14,10 @@ namespace Super.ExtensionMethods
 
 		public static ISpecification<T> ToSpecification<T>(this Func<T, bool> @this) => Specifications<T>.Default.Get(@this);
 
+		public static ISpecification<object> ToSpecification(this IInstance<bool> @this) => @this.ToDelegate().ToSpecification();
+
+		public static ISpecification<object> ToSpecification(this Func<bool> @this) => @this.To(I<FixedDelegatedSpecification<object>>.Default);
+
 		public static ISource<TParameter, ISource<T, bool>> Adapt<TParameter, T>(
 			this ISource<TParameter, ISpecification<T>> @this)
 			=> @this.Out(SpecificationSourceCoercer<T>.Default);
@@ -22,8 +28,7 @@ namespace Super.ExtensionMethods
 		public static ISpecification<TTo> Adapt<TFrom, TTo>(this ISpecification<TFrom> @this, Func<TTo, TFrom> coercer)
 			=> @this.Adapt().In(coercer).ToSpecification();
 
-		public static ISource<T, bool> Adapt<T>(this ISpecification<T> @this)
-			=> Model.Specifications.Adapters<T>.Default.Get(@this);
+		public static ISource<T, bool> Adapt<T>(this ISpecification<T> @this) => Model.Specifications.Adapters<T>.Default.Get(@this);
 
 		public static ISource<TParameter, TResult> If<TParameter, TResult>(
 			this ISpecification<TParameter> @this, ISource<TParameter, TResult> @true)

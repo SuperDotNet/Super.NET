@@ -11,7 +11,7 @@ namespace Super.Testing.Runtime.Activation
 		[AutoData]
 		public void Verify(int number)
 		{
-			var subject = Locator<Subject>.New(number);
+			var subject = Activate<Subject>.New(number);
 			subject.Number.Should()
 			       .Be(number)
 			       .And.Subject.Should()
@@ -22,14 +22,14 @@ namespace Super.Testing.Runtime.Activation
 		[AutoData]
 		public void Default(int number)
 		{
-			Locator<Subject>.New(number).Number.Should().Be(number);
+			Activate<Subject>.New(number).Number.Should().Be(number);
 		}
 
 		[Theory]
 		[AutoData]
 		public void MultipleParameters(int number)
 		{
-			var subject = Locator<SubjectWithMultipleParameters>.New(number);
+			var subject = Activate<SubjectWithMultipleParameters>.New(number);
 			subject.Another.Should().Be(4);
 			subject.Number.Should().Be(number);
 		}
@@ -59,14 +59,14 @@ namespace Super.Testing.Runtime.Activation
 		[Fact]
 		public void NoParameters()
 		{
-			Locator<SubjectWithoutConstructor>.New(6776).Should().NotBeNull();
+			Activate<SubjectWithoutConstructor>.New(6776).Should().NotBeNull();
 		}
 
 		[Fact]
 		public void References()
 		{
-			var first  = Locator<SubjectWithoutConstructor>.New(6776);
-			var second = Locator<SubjectWithoutConstructor>.New(6776);
+			var first  = Activate<SubjectWithoutConstructor>.New(6776);
+			var second = Activate<SubjectWithoutConstructor>.New(6776);
 			first.Should().NotBeSameAs(second);
 		}
 	}

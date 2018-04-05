@@ -1,11 +1,13 @@
-﻿using System;
-using System.Reactive.Linq;
-using Polly;
+﻿using Polly;
 using Super.Model.Sources;
+using System;
+using System.Reactive.Linq;
 
 namespace Super.Observable
 {
-	public class DurableObservableSource<T> : ISource<IObservable<T>, T>
+	public interface IObserve<T> : ISource<IObservable<T>, T> {}
+
+	public class DurableObservableSource<T> : IObserve<T>
 	{
 		readonly Func<Func<T>, T> _policy;
 

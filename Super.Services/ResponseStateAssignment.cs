@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Super.Model.Sources;
+using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using Microsoft.AspNetCore.Http;
-using Super.Model.Commands;
 
 namespace Super.Services
 {
-	class ResponseStateAssignment : ICommand<(HttpRequest Parameter, HttpClient Result)>
+	class ResponseStateAssignment : IAssignable<HttpRequest, HttpClient>
 	{
 		readonly static Func<HttpClient, System.Net.Http.HttpClientHandler> Handler = AssociatedHandlers.Default.Get;
 
@@ -22,11 +23,11 @@ namespace Super.Services
 			_state   = state;
 		}
 
-		public void Execute((HttpRequest Parameter, HttpClient Result) parameter)
+		public void Execute(KeyValuePair<HttpRequest, HttpClient> parameter)
 		{
-			_handler(parameter.Result)
+			_handler(parameter.Value)
 				.CookieContainer
-				.Add(parameter.Result.BaseAddress, _state(parameter.Parameter));
+				.Add(parameter.Value.BaseAddress, _state(parameter.Key));
 		}
 	}
 }

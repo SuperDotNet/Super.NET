@@ -9,6 +9,7 @@ namespace Super.Model.Collections
 	[DebuggerDisplay("{Value}", Name = "[{Index}]: {Key}")]
 	class IndexedKeyValuePairs
 	{
+		// ReSharper disable once TooManyDependencies
 		public IndexedKeyValuePairs(IDictionary dictionary, int index, object key, object value)
 		{
 			Index      = index;

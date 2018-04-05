@@ -1,5 +1,5 @@
-﻿using System;
-using Super.Runtime;
+﻿using Super.Runtime;
+using System;
 
 namespace Super.Model.Sources
 {
@@ -16,6 +16,6 @@ namespace Super.Model.Sources
 		public DecorationParameterCoercer(Func<TFrom, TTo> coercer) => _coercer = coercer;
 
 		public Decoration<TTo, TResult> Get(Decoration<TFrom, TResult> parameter)
-			=> new Decoration<TTo, TResult>(_coercer.Invoke(parameter.Parameter), parameter.Result);
+			=> new Decoration<TTo, TResult>(_coercer(parameter.Parameter), parameter.Result);
 	}
 }

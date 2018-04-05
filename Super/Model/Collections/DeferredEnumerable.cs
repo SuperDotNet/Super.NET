@@ -9,7 +9,6 @@ namespace Super.Model.Collections
 
 		public DeferredEnumerable(Func<IEnumerable<T>> enumerable) => _enumerable = enumerable;
 
-		public override IEnumerator<T> GetEnumerator() => _enumerable.Invoke()
-		                                                             .GetEnumerator();
+		public override IEnumerator<T> GetEnumerator() => _enumerable().GetEnumerator();
 	}
 }
