@@ -4,6 +4,8 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Super.Environment</AssemblyName>
     <RootNamespace>Super.Environment</RootNamespace>
+    <LangVersion>latest</LangVersion>
+
   </PropertyGroup>
 
   <ItemGroup>
