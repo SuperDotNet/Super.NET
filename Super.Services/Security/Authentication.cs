@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Super.ExtensionMethods;
-using Super.Model.Collections;
 using Super.Model.Sources;
 
 namespace Super.Services.Security
@@ -11,9 +10,9 @@ namespace Super.Services.Security
 
 		Authentication() : base(AuthenticationAddress.Default
 		                                             .Out(ClientStore.Default)
-		                                             .Out(AuthenticationStateAssignment.Default)
+		                                             .Configure(AuthenticationStateAssignment.Default)
 		                                             .Out(Api<IAuthentication>.Default)
 		                                             .Request(x => x.Current())
-		                                             .Out(OnlyCoercer<AuthenticationInformation>.Default)) {}
+		                                             .Out(x => x.Only())) {}
 	}
 }

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Reflection;
-using Super.ExtensionMethods;
+﻿using Super.ExtensionMethods;
 using Super.Model.Sources;
 using Super.Model.Sources.Alterations;
 using Super.Reflection;
+using System;
+using System.Reflection;
 
 namespace Super.Runtime.Activation
 {

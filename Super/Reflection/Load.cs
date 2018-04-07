@@ -9,6 +9,6 @@ namespace Super.Reflection
 	{
 		public static Load Default { get; } = new Load();
 
-		Load() : base(new DelegatedSource<AssemblyName, Assembly>(Assembly.Load).Try(I<FileNotFoundException>.Default)) {}
+		Load() : base(In<AssemblyName>.Select(Assembly.Load).Try(I<FileNotFoundException>.Default)) {}
 	}
 }

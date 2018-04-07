@@ -9,8 +9,9 @@ namespace Super.Runtime
 		public static CanCast<TFrom, TTo> Default { get; } = new CanCast<TFrom, TTo>();
 
 		CanCast()
-			: base(AssignedSpecification<TFrom>
-			       .Default.And(IsAssignableSpecification<TTo>
-			                    .Default.Adapt(TypeMetadataCoercer.Default.In(InstanceTypeCoercer<TFrom>.Default)))) {}
+			: base(IsAssigned<TFrom>.Default
+			                        .And(IsAssignableFrom<TTo>.Default
+			                                                  .Select(TypeMetadataCoercer.Default)
+			                                                  .Select(InstanceTypeCoercer<TFrom>.Default))) {}
 	}
 }

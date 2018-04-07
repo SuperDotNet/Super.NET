@@ -7,7 +7,7 @@ namespace Super.Model.Collections
 {
 	sealed class Repeat<T> : ItemsBase<T>
 	{
-		readonly static Func<T> Create = New<T>.Default.ToDelegate();
+		readonly static Func<T> Create = Activation<T>.Default.ToDelegate();
 
 		readonly int     _times;
 		readonly Func<T> _create;

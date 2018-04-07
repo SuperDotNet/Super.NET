@@ -1,18 +1,9 @@
-using Super.Model.Sources.Alterations;
+using Super.Model.Sources;
 
 namespace Super.Model.Specifications
 {
-	public sealed class AlteredSpecification<T> : ISpecification<T>
+	public sealed class AlteredSpecification<T> : SelectedParameterSpecification<T, T>
 	{
-		readonly IAlteration<T>    _alteration;
-		readonly ISpecification<T> _specification;
-
-		public AlteredSpecification(ISpecification<T> specification, IAlteration<T> alteration)
-		{
-			_specification = specification;
-			_alteration    = alteration;
-		}
-
-		public bool IsSatisfiedBy(T parameter) => _specification.IsSatisfiedBy(_alteration.Get(parameter));
+		public AlteredSpecification(ISpecification<T> specification, ISource<T, T> alteration) : base(specification, alteration) {}
 	}
 }

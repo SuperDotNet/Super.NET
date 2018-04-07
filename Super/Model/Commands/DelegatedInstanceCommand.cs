@@ -1,10 +1,11 @@
 ﻿using Super.ExtensionMethods;
 using Super.Model.Instances;
+using Super.Runtime.Activation;
 using System;
 
 namespace Super.Model.Commands
 {
-	public class DelegatedInstanceCommand<T> : ICommand<T>
+	public class DelegatedInstanceCommand<T> : ICommand<T>, IActivateMarker<IInstance<ICommand<T>>>
 	{
 		readonly Func<ICommand<T>> _instance;
 

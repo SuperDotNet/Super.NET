@@ -1,20 +1,10 @@
-﻿using System;
-using System.Collections.Immutable;
-using System.Reflection;
-using Super.ExtensionMethods;
+﻿using Super.ExtensionMethods;
 using Super.Model.Sources;
+using System;
+using System.Reflection;
 
 namespace Super.Reflection
 {
-	public interface IGeneric<in T1, out T> : ISource<ImmutableArray<TypeInfo>, Func<T1, T>> {}
-
-	public interface IGeneric<in T1, in T2, out T> : ISource<ImmutableArray<TypeInfo>, Func<T1, T2, T>> {}
-
-	public interface IGeneric<in T1, in T2, in T3, out T> : ISource<ImmutableArray<TypeInfo>, Func<T1, T2, T3, T>> {}
-
-	public interface IGeneric<in T1, in T2, in T3, in T4, out T>
-		: ISource<ImmutableArray<TypeInfo>, Func<T1, T2, T3, T4, T>> {}
-
 	public class Generic<T> : GenericAdapterBase<Func<T>>, IGeneric<T>
 	{
 		readonly static ISource<TypeInfo, Func<T>> Activator =
@@ -27,12 +17,12 @@ namespace Super.Reflection
 
 	public class Generic<T1, T> : GenericAdapterBase<Func<T1, T>>, IGeneric<T1, T>
 	{
-		readonly static ISource<TypeInfo, Func<T1, T>> Activator =
+		readonly static ISource<Type, Func<T1, T>> Activator =
 			new GenericActivators<Func<T1, T>>(typeof(T1)).ToReferenceStore();
 
 		public Generic(Type definition) : this(definition, Activator) {}
 
-		public Generic(Type definition, ISource<TypeInfo, Func<T1, T>> source) : base(definition, source) {}
+		public Generic(Type definition, ISource<Type, Func<T1, T>> source) : base(definition, source) {}
 	}
 
 	public class Generic<T1, T2, T> : GenericAdapterBase<Func<T1, T2, T>>, IGeneric<T1, T2, T>

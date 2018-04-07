@@ -1,13 +1,12 @@
-﻿using System;
+﻿using Super.Model.Sources;
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
-using Super.Model.Sources;
 
 namespace Super.Reflection
 {
-	sealed class GenericActivators<T> : ISource<TypeInfo, T>
+	sealed class GenericActivators<T> : ISource<Type, T>
 	{
 		readonly IGenericActivation                  _activation;
 		readonly ImmutableArray<ParameterExpression> _expressions;
@@ -29,7 +28,7 @@ namespace Super.Reflection
 			_expressions = expressions;
 		}
 
-		public T Get(TypeInfo parameter) => Expression.Lambda<T>(_activation.Get(parameter), _expressions.ToArray())
+		public T Get(Type parameter) => Expression.Lambda<T>(_activation.Get(parameter), _expressions.ToArray())
 		                                              .Compile();
 	}
 }

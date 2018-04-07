@@ -1,8 +1,8 @@
-﻿using System;
-using Super.ExtensionMethods;
+﻿using Super.ExtensionMethods;
 using Super.Model.Sources;
 using Super.Model.Specifications;
 using Super.Reflection;
+using System;
 
 namespace Super.Expressions
 {
@@ -18,4 +18,12 @@ namespace Super.Expressions
 
 		public ISpecification<Type> Get(Type parameter) => _null.And(new EqualitySpecification<Type>(parameter).Inverse());
 	}
+
+	sealed class ShouldConvertExpressions : ReferenceStore<Type, ISpecification<Type>>
+	{
+		public static ShouldConvertExpressions Default { get; } = new ShouldConvertExpressions();
+
+		ShouldConvertExpressions() : base(ShouldConvertExpression.Default.Get) {}
+	}
+
 }

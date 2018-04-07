@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Super.ExtensionMethods;
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Super.ExtensionMethods;
 
 namespace Super.Reflection
 {
@@ -18,9 +18,9 @@ namespace Super.Reflection
 			_expressions = expressions;
 		}
 
-		public Expression Get(TypeInfo parameter)
+		public Expression Get(Type parameter)
 		{
-			var constructor = parameter.DeclaredConstructors.Only() ??
+			var constructor = parameter.GetTypeInfo().DeclaredConstructors.Only() ??
 			                  parameter.GetConstructors().Only() ??
 			                  parameter.GetConstructor(_types.ToArray());
 			var expressions = _expressions.ToArray();

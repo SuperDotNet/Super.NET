@@ -3,6 +3,7 @@ using Super.Model.Specifications;
 using Super.Reflection;
 using Super.Runtime.Activation;
 using System;
+using System.Collections.Concurrent;
 
 namespace Super.Model.Sources.Tables
 {
@@ -14,7 +15,7 @@ namespace Super.Model.Sources.Tables
 		Tables() : base(IsValueTypeSpecification.Default.IsSatisfiedBy(typeof(TParameter))
 			                ? Activations<Func<TParameter, TResult>, ConcurrentTables<TParameter, TResult>>
 			                  .Default
-			                  .Reduce()
+			                  .Out(Activation<ConcurrentDictionary<TParameter, TResult>>.Default.Get)
 			                  .ToDelegate()
 			                : new Generic<ISource<Func<TParameter, TResult>, ITable<TParameter, TResult>>>(typeof(ReferenceTables<,>))
 			                  .Get(typeof(TParameter), typeof(TResult))()

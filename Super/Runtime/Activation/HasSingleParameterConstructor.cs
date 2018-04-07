@@ -6,20 +6,16 @@ using System.Reflection;
 
 namespace Super.Runtime.Activation
 {
-	sealed class HasSingleParameterConstructor<T> : DelegatedSpecification<ConstructorInfo>
+	sealed class HasSingleParameterConstructor<T> : DecoratedSpecification<ConstructorInfo>
 	{
 		public static HasSingleParameterConstructor<T> Default { get; } = new HasSingleParameterConstructor<T>();
 
 		HasSingleParameterConstructor()
-			: base(IsAssignableSpecification<T>.Default
-			                                   .Adapt()
-			                                   .In(TypeMetadataCoercer.Default)
-			                                   .Assigned(FirstOrDefaultCoercer<ParameterInfo>.Default
-			                                                                                 .Assigned(ParameterType.Default))
-			                                   .ToSpecification()
-			                                   .And(RemainingParametersAreOptional.Default)
-			                                   .Adapt()
-			                                   .In(Parameters.Default)
-			                                   .Get) {}
+			: base(IsAssignableFrom<T>.Default
+			                          .Select(TypeMetadataCoercer.Default.Assigned()) // TODO: Fix assigned.
+			                          .Select(FirstOrDefaultCoercer<ParameterInfo>.Default
+			                                                                      .Out(ParameterType.Default.Assigned()))
+			                          .And(RemainingParametersAreOptional.Default)
+			                          .Select(Parameters.Default)) {}
 	}
 }

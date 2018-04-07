@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
 using Super.ExtensionMethods;
 using Super.Model.Commands;
 using Super.Model.Sources;
 using Super.Model.Specifications;
+using System;
+using System.Collections.Generic;
 
 namespace Super.Model.Collections
 {
@@ -24,8 +24,8 @@ namespace Super.Model.Collections
 		}
 
 		public ICommand<T> Get(Decoration<IList<T>, ICommand<T>> parameter)
-			=> parameter.Result.Adapt()
-			            .Unless(_specification, new InsertItemCommand<T>(parameter.Parameter, _index).Adapt())
-			            .ToCommand();
+			=> _specification.If(new InsertItemCommand<T>(parameter.Parameter, _index).Out(),
+			                     parameter.Result.Out())
+			                 .ToCommand();
 	}
 }

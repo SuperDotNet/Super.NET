@@ -1,7 +1,9 @@
-﻿namespace Super.Model.Commands
+﻿using Super.ExtensionMethods;
+
+namespace Super.Model.Commands
 {
 	public class DecoratedCommand<T> : DelegatedCommand<T>
 	{
-		public DecoratedCommand(ICommand<T> command) : base(command.Execute) {}
+		public DecoratedCommand(ICommand<T> command) : base(command.ToDelegate()) {}
 	}
 }

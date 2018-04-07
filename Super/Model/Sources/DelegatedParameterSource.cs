@@ -7,7 +7,7 @@ namespace Super.Model.Sources
 {
 	public class DelegatedParameterSource<TParameter, TResult> : IInstance<TResult>
 	{
-		readonly static Func<TParameter>          New = New<TParameter>.Default.ToDelegate();
+		readonly static Func<TParameter>          New = Activation<TParameter>.Default.ToDelegate();
 		readonly        Func<TParameter>          _parameter;
 		readonly        Func<TParameter, TResult> _source;
 

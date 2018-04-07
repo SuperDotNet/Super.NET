@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Super.ExtensionMethods;
 using Super.Model.Sources;
+using Super.Runtime.Activation;
 
 namespace Super.Application.AzureFunctions
 {
@@ -10,7 +11,7 @@ namespace Super.Application.AzureFunctions
 	{
 		public static ApplicationContexts<T> Default { get; } = new ApplicationContexts<T>();
 
-		ApplicationContexts() : base(From.New<AzureFunctionParameter, AzureFunctionArgument>()
-		                                 .Out(Services<AzureFunctionArgument>.Default)) {}
+		ApplicationContexts() : base(Activate.New<AzureFunctionParameter, AzureFunctionArgument>()
+		                                     .Out(Services<AzureFunctionArgument>.Default)) {}
 	}
 }

@@ -19,6 +19,6 @@ namespace Super.Model.Collections
 	sealed class GroupName<T> : DecoratedSource<T, GroupName>, IGroupName<T>
 	{
 		public GroupName(GroupName defaultName, ISpecification<string, GroupName> names)
-			: base(Assume<T>.Default(defaultName).Unless(new MetadataGroupName<T>(names))) {}
+			: base(new MetadataGroupName<T>(names).Or(In<T>.New(defaultName))) {}
 	}
 }

@@ -1,8 +1,7 @@
-﻿using System.Linq;
-using System.Reflection;
-using Super.ExtensionMethods;
+﻿using Super.ExtensionMethods;
 using Super.Model.Collections;
 using Super.Reflection;
+using System.Reflection;
 
 namespace Super.Runtime.Environment
 {
@@ -10,13 +9,12 @@ namespace Super.Runtime.Environment
 	{
 		public static ComponentAssemblies Default { get; } = new ComponentAssemblies();
 
-		ComponentAssemblies() : base(PrimaryAssembly.Default.Adapt()
-		                                            .Guard(PrimaryAssemblyMessage.Default)
-		                                            .Out(AssemblyNameCoercer.Default)
-		                                            .Out(ComponentAssemblyNames.Default)
-		                                            .Out(Load.Default)
-		                                            .Get()
-		                                            .ToArray()
-		                                            .Assigned()) {}
+		ComponentAssemblies() : base(PrimaryAssembly.Default
+		                                            /*.Allow()
+		                                            .Guard(PrimaryAssemblyMessage.Default)*/
+		                                            .Select(AssemblyNameCoercer.Default)
+		                                            .Select(ComponentAssemblyNames.Default)
+		                                            .Select(Load.Default.Select())
+		                                            .Select(x => x.Assigned()).Get()) {}
 	}
 }

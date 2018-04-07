@@ -4,7 +4,7 @@ namespace Super.Model.Commands
 {
 	public sealed class EmptyCommand<T> : ICommand<T>
 	{
-		public static EmptyCommand<T> Default { get; } = new EmptyCommand<T>();
+		public static ICommand<T> Default { get; } = new EmptyCommand<T>();
 
 		EmptyCommand() {}
 

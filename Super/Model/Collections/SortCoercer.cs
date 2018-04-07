@@ -1,6 +1,7 @@
 using Super.ExtensionMethods;
+using Super.Model.Containers;
+using Super.Model.Instances;
 using Super.Model.Sources;
-using Super.Reflection;
 
 namespace Super.Model.Collections
 {
@@ -8,8 +9,9 @@ namespace Super.Model.Collections
 	{
 		public static SortCoercer<T> Default { get; } = new SortCoercer<T>();
 
-		SortCoercer() : base(Assume<T>.Default(-1)
-		                              .Unless(SortMetadata<T>.Default)
-		                              .Unless(I<ISortAware>.Default)) {}
+		SortCoercer() : base(In<T>.Select(Container<ISortAware>.Default)
+		                          .Out(InstanceValueCoercer<int>.Default.Assigned())
+		                          .Or(SortMetadata<T>.Default)
+		                          .Or(In<T>.New(-1))) {}
 	}
 }

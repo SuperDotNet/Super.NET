@@ -1,7 +1,7 @@
-using System;
 using Super.ExtensionMethods;
 using Super.Model.Commands;
 using Super.Model.Sources;
+using System;
 
 namespace Super.Model.Collections
 {

@@ -1,15 +1,15 @@
-﻿using System;
-using Super.ExtensionMethods;
+﻿using Super.Model.Sources;
+using System;
 
 namespace Super.Model.Specifications
 {
 	public class HasResult<TParameter, TResult> : DelegatedSpecification<TParameter>
 	{
-		readonly static Func<TResult, bool> Assigned =
-			new SpecificationAdapter<TResult>(AssignedSpecification<TResult>.Default).Get;
+		readonly static Func<TResult, bool> Assigned = IsAssigned<TResult>.Default.IsSatisfiedBy;
 
-		public HasResult(Func<TParameter, TResult> source) : this(source, Assigned) {}
+		protected HasResult(Func<TParameter, TResult> source) : this(source, Assigned) {}
 
-		public HasResult(Func<TParameter, TResult> source, Func<TResult, bool> result) : base(result.In(source).Get) {}
+		HasResult(Func<TParameter, TResult> source, Func<TResult, bool> result)
+			: base(new SelectedParameterSource<TResult, TParameter, bool>(result, source).Get) {}
 	}
 }

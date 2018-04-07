@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Super.ExtensionMethods;
+using Super.Model.Containers;
 using Super.Model.Sources;
-using Super.Reflection;
 using Super.Runtime.Activation;
 using System;
 using Xunit;
@@ -51,14 +51,14 @@ namespace Super.Testing.Runtime.Activation
 		[Fact]
 		public void VerifyReferences()
 		{
-			var source = StartReferences.Default.Out(I<References>.Default);
+			var source = StartReferences.Default.Out(New<References>.Default);
 			source.Get(123).Should().BeSameAs(source.Get(123));
 		}
 
 		[Fact]
 		public void VerifyValues()
 		{
-			var          source    = StartValues.Default.Out(I<Values>.Default);
+			var          source    = StartValues.Default.Out(New<Values>.Default);
 			const string parameter = "First";
 			source.Get(parameter).Should().NotBeSameAs(source.Get(parameter));
 		}

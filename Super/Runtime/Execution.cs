@@ -5,6 +5,7 @@ using Super.Model.Instances;
 using Super.Model.Sources;
 using Super.Model.Sources.Alterations;
 using Super.Reflection;
+using Super.Runtime.Activation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -157,7 +158,7 @@ namespace Super.Runtime
 		[UsedImplicitly]
 		public ExecutionContextStack() : this(RootExecutionContext.Default) {}
 
-		public ExecutionContextStack(IIExecutionContext root) : this(root, root.To(Observe.Default)) {}
+		public ExecutionContextStack(IIExecutionContext root) : this(root, root.Shift(Observe.Default)) {}
 
 		public ExecutionContextStack(params IIExecutionContext[] contexts) : this(contexts.AsEnumerable()) {}
 
@@ -180,7 +181,7 @@ namespace Super.Runtime
 
 		public RootExecutionContext(string message)
 			: base(RootExecutionContextInformation.Default, message.New(I<InvalidOperationException>.Default)
-			                                                       .To(I<ThrowCommand<InvalidOperationException>>.Default)
+			                                                       .New(I<ThrowCommand<InvalidOperationException>>.Default)
 			                                                       .Execute) {}
 	}
 

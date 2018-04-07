@@ -26,7 +26,7 @@ namespace Super.Runtime.Invocation
 	                                            IActivateMarker<ISource<TParameter, TResult>>
 	{
 		public Striped(ISource<TParameter, TResult> source)
-			: base(source.Or(source.To(I<Deferred<TParameter, TResult>>.Default)
+			: base(source.Or(source.New(I<Deferred<TParameter, TResult>>.Default)
 			                       .ToDelegate()
 			                       .To(I<Stripe<TParameter, TResult>>.Default))) {}
 	}
@@ -35,14 +35,14 @@ namespace Super.Runtime.Invocation
 	{
 		public static StripedAlteration<TParameter, TResult> Default { get; } = new StripedAlteration<TParameter, TResult>();
 
-		StripedAlteration() : base(I<Striped<TParameter, TResult>>.Default.Get) {}
+		StripedAlteration() : base(I<Striped<TParameter, TResult>>.Default.From) {}
 	}
 
 	sealed class ProtectAlteration<TParameter, TResult> : DelegatedAlteration<ISource<TParameter, TResult>>
 	{
 		public static ProtectAlteration<TParameter, TResult> Default { get; } = new ProtectAlteration<TParameter, TResult>();
 
-		ProtectAlteration() : base(I<Protect<TParameter, TResult>>.Default.Get) {}
+		ProtectAlteration() : base(I<Protect<TParameter, TResult>>.Default.From) {}
 	}
 
 	sealed class Protect<TParameter, TResult> : ISource<TParameter, TResult>, IActivateMarker<ISource<TParameter, TResult>>
@@ -94,7 +94,7 @@ namespace Super.Runtime.Invocation
 	{
 		public static LockItem<T> Default { get; } = new LockItem<T>();
 
-		LockItem() : this(New<T>.Default.ToDelegate()) {}
+		LockItem() : this(Activation<T>.Default.ToDelegate()) {}
 
 		readonly Func<T> _create;
 

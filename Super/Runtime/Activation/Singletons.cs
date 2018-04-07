@@ -12,7 +12,7 @@ namespace Super.Runtime.Activation
 		Singletons() : base(HasSingletonProperty.Default
 		                                        .If(SingletonProperty.Default
 		                                                             .Out(SingletonPropertyDelegates.Default)
-		                                                             .Out(InvokeCoercer<object>.Default))
+		                                                             .Out(Invoke<object>.Default))
 		                                        .ToReferenceStore()) {}
 	}
 }

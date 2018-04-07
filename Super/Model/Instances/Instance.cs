@@ -17,6 +17,6 @@ namespace Super.Model.Instances
 	public class Instance<TParameter, TResult> : DecoratedInstance<TResult>
 	{
 		public Instance(ISource<TParameter, TResult> source, TParameter parameter) :
-			base(source.Fix(parameter).Singleton()) {}
+			base(source.Select(parameter).Singleton()) {}
 	}
 }

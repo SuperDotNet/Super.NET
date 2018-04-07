@@ -7,6 +7,6 @@ namespace Super.Runtime
 	{
 		public static ExecutionContexts Default { get; } = new ExecutionContexts();
 
-		ExecutionContexts() : base(New<ExecutionContextStack>.Default) {}
+		ExecutionContexts() : base(Activation<ExecutionContextStack>.Default) {}
 	}
 }

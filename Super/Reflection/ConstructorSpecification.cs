@@ -14,6 +14,6 @@ namespace Super.Reflection
 			: base(HasNone<ParameterInfo>.Default
 			                             .Or(new AllItemsAre<ParameterInfo>(x => x.IsOptional ||
 			                                                                     x.Has<ParamArrayAttribute>()))
-			                             .Adapt(Parameters.Default)) {}
+			                             .Select(Parameters.Default)) {}
 	}
 }

@@ -6,6 +6,7 @@ using Super.Model.Commands;
 using Super.Model.Instances;
 using Super.Model.Sources;
 using Super.Model.Sources.Alterations;
+using Super.Model.Specifications;
 using Super.Reflection;
 using Super.Runtime.Activation;
 using Super.Runtime.Environment;
@@ -103,38 +104,36 @@ namespace Super.Application
 	sealed class GenericTypeDependencySelector : DecoratedAlteration<Type>, IActivateMarker<Type>
 	{
 		public GenericTypeDependencySelector(Type type)
-			: base(IsGenericTypeDefinition.Default
-			                              .Adapt()
-			                              .Fix(type)
-			                              .ToSpecification()
+			: base(IsGenericTypeDefinition.Default.IsSatisfiedBy(type)
+			                              .To(I<FixedResultSpecification>.Default)
 			                              .And(IsConstructedGenericType.Default, IsGenericTypeDefinition.Default.Inverse())
 			                              .If(GenericTypeDefinitionAlteration.Default)) {}
 	}
 
 	sealed class DependencyCandidates : DecoratedSource<Type, ImmutableArray<Type>>, IActivateMarker<Type>
 	{
-		public DependencyCandidates(Type type) : base(Constructors.Default
-		                                                          .In(TypeMetadataCoercer.Default)
-		                                                          .Out(Parameters.Default.Out(x => x.AsEnumerable()))
-		                                                          .Out(ParameterType.Default)
-		                                                          .Out(type.To(I<GenericTypeDependencySelector>.Default))
-		                                                          .Out(IsClass.Default)
-		                                                          .Enumerate()) {}
+		public DependencyCandidates(Type type)
+			: base(Constructors.Default
+			                   .In(TypeMetadataCoercer.Default)
+			                   .Out(Parameters.Default
+			                                        .Out(x => x.AsEnumerable())
+			                                        .SelectMany())
+			                   .Out(ParameterType.Default.Select())
+			                   .Out(type.To(I<GenericTypeDependencySelector>.Default).Select())
+			                   .Out(x => x.Where(IsClass.Default.IsSatisfiedBy)
+			                                    .ToImmutableArray())) {}
 	}
 
-	sealed class NotRegistered : DecoratedSource<IServiceRegistry, Func<Type, bool>>
+	sealed class ServiceTypeSelector : SelectCoercer<LightInject.ServiceRegistration, Type>
 	{
-		public static NotRegistered Default { get; } = new NotRegistered();
+		public static ServiceTypeSelector Default { get; } = new ServiceTypeSelector();
 
-		NotRegistered() : base(From<IServiceRegistry>.To(x => x.AvailableServices)
-		                                             .Out(x => x.ServiceType)
-		                                             .Out(I<NotHave<Type>>.Default)
-		                                             .Out(x => x.Adapt().ToDelegate())) {}
+		ServiceTypeSelector() : base(x => x.ServiceType) {}
 	}
 
 	sealed class RegisterDependencies : IRegistration
 	{
-		readonly ImmutableArray<Type> _candidates;
+		readonly ImmutableArray<Type>                     _candidates;
 		readonly Func<IServiceRegistry, Func<Type, bool>> _where;
 
 		public RegisterDependencies(Type type)
@@ -143,7 +142,7 @@ namespace Super.Application
 		public RegisterDependencies(ImmutableArray<Type> candidates, Func<IServiceRegistry, Func<Type, bool>> where)
 		{
 			_candidates = candidates;
-			_where = @where;
+			_where      = @where;
 		}
 
 		public IServiceRegistry Get(IServiceRegistry parameter)

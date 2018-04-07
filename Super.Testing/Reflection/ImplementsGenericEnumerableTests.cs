@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Super.ExtensionMethods;
 using Super.Model.Commands;
 using Super.Model.Instances;
 using Super.Reflection;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reactive;
 using Xunit;
 
 namespace Super.Testing.Reflection
@@ -16,34 +16,34 @@ namespace Super.Testing.Reflection
 	{
 		sealed class Instance : IInstance<object>
 		{
-			public object Get() => throw new NotImplementedException();
+			public object Get() => throw new NotSupportedException();
 		}
 
 		sealed class Command : ICommand<Unit>
 		{
 			public void Execute(Unit parameter)
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 		}
 
 		sealed class Subject : IEnumerable<object>
 		{
-			public IEnumerator<object> GetEnumerator() => throw new NotImplementedException();
+			public IEnumerator<object> GetEnumerator() => throw new NotSupportedException();
 
 			IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 		}
 
 		sealed class Subject<T> : IEnumerable<T>
 		{
-			public IEnumerator<T> GetEnumerator() => throw new NotImplementedException();
+			public IEnumerator<T> GetEnumerator() => throw new NotSupportedException();
 
 			IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 		}
 
 		sealed class Integers : IEnumerable<int>
 		{
-			public IEnumerator<int> GetEnumerator() => throw new NotImplementedException();
+			public IEnumerator<int> GetEnumerator() => throw new NotSupportedException();
 
 			IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 		}

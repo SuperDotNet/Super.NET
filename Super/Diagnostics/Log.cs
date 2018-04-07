@@ -14,7 +14,7 @@ namespace Super.Diagnostics
 	{
 		public static Log<T> Default { get; } = new Log<T>();
 
-		Log() : base(Logger.Default.Adapt(ContextCoercer<T>.Default)) {}
+		Log() : base(Logger.Default.Select(ContextCoercer<T>.Default)) {}
 
 		ILogger ILogger.ForContext(ILogEventEnricher enricher) => Get().ForContext(enricher);
 

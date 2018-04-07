@@ -9,7 +9,7 @@ namespace Super.Services.Security
 		public static AppServiceAuthSession Default { get; } = new AppServiceAuthSession();
 
 		AppServiceAuthSession() : base(Name,
-		                               new RequestStateValue(Name).Or(AuthenticationSessionToken.Default.Allow())
+		                               new RequestStateValue(Name).Or(AuthenticationSessionToken.Default)
 		                                                          .ToDelegate()) {}
 	}
 }

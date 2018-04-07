@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Super.ExtensionMethods;
+using Super.Runtime.Activation;
+using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Super.ExtensionMethods;
-using Super.Runtime.Activation;
 
 namespace Super.Reflection
 {
@@ -25,11 +25,11 @@ namespace Super.Reflection
 			_method     = method;
 		}
 
-		public Expression Get(TypeInfo parameter)
+		public Expression Get(Type parameter)
 		{
 			var instance = Expression.Constant(_singletons);
 			var call     = Expression.Call(instance, _method, Expression.Constant(parameter));
-			var result   = Expression.Convert(call, parameter.AsType());
+			var result   = Expression.Convert(call, parameter);
 			return result;
 		}
 	}

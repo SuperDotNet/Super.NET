@@ -3,6 +3,7 @@ using Super.Model.Collections;
 using Super.Model.Instances;
 using Super.Model.Sources;
 using Super.Reflection;
+using Super.Runtime.Invocation;
 using System;
 using System.Reflection;
 
@@ -14,9 +15,9 @@ namespace Super.Runtime.Activation
 
 		Activator() : base(TypeMetadataCoercer.Default
 		                                      .Out(YieldCoercer<TypeInfo>.Default)
-		                                      .Out(ImmutableArraySelector<TypeInfo>.Default)
+		                                      .Out(ImmutableArraySelector<Type>.Default)
 		                                      .Out(new Generic<IInstance<object>>(typeof(ActivatorInstance<>)))
-		                                      .Invoke()
+		                                      .Out(Invoke<IInstance<object>>.Default)
 		                                      .Out(InstanceValueCoercer<object>.Default)) {}
 	}
 
@@ -24,6 +25,6 @@ namespace Super.Runtime.Activation
 	{
 		public static Activator<T> Default { get; } = new Activator<T>();
 
-		Activator() : base(Singleton<T>.Default.Adapt().Or(New<T>.Default.Adapt())) {}
+		Activator() : base(Singleton<T>.Default.Or(Activation<T>.Default)) {}
 	}
 }

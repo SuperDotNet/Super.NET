@@ -1,5 +1,5 @@
-﻿using Super.ExtensionMethods;
-using Super.Reflection;
+﻿using Super.Reflection;
+using Super.Runtime.Activation;
 using System;
 
 namespace Super.Model.Sources
@@ -9,6 +9,6 @@ namespace Super.Model.Sources
 		public static Sources<TParameter, TResult> Default { get; } = new Sources<TParameter, TResult>();
 
 		Sources() : base(x => x.Target as ISource<TParameter, TResult> ??
-		                      I<DelegatedSource<TParameter, TResult>>.Default.Get(x)) {}
+		                      I<DelegatedSource<TParameter, TResult>>.Default.From(x)) {}
 	}
 }

@@ -4,7 +4,7 @@ using Super.Model.Sources;
 
 namespace Super.Runtime
 {
-	sealed class InstanceMetadataCoercer<T> : CoercedParameter<Type, T, TypeInfo>
+	sealed class InstanceMetadataCoercer<T> : SelectedParameterSource<Type, T, TypeInfo>
 	{
 		public static InstanceMetadataCoercer<T> Default { get; } = new InstanceMetadataCoercer<T>();
 

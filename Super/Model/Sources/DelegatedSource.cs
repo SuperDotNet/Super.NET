@@ -6,7 +6,7 @@ using System;
 namespace Super.Model.Sources
 {
 	public class DelegatedSource<TParameter, TResult> : ISource<TParameter, TResult>,
-	                                              IActivateMarker<Func<TParameter, TResult>>
+	                                                    IActivateMarker<Func<TParameter, TResult>>
 	{
 		readonly Func<TParameter, TResult> _source;
 
@@ -28,12 +28,12 @@ namespace Super.Model.Sources
 	}*/
 
 	public class DelegatedInstanceSource<TParameter, TResult> : ISource<TParameter, TResult>,
-	                                             IActivateMarker<Func<Func<TParameter, TResult>>>
+	                                                            IActivateMarker<Func<Func<TParameter, TResult>>>
 	{
 		readonly Func<Func<TParameter, TResult>> _source;
 
 		public DelegatedInstanceSource(IInstance<ISource<TParameter, TResult>> instance)
-			: this(instance.Adapt(DelegateCoercer<TParameter, TResult>.Default)) {}
+			: this(instance.Select(DelegateCoercer<TParameter, TResult>.Default)) {}
 
 		public DelegatedInstanceSource(IInstance<Func<TParameter, TResult>> instance) : this(instance.ToDelegate()) {}
 

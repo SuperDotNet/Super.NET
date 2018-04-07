@@ -1,4 +1,5 @@
 ﻿using Super.ExtensionMethods;
+using Super.Model.Containers;
 using Super.Model.Instances;
 using Super.Reflection;
 using Super.Runtime.Activation;
@@ -17,7 +18,7 @@ namespace Super.Runtime.Environment
 		public Component(IInstance<T> fallback) : this(ComponentLocator<T>.Default, fallback) {}
 
 		public Component(IActivator activator, IInstance<T> fallback)
-			: base(activator.Account(Cast<T>.Default).Or(fallback.Allow()).Guard(LocateMessage.Default).Protect(),
+			: base(activator.Out(Container<T>.Default).Or(fallback).Guard(LocateMessage.Default).Protect(),
 			       Types<T>.Identity) {}
 	}
 }

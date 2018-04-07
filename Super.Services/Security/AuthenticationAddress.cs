@@ -1,8 +1,8 @@
-﻿using System;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Super.ExtensionMethods;
 using Super.Model.Sources;
 using Super.Runtime;
+using System;
 
 namespace Super.Services.Security
 {
@@ -11,8 +11,7 @@ namespace Super.Services.Security
 		public static AuthenticationAddress Default { get; } = new AuthenticationAddress();
 
 		AuthenticationAddress() : base(AuthenticationBaseAddress.Default
-		                                                        .Allow()
-		                                                        .Assigned(Uris.Default)
+		                                                        .Select(Uris.Default.Assigned())
 		                                                        .Or(CurrentRequestUri.Default
 		                                                                             .Out(Authority.Default)
 		                                                                             .Out(Uris.Default))

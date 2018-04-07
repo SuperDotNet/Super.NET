@@ -14,7 +14,7 @@ namespace Super.Model.Sources
 
 		public Conditional(ISpecification<TParameter> specification, ISource<TParameter, TResult> source,
 		                   ISource<TParameter, TResult> fallback)
-			: this(specification.Adapt().ToDelegate(), source.ToDelegate(), fallback.ToDelegate()) {}
+			: this(specification.ToDelegate(), source.ToDelegate(), fallback.ToDelegate()) {}
 
 		public Conditional(Func<TParameter, bool> specification, Func<TParameter, TResult> source,
 		                   Func<TParameter, TResult> fallback)

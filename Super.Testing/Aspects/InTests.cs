@@ -14,7 +14,7 @@ namespace Super.Testing.Aspects
 		[Theory, AutoData]
 		void Verify(I<Subject> sut)
 		{
-			sut.Source(x => x).Should().BeSameAs(Source<Subject, int, int>.Default);
+			sut.Source(x => x).Should().BeSameAs(I<Subject, int, int>.Default);
 		}
 
 		sealed class Subject : ISource<int, int>

@@ -14,8 +14,8 @@ namespace Super.Testing.Runtime.Activation
 		[Theory, AutoData]
 		public void Verify(int number)
 		{
-			var subject = I<Subject>.Default.New(number);
-			subject.Should().NotBeSameAs(I<Subject>.Default.New(number));
+			var subject = I<Subject>.Default.From(number);
+			subject.Should().NotBeSameAs(I<Subject>.Default.From(number));
 
 			subject.Number.Should().Be(number);
 		}
@@ -24,8 +24,7 @@ namespace Super.Testing.Runtime.Activation
 		void VerifyObject(I<Object> sut)
 		{
 			var first  = new object();
-			var second = new object();
-			sut.New(first).Should().NotBeSameAs(sut.New(first));
+			first.New(sut).Should().NotBeSameAs(first.New(sut));
 		}
 
 		[Theory, AutoFixture.Xunit2.AutoData]

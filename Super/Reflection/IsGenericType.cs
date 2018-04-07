@@ -47,7 +47,7 @@ namespace Super.Reflection
 	{
 		public static HasGenericArguments Default { get; } = new HasGenericArguments();
 
-		HasGenericArguments() : base(IsGenericType.Default, HasAny<Type>.Default.Adapt(GenericArgumentsSelector.Default)) {}
+		HasGenericArguments() : base(IsGenericType.Default, HasAny<Type>.Default.Select(GenericArgumentsSelector.Default)) {}
 	}
 
 	sealed class GenericArgumentsSelector : DelegatedSource<TypeInfo, Type[]>

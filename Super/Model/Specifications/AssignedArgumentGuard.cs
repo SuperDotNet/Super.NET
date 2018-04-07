@@ -7,7 +7,7 @@ namespace Super.Model.Specifications
 	{
 		public static AssignedArgumentGuard<T> Default { get; } = new AssignedArgumentGuard<T>();
 
-		AssignedArgumentGuard() : this(AssignedSpecification<T>.Default,
+		AssignedArgumentGuard() : this(IsAssigned<T>.Default,
 		                               new ArgumentNullException($"Argument of type {typeof(T)} was not assigned.")) {}
 
 		public AssignedArgumentGuard(ISpecification<T> specification, ArgumentNullException exception)

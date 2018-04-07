@@ -1,6 +1,7 @@
-﻿using Super.ExtensionMethods;
-using Super.Reflection;
+﻿using Serilog;
+using Super.ExtensionMethods;
 using Super.Runtime;
+using Super.Runtime.Activation;
 
 namespace Super.Diagnostics
 {
@@ -9,10 +10,9 @@ namespace Super.Diagnostics
 		public static Logger Default { get; } = new Logger();
 
 		Logger() : base(LoggingConfiguration.Default
-		                                    .Adapt()
-		                                    .Reduce()
-		                                    .Out(LoggerCoercer.Default)
-		                                    .Out(I<PrimaryLogger>.Default)
-		                                    .ToInstance()) {}
+		                                    .Select(Activation<LoggerConfiguration>.Default.Get)
+		                                    .Select(LoggerCoercer.Default)
+		                                    .Select(Model.Containers.New<PrimaryLogger>.Default)
+		                                    .Get) {}
 	}
 }

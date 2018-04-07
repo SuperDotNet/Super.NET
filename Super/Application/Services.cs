@@ -1,6 +1,7 @@
 ﻿using Super.ExtensionMethods;
 using Super.Model.Collections;
 using Super.Model.Commands;
+using Super.Model.Containers;
 using Super.Model.Instances;
 using Super.Model.Sources;
 using Super.Reflection;
@@ -59,20 +60,30 @@ namespace Super.Application
 		Services() : this(ServiceRegistration.Default) {}
 
 		public Services(IInstance<IRegistration> registration)
-			: base(From.New<T, InstanceRegistration<T>>()
-			           .Out(YieldCoercer<IRegistration>.Default)
-			           .Out(new AppendInstanceCoercer<IRegistration>(registration))
-			           .Out(I<CompositeRegistration>.Default)
-			           .Reduce(ServiceOptions.Default.To(I<Services>.Default))
-			           .Out(Cast<IServices>.Default)
-			           .Out(ServiceConfiguration.Default)) {}
+			: base(Activate.New<T, InstanceRegistration<T>>()
+			               .Out(YieldCoercer<IRegistration>.Default)
+			               .Out(new AppendInstanceCoercer<IRegistration>(registration))
+			               .Out(New<CompositeRegistration>.Default)
+			               .Out(ServiceOptions.Default.Select(I<Services>.Default).Get)
+			               .Out(Cast<IServices>.Default)
+			               .Out(ServiceConfiguration.Default.ToCommand().ToConfiguration())) {}
+	}
+
+	sealed class ServiceCoercer<T> : ISource<IServiceProvider, T>
+	{
+		public static ServiceCoercer<T> Default { get; } = new ServiceCoercer<T>();
+
+		ServiceCoercer() {}
+
+		public T Get(IServiceProvider parameter) => parameter.Get<T>();
 	}
 
 	public class ApplicationContexts<TParameter, TContext> : DecoratedSource<TParameter, IApplicationContext<TParameter>>
 		where TContext : IApplicationContext<TParameter>
 	{
 		protected ApplicationContexts(ISource<TParameter, IServices> services)
-			: base(services.Service(I<TContext>.Default).Out(Cast<IApplicationContext<TParameter>>.Default)) {}
+			: base(services.Out(ServiceCoercer<TContext>.Default)
+			               .Out(Cast<IApplicationContext<TParameter>>.Default)) {}
 	}
 
 	public class ApplicationContexts<TContext, TParameter, TResult>
@@ -80,6 +91,7 @@ namespace Super.Application
 		where TContext : IApplicationContext<TParameter, TResult>
 	{
 		protected ApplicationContexts(ISource<TParameter, IServices> services)
-			: base(services.Service(I<TContext>.Default).Out(Cast<IApplicationContext<TParameter, TResult>>.Default)) {}
+			: base(services.Out(ServiceCoercer<TContext>.Default)
+			               .Out(Cast<IApplicationContext<TParameter, TResult>>.Default)) {}
 	}
 }

@@ -4,6 +4,12 @@ using System.Collections.Immutable;
 
 namespace Super.Model.Collections
 {
+	public static class Set<T>
+	{
+		public static ImmutableArray<T> Enumerate(IEnumerable<T> items) => ImmutableArraySelector<T>.Default.Get(items);
+		public static IEnumerable<T> Hide(ImmutableArray<T> items) => EnumerableSelector<T>.Default.Get(items);
+	}
+
 	public sealed class ImmutableArraySelector<T> : DelegatedSource<IEnumerable<T>, ImmutableArray<T>>
 	{
 		public static ImmutableArraySelector<T> Default { get; } = new ImmutableArraySelector<T>();

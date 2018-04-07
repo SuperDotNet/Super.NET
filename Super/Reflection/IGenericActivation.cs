@@ -1,8 +1,8 @@
-﻿using System.Linq.Expressions;
-using System.Reflection;
-using Super.Model.Sources;
+﻿using Super.Model.Sources;
+using System;
+using System.Linq.Expressions;
 
 namespace Super.Reflection
 {
-	public interface IGenericActivation : ISource<TypeInfo, Expression> {}
+	public interface IGenericActivation : ISource<Type, Expression> {}
 }

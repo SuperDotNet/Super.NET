@@ -1,7 +1,8 @@
-﻿using System;
-using Super.ExtensionMethods;
+﻿using Super.ExtensionMethods;
 using Super.Model.Sources;
 using Super.Model.Sources.Tables;
+using Super.Runtime.Activation;
+using System;
 
 namespace Super.Services
 {
@@ -9,8 +10,7 @@ namespace Super.Services
 	{
 		public static ClientHandlers Default { get; } = new ClientHandlers();
 
-		ClientHandlers() : base(new StandardTables<Uri, System.Net.Http.HttpClientHandler>(_ => new HttpClientHandler())
-		                        .Get(RegisteredClientHandlers.Default)
-		                        .ToDelegate()) {}
+		ClientHandlers() : base(new StandardTables<Uri, System.Net.Http.HttpClientHandler>(Activator<HttpClientHandler>.Default.Any)
+		                        .Get(RegisteredClientHandlers.Default)) {}
 	}
 }
