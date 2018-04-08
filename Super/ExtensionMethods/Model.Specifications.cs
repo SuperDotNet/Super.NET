@@ -1,6 +1,6 @@
 ﻿using Super.Model.Sources;
-using Super.Model.Sources.Coercion;
 using Super.Model.Specifications;
+using Super.Runtime;
 using System;
 
 namespace Super.ExtensionMethods
@@ -31,14 +31,16 @@ namespace Super.ExtensionMethods
 		public static ISpecification<TFrom> Select<TFrom, TTo>(this ISpecification<TTo> @this, ISource<TFrom, TTo> select)
 			=> @this.Select(select.ToDelegate());
 
+		public static ISpecification<TFrom> InTo<TFrom, TResult>(this ISpecification<Type> @this, ISource<TFrom, TResult> source)
+			=> @this.Select(InstanceTypeCoercer<TFrom>.Default);
+
 		public static ISpecification<TFrom> Select<TFrom, TTo>(this ISpecification<TTo> @this, Func<TFrom, TTo> select)
 			=> new SelectedParameterSpecification<TFrom,TTo>(@this.ToDelegate(), select);
 
 		public static Func<T, bool> ToDelegate<T>(this ISpecification<T> @this) => Delegates<T>.Default.Get(@this);
 
 		public static ISource<TParameter, TResult> If<TParameter, TResult>(
-			this ISpecification<TParameter> @this, ISource<TParameter, TResult> @true)
-			=> @this.If(@true, Defaults<TParameter, TResult>.Default.Get(@true));
+			this ISpecification<TParameter> @this, ISource<TParameter, TResult> @true) => @this.If(@true, @true.Default());
 
 		public static ISource<TParameter, TResult> If<TParameter, TResult>(
 			this ISpecification<TParameter> @this, ISource<TParameter, TResult> @true, ISource<TParameter, TResult> @false)

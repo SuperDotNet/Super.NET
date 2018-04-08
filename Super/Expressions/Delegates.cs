@@ -14,7 +14,7 @@ namespace Super.Expressions
 			: this(source, ReturnType<TResult>.Default.Get(), expressions) {}
 
 		public Delegates(ISource<TParameter, Expression> source, Type resultType, params ParameterExpression[] parameters)
-			: base(ConvertExpression.Default
+			: base(ConvertExpressions.Default
 			                        .Get(resultType)
 			                        .Out(new Lambda<TResult>(parameters))
 			                        .Out(Compiler<TResult>.Default)

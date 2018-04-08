@@ -26,15 +26,24 @@ namespace Super.ExtensionMethods
 
 		public static ISource<TParameter, TResult> Try<TException, TParameter, TResult>(
 			this ISource<TParameter, TResult> @this, I<TException> infer) where TException : Exception
-			=> infer.Try(@this.ToDelegate(), Defaults<TParameter, TResult>.Default.Get(@this).ToDelegate());
+			=> infer.Try(@this.ToDelegate(), @this.Default().ToDelegate());
+
+		public static ISource<TParameter, TResult> Default<TParameter, TResult>(this ISource<TParameter, TResult> @this)
+			=> Defaults<TParameter, TResult>.Default.Get(@this);
 
 		public static ISource<TParameter, TResult> Or<TParameter, TResult>(
 			this ISource<TParameter, TResult> @this, IInstance<TResult> instance)
 			=> @this.Or(instance.Allow(I<TParameter>.Default));
 
+		/*public static ISource<TParameter, TResult> Or<TParameter, TResult>(
+			this ISource<TParameter, TResult> @this) => @this.Or(@this.Default());*/
+
 		public static ISource<TParameter, TResult> Or<TParameter, TResult>(
 			this ISource<TParameter, TResult> @this, ISource<TParameter, TResult> next)
 			=> @this.Or(IsAssigned<TResult>.Default, next);
+
+		public static ISource<TParameter, TResult> Or<TParameter, TResult>(
+			this ISource<TParameter, TResult> @this, ISpecification<TResult> specification) => @this.Or(specification, @this.Default());
 
 		public static ISource<TParameter, TResult> Or<TParameter, TResult>(
 			this ISource<TParameter, TResult> @this, ISpecification<TResult> specification,
@@ -93,7 +102,8 @@ namespace Super.ExtensionMethods
 			                  .Default
 			                  .Select(InstanceMetadataCoercer<TParameter>.Default));
 
-		public static TResult Get<TItem, TResult>(this ISource<ImmutableArray<TItem>, TResult> @this, params TItem[] parameters)
+		public static TResult Get<TItem, TResult>(this ISource<ImmutableArray<TItem>, TResult> @this,
+		                                          params TItem[] parameters)
 			=> @this.Get(parameters.ToImmutableArray());
 	}
 }

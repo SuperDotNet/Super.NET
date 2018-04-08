@@ -37,7 +37,7 @@ namespace Super.Expressions
 
 			public ConvertParameter(ParameterExpression parameter) => _parameter = parameter;
 
-			public Expression Get(Type parameter) => ConvertExpression.Default.Get(parameter).Get(_parameter);
+			public Expression Get(Type parameter) => ConvertExpressions.Default.Get(parameter).Get(_parameter);
 		}
 	}
 }

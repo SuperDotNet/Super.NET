@@ -12,9 +12,10 @@ namespace Super.Runtime.Activation
 
 		HasSingleParameterConstructor()
 			: base(IsAssignableFrom<T>.Default
-			                          .Select(TypeMetadataCoercer.Default.Assigned()) // TODO: Fix assigned.
-			                          .Select(FirstOrDefaultCoercer<ParameterInfo>.Default
-			                                                                      .Out(ParameterType.Default.Assigned()))
+			                          .Select(FirstOrDefaultCoercer<ParameterInfo>
+			                                  .Default.Out(ParameterType.Default
+			                                                            .Out(TypeMetadataCoercer.Default)
+			                                                            .Assigned()))
 			                          .And(RemainingParametersAreOptional.Default)
 			                          .Select(Parameters.Default)) {}
 	}

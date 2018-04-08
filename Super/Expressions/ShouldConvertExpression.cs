@@ -10,13 +10,13 @@ namespace Super.Expressions
 	{
 		public static ShouldConvertExpression Default { get; } = new ShouldConvertExpression();
 
-		ShouldConvertExpression() : this(new EqualitySpecification<Type>(Types.Void).Inverse()) {}
+		ShouldConvertExpression() : this(Types.Void.Not()) {}
 
 		readonly ISpecification<Type> _null;
 
 		public ShouldConvertExpression(ISpecification<Type> @null) => _null = @null;
 
-		public ISpecification<Type> Get(Type parameter) => _null.And(new EqualitySpecification<Type>(parameter).Inverse());
+		public ISpecification<Type> Get(Type parameter) => _null.And(parameter.Not());
 	}
 
 	sealed class ShouldConvertExpressions : ReferenceStore<Type, ISpecification<Type>>

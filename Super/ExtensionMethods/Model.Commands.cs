@@ -15,13 +15,14 @@ namespace Super.ExtensionMethods
 {
 	public static class Commands
 	{
-		public static ICommand<Unit> Select<T>(this ICommand<T> @this, T parameter) => Select(@this, new FixedResult<Unit, T>(parameter));
+		public static ICommand<Unit> Select<T>(this ICommand<T> @this, T parameter)
+			=> Select(@this, new FixedResult<Unit, T>(parameter));
 
 		public static ICommand<TFrom> Select<TFrom, TTo>(this ICommand<TTo> @this, ISource<TFrom, TTo> select)
 			=> Select(@this, @select.ToDelegate());
 
 		public static ICommand<TFrom> Select<TFrom, TTo>(this ICommand<TTo> @this, Func<TFrom, TTo> select)
-			=> new SelectedParameterCommand<TFrom,TTo>(@this.ToDelegate(), select);
+			=> new SelectedParameterCommand<TFrom, TTo>(@this.ToDelegate(), select);
 
 		public static void Execute<T>(this ICommand<ImmutableArray<T>> @this, params T[] parameters) =>
 			@this.Execute(parameters.ToImmutableArray());
@@ -34,10 +35,7 @@ namespace Super.ExtensionMethods
 
 		public static Action<T> ToDelegate<T>(this ICommand<T> @this) => Super.Model.Commands.Delegates<T>.Default.Get(@this);
 
-		/*public static ISource<T, Unit> Adapt<T>(this ICommand<T> @this) => Super.Model.Commands.Adapters<T>.Default.Get(@this);*/
-
-		/*public static ISource<TParameter, ISource<T, Unit>> Adapt<TParameter, T>(this ISource<TParameter, ICommand<T>> @this)
-			=> @this.SelectOut(CommandSourceCoercer<T>.Default);*/
+		public static ISource<T, Unit> Out<T>(this ICommand<T> @this) => @this.ToConfiguration().Out(_ => Unit.Default);
 
 		public static ICommand<T> ToCommand<T>(this ISource<T, Unit> @this) => @this.ToDelegate().ToCommand();
 
@@ -47,6 +45,8 @@ namespace Super.ExtensionMethods
 
 		public static ICommand<T> ToCommand<T>(this Action<T> @this) => DelegateCommands<T>.Default.Get(@this);
 
+		public static ICommand<T> ToCommand<T>(this IInstance<ICommand<T>> @this)
+			=> Activations<IInstance<ICommand<T>>, DelegatedInstanceCommand<T>>.Default.Get(@this);
 
 		public static void Assign<TKey, TValue>(this IAssignable<TKey, TValue> @this, TKey key, TValue value)
 			=> @this.Executed(Pairs.Create(key, value)).Return(@this);
@@ -69,12 +69,7 @@ namespace Super.ExtensionMethods
 			@this.Execute(Unit.Default);
 		}
 
-		public static ICommand<T> ToCommand<T>(this IInstance<ICommand<T>> @this)
-			=> Activations<IInstance<ICommand<T>>, DelegatedInstanceCommand<T>>.Default.Get(@this);
-
 		public static IAlteration<T> ToConfiguration<T>(this ICommand<T> @this)
 			=> @this.To(I<ConfiguringAlteration<T>>.Default);
-
-		public static ISource<T, Unit> Out<T>(this ICommand<T> @this) => @this.ToConfiguration().Out(x => Unit.Default);
 	}
 }
