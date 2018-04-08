@@ -1,25 +1,25 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Super.Model.Sources;
+using Super.Model.Selection;
 using Super.Model.Specifications;
 
 namespace Super.Reflection
 {
-	sealed class ConstructorLocator : ISource<TypeInfo, ConstructorInfo>
+	sealed class ConstructorLocator : ISelect<TypeInfo, ConstructorInfo>
 	{
 		public static ConstructorLocator Default { get; } = new ConstructorLocator();
 
 		ConstructorLocator() : this(ConstructorSpecification.Default) {}
 
-		readonly ISource<TypeInfo, IEnumerable<ConstructorInfo>> _constructors;
+		readonly ISelect<TypeInfo, IEnumerable<ConstructorInfo>> _constructors;
 		readonly ISpecification<ConstructorInfo>                 _specification;
 
 		public ConstructorLocator(ISpecification<ConstructorInfo> specification)
 			: this(specification, InstanceConstructors.Default) {}
 
 		public ConstructorLocator(ISpecification<ConstructorInfo> specification,
-		                          ISource<TypeInfo, IEnumerable<ConstructorInfo>> constructors)
+		                          ISelect<TypeInfo, IEnumerable<ConstructorInfo>> constructors)
 		{
 			_specification = specification;
 			_constructors  = constructors;

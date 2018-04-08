@@ -1,12 +1,12 @@
-﻿using Super.Model.Sources;
-using System;
+﻿using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Linq.Expressions;
+using Super.Model.Selection;
 
 namespace Super.Reflection
 {
-	sealed class GenericActivators<T> : ISource<Type, T>
+	sealed class GenericActivators<T> : ISelect<Type, T>
 	{
 		readonly IGenericActivation                  _activation;
 		readonly ImmutableArray<ParameterExpression> _expressions;

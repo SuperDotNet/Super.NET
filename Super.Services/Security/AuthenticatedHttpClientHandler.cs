@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Flurl;
-using Super.Model.Sources.Alterations;
+using Super.Model.Selection.Alterations;
 
 namespace Super.Services.Security
 {

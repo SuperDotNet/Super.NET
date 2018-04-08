@@ -1,14 +1,14 @@
-using Super.Model.Instances;
 using Super.Model.Specifications;
-using Super.Reflection.Query;
 using Super.Runtime.Activation;
 using System;
 using System.Collections.Immutable;
 using System.Linq;
+using Super.Model.Sources;
+using Super.Reflection.Selection;
 
 namespace Super.Runtime.Environment
 {
-	sealed class ComponentTypeCandidates : Instance<ImmutableArray<Type>>
+	sealed class ComponentTypeCandidates : Source<ImmutableArray<Type>>
 	{
 		public static ComponentTypeCandidates Default { get; } = new ComponentTypeCandidates();
 

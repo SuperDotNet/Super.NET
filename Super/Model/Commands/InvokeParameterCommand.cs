@@ -1,8 +1,8 @@
 ﻿using Super.ExtensionMethods;
-using Super.Model.Instances;
 using Super.Runtime.Activation;
 using System;
 using System.Reactive;
+using Super.Model.Sources;
 
 namespace Super.Model.Commands
 {
@@ -34,13 +34,13 @@ namespace Super.Model.Commands
 	{
 		public ThrowCommand(T exception) : base(exception) {}
 
-		public ThrowCommand(IInstance<T> instance) : base(instance) {}
+		public ThrowCommand(ISource<T> source) : base(source) {}
 
 		public ThrowCommand(Func<T> exception) : base(exception) {}
 	}
 
 	class ThrowCommand<T, TException> : ICommand<T>, IActivateMarker<TException>,
-	                                    IActivateMarker<IInstance<TException>>,
+	                                    IActivateMarker<ISource<TException>>,
 	                                    IActivateMarker<Func<TException>>
 		where TException : Exception
 	{
@@ -48,7 +48,7 @@ namespace Super.Model.Commands
 
 		public ThrowCommand(TException exception) : this(exception.ToInstance()) {}
 
-		public ThrowCommand(IInstance<TException> instance) : this(instance.ToDelegate()) {}
+		public ThrowCommand(ISource<TException> source) : this(source.ToDelegate()) {}
 
 		public ThrowCommand(Func<TException> exception) => _exception = exception;
 

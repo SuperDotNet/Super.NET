@@ -1,5 +1,4 @@
-﻿using Super.Model.Sources;
-using Super.Reflection;
+﻿using Super.Reflection;
 
 namespace Super.Runtime.Activation
 {
@@ -16,10 +15,6 @@ namespace Super.Runtime.Activation
 	{
 		public static T From<TParameter, T>(this I<T> _, TParameter parameter) where T : IActivateMarker<TParameter>
 			=> Activations<TParameter, T>.Default.Get(parameter);
-
-		public static ISource<TParameter, TResult> New<TParameter, TResult>(I<TResult> _ = null)
-			where TResult : IActivateMarker<TParameter>
-			=> Activations<TParameter, TResult>.Default;
 	}
 
 	public static class From

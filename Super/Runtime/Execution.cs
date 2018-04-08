@@ -1,11 +1,11 @@
 ﻿using JetBrains.Annotations;
 using Super.ExtensionMethods;
 using Super.Model.Commands;
-using Super.Model.Instances;
+using Super.Model.Selection.Alterations;
 using Super.Model.Sources;
-using Super.Model.Sources.Alterations;
 using Super.Reflection;
 using Super.Runtime.Activation;
+using Super.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,20 +14,6 @@ using System.Threading.Tasks;
 
 namespace Super.Runtime
 {
-	/*sealed class DefaultExecutionContext : Instance<AppDomain>
-	{
-		public static DefaultExecutionContext Default { get; } = new DefaultExecutionContext();
-
-		DefaultExecutionContext() : base(AppDomain.CurrentDomain) {}
-	}*/
-
-	/*sealed class ExecutionContext : AmbientInstance<object>
-	{
-		public static ExecutionContext Default { get; } = new ExecutionContext();
-
-		ExecutionContext() : base(DefaultExecutionContext.Default) {}
-	}*/
-
 	sealed class ObservedExecutionContext : ExecutionContext<ObservedExecutionContextDetails>
 	{
 		public ObservedExecutionContext(IExecutionContextInformation parent, Action dispose)
@@ -129,9 +115,9 @@ namespace Super.Runtime
 		public Contextual(ISource<TContext, T> source, IInstance<TContext> parameter) : base(source, parameter) {}
 	}*/
 
-	public interface IIExecutionContext : IInstance<IExecutionContextInformation>, IDisposable {}
+	public interface IIExecutionContext : ISource<IExecutionContextInformation>, IDisposable {}
 
-	class ExecutionContext<T> : Instance<IExecutionContextInformation>, IIExecutionContext where T : class
+	class ExecutionContext<T> : Source<IExecutionContextInformation>, IIExecutionContext where T : class
 	{
 		readonly Action _dispose;
 
@@ -165,7 +151,7 @@ namespace Super.Runtime
 		public ExecutionContextStack(IEnumerable<IIExecutionContext> collection) : base(collection) {}
 	}
 
-	sealed class ExecutionContext : DelegatedInstance<IExecutionContextInformation>
+	sealed class ExecutionContext : Delegated<IExecutionContextInformation>
 	{
 		public static ExecutionContext Default { get; } = new ExecutionContext();
 

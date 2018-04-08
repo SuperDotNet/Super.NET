@@ -1,10 +1,10 @@
 using System;
-using Super.Model.Instances;
+using Super.Model.Sources;
 
 namespace Super.Model.Collections
 {
 	[AttributeUsage(AttributeTargets.Class)]
-	public sealed class InsertGroupElementAttribute : Attribute, IInstance<int>
+	public sealed class InsertGroupElementAttribute : Attribute, ISource<int>
 	{
 		readonly int _index;
 

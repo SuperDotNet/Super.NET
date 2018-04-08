@@ -1,9 +1,9 @@
 ﻿using System;
-using Super.Model.Sources;
+using Super.Model.Selection;
 
 namespace Super.Diagnostics
 {
-	public sealed class UnixTicks : ISource<DateTime, double>
+	public sealed class UnixTicks : ISelect<DateTime, double>
 	{
 		public static UnixTicks Default { get; } = new UnixTicks();
 

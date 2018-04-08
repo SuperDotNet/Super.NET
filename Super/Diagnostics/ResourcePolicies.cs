@@ -2,7 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Polly;
-using Super.Model.Sources.Alterations;
+using Super.Model.Selection.Alterations;
 
 namespace Super.Diagnostics
 {

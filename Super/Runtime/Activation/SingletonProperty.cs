@@ -2,13 +2,13 @@
 using System.Linq;
 using System.Reflection;
 using Super.ExtensionMethods;
-using Super.Model.Sources;
+using Super.Model.Selection;
 
 namespace Super.Runtime.Activation
 {
-	sealed class SingletonProperty : ISource<Type, PropertyInfo>
+	sealed class SingletonProperty : ISelect<Type, PropertyInfo>
 	{
-		public static ISource<Type, PropertyInfo> Default { get; } = new SingletonProperty().ToReferenceStore();
+		public static ISelect<Type, PropertyInfo> Default { get; } = new SingletonProperty().ToReferenceStore();
 
 		SingletonProperty() : this(SingletonCandidates.Default) {}
 

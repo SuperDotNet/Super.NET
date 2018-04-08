@@ -1,16 +1,12 @@
 ﻿using System;
-using Super.Model.Sources.Tables;
+using Super.Model.Selection.Stores;
 
 namespace Super.Model.Sources
 {
-	sealed class Delegates<TParameter, TResult>
-		: DelegatedSource<ISource<TParameter, TResult>, Func<TParameter, TResult>>
+	sealed class Delegates<T> : ReferenceStore<ISource<T>, Func<T>>
 	{
-		public static Delegates<TParameter, TResult> Default { get; } = new Delegates<TParameter, TResult>();
+		public static Delegates<T> Default { get; } = new Delegates<T>();
 
-		Delegates()
-			: base(DefaultReferenceValueTables<ISource<TParameter, TResult>, Func<TParameter, TResult>>
-			       .Default.Get(x => x.Get)
-			       .Get) {}
+		Delegates() : base(x => x.Get) {}
 	}
 }

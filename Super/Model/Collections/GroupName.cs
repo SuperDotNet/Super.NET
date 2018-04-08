@@ -1,5 +1,5 @@
 using Super.ExtensionMethods;
-using Super.Model.Sources;
+using Super.Model.Selection;
 
 namespace Super.Model.Collections
 {
@@ -16,7 +16,7 @@ namespace Super.Model.Collections
 		public override int GetHashCode() => Name != null ? Name.GetHashCode() : 0;
 	}
 
-	sealed class GroupName<T> : DecoratedSource<T, GroupName>, IGroupName<T>
+	sealed class GroupName<T> : Decorated<T, GroupName>, IGroupName<T>
 	{
 		public GroupName(GroupName defaultName, ISpecification<string, GroupName> names)
 			: base(new MetadataGroupName<T>(names).Or(In<T>.New(defaultName))) {}

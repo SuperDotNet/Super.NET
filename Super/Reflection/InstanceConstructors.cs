@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Super.Model.Sources;
+using Super.Model.Selection;
 
 namespace Super.Reflection
 {
-	sealed class InstanceConstructors : DelegatedSource<TypeInfo, IEnumerable<ConstructorInfo>>
+	sealed class InstanceConstructors : Delegated<TypeInfo, IEnumerable<ConstructorInfo>>
 	{
 		public static InstanceConstructors Default { get; } = new InstanceConstructors();
 

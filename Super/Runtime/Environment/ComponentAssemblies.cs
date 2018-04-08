@@ -12,7 +12,7 @@ namespace Super.Runtime.Environment
 		ComponentAssemblies() : base(PrimaryAssembly.Default
 		                                            /*.Allow()
 		                                            .Guard(PrimaryAssemblyMessage.Default)*/
-		                                            .Select(AssemblyNameCoercer.Default)
+		                                            .Select(AssemblyNameSelector.Default)
 		                                            .Select(ComponentAssemblyNames.Default)
 		                                            .Select(Load.Default.Select())
 		                                            .Select(x => x.Assigned()).Get()) {}

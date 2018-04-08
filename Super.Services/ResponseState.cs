@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Net;
 using Microsoft.AspNetCore.Http;
-using Super.Model.Sources;
+using Super.Model.Selection;
 
 namespace Super.Services
 {
-	class ResponseState : ISource<IRequestCookieCollection, Cookie>
+	class ResponseState : ISelect<IRequestCookieCollection, Cookie>
 	{
 		readonly string                                 _name;
 		readonly Func<IRequestCookieCollection, string> _state;

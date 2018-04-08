@@ -1,13 +1,13 @@
 using System.Collections.Immutable;
 using System.Reflection;
 using Super.ExtensionMethods;
-using Super.Model.Sources;
+using Super.Model.Selection;
 using Super.Runtime.Activation;
 
 namespace Super.Reflection
 {
 	public sealed class GenericInterfaceImplementations
-		: ISource<TypeInfo, ImmutableArray<TypeInfo>>, IActivateMarker<TypeInfo>
+		: ISelect<TypeInfo, ImmutableArray<TypeInfo>>, IActivateMarker<TypeInfo>
 	{
 		readonly ImmutableArray<TypeInfo> _candidates;
 

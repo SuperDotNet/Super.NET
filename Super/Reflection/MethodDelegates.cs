@@ -1,12 +1,11 @@
 ﻿using Super.ExtensionMethods;
-using Super.Model.Containers;
-using Super.Model.Sources;
 using System;
 using System.Reflection;
+using Super.Model.Selection;
 
 namespace Super.Reflection
 {
-	sealed class MethodDelegates : ISource<MethodInfo, Delegate>
+	sealed class MethodDelegates : ISelect<MethodInfo, Delegate>
 	{
 		readonly Type _type;
 
@@ -15,7 +14,7 @@ namespace Super.Reflection
 		public Delegate Get(MethodInfo parameter) => parameter.CreateDelegate(_type);
 	}
 
-	sealed class MethodDelegates<T> : DecoratedSource<MethodInfo, T>
+	sealed class MethodDelegates<T> : Decorated<MethodInfo, T>
 	{
 		public static MethodDelegates<T> Default { get; } = new MethodDelegates<T>();
 

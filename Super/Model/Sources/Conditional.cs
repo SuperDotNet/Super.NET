@@ -1,29 +1,23 @@
-﻿using Super.ExtensionMethods;
-using Super.Model.Specifications;
-using System;
+﻿using System;
+using Super.ExtensionMethods;
 
 namespace Super.Model.Sources
 {
-	public class Conditional<TParameter, TResult> : ISource<TParameter, TResult>
+	public class Conditional<T> : ISource<T>
 	{
-		readonly Func<TParameter, TResult> _source, _fallback;
-		readonly Func<TParameter, bool>    _specification;
+		readonly Func<T>    _source, _fallback;
+		readonly Func<bool> _specification;
 
-		public Conditional(ISpecification<TParameter> specification, ISource<TParameter, TResult> source)
-			: this(specification, source, Default<TParameter, TResult>.Instance) {}
+		public Conditional(Func<bool> specification, ISource<T> source, ISource<T> fallback)
+			: this(specification, source.ToDelegate(), fallback.ToDelegate()) {}
 
-		public Conditional(ISpecification<TParameter> specification, ISource<TParameter, TResult> source,
-		                   ISource<TParameter, TResult> fallback)
-			: this(specification.ToDelegate(), source.ToDelegate(), fallback.ToDelegate()) {}
-
-		public Conditional(Func<TParameter, bool> specification, Func<TParameter, TResult> source,
-		                   Func<TParameter, TResult> fallback)
+		public Conditional(Func<bool> specification, Func<T> source, Func<T> fallback)
 		{
 			_specification = specification;
 			_source        = source;
 			_fallback      = fallback;
 		}
 
-		public TResult Get(TParameter parameter) => _specification(parameter) ? _source(parameter) : _fallback(parameter);
+		public T Get() => _specification() ? _source() : _fallback();
 	}
 }

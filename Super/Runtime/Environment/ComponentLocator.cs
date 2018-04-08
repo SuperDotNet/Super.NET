@@ -1,12 +1,12 @@
 ﻿using Super.ExtensionMethods;
-using Super.Model.Sources;
 using Super.Runtime.Activation;
 using System;
+using Super.Model.Selection;
 using Activator = Super.Runtime.Activation.Activator;
 
 namespace Super.Runtime.Environment
 {
-	sealed class ComponentLocator<T> : DecoratedSource<Type, object>, IActivator
+	sealed class ComponentLocator<T> : Decorated<Type, object>, IActivator
 	{
 		public static ComponentLocator<T> Default { get; } = new ComponentLocator<T>();
 

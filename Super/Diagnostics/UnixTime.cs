@@ -1,9 +1,9 @@
 ﻿using System;
-using Super.Model.Sources;
+using Super.Model.Selection;
 
 namespace Super.Diagnostics
 {
-	public sealed class UnixTime : ISource<double, DateTime>
+	public sealed class UnixTime : ISelect<double, DateTime>
 	{
 		public static UnixTime Default { get; } = new UnixTime();
 

@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Super.Expressions;
+using Super.Runtime.Invocation.Expressions;
 using Xunit;
 
 namespace Super.Testing.Expressions

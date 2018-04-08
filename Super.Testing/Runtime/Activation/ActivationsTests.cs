@@ -1,9 +1,8 @@
 ﻿using FluentAssertions;
 using Super.ExtensionMethods;
-using Super.Model.Containers;
-using Super.Model.Sources;
 using Super.Runtime.Activation;
 using System;
+using Super.Model.Selection;
 using Xunit;
 
 // ReSharper disable All
@@ -12,7 +11,7 @@ namespace Super.Testing.Runtime.Activation
 {
 	public class ActivationsTests
 	{
-		sealed class StartValues : ISource<string, int>
+		sealed class StartValues : ISelect<string, int>
 		{
 			public static StartValues Default { get; } = new StartValues();
 
@@ -21,7 +20,7 @@ namespace Super.Testing.Runtime.Activation
 			public int Get(string parameter) => parameter.Length;
 		}
 
-		sealed class StartReferences : ISource<int, string>
+		sealed class StartReferences : ISelect<int, string>
 		{
 			public static StartReferences Default { get; } = new StartReferences();
 
@@ -30,7 +29,7 @@ namespace Super.Testing.Runtime.Activation
 			public string Get(int parameter) => "Hello World";
 		}
 
-		sealed class Values : ISource<Type, int>, IActivateMarker<int>
+		sealed class Values : ISelect<Type, int>, IActivateMarker<int>
 		{
 			readonly int _number;
 
@@ -39,7 +38,7 @@ namespace Super.Testing.Runtime.Activation
 			public int Get(Type parameter) => _number + parameter.AssemblyQualifiedName.Length;
 		}
 
-		sealed class References : ISource<int, Type>, IActivateMarker<string>
+		sealed class References : ISelect<int, Type>, IActivateMarker<string>
 		{
 			readonly string _message;
 

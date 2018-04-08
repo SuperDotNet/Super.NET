@@ -1,5 +1,5 @@
 ﻿using Super.Diagnostics;
-using Super.Observable;
+using Super.Runtime.Invocation;
 
 namespace Super.Services
 {

@@ -124,9 +124,9 @@ namespace Super.ExtensionMethods
 			return true;
 		}
 
-		public static T Only<T>(this IEnumerable<T> @this) => OnlyCoercer<T>.Default.Get(@this);
+		public static T Only<T>(this IEnumerable<T> @this) => OnlySelector<T>.Default.Get(@this);
 
-		public static T Only<T>(this IEnumerable<T> @this, Func<T, bool> where) => new OnlyCoercer<T>(where).Get(@this);
+		public static T Only<T>(this IEnumerable<T> @this, Func<T, bool> where) => new OnlySelector<T>(where).Get(@this);
 
 		public static void ForEach<TIn, TOut>(this IEnumerable<TIn> @this, Func<TIn, TOut> select)
 		{

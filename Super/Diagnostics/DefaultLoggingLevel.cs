@@ -1,9 +1,9 @@
 ﻿using Serilog.Events;
-using Super.Model.Instances;
+using Super.Model.Sources;
 
 namespace Super.Diagnostics
 {
-	sealed class DefaultLoggingLevel : Instance<LogEventLevel>
+	sealed class DefaultLoggingLevel : Source<LogEventLevel>
 	{
 		public static DefaultLoggingLevel Default { get; } = new DefaultLoggingLevel();
 

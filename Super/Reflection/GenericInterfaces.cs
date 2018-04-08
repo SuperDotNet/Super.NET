@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Super.Model.Sources;
+using Super.Model.Selection;
 
 namespace Super.Reflection
 {
-	public sealed class GenericInterfaces : ISource<TypeInfo, IEnumerable<TypeInfo>>
+	public sealed class GenericInterfaces : ISelect<TypeInfo, IEnumerable<TypeInfo>>
 	{
 		public static GenericInterfaces Default { get; } = new GenericInterfaces();
 

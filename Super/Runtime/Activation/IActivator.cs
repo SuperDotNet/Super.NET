@@ -1,10 +1,10 @@
-﻿using Super.Model.Instances;
+﻿using System;
+using Super.Model.Selection;
 using Super.Model.Sources;
-using System;
 
 namespace Super.Runtime.Activation
 {
-	public interface IActivator<out T> : IInstance<T> {}
+	public interface IActivator<out T> : ISource<T> {}
 
-	public interface IActivator : ISource<Type, object> {}
+	public interface IActivator : ISelect<Type, object> {}
 }

@@ -1,26 +1,26 @@
 ﻿using Super.ExtensionMethods;
 using Super.Model.Commands;
-using Super.Model.Instances;
+using Super.Model.Sources;
 using Super.Runtime.Activation;
 using System;
 using System.Threading;
 
 namespace Super.Runtime
 {
-	public class Ambient<T> : DecoratedInstance<T>, IActivateMarker<IInstance<T>>, IDisposable
+	public class Ambient<T> : Decorated<T>, IActivateMarker<ISource<T>>, IDisposable
 	{
 		readonly Action _dispose;
 
-		public Ambient(Func<T> factory) : this(new DelegatedInstance<T>(factory)) {}
+		public Ambient(Func<T> factory) : this(new Delegated<T>(factory)) {}
 
-		public Ambient(IInstance<T> source) : this(source, new Logical<T>()) {}
+		public Ambient(ISource<T> source) : this(source, new Logical<T>()) {}
 
-		public Ambient(IInstance<T> source, IMutable<T> mutable) : this(source, mutable, mutable) {}
+		public Ambient(ISource<T> source, IMutable<T> mutable) : this(source, mutable, mutable) {}
 
-		public Ambient(IInstance<T> source, IInstance<T> instance, ICommand<T> assign)
-			: this(instance.Or(source.Select(assign.ToConfiguration())), assign.Select(default).Execute) {}
+		public Ambient(ISource<T> source, ISource<T> store, ICommand<T> assign)
+			: this(store.Or(source.Select(assign.ToConfiguration())), assign.Select(default).Execute) {}
 
-		public Ambient(IInstance<T> instance, Action dispose) : base(instance) => _dispose = dispose;
+		public Ambient(ISource<T> source, Action dispose) : base(source) => _dispose = dispose;
 
 		public void Dispose()
 		{

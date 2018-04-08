@@ -1,7 +1,7 @@
 ﻿using Super.Model.Commands;
-using Super.Model.Instances;
+using Super.Model.Selection;
+using Super.Model.Selection.Alterations;
 using Super.Model.Sources;
-using Super.Model.Sources.Alterations;
 using Super.Reflection;
 using Super.Runtime;
 using Super.Runtime.Activation;
@@ -13,12 +13,12 @@ using System.Reactive;
 
 namespace Super.ExtensionMethods
 {
-	public static class Commands
+	partial class Model
 	{
 		public static ICommand<Unit> Select<T>(this ICommand<T> @this, T parameter)
 			=> Select(@this, new FixedResult<Unit, T>(parameter));
 
-		public static ICommand<TFrom> Select<TFrom, TTo>(this ICommand<TTo> @this, ISource<TFrom, TTo> select)
+		public static ICommand<TFrom> Select<TFrom, TTo>(this ICommand<TTo> @this, ISelect<TFrom, TTo> select)
 			=> Select(@this, @select.ToDelegate());
 
 		public static ICommand<TFrom> Select<TFrom, TTo>(this ICommand<TTo> @this, Func<TFrom, TTo> select)
@@ -35,9 +35,9 @@ namespace Super.ExtensionMethods
 
 		public static Action<T> ToDelegate<T>(this ICommand<T> @this) => Super.Model.Commands.Delegates<T>.Default.Get(@this);
 
-		public static ISource<T, Unit> Out<T>(this ICommand<T> @this) => @this.ToConfiguration().Out(_ => Unit.Default);
+		public static ISelect<T, Unit> Out<T>(this ICommand<T> @this) => @this.ToConfiguration().Out(_ => Unit.Default);
 
-		public static ICommand<T> ToCommand<T>(this ISource<T, Unit> @this) => @this.ToDelegate().ToCommand();
+		public static ICommand<T> ToCommand<T>(this ISelect<T, Unit> @this) => @this.ToDelegate().ToCommand();
 
 		public static ICommand<T> ToCommand<T>(this Func<T, Unit> @this) => InvokeParameterCommands<T>.Default.Get(@this);
 
@@ -45,8 +45,8 @@ namespace Super.ExtensionMethods
 
 		public static ICommand<T> ToCommand<T>(this Action<T> @this) => DelegateCommands<T>.Default.Get(@this);
 
-		public static ICommand<T> ToCommand<T>(this IInstance<ICommand<T>> @this)
-			=> Activations<IInstance<ICommand<T>>, DelegatedInstanceCommand<T>>.Default.Get(@this);
+		public static ICommand<T> ToCommand<T>(this ISource<ICommand<T>> @this)
+			=> Activations<ISource<ICommand<T>>, DelegatedInstanceCommand<T>>.Default.Get(@this);
 
 		public static void Assign<TKey, TValue>(this IAssignable<TKey, TValue> @this, TKey key, TValue value)
 			=> @this.Executed(Pairs.Create(key, value)).Return(@this);

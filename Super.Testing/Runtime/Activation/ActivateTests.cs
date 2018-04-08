@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Super.Model.Sources;
+using Super.Model.Selection;
 using Super.Reflection;
 using Super.Runtime.Activation;
 using Super.Testing.Framework;
@@ -42,7 +42,7 @@ namespace Super.Testing.Runtime.Activation
 			Singleton() {}
 		}
 
-		sealed class Subject<TParameter, TResult> : ISource<TParameter, TResult>
+		sealed class Subject<TParameter, TResult> : ISelect<TParameter, TResult>
 		{
 			public static Subject<TParameter, TResult> Default { get; } = new Subject<TParameter, TResult>();
 

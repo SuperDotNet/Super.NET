@@ -1,11 +1,11 @@
 ﻿using Polly;
 using Refit;
 using Super.Diagnostics;
-using Super.Model.Instances;
+using Super.Model.Sources;
 
 namespace Super.Services
 {
-	public sealed class DefaultPolicies : Instance<PolicyBuilder>
+	public sealed class DefaultPolicies : Source<PolicyBuilder>
 	{
 		public static DefaultPolicies Default { get; } = new DefaultPolicies();
 

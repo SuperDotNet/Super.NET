@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Reflection;
-using Super.Model.Sources;
+using Super.Model.Selection;
 
 namespace Super.Reflection
 {
-	sealed class ParameterType : ISource<ParameterInfo, Type>
+	sealed class ParameterType : ISelect<ParameterInfo, Type>
 	{
 		public static ParameterType Default { get; } = new ParameterType();
 

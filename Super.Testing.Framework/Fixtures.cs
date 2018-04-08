@@ -1,20 +1,20 @@
 ﻿using AutoFixture;
-using Super.Model.Instances;
+using Super.Model.Sources;
 using Super.Runtime.Activation;
 
 namespace Super.Testing.Framework
 {
-	public sealed class Fixtures<TWith> : IInstance<IFixture> where TWith : class, ICustomization
+	public sealed class Fixtures<TWith> : ISource<IFixture> where TWith : class, ICustomization
 	{
 		public static Fixtures<TWith> Default { get; } = new Fixtures<TWith>();
 
 		Fixtures() : this(DefaultEngineParts.Default, Activator<TWith>.Default) {}
 
-		readonly IInstance<TWith> _activator;
+		readonly ISource<TWith> _activator;
 
 		readonly DefaultRelays _relays;
 
-		public Fixtures(DefaultRelays relays, IInstance<TWith> activator)
+		public Fixtures(DefaultRelays relays, ISource<TWith> activator)
 		{
 			_relays    = relays;
 			_activator = activator;

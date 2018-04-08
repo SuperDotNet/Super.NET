@@ -1,11 +1,11 @@
 ﻿using Super.ExtensionMethods;
-using Super.Model.Sources;
 using System.IO;
 using System.Reflection;
+using Super.Model.Selection;
 
 namespace Super.Reflection
 {
-	sealed class Load : DecoratedSource<AssemblyName, Assembly>
+	sealed class Load : Decorated<AssemblyName, Assembly>
 	{
 		public static Load Default { get; } = new Load();
 

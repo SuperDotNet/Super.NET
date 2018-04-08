@@ -1,9 +1,9 @@
-﻿using Super.Model.Sources;
-using System;
+﻿using System;
+using Super.Model.Selection;
 
 namespace Super.Runtime.Invocation
 {
-	sealed class Invoke<T> : ISource<Func<T>, T>
+	sealed class Invoke<T> : ISelect<Func<T>, T>
 	{
 		public static Invoke<T> Default { get; } = new Invoke<T>();
 

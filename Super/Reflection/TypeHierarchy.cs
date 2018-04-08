@@ -2,11 +2,11 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection;
 using Super.Model.Collections;
-using Super.Model.Sources;
+using Super.Model.Selection;
 
 namespace Super.Reflection
 {
-	public sealed class TypeHierarchy : ISource<TypeInfo, ImmutableArray<TypeInfo>>
+	public sealed class TypeHierarchy : ISelect<TypeInfo, ImmutableArray<TypeInfo>>
 	{
 		public static TypeHierarchy Default { get; } = new TypeHierarchy();
 

@@ -1,9 +1,9 @@
-﻿using Super.Model.Instances;
-using System;
+﻿using System;
+using Super.Model.Sources;
 
 namespace Super.Testing.Platform
 {
-	public sealed class HelloWorld : Instance<string>
+	public sealed class HelloWorld : Source<string>
 	{
 		public static HelloWorld Default { get; } = new HelloWorld();
 

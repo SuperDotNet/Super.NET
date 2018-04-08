@@ -1,11 +1,11 @@
 ﻿using Super.ExtensionMethods;
-using Super.Model.Sources;
 using Super.Runtime.Invocation;
 using System;
+using Super.Model.Selection;
 
 namespace Super.Runtime.Activation
 {
-	public sealed class Singletons : DecoratedSource<Type, object>, ISingletons
+	public sealed class Singletons : Decorated<Type, object>, ISingletons
 	{
 		public static Singletons Default { get; } = new Singletons();
 

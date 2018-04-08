@@ -1,9 +1,10 @@
-﻿using Super.Model.Sources;
-using System;
+﻿using System;
+using Super.Model.Selection;
+using Super.Text;
 
 namespace Super.Runtime
 {
-	class Message<T> : DelegatedSource<T, string>, IMessage<T>
+	class Message<T> : Delegated<T, string>, IMessage<T>
 	{
 		public Message(Func<T, string> source) : base(source) {}
 	}

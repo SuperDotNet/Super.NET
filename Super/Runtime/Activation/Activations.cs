@@ -1,8 +1,9 @@
-﻿using Super.Model.Sources;
+﻿using Super.Model.Selection;
+using Super.Model.Selection.Stores;
 
 namespace Super.Runtime.Activation
 {
-	sealed class Activations<TParameter, TResult> : DecoratedSource<TParameter, TResult> where TResult : IActivateMarker<TParameter>
+	sealed class Activations<TParameter, TResult> : Decorated<TParameter, TResult> where TResult : IActivateMarker<TParameter>
 	{
 		public static Activations<TParameter, TResult> Default { get; } = new Activations<TParameter, TResult>();
 

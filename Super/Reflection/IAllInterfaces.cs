@@ -1,8 +1,8 @@
 using System.Collections.Immutable;
 using System.Reflection;
-using Super.Model.Sources;
+using Super.Model.Selection;
 
 namespace Super.Reflection
 {
-	public interface IAllInterfaces : ISource<TypeInfo, ImmutableArray<TypeInfo>> {}
+	public interface IAllInterfaces : ISelect<TypeInfo, ImmutableArray<TypeInfo>> {}
 }

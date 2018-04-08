@@ -1,10 +1,10 @@
 ﻿using Super.ExtensionMethods;
-using Super.Model.Sources;
 using System;
+using Super.Model.Selection;
 
 namespace Super.Services
 {
-	public sealed class Service<T> : DecoratedSource<Uri, T>
+	public sealed class Service<T> : Decorated<Uri, T>
 	{
 		public static Service<T> Default { get; } = new Service<T>();
 

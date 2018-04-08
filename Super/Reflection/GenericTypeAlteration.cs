@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Immutable;
 using System.Linq;
-using Super.Model.Sources;
+using Super.Model.Selection;
 
 namespace Super.Reflection
 {
-	sealed class GenericTypeAlteration : ISource<ImmutableArray<Type>, Type>
+	sealed class GenericTypeAlteration : ISelect<ImmutableArray<Type>, Type>
 	{
 		readonly Type _definition;
 

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Net.Http;
 using Super.ExtensionMethods;
-using Super.Model.Sources;
-using Super.Model.Sources.Tables;
+using Super.Model.Selection;
+using Super.Model.Selection.Stores;
 
 namespace Super.Services
 {
-	sealed class Clients : ISource<Uri, HttpClient>
+	sealed class Clients : ISelect<Uri, HttpClient>
 	{
 		public static Clients Default { get; } = new Clients();
 

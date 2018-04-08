@@ -1,7 +1,7 @@
-﻿using Super.Model.Instances;
-using System;
+﻿using System;
+using Super.Model.Sources;
 
 namespace Super.Runtime
 {
-	public interface ITime : IInstance<DateTimeOffset> {}
+	public interface ITime : ISource<DateTimeOffset> {}
 }

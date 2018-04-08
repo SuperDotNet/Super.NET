@@ -1,11 +1,11 @@
 ﻿using System;
 using AutoFixture.Kernel;
 using Super.ExtensionMethods;
-using Super.Model.Sources;
+using Super.Model.Selection;
 
 namespace Super.Testing.Framework
 {
-	public class EngineParts<T> : DelegatedSource<T, ISpecimenBuilder>, ISpecimenBuilderTransformation
+	public class EngineParts<T> : Delegated<T, ISpecimenBuilder>, ISpecimenBuilderTransformation
 		where T : ISpecimenBuilder
 	{
 		readonly Func<T, ISpecimenBuilderNode> _delegate;

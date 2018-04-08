@@ -2,11 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Super.Model.Sources;
+using Super.Model.Selection;
 
 namespace Super.Model.Collections
 {
-	public class GroupCollection<T> : DelegatedSource<GroupName, IList<T>>, IGroupCollection<T>
+	public class GroupCollection<T> : Delegated<GroupName, IList<T>>, IGroupCollection<T>
 	{
 		readonly Func<IEnumerable<T>, IEnumerable<T>>    _select;
 		readonly IOrderedDictionary<GroupName, IList<T>> _store;

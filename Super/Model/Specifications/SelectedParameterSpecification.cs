@@ -1,6 +1,6 @@
 ﻿using Super.ExtensionMethods;
-using Super.Model.Sources;
 using System;
+using Super.Model.Selection;
 
 namespace Super.Model.Specifications
 {
@@ -9,7 +9,7 @@ namespace Super.Model.Specifications
 		readonly Func<TFrom, TTo> _select;
 		readonly Func<TTo, bool>  _source;
 
-		public SelectedParameterSpecification(ISpecification<TTo> source, ISource<TFrom, TTo> select)
+		public SelectedParameterSpecification(ISpecification<TTo> source, ISelect<TFrom, TTo> select)
 			: this(source.IsSatisfiedBy, @select.ToDelegate()) {}
 
 		public SelectedParameterSpecification(Func<TTo, bool> source, Func<TFrom, TTo> select)

@@ -1,6 +1,6 @@
 ﻿using Super.ExtensionMethods;
-using Super.Model.Sources;
 using Super.Runtime;
+using Super.Text;
 using System;
 
 namespace Super.Model.Specifications

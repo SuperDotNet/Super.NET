@@ -1,9 +1,9 @@
 ﻿using System;
-using Super.Model.Sources;
+using Super.Model.Selection;
 
 namespace Super.Runtime.Invocation
 {
-	class Invocation1<T1, T2, TResult> : ISource<T2, TResult>
+	class Invocation1<T1, T2, TResult> : ISelect<T2, TResult>
 	{
 		readonly Func<T1, T2, TResult> _delegate;
 		readonly T1                    _parameter;

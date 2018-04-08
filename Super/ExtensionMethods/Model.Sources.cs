@@ -1,109 +1,102 @@
-﻿using Super.Model.Containers;
-using Super.Model.Instances;
+﻿using Super.Model.Selection;
+using Super.Model.Selection.Alterations;
 using Super.Model.Sources;
-using Super.Model.Sources.Coercion;
 using Super.Model.Specifications;
 using Super.Reflection;
-using Super.Runtime;
+using Super.Runtime.Activation;
 using System;
-using System.Collections.Immutable;
 using System.Reactive;
 
 namespace Super.ExtensionMethods
 {
 	partial class Model
 	{
-		public static ISource<TParameter, TResult> Guard<TParameter, TResult>(
-			this ISource<TParameter, TResult> @this) => @this.Or(GuardedFallback<TParameter, TResult>.Default);
+		public static ISource<TTo> Select<TFrom, TTo>(this ISource<TFrom> @this, ISelect<TTo> select)
+			=> @this.Select(select.Out<TFrom>());
 
-		public static ISource<TParameter, TResult> Guard<TParameter, TResult>(
-			this ISource<TParameter, TResult> @this, Func<TParameter, string> message)
-			=> @this.Guard(new Message<TParameter>(message));
+		public static ISource<TTo> Select<TFrom, TTo>(this ISource<TFrom> @this, ISelect<TFrom, TTo> select)
+			=> @this.Select(select.ToDelegate());
 
-		public static ISource<TParameter, TResult> Guard<TParameter, TResult>(
-			this ISource<TParameter, TResult> @this, IMessage<TParameter> message)
-			=> @this.Or(new GuardedFallback<TParameter, TResult>(message));
+		public static ISource<TTo> Select<TFrom, TTo>(this ISource<TFrom> @this, Func<TFrom, TTo> select)
+			=> new DelegatedSelection<TFrom, TTo>(select, @this.ToDelegate());
 
-		public static ISource<TParameter, TResult> Try<TException, TParameter, TResult>(
-			this ISource<TParameter, TResult> @this, I<TException> infer) where TException : Exception
-			=> infer.Try(@this.ToDelegate(), @this.Default().ToDelegate());
+		public static ISource<TResult> Select<TParameter, TResult>(this ISelect<TParameter, TResult> @this,
+		                                                             TParameter parameter)
+			=> new FixedSelection<TParameter, TResult>(@this, parameter);
 
-		public static ISource<TParameter, TResult> Default<TParameter, TResult>(this ISource<TParameter, TResult> @this)
-			=> Defaults<TParameter, TResult>.Default.Get(@this);
+		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(this ISource<TResult> @this, ISelect<TParameter, TResult> @select)
+			=> @this.Allow(I<TParameter>.Default).Or(@select);
 
-		public static ISource<TParameter, TResult> Or<TParameter, TResult>(
-			this ISource<TParameter, TResult> @this, IInstance<TResult> instance)
-			=> @this.Or(instance.Allow(I<TParameter>.Default));
+		public static ISource<T> Or<T>(this ISource<T> @this, ISource<T> fallback)
+			=> @this.Or(IsAssigned<T>.Default, fallback);
 
-		/*public static ISource<TParameter, TResult> Or<TParameter, TResult>(
-			this ISource<TParameter, TResult> @this) => @this.Or(@this.Default());*/
+		public static ISource<T> Or<T>(this ISource<T> @this, ISpecification<T> specification, ISource<T> fallback)
+			=> new ValidatedSource<T>(specification, @this, fallback);
 
-		public static ISource<TParameter, TResult> Or<TParameter, TResult>(
-			this ISource<TParameter, TResult> @this, ISource<TParameter, TResult> next)
-			=> @this.Or(IsAssigned<TResult>.Default, next);
+		public static ISource<TResult> Select<TParameter, TResult>(this ISource<TParameter> @this, I<TResult> _)
+			where TResult : IActivateMarker<TParameter>
+			=> @this.Select(Activations<TParameter, TResult>.Default);
 
-		public static ISource<TParameter, TResult> Or<TParameter, TResult>(
-			this ISource<TParameter, TResult> @this, ISpecification<TResult> specification) => @this.Or(specification, @this.Default());
+		public static TTo Get<TFrom, TTo>(this ISource<TFrom> @this, Func<TFrom, TTo> select)
+			=> @this.Select(select).Get();
 
-		public static ISource<TParameter, TResult> Or<TParameter, TResult>(
-			this ISource<TParameter, TResult> @this, ISpecification<TResult> specification,
-			ISource<TParameter, TResult> fallback)
-			=> @this.ToDelegate().Or(specification.ToDelegate(), fallback.ToDelegate());
+		public static TResult Get<TParameter, TResult>(this ISource<TParameter> @this,
+		                                                  ISelect<TParameter, TResult> @select)
+			=> @this.Get(@select.ToDelegate());
 
-		public static ISource<TParameter, TResult> Or<TParameter, TResult>(
-			this Func<TParameter, TResult> @this, Func<TResult, bool> specification,
-			Func<TParameter, TResult> fallback)
-			=> new ValidatedResult<TParameter, TResult>(specification, @this, fallback);
+		public static TResult Any<TParameter, TResult>(this ISource<TResult> @this, TParameter _) => @this.Get();
 
-		public static ISource<TParameter, TResult> Unless<TParameter, TResult, TOther>(
-			this ISource<TParameter, TResult> @this, ISource<TOther, TResult> other)
-			=> IsTypeSpecification<TParameter, TOther>.Default.If(other.In(Cast<TParameter>.Default), @this);
+		public static ISelect<Unit, T> Allow<T>(this ISource<T> @this) => @this.Allow(I<Unit>.Default);
 
-		public static ISource<TParameter, TResult> Configure<TParameter, TResult>(
-			this ISource<TParameter, TResult> @this, IAssignable<TParameter, TResult> assignable)
-			=> new ConfiguringSource<TParameter, TResult>(@this, assignable);
+		public static ISelect<TParameter, TResult> Allow<TParameter, TResult>(this ISource<TResult> @this, I<TParameter> _)
+			=> new DelegatedResult<TParameter, TResult>(@this.ToDelegate());
 
-		public static ISource<TParameter, TResult> Assigned<TParameter, TResult>(
-			this ISource<TParameter, TResult> @this) => IsAssigned<TParameter>.Default.If(@this);
+		public static ISource<T> Singleton<T>(this ISource<T> @this) => SingletonSelector<T>.Default.Get(@this);
 
-		public static T Get<T>(this ISource<Unit, T> @this) => @this.Get(Unit.Default);
+		public static ISource<T> ToInstance<T>(this T @this) => Sources<T>.Default.Get(@this);
 
-		public static Func<TParameter, TResult> ToDelegate<TParameter, TResult>(this ISource<TParameter, TResult> @this)
-			=> Delegates<TParameter, TResult>.Default.Get(@this);
+		public static Func<T> ToDelegate<T>(this ISource<T> @this) => Super.Model.Sources.Delegates<T>.Default.Get(@this);
 
-		public static ISource<TParameter, TResult> ToStore<TParameter, TResult>(this ISource<TParameter, TResult> @this)
-			where TParameter : class => @this.ToDelegate().ToStore();
+		/*public static IInstance<T> ToInstance<T>(this ISource<Unit, T> @this) => @this.Fix(Unit.Default);*/
 
-		public static ISpecification<TParameter, TResult> ToStore<TParameter, TResult>(
-			this ISpecification<TParameter, TResult> @this)
-			where TParameter : class
-			=> new SpecificationSource<TParameter, TResult>(Specifications.ToDelegate(@this).ToStore().ToDelegate(),
-			                                                ToDelegate(@this).ToStore().ToDelegate());
+		/*public static IInstance<TResult> Fix<TParameter, TResult>(this ISource<TParameter, TResult> @this,
+		                                                          I<TResult> _)
+			=> new DelegatedParameterSource<TParameter, TResult>(@this);
 
-		public static ISource<TParameter, TResult> ToStore<TParameter, TResult>(this Func<TParameter, TResult> @this)
-			where TParameter : class => ReferenceStores<TParameter, TResult>.Default.Get(@this);
+		public static IInstance<TResult> Fix<TParameter, TResult>(this ISource<TParameter, TResult> @this,
+		                                                          Func<TParameter> parameter)
+			=> new DelegatedParameterSource<TParameter, TResult>(@this.ToDelegate(), parameter);*/
 
-		public static ISource<TParameter, TResult> ToSource<TParameter, TResult>(
-			this TResult @this, ISpecification<TParameter> specification)
-			=> new ConditionalInstance<TParameter, TResult>(specification, @this, default);
+		/*public static T Get<T>(this ISource<Unit, T> @this) => @this.Get(Unit.Default);*/
 
-		public static ISource<Unit, T> ToSource<T>(this T @this)
-			=> @this.ToSource(I<Unit>.Default);
+		/*public static ISource<Unit, T> Adapt<T>(this IInstance<T> @this) => Adapters<T>.Default.Get(@this);
 
-		public static ISource<TParameter, TResult> ToSource<TParameter, TResult>(this TResult @this, I<TParameter> _)
-			=> new FixedResult<TParameter, TResult>(@this);
+		public static IInstance<TTo> Adapt<TFrom, TTo>(this IInstance<TFrom> @this, ISource<TFrom, TTo> coercer)
+			=> @this.Adapt(coercer.ToDelegate());
 
-		public static ISource<TParameter, TResult> ToSource<TParameter, TResult>(this Func<TParameter, TResult> @this)
-			=> Sources<TParameter, TResult>.Default.Get(@this);
+		public static IInstance<TTo> Adapt<TFrom, TTo>(this IInstance<TFrom> @this, Func<TFrom, TTo> coercer)
+			=> @this.Adapt().Out(coercer).ToInstance();*/
 
-		public static ISource<TParameter, TResult> ToSource<TParameter, TResult, TAttribute>(
-			this TResult @this, I<TAttribute> _) where TAttribute : Attribute
-			=> @this.ToSource(IsDefinedSpecification<TAttribute>
-			                  .Default
-			                  .Select(InstanceMetadataCoercer<TParameter>.Default));
+		/*public static IInstance<TTo> Adapt<TFrom, TTo>(this IInstance<TFrom> @this, Cast<TTo> cast)
+			=> @this.Adapt().Out(cast).ToInstance();
 
-		public static TResult Get<TItem, TResult>(this ISource<ImmutableArray<TItem>, TResult> @this,
-		                                          params TItem[] parameters)
-			=> @this.Get(parameters.ToImmutableArray());
+		public static IInstance<TTo> Adapt<TFrom, TTo>(this IInstance<TFrom> @this, I<TTo> activate) where TTo : IActivateMarker<TFrom>
+			=> @this.Adapt().Out(activate).ToInstance();
+
+		public static ISource<TParameter, ISource<Unit, T>> Adapt<TParameter, T>(this ISource<TParameter, IInstance<T>> @this)
+			=> @this.Out(SourceAdapterCoercer<T>.Default);
+
+		public static IInstance<Func<TParameter, TResult>> Delegate<TParameter, TResult>(this IInstance<ISource<TParameter, TResult>> @this)
+			=> @this.Adapt(DelegateCoercer<TParameter, TResult>.Default);
+
+		public static ISource<TParameter, TResult> Source<TParameter, TResult>(this IInstance<ISource<TParameter, TResult>> @this)
+			=> new DelegatedInstanceSource<TParameter, TResult>(@this);*/
+
+		/*public static ISource<TParameter, TResult> Adapt<TParameter, TResult>(this IInstance<ISource<TParameter, TResult>> @this, IInstance<ICommand<TResult>> command)
+			=> @this.Adapt(command.Get());
+
+		public static ISource<TParameter, TResult> Adapt<TParameter, TResult>(this IInstance<ISource<TParameter, TResult>> @this, ICommand<TResult> command)
+			=> @this.To(InstanceValueCoercer<ISource<TParameter, TResult>>.Default)
+			        .SelectOut(command.To(I<ConfiguringAlteration<TResult>>.Default));*/
 	}
 }

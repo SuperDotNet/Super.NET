@@ -1,18 +1,17 @@
-﻿using Super.Model.Sources;
+﻿using Super.Model.Selection;
 using Super.Model.Specifications;
-using Super.Runtime;
 using System;
 
 namespace Super.ExtensionMethods
 {
-	public static class Specifications
+	partial class Model
 	{
+		public static ISpecification<T> ToSpecification<T>(this Func<T, bool> @this) => Specifications<T>.Default.Get(@this);
+
 		/*public static ISpecification<T> ToSpecification<T>(this ISource<T, bool> @this)
 			=> @this.ToDelegate().ToSpecification();
 
-		public static ISpecification<T> ToSpecification<T>(this Func<T, bool> @this) => Specifications<T>.Default.Get(@this);
-
-		public static ISpecification<object> ToSpecification(this IInstance<bool> @this) => @this.ToDelegate().ToSpecification();
+				public static ISpecification<object> ToSpecification(this IInstance<bool> @this) => @this.ToDelegate().ToSpecification();
 
 		public static ISpecification<object> ToSpecification(this Func<bool> @this) => @this.To(I<FixedDelegatedSpecification<object>>.Default);*/
 
@@ -28,23 +27,23 @@ namespace Super.ExtensionMethods
 
 		/*public static ISource<T, bool> Adapt<T>(this ISpecification<T> @this) => Model.Specifications.Adapters<T>.Default.Get(@this);*/
 
-		public static ISpecification<TFrom> Select<TFrom, TTo>(this ISpecification<TTo> @this, ISource<TFrom, TTo> select)
-			=> @this.Select(select.ToDelegate());
+		public static ISpecification<TFrom> Select<TFrom, TTo>(this ISpecification<TTo> @this, ISelect<TFrom> select)
+			=> @this.Select(select.In<TTo>());
 
-		public static ISpecification<TFrom> InTo<TFrom, TResult>(this ISpecification<Type> @this, ISource<TFrom, TResult> source)
-			=> @this.Select(InstanceTypeCoercer<TFrom>.Default);
+		public static ISpecification<TFrom> Select<TFrom, TTo>(this ISpecification<TTo> @this, ISelect<TFrom, TTo> select)
+			=> @this.Select(select.ToDelegate());
 
 		public static ISpecification<TFrom> Select<TFrom, TTo>(this ISpecification<TTo> @this, Func<TFrom, TTo> select)
 			=> new SelectedParameterSpecification<TFrom,TTo>(@this.ToDelegate(), select);
 
 		public static Func<T, bool> ToDelegate<T>(this ISpecification<T> @this) => Delegates<T>.Default.Get(@this);
 
-		public static ISource<TParameter, TResult> If<TParameter, TResult>(
-			this ISpecification<TParameter> @this, ISource<TParameter, TResult> @true) => @this.If(@true, @true.Default());
+		public static ISelect<TParameter, TResult> If<TParameter, TResult>(
+			this ISpecification<TParameter> @this, ISelect<TParameter, TResult> @true) => @this.If(@true, @true.Default());
 
-		public static ISource<TParameter, TResult> If<TParameter, TResult>(
-			this ISpecification<TParameter> @this, ISource<TParameter, TResult> @true, ISource<TParameter, TResult> @false)
-			=> new Conditional<TParameter, TResult>(@this, @true, @false);
+		public static ISelect<TParameter, TResult> If<TParameter, TResult>(
+			this ISpecification<TParameter> @this, ISelect<TParameter, TResult> @true, ISelect<TParameter, TResult> @false)
+			=> new DelegatedConditional<TParameter, TResult>(@this, @true, @false);
 
 		public static ISpecification<T> Or<T>(this ISpecification<T> @this, params ISpecification<T>[] others)
 			=> new AnySpecification<T>(others.Prepend(@this).Fixed());

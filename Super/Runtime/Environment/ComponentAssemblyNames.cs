@@ -1,14 +1,14 @@
 using Super.ExtensionMethods;
-using Super.Model.Sources;
-using Super.Model.Sources.Alterations;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection;
+using Super.Model.Selection;
+using Super.Model.Selection.Alterations;
 
 namespace Super.Runtime.Environment
 {
-	sealed class ComponentAssemblyNames : ISource<AssemblyName, IEnumerable<AssemblyName>>
+	sealed class ComponentAssemblyNames : ISelect<AssemblyName, IEnumerable<AssemblyName>>
 	{
 		public static ComponentAssemblyNames Default { get; } = new ComponentAssemblyNames();
 

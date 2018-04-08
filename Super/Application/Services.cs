@@ -1,8 +1,7 @@
 ﻿using Super.ExtensionMethods;
 using Super.Model.Collections;
 using Super.Model.Commands;
-using Super.Model.Containers;
-using Super.Model.Instances;
+using Super.Model.Selection;
 using Super.Model.Sources;
 using Super.Reflection;
 using Super.Runtime.Activation;
@@ -14,14 +13,14 @@ namespace Super.Application
 
 	public interface IApplicationContext<in T> : ICommand<T>, IApplicationContext {}
 
-	public interface IApplicationContext<in TParameter, out TResult> : ISource<TParameter, TResult>, IApplicationContext {}
+	public interface IApplicationContext<in TParameter, out TResult> : ISelect<TParameter, TResult>, IApplicationContext {}
 
-	public class ApplicationContext<TParameter, TResult> : DecoratedSource<TParameter, TResult>,
+	public class ApplicationContext<TParameter, TResult> : Decorated<TParameter, TResult>,
 	                                                       IApplicationContext<TParameter, TResult>
 	{
 		readonly IDisposable _disposable;
 
-		public ApplicationContext(ISource<TParameter, TResult> source, IDisposable disposable) : base(source)
+		public ApplicationContext(ISelect<TParameter, TResult> @select, IDisposable disposable) : base(@select)
 			=> _disposable = disposable;
 
 		public void Dispose()
@@ -30,7 +29,7 @@ namespace Super.Application
 		}
 	}
 
-	public interface IApplicationContexts<in TParameter, out TContext> : ISource<TParameter, TContext>
+	public interface IApplicationContexts<in TParameter, out TContext> : ISelect<TParameter, TContext>
 		where TContext : IApplicationContext {}
 
 	public class ApplicationContext<T> : DecoratedCommand<T>, IApplicationContext<T>
@@ -46,52 +45,52 @@ namespace Super.Application
 		}
 	}
 
-	public class ApplicationArgument<T> : Instance<T>
+	public class ApplicationArgument<T> : Source<T>
 	{
 		public ApplicationArgument(T instance) : base(instance) {}
 	}
 
-	public interface IServices<in T> : ISource<T, IServices> {}
+	public interface IServices<in T> : ISelect<T, IServices> {}
 
-	public sealed class Services<T> : DecoratedSource<T, IServices>, IServices<T>, IActivateMarker<IRegistration>
+	public sealed class Services<T> : Decorated<T, IServices>, IServices<T>, IActivateMarker<IRegistration>
 	{
 		public static IServices<T> Default { get; } = new Services<T>();
 
 		Services() : this(ServiceRegistration.Default) {}
 
-		public Services(IInstance<IRegistration> registration)
-			: base(Activate.New<T, InstanceRegistration<T>>()
-			               .Out(YieldCoercer<IRegistration>.Default)
-			               .Out(new AppendInstanceCoercer<IRegistration>(registration))
-			               .Out(New<CompositeRegistration>.Default)
-			               .Out(ServiceOptions.Default.Select(I<Services>.Default).Get)
-			               .Out(Cast<IServices>.Default)
-			               .Out(ServiceConfiguration.Default.ToCommand().ToConfiguration())) {}
+		public Services(ISource<IRegistration> registration)
+			: base(In<T>.Out<InstanceRegistration<T>>()
+			            .Out(YieldSelector<IRegistration>.Default)
+			            .Out(new AppendValueSelector<IRegistration>(registration))
+			            .Out(New<CompositeRegistration>.Default)
+			            .Out(ServiceOptions.Default.Select(I<Services>.Default).Get)
+			            .Out(Cast<IServices>.Default)
+			            .Out(ServiceConfiguration.Default.ToCommand().ToConfiguration())) {}
 	}
 
-	sealed class ServiceCoercer<T> : ISource<IServiceProvider, T>
+	sealed class ServiceSelector<T> : ISelect<IServiceProvider, T>
 	{
-		public static ServiceCoercer<T> Default { get; } = new ServiceCoercer<T>();
+		public static ServiceSelector<T> Default { get; } = new ServiceSelector<T>();
 
-		ServiceCoercer() {}
+		ServiceSelector() {}
 
 		public T Get(IServiceProvider parameter) => parameter.Get<T>();
 	}
 
-	public class ApplicationContexts<TParameter, TContext> : DecoratedSource<TParameter, IApplicationContext<TParameter>>
+	public class ApplicationContexts<TParameter, TContext> : Decorated<TParameter, IApplicationContext<TParameter>>
 		where TContext : IApplicationContext<TParameter>
 	{
-		protected ApplicationContexts(ISource<TParameter, IServices> services)
-			: base(services.Out(ServiceCoercer<TContext>.Default)
+		protected ApplicationContexts(ISelect<TParameter, IServices> services)
+			: base(services.Out(ServiceSelector<TContext>.Default)
 			               .Out(Cast<IApplicationContext<TParameter>>.Default)) {}
 	}
 
 	public class ApplicationContexts<TContext, TParameter, TResult>
-		: DecoratedSource<TParameter, IApplicationContext<TParameter, TResult>>
+		: Decorated<TParameter, IApplicationContext<TParameter, TResult>>
 		where TContext : IApplicationContext<TParameter, TResult>
 	{
-		protected ApplicationContexts(ISource<TParameter, IServices> services)
-			: base(services.Out(ServiceCoercer<TContext>.Default)
+		protected ApplicationContexts(ISelect<TParameter, IServices> services)
+			: base(services.Out(ServiceSelector<TContext>.Default)
 			               .Out(Cast<IApplicationContext<TParameter, TResult>>.Default)) {}
 	}
 }

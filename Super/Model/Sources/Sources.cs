@@ -1,14 +1,19 @@
-﻿using Super.Reflection;
-using Super.Runtime.Activation;
-using System;
+using Super.Model.Selection;
+using Super.Model.Selection.Stores;
 
 namespace Super.Model.Sources
 {
-	sealed class Sources<TParameter, TResult> : ReferenceStore<Func<TParameter, TResult>, ISource<TParameter, TResult>>
+	sealed class ValueSelector<T> : Delegated<ISource<T>, T>
 	{
-		public static Sources<TParameter, TResult> Default { get; } = new Sources<TParameter, TResult>();
+		public static ValueSelector<T> Default { get; } = new ValueSelector<T>();
 
-		Sources() : base(x => x.Target as ISource<TParameter, TResult> ??
-		                      I<DelegatedSource<TParameter, TResult>>.Default.From(x)) {}
+		ValueSelector() : base(x => x.Get()) {}
+	}
+
+	sealed class Sources<T> : Store<T, Source<T>>
+	{
+		public static Sources<T> Default { get; } = new Sources<T>();
+
+		Sources() {}
 	}
 }

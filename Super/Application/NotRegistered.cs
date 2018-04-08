@@ -1,13 +1,12 @@
 ﻿using LightInject;
 using Super.ExtensionMethods;
 using Super.Model.Collections;
-using Super.Model.Containers;
-using Super.Model.Sources;
 using System;
+using Super.Model.Selection;
 
 namespace Super.Application
 {
-	sealed class NotRegistered : DecoratedSource<IServiceRegistry, Func<Type, bool>>
+	sealed class NotRegistered : Decorated<IServiceRegistry, Func<Type, bool>>
 	{
 		public static NotRegistered Default { get; } = new NotRegistered();
 

@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Super.Model.Sources.Tables;
+using Super.Model.Selection.Stores;
 using Xunit;
 
 namespace Super.Testing.Model.Sources.Tables

@@ -1,7 +1,7 @@
 ﻿namespace Super.Model.Sources
 {
-	public interface ISource<in TParameter, out TResult>
+	public interface ISource<out T>
 	{
-		TResult Get(TParameter parameter);
+		T Get();
 	}
 }

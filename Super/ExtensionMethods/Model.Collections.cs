@@ -1,18 +1,18 @@
 ﻿using Super.Model.Collections;
-using Super.Model.Sources;
 using Super.Reflection;
 using Super.Runtime.Activation;
 using System.Collections.Generic;
+using Super.Model.Selection;
 
 namespace Super.ExtensionMethods
 {
 	partial class Model
 	{
-		public static ISource<IEnumerable<TFrom>, IEnumerable<TTo>> SelectMany<TFrom, TTo>(this ISource<TFrom, IEnumerable<TTo>> @this)
-			=> @this.ToDelegate().To(I<SelectManyCoercer<TFrom, TTo>>.Default);
+		public static ISelect<IEnumerable<TFrom>, IEnumerable<TTo>> SelectMany<TFrom, TTo>(this ISelect<TFrom, IEnumerable<TTo>> @this)
+			=> @this.ToDelegate().To(I<SelectManySelector<TFrom, TTo>>.Default);
 
-		public static ISource<IEnumerable<TFrom>, IEnumerable<TTo>> Select<TFrom, TTo>(this ISource<TFrom, TTo> @this)
-			=> @this.ToDelegate().To(I<SelectCoercer<TFrom, TTo>>.Default);
+		public static ISelect<IEnumerable<TFrom>, IEnumerable<TTo>> Select<TFrom, TTo>(this ISelect<TFrom, TTo> @this)
+			=> @this.ToDelegate().To(I<SelectSelector<TFrom, TTo>>.Default);
 
 		/*public static IContainer<T> Enclose<T>(this IInstance<T> @this) => Activations<IInstance<T>, Container<T>>.Default.Get(@this);
 

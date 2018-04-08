@@ -1,4 +1,4 @@
-using Super.Model.Sources;
+using Super.Model.Selection.Stores;
 
 namespace Super.Model.Specifications
 {

@@ -1,6 +1,5 @@
 ﻿using Super.ExtensionMethods;
-using Super.Model.Sources;
-using Super.Model.Sources.Tables;
+using Super.Model.Selection.Stores;
 using Super.Runtime.Activation;
 using System;
 

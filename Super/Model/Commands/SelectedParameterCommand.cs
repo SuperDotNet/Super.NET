@@ -1,6 +1,6 @@
 ﻿using Super.ExtensionMethods;
-using Super.Model.Sources;
 using System;
+using Super.Model.Selection;
 
 namespace Super.Model.Commands
 {
@@ -9,7 +9,7 @@ namespace Super.Model.Commands
 		readonly Func<TFrom, TTo> _select;
 		readonly Action<TTo>      _source;
 
-		public SelectedParameterCommand(ICommand<TTo> source, ISource<TFrom, TTo> select)
+		public SelectedParameterCommand(ICommand<TTo> source, ISelect<TFrom, TTo> select)
 			: this(source.ToDelegate(), select.ToDelegate()) {}
 
 		public SelectedParameterCommand(Action<TTo> source, Func<TFrom, TTo> select)

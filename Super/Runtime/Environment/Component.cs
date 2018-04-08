@@ -1,9 +1,9 @@
 ﻿using Super.ExtensionMethods;
-using Super.Model.Containers;
-using Super.Model.Instances;
 using Super.Reflection;
 using Super.Runtime.Activation;
 using System;
+using Super.Model.Selection;
+using Super.Model.Sources;
 
 namespace Super.Runtime.Environment
 {
@@ -11,14 +11,14 @@ namespace Super.Runtime.Environment
 	{
 		public Component() : this(ComponentLocator<T>.Default) {}
 
-		public Component(IActivator activator) : this(activator, Default<T>.Instance) {}
+		public Component(IActivator activator) : this(activator, Model.Sources.Default<T>.Instance) {}
 
 		public Component(T fallback) : this(fallback.ToInstance()) {}
 
-		public Component(IInstance<T> fallback) : this(ComponentLocator<T>.Default, fallback) {}
+		public Component(ISource<T> fallback) : this(ComponentLocator<T>.Default, fallback) {}
 
-		public Component(IActivator activator, IInstance<T> fallback)
-			: base(activator.Out(Container<T>.Default).Or(fallback).Guard(LocateMessage.Default).Protect(),
+		public Component(IActivator activator, ISource<T> fallback)
+			: base(activator.Out(CastOrValue<T>.Default).Or(fallback).Guard(LocateMessage.Default).Protect(),
 			       Types<T>.Identity) {}
 	}
 }

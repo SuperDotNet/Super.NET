@@ -11,7 +11,7 @@ namespace Super.Runtime
 		CanCast()
 			: base(IsAssigned<TFrom>.Default
 			                        .And(IsAssignableFrom<TTo>.Default
-			                                                  .Select(TypeMetadataCoercer.Default)
-			                                                  .Select(InstanceTypeCoercer<TFrom>.Default))) {}
+			                                                  .Select(TypeMetadataSelector.Default)
+			                                                  .Select(InstanceTypeSelector<TFrom>.Default))) {}
 	}
 }

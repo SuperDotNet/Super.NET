@@ -1,18 +1,18 @@
 ﻿using Super.ExtensionMethods;
-using Super.Model.Sources;
-using Super.Model.Sources.Alterations;
 using Super.Reflection;
 using System;
 using System.Reflection;
+using Super.Model.Selection;
+using Super.Model.Selection.Alterations;
 
 namespace Super.Runtime.Activation
 {
-	sealed class SingletonPropertyDelegates : DecoratedSource<PropertyInfo, Func<object>>
+	sealed class SingletonPropertyDelegates : Decorated<PropertyInfo, Func<object>>
 	{
 		public static SingletonPropertyDelegates Default { get; } = new SingletonPropertyDelegates();
 
 		SingletonPropertyDelegates() : base(MethodDelegates<Func<object>>.Default
-		                                                                 .In(PropertyMethodCoercer.Default)
-		                                                                 .Out(SingletonDelegateCoercer<object>.Default)) {}
+		                                                                 .In(PropertyAccessMethodSelector.Default)
+		                                                                 .Out(SingletonDelegateSelector<object>.Default)) {}
 	}
 }

@@ -1,9 +1,9 @@
 ﻿using System;
-using Super.Model.Sources;
+using Super.Model.Selection;
 
 namespace Super.Runtime
 {
-	public sealed class Authority : DelegatedSource<Uri, string>
+	public sealed class Authority : Delegated<Uri, string>
 	{
 		public static Authority Default { get; } = new Authority();
 

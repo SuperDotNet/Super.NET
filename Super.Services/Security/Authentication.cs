@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Super.ExtensionMethods;
-using Super.Model.Sources;
+using Super.Model.Selection;
 
 namespace Super.Services.Security
 {
-	public sealed class Authentication : DecoratedSource<HttpRequest, AuthenticationInformation>
+	public sealed class Authentication : Decorated<HttpRequest, AuthenticationInformation>
 	{
 		public static Authentication Default { get; } = new Authentication();
 

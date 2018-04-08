@@ -1,4 +1,5 @@
-﻿namespace Super.Model.Sources
-{
-	public interface IMutable<TParameter, TResult> : ISource<TParameter, TResult>, IAssignable<TParameter, TResult> {}
+﻿using Super.Model.Commands;
+
+namespace Super.Model.Sources {
+	public interface IMutable<T> : ISource<T>, ICommand<T> {}
 }

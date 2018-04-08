@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using Super.Model.Sources;
+using Super.Model.Selection;
 
 namespace Super.Model.Collections
 {
-	public interface IGroupPairs<T> : ISource<IGroup<T>, KeyValuePair<GroupName, IList<T>>> {}
+	public interface IGroupPairs<T> : ISelect<IGroup<T>, KeyValuePair<GroupName, IList<T>>> {}
 }

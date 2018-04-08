@@ -1,9 +1,9 @@
 using Super.ExtensionMethods;
-using Super.Model.Sources;
+using Super.Model.Selection;
 
 namespace Super.Model.Collections
 {
-	class MetadataGroupName<T> : SpecificationSource<T, GroupName>, IGroupName<T>
+	class MetadataGroupName<T> : Specification<T, GroupName>, IGroupName<T>
 	{
 		public MetadataGroupName(ISpecification<string, GroupName> names)
 			: this(DeclaredGroupNames<T>.Default, names) {}

@@ -1,6 +1,6 @@
-using Super.Model.Sources;
+using Super.Model.Selection;
 
 namespace Super.Model.Collections
 {
-	public interface IGroupName<in T> : ISource<T, GroupName> {}
+	public interface IGroupName<in T> : ISelect<T, GroupName> {}
 }

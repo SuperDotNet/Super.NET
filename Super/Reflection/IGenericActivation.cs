@@ -1,8 +1,8 @@
-﻿using Super.Model.Sources;
-using System;
+﻿using System;
 using System.Linq.Expressions;
+using Super.Model.Selection;
 
 namespace Super.Reflection
 {
-	public interface IGenericActivation : ISource<Type, Expression> {}
+	public interface IGenericActivation : ISelect<Type, Expression> {}
 }

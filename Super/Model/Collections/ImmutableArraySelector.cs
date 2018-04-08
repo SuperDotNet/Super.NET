@@ -1,6 +1,6 @@
-﻿using Super.Model.Sources;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Immutable;
+using Super.Model.Selection;
 
 namespace Super.Model.Collections
 {
@@ -10,14 +10,14 @@ namespace Super.Model.Collections
 		public static IEnumerable<T> Hide(ImmutableArray<T> items) => EnumerableSelector<T>.Default.Get(items);
 	}
 
-	public sealed class ImmutableArraySelector<T> : DelegatedSource<IEnumerable<T>, ImmutableArray<T>>
+	public sealed class ImmutableArraySelector<T> : Delegated<IEnumerable<T>, ImmutableArray<T>>
 	{
 		public static ImmutableArraySelector<T> Default { get; } = new ImmutableArraySelector<T>();
 
 		ImmutableArraySelector() : base(x => x.ToImmutableArray()) {}
 	}
 
-	public sealed class EnumerableSelector<T> : ISource<ImmutableArray<T>, IEnumerable<T>>
+	public sealed class EnumerableSelector<T> : ISelect<ImmutableArray<T>, IEnumerable<T>>
 	{
 		public static EnumerableSelector<T> Default { get; } = new EnumerableSelector<T>();
 

@@ -1,4 +1,4 @@
-﻿using Super.AttachedProperties;
+﻿using Super.Model.AttachedProperties;
 
 namespace Super.ExtensionMethods
 {

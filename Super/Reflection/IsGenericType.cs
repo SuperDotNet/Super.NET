@@ -1,10 +1,10 @@
 using Super.ExtensionMethods;
 using Super.Model.Collections;
-using Super.Model.Sources;
-using Super.Model.Sources.Alterations;
 using Super.Model.Specifications;
 using System;
 using System.Reflection;
+using Super.Model.Selection;
+using Super.Model.Selection.Alterations;
 
 namespace Super.Reflection
 {
@@ -50,14 +50,14 @@ namespace Super.Reflection
 		HasGenericArguments() : base(IsGenericType.Default, HasAny<Type>.Default.Select(GenericArgumentsSelector.Default)) {}
 	}
 
-	sealed class GenericArgumentsSelector : DelegatedSource<TypeInfo, Type[]>
+	sealed class GenericArgumentsSelector : Delegated<TypeInfo, Type[]>
 	{
 		public static GenericArgumentsSelector Default { get; } = new GenericArgumentsSelector();
 
 		GenericArgumentsSelector() : base(x => x.GenericTypeArguments) {}
 	}
 
-	sealed class GenericParametersSelector : DelegatedSource<TypeInfo, Type[]>
+	sealed class GenericParametersSelector : Delegated<TypeInfo, Type[]>
 	{
 		public static GenericParametersSelector Default { get; } = new GenericParametersSelector();
 

@@ -1,8 +1,8 @@
-﻿using Super.Model.Instances;
+﻿using Super.Model.Sources;
 
 namespace Super.Runtime
 {
-	public class EnvironmentVariable : Instance<string, string>
+	public class EnvironmentVariable : Source<string, string>
 	{
 		public EnvironmentVariable(string name) : base(EnvironmentSetting.Default, name) {}
 	}

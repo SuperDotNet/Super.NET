@@ -1,5 +1,5 @@
 ﻿using System.Net.Http;
-using Super.Model.Sources.Tables;
+using Super.Model.Selection.Stores;
 
 namespace Super.Services
 {

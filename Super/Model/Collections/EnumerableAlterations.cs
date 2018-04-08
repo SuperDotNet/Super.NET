@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using Super.Model.Sources.Alterations;
+using Super.Model.Selection.Alterations;
 
 namespace Super.Model.Collections
 {

@@ -1,10 +1,10 @@
-﻿using Super.Model.Sources;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
+using Super.Model.Selection;
 
 namespace Super.Reflection
 {
-	sealed class Parameters : DelegatedSource<ConstructorInfo, ICollection<ParameterInfo>>
+	sealed class Parameters : Delegated<ConstructorInfo, ICollection<ParameterInfo>>
 	{
 		public static Parameters Default { get; } = new Parameters();
 

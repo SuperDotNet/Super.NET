@@ -10,6 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Aspects\**" />
+    <EmbeddedResource Remove="Aspects\**" />
+    <None Remove="Aspects\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Humanizer.Core" Version="2.2.0" />
     <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
     <PackageReference Include="LightInject" Version="5.1.2" />
@@ -23,7 +29,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Aspects\" />
+    <Folder Include="Text\Formatting\" />
+    <Folder Include="Text\Parsing\" />
   </ItemGroup>
 
 </Project>

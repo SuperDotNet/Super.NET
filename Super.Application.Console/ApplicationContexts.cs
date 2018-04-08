@@ -1,6 +1,6 @@
 ﻿using Super.ExtensionMethods;
 using Super.Model.Commands;
-using Super.Runtime.Activation;
+using Super.Model.Selection;
 using System.Collections.Immutable;
 
 namespace Super.Application.Console
@@ -11,7 +11,7 @@ namespace Super.Application.Console
 	{
 		public static ApplicationContexts<T> Default { get; } = new ApplicationContexts<T>();
 
-		ApplicationContexts() : base(Activate.New<ImmutableArray<string>, ConsoleApplicationArgument>()
-		                                     .Out(Services<ConsoleApplicationArgument>.Default)) {}
+		ApplicationContexts() : base(Select.New<ImmutableArray<string>, ConsoleApplicationArgument>()
+		                                   .Out(Services<ConsoleApplicationArgument>.Default)) {}
 	}
 }

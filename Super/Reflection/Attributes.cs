@@ -2,13 +2,13 @@
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using Super.Model.Instances;
+using Super.Model.Selection;
 using Super.Model.Sources;
 
 namespace Super.Reflection
 {
-	sealed class Attributes<TAttribute, T> : ISource<MemberInfo, ImmutableArray<T>>
-		where TAttribute : Attribute, IInstance<T>
+	sealed class Attributes<TAttribute, T> : ISelect<MemberInfo, ImmutableArray<T>>
+		where TAttribute : Attribute, ISource<T>
 	{
 		public static Attributes<TAttribute, T> Default { get; } = new Attributes<TAttribute, T>();
 

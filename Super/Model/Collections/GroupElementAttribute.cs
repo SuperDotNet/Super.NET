@@ -1,10 +1,10 @@
 using System;
-using Super.Model.Instances;
+using Super.Model.Sources;
 
 namespace Super.Model.Collections
 {
 	[AttributeUsage(AttributeTargets.Class)]
-	public sealed class GroupElementAttribute : Attribute, IInstance<string>
+	public sealed class GroupElementAttribute : Attribute, ISource<string>
 	{
 		readonly string _name;
 

@@ -1,9 +1,9 @@
-﻿using Super.Model.Sources;
-using System;
+﻿using System;
+using Super.Model.Selection;
 
 namespace Super.Runtime
 {
-	public sealed class TimePaths : ISource<DateTimeOffset, string>
+	public sealed class TimePaths : ISelect<DateTimeOffset, string>
 	{
 		public static TimePaths Default { get; } = new TimePaths();
 

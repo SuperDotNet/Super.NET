@@ -2,10 +2,11 @@
 using Serilog.Core;
 using Serilog.Events;
 using Super.ExtensionMethods;
-using Super.Model.Instances;
 using Super.Runtime;
 using System;
 using System.Collections.Generic;
+using Super.Model.Sources;
+
 // ReSharper disable TooManyArguments
 
 namespace Super.Diagnostics
@@ -14,7 +15,7 @@ namespace Super.Diagnostics
 	{
 		public static Log<T> Default { get; } = new Log<T>();
 
-		Log() : base(Logger.Default.Select(ContextCoercer<T>.Default)) {}
+		Log() : base(Logger.Default.Select(ContextSelector<T>.Default)) {}
 
 		ILogger ILogger.ForContext(ILogEventEnricher enricher) => Get().ForContext(enricher);
 
@@ -398,5 +399,5 @@ namespace Super.Diagnostics
 		bool ILogger.BindProperty(string propertyName, object value, bool destructureObjects, out LogEventProperty property) => Get().BindProperty(propertyName, value, destructureObjects, out property);
 	}
 
-	public interface ILog : IInstance<ILogger>, ILogger {}
+	public interface ILog : ISource<ILogger>, ILogger {}
 }

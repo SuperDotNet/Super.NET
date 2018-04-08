@@ -1,11 +1,11 @@
 ﻿using System.Reflection;
 using Super.ExtensionMethods;
-using Super.Model.Instances;
+using Super.Model.Sources;
 using Super.Reflection;
 
 namespace Super.Runtime.Environment
 {
-	sealed class PrimaryAssembly : Instance<Assembly>
+	sealed class PrimaryAssembly : Source<Assembly>
 	{
 		public static PrimaryAssembly Default { get; } = new PrimaryAssembly();
 

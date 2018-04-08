@@ -1,6 +1,6 @@
-using Super.Model.Instances;
+using Super.Model.Sources;
 
 namespace Super.Model.Collections
 {
-	public interface ISortAware : IInstance<int> {}
+	public interface ISortAware : ISource<int> {}
 }

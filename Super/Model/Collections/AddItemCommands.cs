@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using Super.Model.Commands;
-using Super.Model.Sources;
+using Super.Model.Selection;
 
 namespace Super.Model.Collections
 {
-	sealed class AddItemCommands<T> : DelegatedSource<IList<T>, ICommand<T>>
+	sealed class AddItemCommands<T> : Delegated<IList<T>, ICommand<T>>
 	{
 		public static AddItemCommands<T> Default { get; } = new AddItemCommands<T>();
 

@@ -1,16 +1,16 @@
 ﻿using System;
-using Super.Model.Sources;
+using Super.Model.Selection;
 
 namespace Super.Services
 {
-	sealed class Request<T> : DecoratedSource<IObservable<T>, T>
+	sealed class Request<T> : Decorated<IObservable<T>, T>
 	{
 		public static Request<T> Default { get; } = new Request<T>();
 
 		Request() : base(Retry<T>.Default) {}
 	}
 
-	sealed class Request<TParameter, TResult> : DelegatedSource<TParameter, IObservable<TResult>>
+	sealed class Request<TParameter, TResult> : Delegated<TParameter, IObservable<TResult>>
 	{
 		public Request(Func<TParameter, IObservable<TResult>> source) : base(source) {}
 	}

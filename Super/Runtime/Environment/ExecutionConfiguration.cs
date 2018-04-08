@@ -1,9 +1,9 @@
-﻿using Super.Model.Instances;
-using System.Reflection;
+﻿using System.Reflection;
+using Super.Model.Sources;
 
 namespace Super.Runtime.Environment
 {
-	public sealed class ExecutionConfiguration : Instance<string>
+	public sealed class ExecutionConfiguration : Source<string>
 	{
 		public static ExecutionConfiguration Default { get; } = new ExecutionConfiguration();
 

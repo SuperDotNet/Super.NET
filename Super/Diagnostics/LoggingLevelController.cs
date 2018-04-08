@@ -1,9 +1,9 @@
 ﻿using Serilog.Core;
-using Super.Model.Instances;
+using Super.Model.Sources;
 
 namespace Super.Diagnostics
 {
-	sealed class LoggingLevelController : Instance<LoggingLevelSwitch>
+	sealed class LoggingLevelController : Source<LoggingLevelSwitch>
 	{
 		public static LoggingLevelController Default { get; } = new LoggingLevelController();
 

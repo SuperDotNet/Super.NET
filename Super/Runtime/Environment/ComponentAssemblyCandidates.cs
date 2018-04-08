@@ -1,11 +1,11 @@
-using Super.Model.Sources;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Super.Model.Selection;
 
 namespace Super.Runtime.Environment
 {
-	sealed class ComponentAssemblyCandidates : ISource<AssemblyName, IEnumerable<AssemblyName>>
+	sealed class ComponentAssemblyCandidates : ISelect<AssemblyName, IEnumerable<AssemblyName>>
 	{
 		public static ComponentAssemblyCandidates Default { get; } = new ComponentAssemblyCandidates();
 

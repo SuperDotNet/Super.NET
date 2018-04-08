@@ -1,9 +1,9 @@
 ﻿using System;
-using Super.Model.Instances;
+using Super.Model.Sources;
 
 namespace Super.Diagnostics
 {
-	public sealed class UnixEpoch : Instance<DateTime>
+	public sealed class UnixEpoch : Source<DateTime>
 	{
 		public static UnixEpoch Default { get; } = new UnixEpoch();
 

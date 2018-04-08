@@ -1,11 +1,11 @@
 ﻿using System;
 using Polly;
 using Polly.Retry;
-using Super.Model.Sources;
+using Super.Model.Selection;
 
 namespace Super.Diagnostics
 {
-	public sealed class RetryPolicies : ISource<PolicyBuilder, ISyncPolicy>
+	public sealed class RetryPolicies : ISelect<PolicyBuilder, ISyncPolicy>
 	{
 		readonly Action<System.Exception, TimeSpan> _onRetry;
 		readonly int                                _retries;
@@ -24,7 +24,7 @@ namespace Super.Diagnostics
 		public ISyncPolicy Get(PolicyBuilder parameter) => parameter.WaitAndRetry(_retries, _time, _onRetry);
 	}
 
-	public sealed class RetryPolicies<T> : ISource<PolicyBuilder<T>, RetryPolicy<T>>
+	public sealed class RetryPolicies<T> : ISelect<PolicyBuilder<T>, RetryPolicy<T>>
 	{
 		readonly Action<DelegateResult<T>, TimeSpan, Context> _onRetry;
 		readonly int                                          _retries;

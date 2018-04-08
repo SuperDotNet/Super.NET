@@ -1,9 +1,10 @@
-﻿using Super.Model.Sources;
+﻿using Super.Model.Selection;
 using Super.Model.Specifications;
+using Super.Text;
 
 namespace Super.Runtime
 {
-	class GuardedFallback<TParameter, TResult> : Conditional<TParameter, TResult>
+	class GuardedFallback<TParameter, TResult> : DelegatedConditional<TParameter, TResult>
 	{
 		public static GuardedFallback<TParameter, TResult> Default { get; } = new GuardedFallback<TParameter, TResult>();
 

@@ -1,5 +1,5 @@
 ﻿using Serilog;
-using Super.Model.Sources.Alterations;
+using Super.Model.Selection.Alterations;
 
 namespace Super.Diagnostics
 {

@@ -1,7 +1,7 @@
-﻿using Super.Model.Instances;
-using System.Reflection;
+﻿using System.Reflection;
+using Super.Model.Sources;
 
 namespace Super.Reflection
 {
-	public interface IInfer : IInstance<TypeInfo> {}
+	public interface IInfer : ISource<TypeInfo> {}
 }

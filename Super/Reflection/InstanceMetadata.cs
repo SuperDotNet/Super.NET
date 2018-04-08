@@ -1,19 +1,19 @@
-﻿using System;
-using System.Reflection;
-using Super.ExtensionMethods;
-using Super.Model.Instances;
-using Super.Model.Sources;
+﻿using Super.ExtensionMethods;
 using Super.Runtime;
+using System;
+using System.Reflection;
+using Super.Model.Selection;
+using Super.Model.Sources;
 
 namespace Super.Reflection
 {
-	class InstanceMetadata<TAttribute, TParameter, TResult> : SpecificationSource<TParameter, TResult>
-		where TAttribute : Attribute, IInstance<TResult>
+	class InstanceMetadata<TAttribute, TParameter, TResult> : Specification<TParameter, TResult>
+		where TAttribute : Attribute, ISource<TResult>
 	{
 		public InstanceMetadata() : this(new TypeMetadataValue<TAttribute, TResult>()) {}
 
 		public InstanceMetadata(ISpecification<TypeInfo, TResult> metadata)
-			: this(metadata.ToStore().In(InstanceMetadataCoercer<TParameter>.Default)) {}
+			: this(metadata.ToStore().In(InstanceMetadataSelector<TParameter>.Default)) {}
 
 		public InstanceMetadata(ISpecification<TParameter, TResult> source) : base(source, source) {}
 	}

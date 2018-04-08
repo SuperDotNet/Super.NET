@@ -1,7 +1,7 @@
-using System.Collections.Generic;
 using Super.ExtensionMethods;
 using Super.Model.Commands;
-using Super.Model.Sources;
+using Super.Model.Selection.Stores;
+using System.Collections.Generic;
 
 namespace Super.Model.Collections
 {

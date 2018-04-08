@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Super.ExtensionMethods;
-using Super.Model.Sources;
+using Super.Model.Selection;
 using Super.Reflection;
 using Super.Testing.Framework;
 using Xunit;
@@ -17,7 +17,7 @@ namespace Super.Testing.Aspects
 			sut.Source(x => x).Should().BeSameAs(I<Subject, int, int>.Default);
 		}
 
-		sealed class Subject : ISource<int, int>
+		sealed class Subject : ISelect<int, int>
 		{
 			public static Subject Default { get; } = new Subject();
 

@@ -3,9 +3,6 @@ using LightInject;
 using Super.ExtensionMethods;
 using Super.Model.Collections;
 using Super.Model.Commands;
-using Super.Model.Instances;
-using Super.Model.Sources;
-using Super.Model.Sources.Alterations;
 using Super.Model.Specifications;
 using Super.Reflection;
 using Super.Runtime.Activation;
@@ -14,6 +11,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Super.Model.Selection;
+using Super.Model.Selection.Alterations;
+using Super.Model.Sources;
 
 namespace Super.Application
 {
@@ -31,7 +31,7 @@ namespace Super.Application
 
 	sealed class ServiceOptions : Component<ContainerOptions>
 	{
-		public static IInstance<ContainerOptions> Default { get; } = new ServiceOptions();
+		public static ISource<ContainerOptions> Default { get; } = new ServiceOptions();
 
 		ServiceOptions() : base(new ContainerOptions {EnablePropertyInjection = false}) {}
 	}
@@ -45,7 +45,7 @@ namespace Super.Application
 
 	sealed class ServiceConfiguration : Component<ICommand<IServices>>
 	{
-		public static IInstance<ICommand<IServices>> Default { get; } = new ServiceConfiguration();
+		public static ISource<ICommand<IServices>> Default { get; } = new ServiceConfiguration();
 
 		ServiceConfiguration() : base(EmptyCommand<IServices>.Default) {}
 	}
@@ -56,7 +56,7 @@ namespace Super.Application
 	                              IRegistration,
 	                              IActivateMarker<IAlteration<IServiceRegistry>>
 	{
-		public DecoratedRegistration(ISource<IServiceRegistry, IServiceRegistry> registration) : base(registration) {}
+		public DecoratedRegistration(ISelect<IServiceRegistry, IServiceRegistry> registration) : base(registration) {}
 	}
 
 	sealed class InstanceRegistration<T> : IRegistration, IActivateMarker<T>
@@ -110,11 +110,11 @@ namespace Super.Application
 			                              .If(GenericTypeDefinitionAlteration.Default)) {}
 	}
 
-	sealed class DependencyCandidates : DecoratedSource<Type, ImmutableArray<Type>>, IActivateMarker<Type>
+	sealed class DependencyCandidates : Decorated<Type, ImmutableArray<Type>>, IActivateMarker<Type>
 	{
 		public DependencyCandidates(Type type)
 			: base(Constructors.Default
-			                   .In(TypeMetadataCoercer.Default)
+			                   .In(TypeMetadataSelector.Default)
 			                   .Out(Parameters.Default
 			                                        .Out(x => x.AsEnumerable())
 			                                        .SelectMany())
@@ -124,7 +124,7 @@ namespace Super.Application
 			                                    .ToImmutableArray())) {}
 	}
 
-	sealed class ServiceTypeSelector : SelectCoercer<LightInject.ServiceRegistration, Type>
+	sealed class ServiceTypeSelector : SelectSelector<LightInject.ServiceRegistration, Type>
 	{
 		public static ServiceTypeSelector Default { get; } = new ServiceTypeSelector();
 

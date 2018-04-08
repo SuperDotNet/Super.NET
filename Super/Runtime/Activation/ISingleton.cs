@@ -1,6 +1,6 @@
-﻿using Super.Model.Instances;
+﻿using Super.Model.Sources;
 
 namespace Super.Runtime.Activation
 {
-	public interface ISingleton<out T> : IInstance<T> {}
+	public interface ISingleton<out T> : ISource<T> {}
 }

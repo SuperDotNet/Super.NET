@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using Super.Model.Sources.Alterations;
+using Super.Model.Selection.Alterations;
 
 namespace Super.Services.Security
 {

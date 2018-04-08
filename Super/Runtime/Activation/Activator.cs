@@ -1,27 +1,27 @@
 ﻿using Super.ExtensionMethods;
 using Super.Model.Collections;
-using Super.Model.Instances;
-using Super.Model.Sources;
 using Super.Reflection;
 using Super.Runtime.Invocation;
 using System;
 using System.Reflection;
+using Super.Model.Selection;
+using Super.Model.Sources;
 
 namespace Super.Runtime.Activation
 {
-	sealed class Activator : DecoratedSource<Type, object>, IActivator
+	sealed class Activator : Decorated<Type, object>, IActivator
 	{
 		public static Activator Default { get; } = new Activator();
 
-		Activator() : base(TypeMetadataCoercer.Default
-		                                      .Out(YieldCoercer<TypeInfo>.Default)
+		Activator() : base(TypeMetadataSelector.Default
+		                                      .Out(YieldSelector<TypeInfo>.Default)
 		                                      .Out(ImmutableArraySelector<Type>.Default)
-		                                      .Out(new Generic<IInstance<object>>(typeof(ActivatorInstance<>)))
-		                                      .Out(Invoke<IInstance<object>>.Default)
-		                                      .Out(InstanceValueCoercer<object>.Default)) {}
+		                                      .Out(new Generic<ISource<object>>(typeof(ActivatorSource<>)))
+		                                      .Out(Invoke<ISource<object>>.Default)
+		                                      .Out(ValueSelector<object>.Default)) {}
 	}
 
-	public sealed class Activator<T> : DecoratedInstance<T>, IActivator<T>
+	public sealed class Activator<T> : Decorated<T>, IActivator<T>
 	{
 		public static Activator<T> Default { get; } = new Activator<T>();
 

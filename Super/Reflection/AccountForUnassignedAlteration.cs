@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Reflection;
-using Super.Model.Sources.Alterations;
+using Super.Model.Selection.Alterations;
 
 namespace Super.Reflection
 {

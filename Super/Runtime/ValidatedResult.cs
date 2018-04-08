@@ -1,18 +1,18 @@
 ﻿using System;
-using Super.Model.Sources;
+using Super.Model.Selection;
 using Super.Model.Specifications;
 
 namespace Super.Runtime
 {
-	class ValidatedResult<TParameter, TResult> : ISource<TParameter, TResult>
+	class ValidatedResult<TParameter, TResult> : ISelect<TParameter, TResult>
 	{
 		readonly Func<TParameter, TResult> _fallback;
 		readonly Func<TParameter, TResult> _source;
 		readonly Func<TResult, bool>       _specification;
 
-		public ValidatedResult(ISpecification<TResult> specification, ISource<TParameter, TResult> source,
-		                       ISource<TParameter, TResult> fallback)
-			: this(specification.IsSatisfiedBy, source.Get, fallback.Get) {}
+		public ValidatedResult(ISpecification<TResult> specification, ISelect<TParameter, TResult> @select,
+		                       ISelect<TParameter, TResult> fallback)
+			: this(specification.IsSatisfiedBy, @select.Get, fallback.Get) {}
 
 		public ValidatedResult(Func<TResult, bool> specification, Func<TParameter, TResult> source,
 		                       Func<TParameter, TResult> fallback)

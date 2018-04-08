@@ -6,7 +6,7 @@ namespace Super.Services.Security
 	{
 		public static AuthenticationStateAssignment Default { get; } = new AuthenticationStateAssignment();
 
-		AuthenticationStateAssignment() : base(RequestStateCoercer.Default
+		AuthenticationStateAssignment() : base(RequestStateSelector.Default
 		                                                          .Out(AppServiceAuthSession.Default)
 		                                                          .ToDelegate()) {}
 	}

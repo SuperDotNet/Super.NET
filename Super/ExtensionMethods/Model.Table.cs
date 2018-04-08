@@ -1,5 +1,5 @@
-﻿using Super.Model.Sources;
-using Super.Model.Sources.Tables;
+﻿using Super.Model.Selection;
+using Super.Model.Selection.Stores;
 using Super.Reflection;
 using Super.Runtime.Activation;
 using System;
@@ -11,11 +11,11 @@ namespace Super.ExtensionMethods
 	partial class Model
 	{
 		public static ITable<TParameter, TResult> ToStandardTable<TParameter, TResult>(
-			this ISource<TParameter, TResult> @this)
+			this ISelect<TParameter, TResult> @this)
 			=> @this.ToDelegate().ToStandardTable();
 
 		public static ITable<TParameter, TResult> ToStandardTable<TParameter, TResult>(
-			this ISource<TParameter, TResult> @this,
+			this ISelect<TParameter, TResult> @this,
 			IDictionary<TParameter, TResult> table)
 			=> @this.ToDelegate().ToStandardTable(table);
 
@@ -27,11 +27,11 @@ namespace Super.ExtensionMethods
 			=> I<StandardTables<TParameter, TResult>>.Default.From(@this).Get(table);
 
 		public static ITable<TParameter, TResult> ToConcurrentTable<TParameter, TResult>(
-			this ISource<TParameter, TResult> @this)
+			this ISelect<TParameter, TResult> @this)
 			=> @this.ToDelegate().ToConcurrentTable();
 
 		public static ITable<TParameter, TResult> ToConcurrentTable<TParameter, TResult>(
-			this ISource<TParameter, TResult> @this,
+			this ISelect<TParameter, TResult> @this,
 			ConcurrentDictionary<TParameter, TResult> table)
 			=> @this.ToDelegate().ToConcurrentTable(table);
 

@@ -1,5 +1,5 @@
-﻿using Super.Model.Sources;
-using System;
+﻿using System;
+using Super.Model.Selection;
 
 namespace Super.Model.Specifications
 {
@@ -10,6 +10,6 @@ namespace Super.Model.Specifications
 		protected HasResult(Func<TParameter, TResult> source) : this(source, Assigned) {}
 
 		HasResult(Func<TParameter, TResult> source, Func<TResult, bool> result)
-			: base(new SelectedParameterSource<TResult, TParameter, bool>(result, source).Get) {}
+			: base(new Parameter<TResult, TParameter, bool>(result, source).Get) {}
 	}
 }

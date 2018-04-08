@@ -1,10 +1,10 @@
 ﻿using System;
-using Super.Model.Sources;
-using Super.Model.Sources.Alterations;
+using Super.Model.Selection;
+using Super.Model.Selection.Alterations;
 
 namespace Super.Diagnostics
 {
-	public abstract class RetryTimeBase : ISource<int, TimeSpan>
+	public abstract class RetryTimeBase : ISelect<int, TimeSpan>
 	{
 		readonly Alter<int> _time;
 

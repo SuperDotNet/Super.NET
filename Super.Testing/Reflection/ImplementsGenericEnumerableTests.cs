@@ -1,20 +1,20 @@
 ﻿using FluentAssertions;
 using Super.ExtensionMethods;
 using Super.Model.Commands;
-using Super.Model.Instances;
 using Super.Reflection;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
+using Super.Model.Sources;
 using Xunit;
 
 namespace Super.Testing.Reflection
 {
 	public class ImplementsGenericEnumerableTests
 	{
-		sealed class Instance : IInstance<object>
+		sealed class Source : ISource<object>
 		{
 			public object Get() => throw new NotSupportedException();
 		}
@@ -62,7 +62,7 @@ namespace Super.Testing.Reflection
 		[Fact]
 		public void AreNot() => new[]
 			{
-				typeof(Instance),
+				typeof(Source),
 				typeof(Command)
 			}.ToMetadata()
 			 .All(ImplementsGenericEnumerable.Default.IsSatisfiedBy)

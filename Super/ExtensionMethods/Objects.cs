@@ -1,7 +1,7 @@
-﻿using Super.Model.Sources;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Super.Model.Selection;
 
 namespace Super.ExtensionMethods
 {
@@ -27,7 +27,7 @@ namespace Super.ExtensionMethods
 			return result;
 		}
 
-		public static TResult Shift<T, TResult>(this T @this, ISource<T, TResult> select)
+		public static TResult Shift<T, TResult>(this T @this, ISelect<T, TResult> select)
 			=> @this.Shift(select.ToDelegate());
 
 		public static TResult Shift<T, TResult>(this T @this, Func<T, TResult> select) => select(@this);

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
-using Super.Expressions;
+using Super.Runtime.Invocation.Expressions;
 using Xunit;
 
 namespace Super.Testing.Expressions

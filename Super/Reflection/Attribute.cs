@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Reflection;
-using Super.Model.Instances;
+using Super.Model.Selection;
 using Super.Model.Sources;
 
 namespace Super.Reflection
 {
-	sealed class Attribute<TAttribute, T> : ISource<MemberInfo, T> where TAttribute : Attribute, IInstance<T>
+	sealed class Attribute<TAttribute, T> : ISelect<MemberInfo, T> where TAttribute : Attribute, ISource<T>
 	{
 		public static Attribute<TAttribute, T> Default { get; } = new Attribute<TAttribute, T>();
 

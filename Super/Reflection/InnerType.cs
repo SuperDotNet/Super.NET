@@ -1,9 +1,9 @@
 using Super.ExtensionMethods;
-using Super.Model.Sources.Alterations;
 using Super.Model.Specifications;
 using System;
 using System.Collections.Immutable;
 using System.Reflection;
+using Super.Model.Selection.Alterations;
 
 namespace Super.Reflection
 {

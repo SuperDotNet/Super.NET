@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Super.Model.Sources;
+using Super.Model.Selection;
 
 namespace Super.Services
 {
-	sealed class RequestStateValue : ISource<IRequestCookieCollection, string>
+	sealed class RequestStateValue : ISelect<IRequestCookieCollection, string>
 	{
 		readonly string _name;
 

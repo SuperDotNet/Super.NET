@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using Super.Model.Sources.Tables;
+using Super.Model.Selection.Stores;
 
 namespace Super.Reflection
 {

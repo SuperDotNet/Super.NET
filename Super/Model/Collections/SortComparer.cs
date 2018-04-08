@@ -4,6 +4,6 @@ namespace Super.Model.Collections
 	{
 		public static SortComparer<T> Default { get; } = new SortComparer<T>();
 
-		SortComparer() : base(SortCoercer<T>.Default.Get) {}
+		SortComparer() : base(SortSelector<T>.Default.Get) {}
 	}
 }

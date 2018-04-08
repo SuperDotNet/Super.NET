@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Super.Model.Selection.Stores;
+using System;
 using System.Net.Http;
-using Super.Model.Sources;
 
 namespace Super.Services
 {
