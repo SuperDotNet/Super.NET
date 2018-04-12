@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Super.Text;
+using System;
 
 namespace Super.Runtime.Environment
 {

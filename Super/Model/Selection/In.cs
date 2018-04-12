@@ -7,7 +7,9 @@ namespace Super.Model.Selection
 {
 	public static class In<T>
 	{
-		public static ISelect<T, TResult> Out<TResult>() => Default<T, TResult>.Instance;
+		public static Func<T, TResult> From<TResult>(Func<T, TResult> select) => select;
+
+		public static ISelect<T, TResult> Out<TResult>() where TResult : IActivateMarker<T> => Activations<T, TResult>.Default;
 
 		public static ISelect<T, TResult> New<TResult>(TResult @this) => @this.ToSource(I<T>.Default);
 
@@ -23,7 +25,9 @@ namespace Super.Model.Selection
 			where TResult : IActivateMarker<TParameter>
 			=> Activations<TParameter, TResult>.Default;
 
-		public static ISelect<TParameter, TResult> From<TParameter, TResult>(Func<TParameter, TResult> source)
-			=> In<TParameter>.Select(source);
+		public static TResult To<T, TResult>(this T @this, ISelect<T, TResult> select)
+			=> @this.To(@select.ToDelegate());
+
+		public static TResult To<T, TResult>(this T @this, Func<T, TResult> select) => @select(@this);
 	}
 }

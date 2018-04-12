@@ -1,14 +1,24 @@
-﻿using System;
-using Serilog;
+﻿using Serilog;
+using Serilog.Configuration;
+using Serilog.Core;
+using Super.ExtensionMethods;
+using System;
 
 namespace Super.Diagnostics
 {
-	public class SeqConfiguration : ILoggingConfiguration
+	public class SeqConfiguration : ILoggingSinkConfiguration
 	{
 		readonly Uri _uri;
+		readonly Func<LoggingLevelSwitch> _switch;
 
-		public SeqConfiguration(Uri uri) => _uri = uri;
+		public SeqConfiguration(Uri uri) : this(uri, LoggingLevelController.Default.ToDelegate()) {}
 
-		public LoggerConfiguration Get(LoggerConfiguration parameter) => parameter.WriteTo.Seq(_uri.ToString());
+		public SeqConfiguration(Uri uri, Func<LoggingLevelSwitch> @switch)
+		{
+			_uri = uri;
+			_switch = @switch;
+		}
+
+		public LoggerConfiguration Get(LoggerSinkConfiguration parameter) => parameter.Seq(_uri.ToString(), controlLevelSwitch: _switch());
 	}
 }

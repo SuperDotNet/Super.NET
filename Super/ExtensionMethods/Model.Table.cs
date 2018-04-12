@@ -5,11 +5,30 @@ using Super.Runtime.Activation;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Super.ExtensionMethods
 {
 	partial class Model
 	{
+		public static ISpecification<TParameter, TResult> ToStore<TParameter, TResult>(this IReadOnlyDictionary<TParameter, TResult> @this)
+			=> @this.To(I<Lookup<TParameter, TResult>>.Default);
+
+		public static ITable<TParameter, TResult> ToTable<TParameter, TResult>(this IDictionary<TParameter, TResult> @this)
+			=> StandardTables<TParameter, TResult>.Default.Get(@this);
+
+		public static ITable<TParameter, TResult> ToTable<TParameter, TResult>(
+			this ConcurrentDictionary<TParameter, TResult> @this)
+			=> ConcurrentTables<TParameter, TResult>.Default.Get(@this);
+
+		public static ITable<TParameter, TResult> ToTable<TParameter, TResult>(
+			this ConditionalWeakTable<TParameter, TResult> @this) where TResult : class where TParameter : class
+			=> ReferenceValueTables<TParameter, TResult>.Default.Get(@this);
+
+		public static ITable<TParameter, TResult> ToTable<TParameter, TResult>(
+			this ConditionalWeakTable<TParameter, Tuple<TResult>> @this) where TParameter : class where TResult : struct
+			=> StructureValueTables<TParameter, TResult>.Default.Get(@this);
+
 		public static ITable<TParameter, TResult> ToStandardTable<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this)
 			=> @this.ToDelegate().ToStandardTable();

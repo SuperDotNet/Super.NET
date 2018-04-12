@@ -1,7 +1,7 @@
 ﻿using System;
 using Super.Model.Selection;
 
-namespace Super.Diagnostics
+namespace Super.Runtime
 {
 	public sealed class UnixTime : ISelect<double, DateTime>
 	{

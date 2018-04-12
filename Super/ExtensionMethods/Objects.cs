@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using Super.Model.Selection;
 
 namespace Super.ExtensionMethods
 {
@@ -19,6 +19,9 @@ namespace Super.ExtensionMethods
 		                                                                  IEqualityComparer<TKey> comparer = null)
 			=> @this.ToDictionary(x => x.Key, x => x.Value, comparer);
 
+		public static IReadOnlyDictionary<TKey, TValue> AsReadOnly<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> @this)
+			=> new ReadOnlyDictionary<TKey, TValue>(@this.ToDictionary());
+
 		public static TResult AsTo<TSource, TResult>(this object target, Func<TSource, TResult> transform,
 		                                             Func<TResult> resolve = null)
 		{
@@ -26,11 +29,6 @@ namespace Super.ExtensionMethods
 			var result   = target is TSource source ? transform(source) : @default();
 			return result;
 		}
-
-		public static TResult Shift<T, TResult>(this T @this, ISelect<T, TResult> select)
-			=> @this.Shift(select.ToDelegate());
-
-		public static TResult Shift<T, TResult>(this T @this, Func<T, TResult> select) => select(@this);
 
 		public static (T1, T2) Pair<T1, T2>(this T1 @this, T2 other) => ValueTuple.Create(@this, other);
 

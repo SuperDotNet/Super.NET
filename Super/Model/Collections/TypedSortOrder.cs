@@ -1,10 +1,10 @@
-using System.Reflection;
 using Super.Model.Selection.Stores;
+using System;
 
 namespace Super.Model.Collections
 {
-	sealed class TypedSortOrder : DecoratedTable<TypeInfo, int>, ITypedSortOrder
+	sealed class TypedSortOrder : DecoratedTable<Type, int>, ITypedSortOrder
 	{
-		public TypedSortOrder() : base(ReferenceTables<TypeInfo, int>.Default.Get(info => 1)) {}
+		public TypedSortOrder() : base(ReferenceTables<Type, int>.Default.Get(info => 1)) {}
 	}
 }

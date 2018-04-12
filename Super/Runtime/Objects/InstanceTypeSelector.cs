@@ -1,9 +1,9 @@
-﻿using Super.Model.Selection;
-using System;
+﻿using System;
+using Super.Model.Selection;
 
-namespace Super.Runtime
+namespace Super.Runtime.Objects
 {
-	sealed class InstanceTypeSelector<T> : Delegated<T, Type>
+	public sealed class InstanceTypeSelector<T> : Delegated<T, Type>
 	{
 		public static InstanceTypeSelector<T> Default { get; } = new InstanceTypeSelector<T>();
 

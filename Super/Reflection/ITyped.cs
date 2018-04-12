@@ -1,7 +1,7 @@
-﻿using System.Reflection;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
+using System;
 
 namespace Super.Reflection
 {
-	public interface ITyped<out T> : ISelect<TypeInfo, T> {}
+	public interface ITyped<out T> : ISelect<Type, T> {}
 }

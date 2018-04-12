@@ -5,9 +5,12 @@ using Super.Model.Sources;
 using Super.Model.Specifications;
 using Super.Reflection;
 using Super.Runtime;
+using Super.Runtime.Objects;
 using Super.Text;
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Reactive;
 
 namespace Super.ExtensionMethods
@@ -53,6 +56,10 @@ namespace Super.ExtensionMethods
 			=> @this.ToDelegate().Or(specification.ToDelegate(), fallback.ToDelegate());
 
 		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(
+			this Func<TParameter, TResult> @this,
+			Func<TParameter, TResult> fallback) => @this.Or(IsAssigned<TResult>.Default.ToDelegate(), fallback);
+
+		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(
 			this Func<TParameter, TResult> @this, Func<TResult, bool> specification,
 			Func<TParameter, TResult> fallback)
 			=> new ValidatedResult<TParameter, TResult>(specification, @this, fallback);
@@ -70,6 +77,12 @@ namespace Super.ExtensionMethods
 
 		public static T Get<T>(this ISelect<Unit, T> @this) => @this.Get(Unit.Default);
 
+		public static Func<TParameter, TResult> ToSelect<TParameter, TResult>(this ISpecification<TParameter, TResult> @this)
+			=> Delegates<TParameter, TResult>.Default.Get(@this);
+
+		public static Func<TParameter, bool> ToPredicate<TParameter, TResult>(this ISpecification<TParameter, TResult> @this)
+			=> Super.Model.Specifications.Delegates<TParameter>.Default.Get(@this);
+
 		public static Func<TParameter, TResult> ToDelegate<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
 			=> Delegates<TParameter, TResult>.Default.Get(@this);
 
@@ -79,8 +92,8 @@ namespace Super.ExtensionMethods
 		public static ISpecification<TParameter, TResult> ToStore<TParameter, TResult>(
 			this ISpecification<TParameter, TResult> @this)
 			where TParameter : class
-			=> new Specification<TParameter, TResult>(ToDelegate((ISpecification<TParameter>)@this).ToStore().ToDelegate(),
-			                                          ToDelegate((ISelect<TParameter, TResult>)@this).ToStore().ToDelegate());
+			=> new Specification<TParameter, TResult>(@this.ToPredicate().ToStore().ToDelegate(),
+			                                          @this.ToSelect().ToStore().ToDelegate());
 
 		public static ISelect<TParameter, TResult> ToStore<TParameter, TResult>(this Func<TParameter, TResult> @this)
 			where TParameter : class => ReferenceStores<TParameter, TResult>.Default.Get(@this);
@@ -107,5 +120,9 @@ namespace Super.ExtensionMethods
 		public static TResult Get<TItem, TResult>(this ISelect<ImmutableArray<TItem>, TResult> @this,
 		                                          params TItem[] parameters)
 			=> @this.Get(parameters.ToImmutableArray());
+
+		public static ISelect<TParameter, TResult> Composite<TParameter, TResult>(
+			this IEnumerable<ISelect<TParameter, TResult>> @this)
+			=> @this.Fixed().To(x => x.Skip(1).Aggregate(x.First(), (current, alteration) => alteration.Or(current)));
 	}
 }

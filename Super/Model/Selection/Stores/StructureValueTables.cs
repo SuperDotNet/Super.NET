@@ -1,6 +1,6 @@
+using Super.Runtime.Activation;
 using System;
 using System.Runtime.CompilerServices;
-using Super.Runtime.Activation;
 
 namespace Super.Model.Selection.Stores
 {
@@ -10,6 +10,11 @@ namespace Super.Model.Selection.Stores
 		where TParameter : class
 		where TResult : struct
 	{
+		public static StructureValueTables<TParameter, TResult> Default { get; } = new StructureValueTables<TParameter, TResult>();
+
+		StructureValueTables() : this(Default<TParameter, TResult>.Instance.Get) {}
+
+
 		readonly Func<TParameter, Tuple<TResult>> _source;
 
 		public StructureValueTables(Func<TParameter, TResult> source) => _source = new TupleSelector(source).Get;

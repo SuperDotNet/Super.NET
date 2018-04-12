@@ -1,6 +1,4 @@
-﻿using Super.Model.Selection;
-
-namespace Super.Text
+﻿namespace Super.Text
 {
-	public interface IMessage<in T> : ISelect<T, string> {}
+	public interface IMessage<in T> : IFormatter<T> {}
 }

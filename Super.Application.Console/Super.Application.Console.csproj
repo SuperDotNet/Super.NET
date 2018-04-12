@@ -6,10 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Super\Super.csproj" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.2-dev-00767" />
   </ItemGroup>
+
   <ItemGroup>
-    <PackageReference Include="Serilog.Sinks.ColoredConsole" Version="3.0.1" />
+    <ProjectReference Include="..\Super\Super.csproj" />
   </ItemGroup>
 
 </Project>

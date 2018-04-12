@@ -1,7 +1,7 @@
 ﻿using System;
 using Super.Model.Sources;
 
-namespace Super.Diagnostics
+namespace Super.Runtime
 {
 	public sealed class UnixEpoch : Source<DateTime>
 	{

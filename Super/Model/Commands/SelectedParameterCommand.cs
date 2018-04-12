@@ -1,10 +1,10 @@
 ﻿using Super.ExtensionMethods;
-using System;
 using Super.Model.Selection;
+using System;
 
 namespace Super.Model.Commands
 {
-	sealed class SelectedParameterCommand<TFrom, TTo> : ICommand<TFrom>
+	public class SelectedParameterCommand<TFrom, TTo> : ICommand<TFrom>
 	{
 		readonly Func<TFrom, TTo> _select;
 		readonly Action<TTo>      _source;

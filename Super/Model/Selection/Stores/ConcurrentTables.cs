@@ -1,6 +1,6 @@
+using Super.Runtime.Activation;
 using System;
 using System.Collections.Concurrent;
-using Super.Runtime.Activation;
 
 namespace Super.Model.Selection.Stores
 {
@@ -8,6 +8,10 @@ namespace Super.Model.Selection.Stores
 		: ISelect<ConcurrentDictionary<TParameter, TResult>, ITable<TParameter, TResult>>,
 		  IActivateMarker<Func<TParameter, TResult>>
 	{
+		public static ConcurrentTables<TParameter, TResult> Default { get; } = new ConcurrentTables<TParameter, TResult>();
+
+		ConcurrentTables() : this(Default<TParameter, TResult>.Instance.Get) {}
+
 		readonly Func<TParameter, TResult> _source;
 
 		public ConcurrentTables(Func<TParameter, TResult> source) => _source = source;

@@ -1,12 +1,16 @@
+using Super.Runtime.Activation;
 using System;
 using System.Collections.Generic;
-using Super.Runtime.Activation;
 
 namespace Super.Model.Selection.Stores
 {
 	public class StandardTables<TParameter, TResult>
 		: ISelect<IDictionary<TParameter, TResult>, ITable<TParameter, TResult>>, IActivateMarker<Func<TParameter, TResult>>
 	{
+		public static StandardTables<TParameter, TResult> Default { get; } = new StandardTables<TParameter, TResult>();
+
+		StandardTables() : this(Default<TParameter, TResult>.Instance.Get) {}
+
 		readonly Func<TParameter, TResult> _source;
 
 		public StandardTables(Func<TParameter, TResult> source) => _source = source;

@@ -1,6 +1,7 @@
 ﻿using JetBrains.Annotations;
 using Super.ExtensionMethods;
 using Super.Model.Commands;
+using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
 using Super.Model.Sources;
 using Super.Reflection;
@@ -144,7 +145,7 @@ namespace Super.Runtime
 		[UsedImplicitly]
 		public ExecutionContextStack() : this(RootExecutionContext.Default) {}
 
-		public ExecutionContextStack(IIExecutionContext root) : this(root, root.Shift(Observe.Default)) {}
+		public ExecutionContextStack(IIExecutionContext root) : this(root, root.To(Observe.Default)) {}
 
 		public ExecutionContextStack(params IIExecutionContext[] contexts) : this(contexts.AsEnumerable()) {}
 

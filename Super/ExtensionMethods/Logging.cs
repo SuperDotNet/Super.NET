@@ -1,12 +1,14 @@
 ﻿using Polly;
+using Super.Diagnostics;
 using Super.Model.Commands;
 using System;
 using System.Collections.Immutable;
+
 // ReSharper disable TooManyArguments
 
-namespace Super.Diagnostics
+namespace Super.ExtensionMethods
 {
-	public static class Objects
+	public static class Logging
 	{
 		public static void Execute<T>(this ICommand<ExceptionParameter<TimeSpan>> @this, DelegateResult<T> result,
 		                              TimeSpan span)
@@ -21,8 +23,7 @@ namespace Super.Diagnostics
 			=> @this.Execute(new ExceptionParameter<T>(exception, argument));
 
 		public static void Execute<T1, T2>(this ICommand<ExceptionParameter<ValueTuple<T1, T2>>> @this,
-		                                   System.Exception exception,
-		                                   T1 first, T2 second)
+		                                   System.Exception exception, T1 first, T2 second)
 			=> @this.Execute(new ExceptionParameter<ValueTuple<T1, T2>>(exception, ValueTuple.Create(first, second)));
 
 		public static void Execute<T1, T2, T3>(this ICommand<ExceptionParameter<ValueTuple<T1, T2, T3>>> @this,

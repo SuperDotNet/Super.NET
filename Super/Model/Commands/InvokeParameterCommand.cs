@@ -1,18 +1,24 @@
 ﻿using Super.ExtensionMethods;
+using Super.Model.Sources;
 using Super.Runtime.Activation;
 using System;
 using System.Reactive;
-using Super.Model.Sources;
 
 namespace Super.Model.Commands
 {
-	sealed class InvokeParameterCommand<T> : ICommand<T>
+	sealed class InvokeParameterCommand<T> : DecoratedCommand<T>
 	{
-		readonly Func<T, Unit> _delegate;
+		public InvokeParameterCommand(Func<T, Unit> @delegate) : base(new InvokeParameterCommand<T, Unit>(@delegate)) {}
+	}
 
-		public InvokeParameterCommand(Func<T, Unit> @delegate) => _delegate = @delegate;
+	sealed class InvokeParameterCommand<TParameter, TResult>
+		: ICommand<TParameter>, IActivateMarker<Func<TParameter, TResult>>
+	{
+		readonly Func<TParameter, TResult> _delegate;
 
-		public void Execute(T parameter)
+		public InvokeParameterCommand(Func<TParameter, TResult> @delegate) => _delegate = @delegate;
+
+		public void Execute(TParameter parameter)
 		{
 			_delegate(parameter);
 		}

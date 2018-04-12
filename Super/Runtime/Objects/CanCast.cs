@@ -2,7 +2,7 @@
 using Super.Model.Specifications;
 using Super.Reflection;
 
-namespace Super.Runtime
+namespace Super.Runtime.Objects
 {
 	public sealed class CanCast<TFrom, TTo> : DecoratedSpecification<TFrom>
 	{

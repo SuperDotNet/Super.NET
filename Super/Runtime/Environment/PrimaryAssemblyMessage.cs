@@ -1,4 +1,5 @@
-﻿using System.Reactive;
+﻿using Super.Text;
+using System.Reactive;
 
 namespace Super.Runtime.Environment
 {

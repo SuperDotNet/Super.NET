@@ -13,6 +13,10 @@ namespace Super.Model.Selection.Stores
 					ReferenceValueTables<TParameter, TResult>>(x => new ReferenceValueTables<TParameter, TResult>(x))
 				.Get(new ConditionalWeakTable<Func<TParameter, TResult>, ReferenceValueTables<TParameter, TResult>>());
 
+		public static ReferenceValueTables<TParameter, TResult> Default { get; } = new ReferenceValueTables<TParameter, TResult>();
+
+		ReferenceValueTables() : this(Default<TParameter, TResult>.Instance.Get) {}
+
 		readonly Func<TParameter, TResult> _source;
 
 		public ReferenceValueTables(Func<TParameter, TResult> source) => _source = source;

@@ -48,6 +48,12 @@ namespace Super.ExtensionMethods
 		public static ICommand<T> ToCommand<T>(this ISource<ICommand<T>> @this)
 			=> Activations<ISource<ICommand<T>>, DelegatedInstanceCommand<T>>.Default.Get(@this);
 
+		public static ICommand<TParameter> ToCommand<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
+			=> @this.ToDelegate().ToCommand();
+
+		public static ICommand<TParameter> ToCommand<TParameter, TResult>(this Func<TParameter, TResult> @this)
+			=> @this.To(I<InvokeParameterCommand<TParameter, TResult>>.Default);
+
 		public static void Assign<TKey, TValue>(this IAssignable<TKey, TValue> @this, TKey key, TValue value)
 			=> @this.Executed(Pairs.Create(key, value)).Return(@this);
 

@@ -1,11 +1,15 @@
-﻿using System;
-using System.Collections.Immutable;
-using Serilog;
+﻿using Serilog;
 using Super.Model.Commands;
+using Super.Runtime.Activation;
+using System;
+using System.Collections.Immutable;
+using System.Linq;
 
 namespace Super.Diagnostics
 {
-	public class LogMessage : ICommand<ImmutableArray<object>>
+	public interface ILogMessage<in T> : ICommand<T>, IActivateMarker<ILogger> {}
+
+	public class LogMessage : ILogMessage<ImmutableArray<object>>
 	{
 		readonly Message _action;
 		readonly string  _messageTemplate;
@@ -18,10 +22,10 @@ namespace Super.Diagnostics
 			_messageTemplate = messageTemplate;
 		}
 
-		public void Execute(ImmutableArray<object> parameter) => _action(_messageTemplate, parameter);
+		public void Execute(ImmutableArray<object> parameter) => _action(_messageTemplate, parameter.ToArray());
 	}
 
-	public class LogMessage<T> : ICommand<T>
+	public class LogMessage<T> : ILogMessage<T>
 	{
 		readonly Message<T> _action;
 		readonly string     _messageTemplate;
@@ -37,7 +41,7 @@ namespace Super.Diagnostics
 		public void Execute(T parameter) => _action(_messageTemplate, parameter);
 	}
 
-	public class LogMessage<T1, T2> : ICommand<ValueTuple<T1, T2>>
+	public class LogMessage<T1, T2> : ILogMessage<ValueTuple<T1, T2>>
 	{
 		readonly Message<T1, T2> _action;
 		readonly string          _messageTemplate;
@@ -53,7 +57,7 @@ namespace Super.Diagnostics
 		public void Execute(ValueTuple<T1, T2> parameter) => _action(_messageTemplate, parameter.Item1, parameter.Item2);
 	}
 
-	public class LogMessage<T1, T2, T3> : ICommand<ValueTuple<T1, T2, T3>>
+	public class LogMessage<T1, T2, T3> : ILogMessage<ValueTuple<T1, T2, T3>>
 	{
 		readonly Message<T1, T2, T3> _action;
 		readonly string              _messageTemplate;

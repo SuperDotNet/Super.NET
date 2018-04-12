@@ -1,28 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using Super.Model.Specifications;
+﻿using Super.Model.Specifications;
+using System;
+using System.Collections.Immutable;
 
 namespace Super.Runtime.Activation
 {
-	sealed class ServiceProvider : IServiceProvider, ISpecification<Type>
+	public class ServiceProvider : IServiceProvider, ISpecification<Type>
 	{
-		readonly IList<object> _services;
+		readonly ImmutableArray<object> _services;
+		readonly int _length;
 
-		public ServiceProvider(params object[] services) : this(services.ToList()) {}
+		public ServiceProvider(params object[] services) : this(services.ToImmutableArray()) {}
 
-		public ServiceProvider(IList<object> services) => _services = services;
+		public ServiceProvider(ImmutableArray<object> services) : this(services, services.Length) {}
+
+		ServiceProvider(ImmutableArray<object> services, int length)
+		{
+			_services = services;
+			_length = length;
+		}
 
 		public object GetService(Type serviceType)
 		{
-			var info   = serviceType.GetTypeInfo();
-			var length = _services.Count;
-
-			for (var i = 0; i < length; i++)
+			for (var i = 0; i < _length; i++)
 			{
 				var item = _services[i];
-				if (info.IsInstanceOfType(item))
+				if (serviceType.IsInstanceOfType(item))
 				{
 					return item;
 				}
@@ -33,11 +35,9 @@ namespace Super.Runtime.Activation
 
 		public bool IsSatisfiedBy(Type parameter)
 		{
-			var length = _services.Count;
-			for (var i = 0; i < length; i++)
+			for (var i = 0; i < _length; i++)
 			{
-				var item = _services[i];
-				if (parameter.IsInstanceOfType(item))
+				if (parameter.IsInstanceOfType(_services[i]))
 				{
 					return true;
 				}

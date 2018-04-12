@@ -1,13 +1,34 @@
 ﻿using Serilog;
+using Serilog.Configuration;
 using Super.Diagnostics;
-using Super.Model.Selection.Alterations;
+using Super.Model.Sources;
+using System;
 
 namespace Super.Application.Console
 {
-	sealed class ConsoleConfiguration : DelegatedAlteration<LoggerConfiguration>, ILoggingConfiguration
+	public sealed class ConsoleConfiguration : ILoggingSinkConfiguration
 	{
-		public static ConsoleConfiguration Default { get; } = new ConsoleConfiguration();
+		readonly IFormatProvider _provider;
+		readonly LoggingLevelController _controller;
+		readonly string _template;
 
-		ConsoleConfiguration() : base(x => x.WriteTo.ColoredConsole()) {}
+		public ConsoleConfiguration(IFormatProvider provider)
+			: this(provider, LoggingLevelController.Default, ConsoleMessageTemplate.Default) {}
+
+		public ConsoleConfiguration(IFormatProvider provider, LoggingLevelController controller, string template)
+		{
+			_provider = provider;
+			_controller = controller;
+			_template = template;
+		}
+
+		public LoggerConfiguration Get(LoggerSinkConfiguration parameter) => parameter.Console(formatProvider: _provider, outputTemplate: _template, levelSwitch: _controller);
+	}
+
+	sealed class ConsoleMessageTemplate : Source<string>
+	{
+		public static ConsoleMessageTemplate Default { get; } = new ConsoleMessageTemplate();
+
+		ConsoleMessageTemplate() : base("[{Timestamp:HH:mm:ss} {Level:u3}] {Message:l}{NewLine}{Exception}") {}
 	}
 }

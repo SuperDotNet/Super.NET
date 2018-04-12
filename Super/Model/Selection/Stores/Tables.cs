@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Concurrent;
-using Super.ExtensionMethods;
+﻿using Super.ExtensionMethods;
 using Super.Model.Specifications;
 using Super.Reflection;
 using Super.Runtime.Activation;
+using System;
+using System.Collections.Concurrent;
 
 namespace Super.Model.Selection.Stores
 {
@@ -20,5 +20,11 @@ namespace Super.Model.Selection.Stores
 			                : new Generic<ISelect<Func<TParameter, TResult>, ITable<TParameter, TResult>>>(typeof(ReferenceTables<,>))
 			                  .Get(typeof(TParameter), typeof(TResult))()
 			                  .ToDelegate()) {}
+	}
+
+	public static class Tables
+	{
+		public static ITable<TParameter, TResult> From<TParameter, TResult>(this Func<TParameter, TResult> @this)
+			=> Tables<TParameter, TResult>.Default.Get(@this);
 	}
 }

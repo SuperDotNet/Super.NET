@@ -3,7 +3,7 @@ using Super.Model.Sources;
 
 namespace Super.Diagnostics
 {
-	sealed class LoggingLevelController : Source<LoggingLevelSwitch>
+	public sealed class LoggingLevelController : Source<LoggingLevelSwitch>
 	{
 		public static LoggingLevelController Default { get; } = new LoggingLevelController();
 
