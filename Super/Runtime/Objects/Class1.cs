@@ -6,6 +6,7 @@ using Super.Reflection;
 using Super.Runtime.Activation;
 using Super.Runtime.Invocation;
 using Super.Runtime.Invocation.Expressions;
+using Super.Text;
 using Super.Text.Formatting;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,7 @@ namespace Super.Runtime.Objects
 
 		public Projection(string text, Type instanceType, IDictionary<string, object> properties)
 		{
-			_text = text;
+			_text        = text;
 			_properties  = properties;
 			InstanceType = instanceType;
 		}
@@ -49,52 +50,38 @@ namespace Super.Runtime.Objects
 		public override string ToString() => _text;
 	}
 
-	public sealed class ApplicationDomainProjection : Projection<AppDomain>
+	sealed class ApplicationDomainProjection : Projection<AppDomain>
 	{
 		public static ApplicationDomainProjection Default { get; } = new ApplicationDomainProjection();
 
 		ApplicationDomainProjection()
-			: base(DefaultApplicationDomainFormatter.Default.ToDelegate(), x => x.FriendlyName, x => x.Id) {}
+			: base(DefaultApplicationDomainFormatter.Default, x => x.FriendlyName, x => x.Id) {}
 	}
 
-	/*public sealed class ApplicationDomainProjections : Projections<AppDomain>
+	sealed class ApplicationDomainProjections : Projections<AppDomain>
 	{
 		public static ApplicationDomainProjections Default { get; } = new ApplicationDomainProjections();
 
 		ApplicationDomainProjections()
 			: base(ApplicationDomainProjection.Default,
-			       ApplicationDomainFormatter.Default.Profile("F", x => x.FriendlyName, x => x.Id, x => x.IsFullyTrusted),
-			       ApplicationDomainFormatter.Default.Profile("I", x => x.FriendlyName, x => x.Id, x => x.BaseDirectory,
-			                                                  x => x.RelativeSearchPath)) {}
+			       ApplicationDomainName.Default.Project(x => x.FriendlyName, x => x.Id, x => x.IsFullyTrusted),
+			       ApplicationDomainIdentifier.Default.Project(x => x.FriendlyName, x => x.Id, x => x.BaseDirectory,
+			                                                   x => x.RelativeSearchPath)) {}
 	}
 
-	sealed class ProjectionProfile<T>
+	class Projections<T> : TextSelect<T, Projection>
 	{
-		public ProjectionProfile(string name, string format, params Expression<Func<T, object>>[] expressions)
-			: this(name, format, expressions.ToImmutableArray()) {}
-
-		public ProjectionProfile(string name, string format, ImmutableArray<Expression<Func<T, object>>> expressions)
-		{
-			Name        = name;
-			Format      = format;
-			Expressions = expressions;
-		}
-
-		public string Name { get; }
-		public string Format { get; }
-		public ImmutableArray<Expression<Func<T, object>>> Expressions { get; }
-	}*/
-
-	/*class Projections<T> : NamedSelection<T, Projection>
-	{
-		public Projections(ISelect<T, Projection> @default, params KeyValuePair<string, Func<T, Projection>>[] options)
-			: base(@default, options) {}
-	}*/
+		public Projections(ISelect<T, Projection> @default, params KeyValuePair<string, Func<T, Projection>>[] pairs) :
+			base(@default, pairs) {}
+	}
 
 	public class Projection<T> : ISelect<T, Projection>
 	{
-		readonly Func<T, string>               _formatter;
+		readonly Func<T, string>              _formatter;
 		readonly ImmutableArray<IProperty<T>> _properties;
+
+		public Projection(ISelect<T, string> formatter, params Expression<Func<T, object>>[] expressions)
+			: this(formatter.ToDelegate(), expressions) {}
 
 		public Projection(Func<T, string> formatter, params Expression<Func<T, object>>[] expressions)
 			: this(formatter, expressions.Select(I<Property<T>>.Default.From).ToImmutableArray<IProperty<T>>()) {}
@@ -131,8 +118,9 @@ namespace Super.Runtime.Objects
 
 	public interface IProperty<in T> : ISelect<T, KeyValuePair<string, object>> {}
 
-	sealed class Property<T> : Decorated<T, KeyValuePair<string, object>>, IProperty<T>,
-	                                    IActivateMarker<Expression<Func<T, object>>>
+	sealed class Property<T> : Decorated<T, KeyValuePair<string, object>>,
+	                           IProperty<T>,
+	                           IActivateMarker<Expression<Func<T, object>>>
 	{
 		[UsedImplicitly]
 		public Property(Expression<Func<T, object>> expression)

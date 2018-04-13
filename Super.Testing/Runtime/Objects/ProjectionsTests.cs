@@ -22,5 +22,30 @@ namespace Super.Testing.Runtime.Objects
 			int id = dynamic.Id;
 			id.Should().Be(AppDomain.CurrentDomain.Id);
 		}
+
+		[Fact]
+		void VerifySelection()
+		{
+			var projection = ApplicationDomainProjections.Default.Get("F")(AppDomain.CurrentDomain);
+			projection.InstanceType.Should().Be(typeof(AppDomain));
+			projection.GetDynamicMemberNames()
+			          .Should()
+			          .BeEquivalentTo(nameof(AppDomain.FriendlyName).Yield(nameof(AppDomain.Id)).Append(nameof(AppDomain.IsFullyTrusted)));
+		}
+
+		[Fact]
+		void VerifyDefaultSelection()
+		{
+			var projection = ApplicationDomainProjections.Default.Get(null)(AppDomain.CurrentDomain);
+			projection.InstanceType.Should().Be(typeof(AppDomain));
+			projection.GetDynamicMemberNames()
+			          .Should()
+			          .BeEquivalentTo(nameof(AppDomain.FriendlyName).Yield(nameof(AppDomain.Id)));
+			var    dynamic = projection.To<dynamic>();
+			string name    = dynamic.FriendlyName;
+			name.Should().Be(AppDomain.CurrentDomain.FriendlyName);
+			int id = dynamic.Id;
+			id.Should().Be(AppDomain.CurrentDomain.Id);
+		}
 	}
 }

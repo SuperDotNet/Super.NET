@@ -21,7 +21,9 @@ namespace Super.Runtime
 			=> @pairs.ToSelect();
 	}
 
-	class Pair<TKey, TValue> : Source<KeyValuePair<TKey, TValue>>
+	public interface IPair<TKey, TValue> : ISource<KeyValuePair<TKey, TValue>> {}
+
+	class Pair<TKey, TValue> : Source<KeyValuePair<TKey, TValue>>, IPair<TKey, TValue>
 	{
 		protected Pair(TKey key, TValue value) : base(Pairs.Create(key, value)) {}
 	}

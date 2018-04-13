@@ -72,7 +72,7 @@ namespace Super.Text.Formatting
 
 	sealed class Formatters<T> : ISelect<T, IFormattable>,
 	                             IActivateMarker<IFormatter<T>>,
-	                             IActivateMarker<INamedFormatter<T>>
+	                             IActivateMarker<ISelectFormatter<T>>
 	{
 		readonly Func<string, Func<T, string>> _select;
 
@@ -80,7 +80,7 @@ namespace Super.Text.Formatting
 		public Formatters(IFormatter<T> formatter) : this(formatter.ToDelegate().Accept) {}
 
 		[UsedImplicitly]
-		public Formatters(INamedFormatter<T> formatter) : this(formatter.Get) {}
+		public Formatters(ISelectFormatter<T> formatter) : this(formatter.Get) {}
 
 		public Formatters(Func<string, Func<T, string>> select) => _select = @select;
 
@@ -96,15 +96,12 @@ namespace Super.Text.Formatting
 		public string Get(AppDomain parameter) => $"AppDomain: {parameter.FriendlyName}";
 	}
 
-	class Format<T> : Pair<string, Func<T, string>>
+	public interface IFormat<T> : IPair<string, Func<T, string>> {}
+
+	class Format<T> : Pair<string, Func<T, string>>, IFormat<T>
 	{
 		protected Format(string key, Func<T, string> value) : base(key, value) {}
 	}
-
-	/*sealed class DefaultFormat<T> : Format<T>, IActivateMarker<Func<T, string>>
-	{
-		public DefaultFormat(Func<T, string> value) : base(string.Empty, value) {}
-	}*/
 
 	sealed class ApplicationDomainName : Format<AppDomain>
 	{
@@ -121,17 +118,17 @@ namespace Super.Text.Formatting
 	}
 
 
-	sealed class ApplicationDomainFormatter : TextSelect<AppDomain, string>, INamedFormatter<AppDomain>
+	sealed class ApplicationDomainFormatter : TextSelect<AppDomain, string>, ISelectFormatter<AppDomain>
 	{
 		public static ApplicationDomainFormatter Default { get; } = new ApplicationDomainFormatter();
 
 		ApplicationDomainFormatter()
-			: base(Pairs.From(ApplicationDomainName.Default,
-			                  ApplicationDomainIdentifier.Default)
-			            .Or(DefaultApplicationDomainFormatter.Default.AsDefault())) {}
+			: base(DefaultApplicationDomainFormatter.Default,
+			       ApplicationDomainName.Default,
+			       ApplicationDomainIdentifier.Default) {}
 	}
 
-	public interface INamedFormatter<in T> : ISelect<string, Func<T, string>> {}
+	public interface ISelectFormatter<in T> : ISelect<string, T, string> {}
 
 	sealed class DefaultFormatter : Adapter<object>
 	{
