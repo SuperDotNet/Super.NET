@@ -1,11 +1,14 @@
-﻿using Super.Runtime.Activation;
+﻿using Super.ExtensionMethods;
+using Super.Runtime.Activation;
 using System.Collections.Generic;
 
 namespace Super.Model.Selection.Stores
 {
-	public class Lookup<TParameter, TResult> : ISpecification<TParameter, TResult>, IActivateMarker<IReadOnlyDictionary<TParameter, TResult>>
+	public class Lookup<TParameter, TResult> : ISpecification<TParameter, TResult>, IActivateMarker<IReadOnlyDictionary<TParameter, TResult>>, IActivateMarker<IDictionary<TParameter, TResult>>
 	{
 		readonly IReadOnlyDictionary<TParameter, TResult> _store;
+
+		public Lookup(IDictionary<TParameter, TResult> dictionary) : this(dictionary.AsReadOnly()) {}
 
 		public Lookup(IReadOnlyDictionary<TParameter, TResult> store) => _store = store;
 

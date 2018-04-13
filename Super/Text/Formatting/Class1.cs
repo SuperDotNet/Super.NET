@@ -1,8 +1,9 @@
-﻿using Super.ExtensionMethods;
+﻿using JetBrains.Annotations;
+using Super.ExtensionMethods;
 using Super.Model.Selection;
+using Super.Runtime;
 using Super.Runtime.Activation;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 
 namespace Super.Text.Formatting
@@ -46,25 +47,21 @@ namespace Super.Text.Formatting
 
 		KnownFormatters() : this(ApplicationDomainFormatter.Default.Register()) {}
 
-		readonly ISpecification<Type, Func<object, IFormattable>> _source;
+		readonly ISelect<object, Func<object, IFormattable>> _source;
 
-		public KnownFormatters(params KeyValuePair<Type, Func<object, IFormattable>>[] registrations)
-			: this(registrations.ToDictionary().ToTable()) {}
+		public KnownFormatters(ISelect<object, Func<object, IFormattable>> source) => _source = source;
 
-		public KnownFormatters(ISpecification<Type, Func<object, IFormattable>> source) => _source = source;
-
-		public IFormattable Get(object parameter)
-			=> _source.IsSatisfiedBy(parameter.GetType()) ? _source.Get(parameter.GetType())(parameter) : null;
+		public IFormattable Get(object parameter) => _source.Get(parameter)?.Invoke(parameter);
 	}
 
-	class Formatter<T> : IFormattable, IActivateMarker<T>
+	class Adapter<T> : IFormattable, IActivateMarker<T>
 	{
 		readonly T                             _subject;
 		readonly Func<string, Func<T, string>> _selector;
 
-		public Formatter(T subject, ISelect<T, string> format) : this(subject, format.ToDelegate().Accept) {}
+		public Adapter(T subject, ISelect<T, string> format) : this(subject, format.ToDelegate().Accept) {}
 
-		public Formatter(T subject, Func<string, Func<T, string>> selector)
+		public Adapter(T subject, Func<string, Func<T, string>> selector)
 		{
 			_subject  = subject;
 			_selector = selector;
@@ -73,17 +70,21 @@ namespace Super.Text.Formatting
 		public string ToString(string format, IFormatProvider formatProvider) => _selector(format)(_subject);
 	}
 
-	sealed class Formatters<T> : ISelect<T, IFormattable>, IActivateMarker<IFormatter<T>>, IActivateMarker<INamedFormatter<T>>
+	sealed class Formatters<T> : ISelect<T, IFormattable>,
+	                             IActivateMarker<IFormatter<T>>,
+	                             IActivateMarker<INamedFormatter<T>>
 	{
 		readonly Func<string, Func<T, string>> _select;
 
+		[UsedImplicitly]
 		public Formatters(IFormatter<T> formatter) : this(formatter.ToDelegate().Accept) {}
 
+		[UsedImplicitly]
 		public Formatters(INamedFormatter<T> formatter) : this(formatter.Get) {}
 
 		public Formatters(Func<string, Func<T, string>> select) => _select = @select;
 
-		public IFormattable Get(T parameter) => new Formatter<T>(parameter, _select);
+		public IFormattable Get(T parameter) => new Adapter<T>(parameter, _select);
 	}
 
 	sealed class DefaultApplicationDomainFormatter : IFormatter<AppDomain>
@@ -95,29 +96,44 @@ namespace Super.Text.Formatting
 		public string Get(AppDomain parameter) => $"AppDomain: {parameter.FriendlyName}";
 	}
 
-	sealed class ApplicationDomainFormatter : NamedFormatter<AppDomain>
+	class Format<T> : Pair<string, Func<T, string>>
+	{
+		protected Format(string key, Func<T, string> value) : base(key, value) {}
+	}
+
+	/*sealed class DefaultFormat<T> : Format<T>, IActivateMarker<Func<T, string>>
+	{
+		public DefaultFormat(Func<T, string> value) : base(string.Empty, value) {}
+	}*/
+
+	sealed class ApplicationDomainName : Format<AppDomain>
+	{
+		public static ApplicationDomainName Default { get; } = new ApplicationDomainName();
+
+		ApplicationDomainName() : base("F", x => x.FriendlyName) {}
+	}
+
+	sealed class ApplicationDomainIdentifier : Format<AppDomain>
+	{
+		public static ApplicationDomainIdentifier Default { get; } = new ApplicationDomainIdentifier();
+
+		ApplicationDomainIdentifier() : base("I", x => x.Id.ToString()) {}
+	}
+
+
+	sealed class ApplicationDomainFormatter : TextSelect<AppDomain, string>, INamedFormatter<AppDomain>
 	{
 		public static ApplicationDomainFormatter Default { get; } = new ApplicationDomainFormatter();
 
-		ApplicationDomainFormatter() : base(DefaultApplicationDomainFormatter.Default,
-		                                    new Formats<AppDomain>
-		                                    {
-			                                    {"F", x => x.FriendlyName},
-			                                    {"I", x => x.Id.ToString()}
-		                                    }) {}
+		ApplicationDomainFormatter()
+			: base(Pairs.From(ApplicationDomainName.Default,
+			                  ApplicationDomainIdentifier.Default)
+			            .Or(DefaultApplicationDomainFormatter.Default.AsDefault())) {}
 	}
-
-	sealed class Formats<T> : Dictionary<string, Func<T, string>> {}
 
 	public interface INamedFormatter<in T> : ISelect<string, Func<T, string>> {}
 
-	class NamedFormatter<T> : NamedSelection<T, string>, INamedFormatter<T>
-	{
-		public NamedFormatter(ISelect<T, string> @default, IEnumerable<KeyValuePair<string, Func<T, string>>> options)
-			: base(@default, options) {}
-	}
-
-	sealed class DefaultFormatter : Formatter<object>
+	sealed class DefaultFormatter : Adapter<object>
 	{
 		public DefaultFormatter(object subject) : base(subject, TextSelector<object>.Default) {}
 	}

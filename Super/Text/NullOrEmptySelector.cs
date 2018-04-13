@@ -1,4 +1,7 @@
-﻿using Super.Model.Selection.Alterations;
+﻿using Super.ExtensionMethods;
+using Super.Model.Selection;
+using Super.Model.Selection.Alterations;
+using System;
 
 namespace Super.Text
 {
@@ -9,5 +12,11 @@ namespace Super.Text
 		NullOrEmptySelector() {}
 
 		public string Get(string parameter) => parameter ?? string.Empty;
+	}
+
+	class TextSelect<TParameter, TResult> : Select<string, TParameter, TResult>
+	{
+		public TextSelect(ISelect<string, Func<TParameter, TResult>> @select)
+			: base(select.In(NullOrEmptySelector.Default).ToDelegate()) {}
 	}
 }

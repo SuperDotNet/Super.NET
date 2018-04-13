@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Super.Model.Collections;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -19,7 +20,13 @@ namespace Super.ExtensionMethods
 		                                                                  IEqualityComparer<TKey> comparer = null)
 			=> @this.ToDictionary(x => x.Key, x => x.Value, comparer);
 
-		public static IReadOnlyDictionary<TKey, TValue> AsReadOnly<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> @this)
+		public static OrderedDictionary<TKey, TValue> ToOrderedDictionary<TKey, TValue>(
+			this IEnumerable<KeyValuePair<TKey, TValue>> @this,
+			IEqualityComparer<TKey> comparer = null)
+			=> @this.ToOrderedDictionary(x => x.Key, x => x.Value, comparer);
+
+		public static IReadOnlyDictionary<TKey, TValue> AsReadOnly<TKey, TValue>(
+			this IEnumerable<KeyValuePair<TKey, TValue>> @this)
 			=> new ReadOnlyDictionary<TKey, TValue>(@this.ToDictionary());
 
 		public static TResult AsTo<TSource, TResult>(this object target, Func<TSource, TResult> transform,

@@ -1,11 +1,11 @@
-﻿using System;
-using System.Linq.Expressions;
-using Super.ExtensionMethods;
+﻿using Super.ExtensionMethods;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
 using Super.Model.Selection.Stores;
 using Super.Model.Specifications;
 using Super.Runtime.Objects;
+using System;
+using System.Linq.Expressions;
 
 namespace Super.Runtime.Invocation.Expressions
 {
@@ -38,7 +38,7 @@ namespace Super.Runtime.Invocation.Expressions
 		{
 			var alteration    = _alteration(parameter);
 			var specification = _specification(parameter);
-			var result        = alteration.Or(specification).ToAlteration();
+			var result        = alteration.When(specification).ToAlteration();
 			return result;
 		}
 	}

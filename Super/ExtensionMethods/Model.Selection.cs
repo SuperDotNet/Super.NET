@@ -5,6 +5,7 @@ using Super.Model.Sources;
 using Super.Model.Specifications;
 using Super.Reflection;
 using Super.Runtime;
+using Super.Runtime.Activation;
 using Super.Runtime.Objects;
 using Super.Text;
 using System;
@@ -17,6 +18,9 @@ namespace Super.ExtensionMethods
 {
 	partial class Model
 	{
+		public static ISelect<TParameter, TIn, TOut> Allow<TParameter, TIn, TOut>(this Func<TIn, TOut> @this, I<TParameter> infer)
+			=> I<Select<TParameter, TIn, TOut>>.Default.From(@this.ToInstance().Allow(infer).ToDelegate());
+
 		public static ISelect<TParameter, TResult> Guard<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this) => @this.Or(GuardedFallback<TParameter, TResult>.Default);
 
@@ -39,16 +43,9 @@ namespace Super.ExtensionMethods
 			this ISelect<TParameter, TResult> @this, ISource<TResult> source)
 			=> @this.Or(source.Allow(I<TParameter>.Default));
 
-		/*public static ISource<TParameter, TResult> Or<TParameter, TResult>(
-			this ISource<TParameter, TResult> @this) => @this.Or(@this.Default());*/
-
 		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, ISelect<TParameter, TResult> next)
 			=> @this.Or(IsAssigned<TResult>.Default, next);
-
-		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(
-			this ISelect<TParameter, TResult> @this, ISpecification<TResult> specification)
-			=> @this.Or(specification, @this.Default());
 
 		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, ISpecification<TResult> specification,
@@ -64,9 +61,31 @@ namespace Super.ExtensionMethods
 			Func<TParameter, TResult> fallback)
 			=> new ValidatedResult<TParameter, TResult>(specification, @this, fallback);
 
+		public static KeyValuePair<TParameter, Func<TIn, TOut>> Pair<TParameter, TIn, TOut>(
+			this ISelect<TIn, TOut> @this, TParameter parameter, Func<TIn, TOut> select)
+			=> Pairs.Create(parameter, select);
+
+		public static ISelect<TSelect, Func<TParameter, TResult>> Unless<TSelect, TParameter, TResult>(
+			this ISelect<TParameter, TResult> @this, ISpecification<TSelect> select, ISelect<TParameter, TResult> then)
+			=> @this.ToDelegate()
+			        .ToInstance()
+			        .Allow(I<TSelect>.Default)
+			        .Unless(select, then);
+
+		public static ISelect<TSelect, Func<TParameter, TResult>> Unless<TSelect, TParameter, TResult>(
+			this ISelect<TSelect, Func<TParameter, TResult>> @this, ISpecification<TSelect> select,
+			ISelect<TParameter, TResult> then)
+			=> @this.Unless<TSelect, Func<TParameter, TResult>>(select,
+			                                                    then.ToDelegate().ToInstance().Allow(I<TSelect>.Default));
+
 		public static ISelect<TParameter, TResult> Unless<TParameter, TResult, TOther>(
-			this ISelect<TParameter, TResult> @this, ISelect<TOther, TResult> other)
-			=> IsTypeSpecification<TParameter, TOther>.Default.If(other.In(Cast<TParameter>.Default), @this);
+			this ISelect<TParameter, TResult> @this, ISelect<TOther, TResult> then)
+			=> @this.Unless<TParameter, TResult>(IsTypeSpecification<TParameter, TOther>.Default,
+			                                     then.In(Cast<TParameter>.Default));
+
+		public static ISelect<TParameter, TResult> Unless<TParameter, TResult>(
+			this ISelect<TParameter, TResult> @this, ISpecification<TParameter> specification, ISelect<TParameter, TResult> then)
+			=> specification.If(then, @this);
 
 		public static ISelect<TParameter, TResult> Configure<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, IAssignable<TParameter, TResult> assignable)
@@ -98,9 +117,6 @@ namespace Super.ExtensionMethods
 		public static ISelect<TParameter, TResult> ToStore<TParameter, TResult>(this Func<TParameter, TResult> @this)
 			where TParameter : class => ReferenceStores<TParameter, TResult>.Default.Get(@this);
 
-		public static ISelect<TParameter, TResult> ToSource<TParameter, TResult>(
-			this TResult @this, ISpecification<TParameter> specification)
-			=> new Conditional<TParameter, TResult>(specification, @this, default);
 
 		public static ISelect<Unit, T> ToSource<T>(this T @this)
 			=> @this.ToSource(I<Unit>.Default);
@@ -113,13 +129,24 @@ namespace Super.ExtensionMethods
 
 		public static ISelect<TParameter, TResult> ToSource<TParameter, TResult, TAttribute>(
 			this TResult @this, I<TAttribute> _) where TAttribute : Attribute
-			=> @this.ToSource(IsDefinedSpecification<TAttribute>
-			                  .Default
-			                  .Select(InstanceMetadataSelector<TParameter>.Default));
+			=> @this.OrDefault(IsDefinedSpecification<TAttribute>.Default.Select(InstanceMetadataSelector<TParameter>.Default));
+
+		public static ISpecification<TParameter, TResult> ToSpecification<TParameter, TResult>(
+			this ISelect<TParameter, TResult> @this,
+			ISpecification<TParameter> specification)
+			=> new Specification<TParameter, TResult>(specification, @this);
 
 		public static TResult Get<TItem, TResult>(this ISelect<ImmutableArray<TItem>, TResult> @this,
 		                                          params TItem[] parameters)
 			=> @this.Get(parameters.ToImmutableArray());
+
+		public static ISelect<TParameter, TResult> When<TParameter, TResult>(
+			this ISelect<TParameter, TResult> @this, ISpecification<TResult> specification)
+			=> @this.Or(specification, @this.Default());
+
+		public static ISelect<TParameter, TResult> OrDefault<TParameter, TResult>(
+			this TResult @this, ISpecification<TParameter> specification)
+			=> new Conditional<TParameter, TResult>(specification, @this, default);
 
 		public static ISelect<TParameter, TResult> Composite<TParameter, TResult>(
 			this IEnumerable<ISelect<TParameter, TResult>> @this)

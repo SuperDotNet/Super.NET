@@ -21,10 +21,11 @@ namespace Super.ExtensionMethods
 			=> new DelegatedSelection<TFrom, TTo>(select, @this.ToDelegate());
 
 		public static ISource<TResult> Select<TParameter, TResult>(this ISelect<TParameter, TResult> @this,
-		                                                             TParameter parameter)
+		                                                           TParameter parameter)
 			=> new FixedSelection<TParameter, TResult>(@this, parameter);
 
-		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(this ISource<TResult> @this, ISelect<TParameter, TResult> @select)
+		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(this ISource<TResult> @this,
+		                                                                   ISelect<TParameter, TResult> @select)
 			=> @this.Allow(I<TParameter>.Default).Or(@select);
 
 		public static ISource<T> Or<T>(this ISource<T> @this, ISource<T> fallback)
@@ -41,12 +42,19 @@ namespace Super.ExtensionMethods
 			=> @this.Select(select).Get();
 
 		public static TResult Get<TParameter, TResult>(this ISource<TParameter> @this,
-		                                                  ISelect<TParameter, TResult> @select)
+		                                               ISelect<TParameter, TResult> @select)
 			=> @this.Get(@select.ToDelegate());
 
 		public static TResult Any<TParameter, TResult>(this ISource<TResult> @this, TParameter _) => @this.Get();
 
-		public static ISelect<Unit, T> Allow<T>(this ISource<T> @this) => @this.Allow(I<Unit>.Default);
+		public static ISelect<Unit, T> In<T>(this ISource<T> @this) => @this.Allow(I<Unit>.Default);
+
+		public static ISpecification<TParameter, TResult> Allow<TParameter, TResult>(
+			this TResult @this, ISpecification<TParameter> specification)
+			=> @this.ToSource(I<TParameter>.Default).ToSpecification(specification);
+
+		public static ISelect<TParameter, TResult> Allow<TParameter, TResult>(this TResult @this, I<TParameter> infer)
+			=> @this.ToInstance().Allow(infer);
 
 		public static ISelect<TParameter, TResult> Allow<TParameter, TResult>(this ISource<TResult> @this, I<TParameter> _)
 			=> new DelegatedResult<TParameter, TResult>(@this.ToDelegate());

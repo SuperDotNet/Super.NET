@@ -6,6 +6,7 @@ using Super.Reflection;
 using Super.Runtime.Activation;
 using Super.Runtime.Invocation;
 using Super.Runtime.Invocation.Expressions;
+using Super.Text.Formatting;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -15,35 +16,17 @@ using System.Linq.Expressions;
 
 namespace Super.Runtime.Objects
 {
-	sealed class Values<T> : ItemsBase<KeyValuePair<string, object>>
+	public sealed class Projection : DynamicObject
 	{
-		readonly T                             _subject;
-		readonly ImmutableArray<Definition<T>> _properties;
+		readonly string                      _text;
+		readonly IDictionary<string, object> _properties;
 
-		public Values(T subject, ImmutableArray<Definition<T>> properties)
+		public Projection(string text, Type instanceType, IEnumerable<KeyValuePair<string, object>> properties)
+			: this(text, instanceType, properties.ToOrderedDictionary()) {}
+
+		public Projection(string text, Type instanceType, IDictionary<string, object> properties)
 		{
-			_subject    = subject;
-			_properties = properties;
-		}
-
-		public override IEnumerator<KeyValuePair<string, object>> GetEnumerator()
-		{
-			foreach (var property in _properties)
-			{
-				yield return property.Get(_subject);
-			}
-		}
-	}
-
-	sealed class Projection : DynamicObject
-	{
-		readonly OrderedDictionary<string, object> _properties;
-
-		public Projection(Type instanceType, IEnumerable<KeyValuePair<string, object>> properties)
-			: this(instanceType, new OrderedDictionary<string, object>(properties)) {}
-
-		public Projection(Type instanceType, OrderedDictionary<string, object> properties)
-		{
+			_text = text;
 			_properties  = properties;
 			InstanceType = instanceType;
 		}
@@ -62,53 +45,97 @@ namespace Super.Runtime.Objects
 		public override IEnumerable<string> GetDynamicMemberNames() => _properties.Keys;
 
 		public Type InstanceType { get; }
+
+		public override string ToString() => _text;
 	}
 
-	sealed class ApplicationDomainProjection : Projection<AppDomain>
+	public sealed class ApplicationDomainProjection : Projection<AppDomain>
 	{
 		public static ApplicationDomainProjection Default { get; } = new ApplicationDomainProjection();
 
-		ApplicationDomainProjection() : base(x => x.FriendlyName, x => x.Id) {}
+		ApplicationDomainProjection()
+			: base(DefaultApplicationDomainFormatter.Default.ToDelegate(), x => x.FriendlyName, x => x.Id) {}
 	}
 
-	sealed class ApplicationDomainProjections : Projections<AppDomain>
+	/*public sealed class ApplicationDomainProjections : Projections<AppDomain>
 	{
 		public static ApplicationDomainProjections Default { get; } = new ApplicationDomainProjections();
 
-		ApplicationDomainProjections() : base(ApplicationDomainProjection.Default, new Profiles<AppDomain>
+		ApplicationDomainProjections()
+			: base(ApplicationDomainProjection.Default,
+			       ApplicationDomainFormatter.Default.Profile("F", x => x.FriendlyName, x => x.Id, x => x.IsFullyTrusted),
+			       ApplicationDomainFormatter.Default.Profile("I", x => x.FriendlyName, x => x.Id, x => x.BaseDirectory,
+			                                                  x => x.RelativeSearchPath)) {}
+	}
+
+	sealed class ProjectionProfile<T>
+	{
+		public ProjectionProfile(string name, string format, params Expression<Func<T, object>>[] expressions)
+			: this(name, format, expressions.ToImmutableArray()) {}
+
+		public ProjectionProfile(string name, string format, ImmutableArray<Expression<Func<T, object>>> expressions)
 		{
-			{"Primary", new Projection<AppDomain>(x => x.FriendlyName, x => x.Id, x => x.IsFullyTrusted)},
-			{"Diagnostic", new Projection<AppDomain>(x => x.FriendlyName, x => x.Id, x => x.BaseDirectory, x => x.RelativeSearchPath)}
-		}) {}
-	}
+			Name        = name;
+			Format      = format;
+			Expressions = expressions;
+		}
 
-	class Projections<T> : NamedSelection<T, Projection>
+		public string Name { get; }
+		public string Format { get; }
+		public ImmutableArray<Expression<Func<T, object>>> Expressions { get; }
+	}*/
+
+	/*class Projections<T> : NamedSelection<T, Projection>
 	{
-		public Projections(ISelect<T, Projection> @default, Profiles<T> profiles)
-			: this(@default, profiles.ToOrderedDictionary(x => x.Key, x => x.Value.ToDelegate())) {}
+		public Projections(ISelect<T, Projection> @default, params KeyValuePair<string, Func<T, Projection>>[] options)
+			: base(@default, options) {}
+	}*/
 
-		public Projections(ISelect<T, Projection> @default, IEnumerable<KeyValuePair<string, Func<T, Projection>>> options) : base(@default, options) {}
-	}
-
-	sealed class Profiles<T> : OrderedDictionary<string, Projection<T>> {}
-
-	class Projection<T> : ISelect<T, Projection>
+	public class Projection<T> : ISelect<T, Projection>
 	{
-		readonly ImmutableArray<Definition<T>> _properties;
+		readonly Func<T, string>               _formatter;
+		readonly ImmutableArray<IProperty<T>> _properties;
 
-		public Projection(params Expression<Func<T, object>>[] expressions)
-			: this(expressions.Select(I<Definition<T>>.Default.From).ToImmutableArray()) {}
+		public Projection(Func<T, string> formatter, params Expression<Func<T, object>>[] expressions)
+			: this(formatter, expressions.Select(I<Property<T>>.Default.From).ToImmutableArray<IProperty<T>>()) {}
 
-		public Projection(ImmutableArray<Definition<T>> expressions) => _properties = expressions;
+		public Projection(Func<T, string> formatter, ImmutableArray<IProperty<T>> expressions)
+		{
+			_formatter  = formatter;
+			_properties = expressions;
+		}
 
-		public Projection Get(T parameter) => new Projection(parameter.GetType(), new Values<T>(parameter, _properties));
+		public Projection Get(T parameter)
+			=> new Projection(_formatter(parameter), parameter.GetType(), new Values(parameter, _properties));
+
+		sealed class Values : ItemsBase<KeyValuePair<string, object>>
+		{
+			readonly T                            _subject;
+			readonly ImmutableArray<IProperty<T>> _properties;
+
+			public Values(T subject, ImmutableArray<IProperty<T>> properties)
+			{
+				_subject    = subject;
+				_properties = properties;
+			}
+
+			public override IEnumerator<KeyValuePair<string, object>> GetEnumerator()
+			{
+				foreach (var property in _properties)
+				{
+					yield return property.Get(_subject);
+				}
+			}
+		}
 	}
 
-	sealed class Definition<T> : Decorated<T, KeyValuePair<string, object>>,
-	                             IActivateMarker<Expression<Func<T, object>>>
+	public interface IProperty<in T> : ISelect<T, KeyValuePair<string, object>> {}
+
+	sealed class Property<T> : Decorated<T, KeyValuePair<string, object>>, IProperty<T>,
+	                                    IActivateMarker<Expression<Func<T, object>>>
 	{
 		[UsedImplicitly]
-		public Definition(Expression<Func<T, object>> expression)
+		public Property(Expression<Func<T, object>> expression)
 			: base(new Invocation1<string, object, KeyValuePair<string, object>>(Pairs.Create,
 			                                                                     expression.GetMemberInfo().Name)
 				       .In(expression.Compile())) {}

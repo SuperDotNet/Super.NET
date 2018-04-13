@@ -13,9 +13,11 @@ namespace Super.Testing.Runtime.Objects
 		{
 			var projection = ApplicationDomainProjection.Default.Get(AppDomain.CurrentDomain);
 			projection.InstanceType.Should().Be(typeof(AppDomain));
-			projection.GetDynamicMemberNames().Should().HaveCount(2);
-			var dynamic = projection.To<dynamic>();
-			string name = dynamic.FriendlyName;
+			projection.GetDynamicMemberNames()
+			          .Should()
+			          .BeEquivalentTo(nameof(AppDomain.FriendlyName).Yield(nameof(AppDomain.Id)));
+			var    dynamic = projection.To<dynamic>();
+			string name    = dynamic.FriendlyName;
 			name.Should().Be(AppDomain.CurrentDomain.FriendlyName);
 			int id = dynamic.Id;
 			id.Should().Be(AppDomain.CurrentDomain.Id);
