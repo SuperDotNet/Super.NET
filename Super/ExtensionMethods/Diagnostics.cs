@@ -24,6 +24,9 @@ namespace Super.ExtensionMethods
 		public static IAlteration<LoggerConfiguration> ToConfiguration(this ILoggingSinkConfiguration @this)
 			=> @this.In(LoggerSinkSelector.Default).ToAlteration();
 
+		public static IAlteration<LoggerConfiguration> ToConfiguration(this ILoggingEnrichmentConfiguration @this)
+			=> @this.In(LoggerEnrichmentSelector.Default).ToAlteration();
+
 		public static IAlteration<LoggerConfiguration> ToConfiguration(this ILoggingDestructureConfiguration @this)
 			=> @this.In(LoggerDestructureSelector.Default).ToAlteration();
 	}

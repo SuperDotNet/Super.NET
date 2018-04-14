@@ -3,10 +3,12 @@ using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 using Super.Diagnostics;
+using Super.ExtensionMethods;
 using Super.Model.Selection;
 using Super.Text.Formatting;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Xunit;
 
 namespace Super.Testing.Diagnostics
@@ -28,6 +30,41 @@ namespace Super.Testing.Diagnostics
 			}
 
 			sink.Should().Equal("Testing: AppDomain: Super.Testing", "Testing: Super.Testing", $"Testing: {AppDomain.CurrentDomain.Id}");
+		}
+
+		[Fact]
+		void VerifyStructure()
+		{
+			var sink = new StructureSink();
+			using (var logger = new LoggerConfiguration().To(ProjectionsConfiguration.Default)
+			                                             .To(new ProjectionAwareSinkDecoration(sink))
+			                                             .CreateLogger())
+			{
+				logger.Information("Testing: {AppDomain}", AppDomain.CurrentDomain);
+				logger.Information("Testing: {AppDomain:I}", AppDomain.CurrentDomain);
+			}
+
+			var @default = sink.First();
+			@default.TypeTag.Should().Be("AppDomain");
+			@default.Properties.Should().HaveCount(2);
+			@default.Properties[0].Value.To<ScalarValue>().Value.Should().Be(AppDomain.CurrentDomain.FriendlyName);
+			@default.Properties[1].Value.To<ScalarValue>().Value.Should().Be(AppDomain.CurrentDomain.Id);
+
+			var identifier = sink.ElementAt(1);
+			identifier.TypeTag.Should().Be("AppDomain");
+			identifier.Properties.Should().HaveCount(4);
+			identifier.Properties[0].Value.To<ScalarValue>().Value.Should().Be(AppDomain.CurrentDomain.FriendlyName);
+			identifier.Properties[1].Value.To<ScalarValue>().Value.Should().Be(AppDomain.CurrentDomain.Id);
+			identifier.Properties[2].Value.To<ScalarValue>().Value.Should().Be(AppDomain.CurrentDomain.BaseDirectory);
+			identifier.Properties[3].Value.To<ScalarValue>().Value.Should().Be(AppDomain.CurrentDomain.RelativeSearchPath);
+		}
+
+		sealed class StructureSink : Collection<StructureValue>, ILogEventSink
+		{
+			public void Emit(LogEvent logEvent)
+			{
+				logEvent.Properties.Values.OfType<StructureValue>().ForEach(Add);
+			}
 		}
 
 		sealed class TextSink : Collection<string>, ILogEventSink

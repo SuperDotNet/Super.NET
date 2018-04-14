@@ -10,4 +10,6 @@ namespace Super.Diagnostics
 	public interface ILoggingSinkConfiguration : ISelect<LoggerSinkConfiguration, LoggerConfiguration> {}
 
 	public interface ILoggingDestructureConfiguration : ISelect<LoggerDestructuringConfiguration, LoggerConfiguration> {}
+
+	public interface ILoggingEnrichmentConfiguration : ISelect<LoggerEnrichmentConfiguration, LoggerConfiguration> {}
 }

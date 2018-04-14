@@ -11,57 +11,46 @@ using Super.Text.Formatting;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Dynamic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 
 namespace Super.Runtime.Objects
 {
-	public sealed class Projection : DynamicObject
+	public interface IProjection : IReadOnlyDictionary<string, object>
+	{
+		Type InstanceType { get; }
+	}
+	public sealed class Projection : ReadOnlyDictionary<string, object>, IProjection
 	{
 		readonly string                      _text;
-		readonly IDictionary<string, object> _properties;
 
 		public Projection(string text, Type instanceType, IEnumerable<KeyValuePair<string, object>> properties)
 			: this(text, instanceType, properties.ToOrderedDictionary()) {}
 
-		public Projection(string text, Type instanceType, IDictionary<string, object> properties)
+		public Projection(string text, Type instanceType, IDictionary<string, object> properties) : base(properties)
 		{
 			_text        = text;
-			_properties  = properties;
 			InstanceType = instanceType;
 		}
-
-		public override bool TryGetMember(GetMemberBinder binder, out object result)
-		{
-			if (_properties.Keys.Contains(binder.Name))
-			{
-				result = _properties[binder.Name];
-				return true;
-			}
-
-			return base.TryGetMember(binder, out result);
-		}
-
-		public override IEnumerable<string> GetDynamicMemberNames() => _properties.Keys;
 
 		public Type InstanceType { get; }
 
 		public override string ToString() => _text;
 	}
 
-	sealed class KnownProjectors : Items<KeyValuePair<Type, Func<string, Func<object, Projection>>>>
+	sealed class KnownProjectors : Items<KeyValuePair<Type, Func<string, Func<object, IProjection>>>>
 	{
 		public static KnownProjectors Default { get; } = new KnownProjectors();
 
 		KnownProjectors() : this(ApplicationDomainProjection.Default.Entry()) {}
 
-		public KnownProjectors(params KeyValuePair<Type, Func<string, Func<object, Projection>>>[] items) : base(items) {}
+		public KnownProjectors(params KeyValuePair<Type, Func<string, Func<object, IProjection>>>[] items) : base(items) {}
 	}
 
-	public interface IProjectors : ISelect<Type, string, Func<object, Projection>> {}
+	public interface IProjectors : ISelect<Type, string, Func<object, IProjection>> {}
 
-	sealed class Projectors : Select<Type, string, Func<object, Projection>>, IProjectors
+	sealed class Projectors : Select<Type, string, Func<object, IProjection>>, IProjectors
 	{
 		public static Projectors Default { get; } = new Projectors();
 
@@ -79,15 +68,15 @@ namespace Super.Runtime.Objects
 			                                                   x => x.RelativeSearchPath)) {}
 	}
 
-	public interface IFormattedProjection<in T> : ISelect<string, T, Projection> {}
+	public interface IFormattedProjection<in T> : ISelect<string, T, IProjection> {}
 
-	class FormattedProjection<T> : TextSelect<T, Projection>, IFormattedProjection<T>
+	class FormattedProjection<T> : TextSelect<T, IProjection>, IFormattedProjection<T>
 	{
-		public FormattedProjection(ISelect<T, Projection> @default, params KeyValuePair<string, Func<T, Projection>>[] pairs)
+		public FormattedProjection(ISelect<T, IProjection> @default, params KeyValuePair<string, Func<T, IProjection>>[] pairs)
 			: base(@default, pairs) {}
 	}
 
-	public class Projection<T> : ISelect<T, Projection>
+	public class Projection<T> : ISelect<T, IProjection>
 	{
 		readonly Func<T, string>              _formatter;
 		readonly ImmutableArray<IProperty<T>> _properties;
@@ -104,7 +93,7 @@ namespace Super.Runtime.Objects
 			_properties = expressions;
 		}
 
-		public Projection Get(T parameter)
+		public IProjection Get(T parameter)
 			=> new Projection(_formatter(parameter), parameter.GetType(), new Values(parameter, _properties));
 
 		sealed class Values : ItemsBase<KeyValuePair<string, object>>

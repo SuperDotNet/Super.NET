@@ -13,13 +13,13 @@ namespace Super.Testing.Runtime.Objects
 		{
 			var projection = ApplicationDomainProjection.Default.Get(AppDomain.CurrentDomain);
 			projection.InstanceType.Should().Be(typeof(AppDomain));
-			projection.GetDynamicMemberNames()
+			projection.Keys
 			          .Should()
 			          .BeEquivalentTo(nameof(AppDomain.FriendlyName).Yield(nameof(AppDomain.Id)));
-			var    dynamic = projection.To<dynamic>();
-			string name    = dynamic.FriendlyName;
+			var dynamic = projection.ToStore();
+			var name    = dynamic.Get("FriendlyName");
 			name.Should().Be(AppDomain.CurrentDomain.FriendlyName);
-			int id = dynamic.Id;
+			var id = dynamic.Get("Id");
 			id.Should().Be(AppDomain.CurrentDomain.Id);
 		}
 
@@ -28,7 +28,7 @@ namespace Super.Testing.Runtime.Objects
 		{
 			var projection = ApplicationDomainProjection.Default.Get("F")(AppDomain.CurrentDomain);
 			projection.InstanceType.Should().Be(typeof(AppDomain));
-			projection.GetDynamicMemberNames()
+			projection.Keys
 			          .Should()
 			          .BeEquivalentTo(nameof(AppDomain.FriendlyName).Yield(nameof(AppDomain.Id)).Append(nameof(AppDomain.IsFullyTrusted)));
 		}
@@ -38,13 +38,13 @@ namespace Super.Testing.Runtime.Objects
 		{
 			var projection = ApplicationDomainProjection.Default.Get(null)(AppDomain.CurrentDomain);
 			projection.InstanceType.Should().Be(typeof(AppDomain));
-			projection.GetDynamicMemberNames()
+			projection.Keys
 			          .Should()
 			          .BeEquivalentTo(nameof(AppDomain.FriendlyName).Yield(nameof(AppDomain.Id)));
-			var    dynamic = projection.To<dynamic>();
-			string name    = dynamic.FriendlyName;
+			var    dynamic = projection.ToStore();
+			var name    = dynamic.Get("FriendlyName");
 			name.Should().Be(AppDomain.CurrentDomain.FriendlyName);
-			int id = dynamic.Id;
+			var id = dynamic.Get("Id");
 			id.Should().Be(AppDomain.CurrentDomain.Id);
 		}
 	}

@@ -1,4 +1,5 @@
 ﻿using Super.Model.Collections;
+using Super.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,7 +28,7 @@ namespace Super.ExtensionMethods
 
 		public static IReadOnlyDictionary<TKey, TValue> AsReadOnly<TKey, TValue>(
 			this IEnumerable<KeyValuePair<TKey, TValue>> @this)
-			=> new ReadOnlyDictionary<TKey, TValue>(@this.ToDictionary());
+			=> @this as IReadOnlyDictionary<TKey, TValue> ?? new ReadOnlyDictionary<TKey, TValue>(@this.ToDictionary());
 
 		public static TResult AsTo<TSource, TResult>(this object target, Func<TSource, TResult> transform,
 		                                             Func<TResult> resolve = null)
@@ -56,6 +57,8 @@ namespace Super.ExtensionMethods
 
 			yield return other;
 		}
+
+		public static IDisposable ToDisposable(this object @this) => @this as IDisposable ?? EmptyDisposable.Default;
 
 		public static T To<T>(this object @this)
 			=> To<T>(@this, $"'{@this.GetType().FullName}' is not of type {typeof(T).FullName}.");

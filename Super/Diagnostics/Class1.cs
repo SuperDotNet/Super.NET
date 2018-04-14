@@ -14,27 +14,41 @@ using Super.Reflection;
 using Super.Runtime.Activation;
 using Super.Runtime.Objects;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
 namespace Super.Diagnostics
 {
-	sealed class ViewAwareSinkDecoration : LoggerSinkDecoration, IActivateMarker<ILoggingSinkConfiguration>
+	sealed class ProjectionAwareSinkDecoration : LoggerSinkDecoration, IActivateMarker<ILoggingSinkConfiguration>
 	{
-		public ViewAwareSinkDecoration(ILoggingSinkConfiguration configuration) : base(I<ViewAwareSink>.Default.From,
-		                                                                               configuration) {}
+		public ProjectionAwareSinkDecoration(ILogEventSink sink) : this(new SinkConfiguration(sink)) {}
+
+		public ProjectionAwareSinkDecoration(ILoggingSinkConfiguration configuration)
+			: base(I<ProjectionAwareSink>.Default.From, configuration) {}
 	}
 
-	sealed class ViewAwareSink : SelectedParameterCommand<LogEvent, LogEvent>,
-	                             ILogEventSink,
-	                             IActivateMarker<ILogEventSink>
+	sealed class ProjectionAwareSink : SelectedParameterCommand<LogEvent, LogEvent>,
+	                                   IDisposable,
+	                                   ILogEventSink,
+	                                   IActivateMarker<ILogEventSink>
 	{
-		public ViewAwareSink(ILogEventSink sink) : base(sink.Emit, Implementations.ViewLogEvents) {}
+		readonly IDisposable _disposable;
+
+		public ProjectionAwareSink(ILogEventSink sink) : this(sink, sink.ToDisposable()) {}
+
+		public ProjectionAwareSink(ILogEventSink sink, IDisposable disposable)
+			: base(sink.Emit, Implementations.ViewLogEvents) => _disposable = disposable;
 
 		public void Emit(LogEvent logEvent)
 		{
 			Execute(logEvent);
+		}
+
+		public void Dispose()
+		{
+			_disposable.Dispose();
 		}
 	}
 
@@ -42,10 +56,12 @@ namespace Super.Diagnostics
 	{
 		public static ProjectionsConfiguration Default { get; } = new ProjectionsConfiguration();
 
-		ProjectionsConfiguration() : this(Projectors.Default, KnownProjectors.Default.Select(x => x.Key).ToImmutableArray()) {}
+		ProjectionsConfiguration() : this(Projectors.Default,
+		                                  KnownProjectors.Default.Select(x => x.Key).ToImmutableArray()) {}
 
 		public ProjectionsConfiguration(IProjectors projectors, ImmutableArray<Type> projectionTypes)
 			: base(new SinkConfiguration(new ApplyProjectionsLogEventSink(projectors)).ToConfiguration(),
+				   new EnrichmentConfiguration(PropertyFactories.Default).ToConfiguration(),
 			       new ScalarConfiguration(projectionTypes.AsEnumerable()).ToConfiguration()) {}
 	}
 
@@ -75,11 +91,29 @@ namespace Super.Diagnostics
 		LoggerSinkSelector() : base(x => x.WriteTo) {}
 	}
 
+	sealed class LoggerEnrichmentSelector : Delegated<LoggerConfiguration, LoggerEnrichmentConfiguration>
+	{
+		public static LoggerEnrichmentSelector Default { get; } = new LoggerEnrichmentSelector();
+
+		LoggerEnrichmentSelector() : base(x => x.Enrich) {}
+	}
+
 	sealed class LoggerDestructureSelector : Delegated<LoggerConfiguration, LoggerDestructuringConfiguration>
 	{
 		public static LoggerDestructureSelector Default { get; } = new LoggerDestructureSelector();
 
 		LoggerDestructureSelector() : base(x => x.Destructure) {}
+	}
+
+	sealed class EnrichmentConfiguration : ILoggingEnrichmentConfiguration
+	{
+		readonly ImmutableArray<ILogEventEnricher> _enrichers;
+
+		public EnrichmentConfiguration(params ILogEventEnricher[] enrichers) : this(enrichers.ToImmutableArray()) {}
+
+		public EnrichmentConfiguration(ImmutableArray<ILogEventEnricher> enrichers) => _enrichers = enrichers;
+
+		public LoggerConfiguration Get(LoggerEnrichmentConfiguration parameter) => parameter.With(_enrichers.ToArray());
 	}
 
 	sealed class SinkConfiguration : ILoggingSinkConfiguration
@@ -93,34 +127,102 @@ namespace Super.Diagnostics
 
 	sealed class ApplyProjectionsLogEventSink : ILogEventSink
 	{
-		readonly ISelect<MessageTemplate, IFormats> _format;
-		readonly IProjectors                        _projectors;
+		readonly Func<LogEvent, IScalar> _scalars;
+		readonly IProjectors             _projectors;
 
-		public ApplyProjectionsLogEventSink(IProjectors projectors) : this(Formats.Default, projectors) {}
+		public ApplyProjectionsLogEventSink(IProjectors projectors) : this(Implementations.Scalars, projectors) {}
 
-		public ApplyProjectionsLogEventSink(ISelect<MessageTemplate, IFormats> format, IProjectors projectors)
+		public ApplyProjectionsLogEventSink(Func<LogEvent, IScalar> scalars, IProjectors projectors)
 		{
-			_format     = format;
+			_scalars    = scalars;
 			_projectors = projectors;
 		}
 
 		public void Emit(LogEvent logEvent)
 		{
-			var formats    = _format.Get(logEvent.MessageTemplate);
-			var properties = logEvent.Properties;
+			foreach (var scalar in _scalars(logEvent))
+			{
+				var instance  = scalar.Value.Instance;
+				var projector = _projectors.Get(instance.GetType());
+				if (projector != null)
+				{
+					var format     = scalar.Value.Get();
+					var projection = projector(format)(instance);
+					var value      = new ScalarValue(projection);
+					logEvent.AddOrUpdateProperty(new LogEventProperty(scalar.Key, value));
+				}
+			}
+		}
+	}
+
+	public interface IScalar : IReadOnlyDictionary<string, ScalarProperty> {}
+
+	sealed class Scalar : IScalar
+	{
+		readonly IReadOnlyDictionary<string, ScalarProperty> _properties;
+
+		public Scalar(IReadOnlyDictionary<string, ScalarProperty> properties) => _properties = properties;
+
+		public IEnumerator<KeyValuePair<string, ScalarProperty>> GetEnumerator() => _properties.GetEnumerator();
+
+		IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)_properties).GetEnumerator();
+
+		public int Count => _properties.Count;
+
+		public bool ContainsKey(string key) => _properties.ContainsKey(key);
+
+		public bool TryGetValue(string key, out ScalarProperty value) => _properties.TryGetValue(key, out value);
+
+		public ScalarProperty this[string key] => _properties[key];
+
+		public IEnumerable<string> Keys => _properties.Keys;
+
+		public IEnumerable<ScalarProperty> Values => _properties.Values;
+	}
+
+	public struct ScalarProperty : ISource<string>
+	{
+		readonly IFormats _formats;
+
+		public ScalarProperty(string key, IFormats formats, object instance)
+		{
+			Key      = key;
+			_formats = formats;
+			Instance    = instance;
+		}
+
+		public string Key { get; }
+
+		public object Instance { get; }
+
+		public string Get() => _formats.Get(Key);
+	}
+
+	public interface IScalars : ISelect<LogEvent, IScalar> {}
+
+	sealed class Scalars : IScalars
+	{
+		public static Scalars Default { get; } = new Scalars();
+
+		Scalars() : this(Formats.Default) {}
+
+		readonly ISelect<MessageTemplate, IFormats> _format;
+
+		public Scalars(ISelect<MessageTemplate, IFormats> format) => _format = format;
+
+		public IScalar Get(LogEvent parameter)
+			=> new Scalar(Enumerate(parameter).ToDictionary(x => x.Key, x => x).AsReadOnly());
+
+		IEnumerable<ScalarProperty> Enumerate(LogEvent parameter)
+		{
+			var formats    = _format.Get(parameter.MessageTemplate);
+			var properties = parameter.Properties;
 			foreach (var name in formats.Get())
 			{
 				var property = properties[name];
 				if (property is ScalarValue scalar)
 				{
-					var projector = _projectors.Get(scalar.Value.GetType());
-					if (projector != null)
-					{
-						var format     = formats.Get(name);
-						var projection = projector(format)(scalar.Value);
-						var value      = new ScalarValue(projection);
-						logEvent.AddOrUpdateProperty(new LogEventProperty(name, value));
-					}
+					yield return new ScalarProperty(name, formats, scalar.Value);
 				}
 			}
 		}
@@ -175,116 +277,90 @@ namespace Super.Diagnostics
 
 	public static class Implementations
 	{
+		public static Func<LogEvent, IScalar> Scalars { get; } = Diagnostics.Scalars.Default.ToStore().ToDelegate();
+
 		public static Func<LogEvent, LogEvent> ViewLogEvents { get; } =
 			Diagnostics.ViewLogEvents.Default.ToStore().ToDelegate();
+	}
+
+	sealed class PropertyFactories : Decorated<LogEvent, ILogEventPropertyFactory>, ILogEventEnricher
+	{
+		public static PropertyFactories Default { get; } = new PropertyFactories();
+
+		PropertyFactories() : this(ReferenceTables<LogEvent, ILogEventPropertyFactory>.Default.Get(x => null)) {}
+
+		readonly ITable<LogEvent, ILogEventPropertyFactory> _table;
+
+		public PropertyFactories(ITable<LogEvent, ILogEventPropertyFactory> table) : base(table) => _table = table;
+
+		public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
+		{
+			_table.Assign(logEvent, propertyFactory);
+		}
 	}
 
 	sealed class ViewLogEvents : IAlteration<LogEvent>
 	{
 		public static ViewLogEvents Default { get; } = new ViewLogEvents();
 
-		ViewLogEvents() {}
+		ViewLogEvents() : this(Implementations.Scalars, PropertyFactories.Default.ToDelegate()) {}
+
+		readonly Func<LogEvent, IScalar>                  _scalars;
+		readonly Func<LogEvent, ILogEventPropertyFactory> _factories;
+
+		public ViewLogEvents(Func<LogEvent, IScalar> scalars, Func<LogEvent, ILogEventPropertyFactory> factories)
+		{
+			_scalars   = scalars;
+			_factories = factories;
+		}
 
 		public LogEvent Get(LogEvent parameter)
 		{
-			/*var properties = Properties(parameter.Properties).ToArray();
-			var result = properties.Length > 0
+			var properties = parameter.Properties;
+			var structures = Structures(parameter, properties).ToDictionary(x => x.Name);
+			var result = structures.Count > 0
 				             ? new LogEvent(parameter.Timestamp, parameter.Level, parameter.Exception, parameter.MessageTemplate,
-				                            properties)
+				                            Properties(properties, structures))
 				             : parameter;
-			return result;*/
-			return parameter;
-		}
-
-		/*static IEnumerable<LogEventProperty> Properties(IReadOnlyDictionary<string, LogEventPropertyValue> values)
-		{
-			var pairs  = values.ToArray();
-			var length = pairs.Length;
-			if (Any(pairs, length))
-			{
-				for (var i = 0; i < length; i++)
-				{
-					var pair = pairs[i];
-					yield return new LogEventProperty(pair.Key,
-					                                  pair.Value is ViewStructureValue view ? new ScalarValue(view.View) : pair.Value);
-				}
-			}
-			yield break;
-		}*/
-
-		/*static bool Any(IReadOnlyList<KeyValuePair<string, LogEventPropertyValue>> pairs, int length)
-		{
-			for (var i = 0; i < length; i++)
-			{
-				var pair = pairs[i];
-				if (pair.Value is ViewStructureValue)
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}*/
-	}
-
-	/*sealed class ApplicationDomainPolicy : Policy<AppDomain>
-	{
-		public static ApplicationDomainPolicy Default { get; } = new ApplicationDomainPolicy();
-
-		ApplicationDomainPolicy() : base(x => x.FriendlyName) {}
-	}
-
-	class Policy<T> : Policy
-	{
-		public Policy(params Expression<Func<T, object>>[] expressions)
-			: base(typeof(T).Name, IsTypeSpecification<T>.Default,
-			       new InstanceProperties<T>(expressions).In(Cast<object>.Default).Get) {}
-	}
-
-	class Policy : IDestructuringPolicy
-	{
-		readonly string                    _name;
-		readonly ISpecification<object>    _specification;
-		readonly Func<object, IProperties> _properties;
-
-		public Policy(string name, ISpecification<object> specification, Func<object, IProperties> properties)
-		{
-			_name          = name;
-			_specification = specification;
-			_properties    = properties;
-		}
-
-		public bool TryDestructure(object instance, ILogEventPropertyValueFactory propertyValueFactory,
-		                           out LogEventPropertyValue value)
-		{
-			var result = _specification.IsSatisfiedBy(instance);
-			value = result ? new ViewStructureValue(instance, _properties(instance).Get(propertyValueFactory), _name) : null;
 			return result;
 		}
-	}*/
 
-	/*sealed class ViewStructureValue : StructureValue
-	{
-		public ViewStructureValue(object subject, IEnumerable<LogEventProperty> properties, string typeTag = null)
-			: base(properties, typeTag) => View = subject;
-
-		public object View { get; }
-	}
-
-	public interface IProperties : ISelect<ILogEventPropertyValueFactory, IEnumerable<LogEventProperty>> {}
-
-	sealed class Properties : IProperties
-	{
-		readonly ImmutableArray<KeyValuePair<string, object>> _properties;
-
-		public Properties(ImmutableArray<KeyValuePair<string, object>> properties) => _properties = properties;
-
-		public IEnumerable<LogEventProperty> Get(ILogEventPropertyValueFactory parameter)
+		static IEnumerable<LogEventProperty> Properties(IReadOnlyDictionary<string, LogEventPropertyValue> source,
+		                                     IReadOnlyDictionary<string, LogEventProperty> structures)
 		{
-			foreach (var property in _properties)
+			var keys   = source.Keys.ToArray();
+			var length = keys.Length;
+			var result = new LogEventProperty[length];
+			for (var i = 0; i < length; i++)
 			{
-				yield return new LogEventProperty(property.Key, parameter.CreatePropertyValue(property.Value));
+				var key = keys[i];
+				result[i] = structures.ContainsKey(key) ? structures[key] : new LogEventProperty(key, source[key]);
+			}
+
+			return result;
+		}
+
+		IEnumerable<LogEventProperty> Structures(LogEvent parameter,
+		                                         IReadOnlyDictionary<string, LogEventPropertyValue> dictionary)
+		{
+			var factory = _factories(parameter);
+			foreach (var scalar in _scalars(parameter))
+			{
+				if (dictionary[scalar.Key] is ScalarValue value && value.Value is Projection projection)
+				{
+					yield return new LogEventProperty(scalar.Key,
+					                                  new StructureValue(Properties(projection, factory),
+					                                                     projection.InstanceType.Name));
+				}
 			}
 		}
-	}*/
+
+		static IEnumerable<LogEventProperty> Properties(Projection projection, ILogEventPropertyFactory factory)
+		{
+			foreach (var name in projection)
+			{
+				yield return factory.CreateProperty(name.Key, name.Value, true);
+			}
+		}
+	}
 }

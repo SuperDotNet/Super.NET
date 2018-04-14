@@ -2,6 +2,13 @@
 
 namespace Super.Runtime
 {
+	sealed class EmptyDisposable : DelegatedDisposable
+	{
+		public static EmptyDisposable Default { get; } = new EmptyDisposable();
+
+		EmptyDisposable() : base(() => {}) {}
+	}
+
 	public class DelegatedDisposable : IDisposable
 	{
 		readonly Action _callback;
