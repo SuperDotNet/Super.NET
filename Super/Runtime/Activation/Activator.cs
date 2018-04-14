@@ -1,11 +1,11 @@
 ﻿using Super.ExtensionMethods;
 using Super.Model.Collections;
+using Super.Model.Selection;
+using Super.Model.Sources;
 using Super.Reflection;
 using Super.Runtime.Invocation;
 using System;
 using System.Reflection;
-using Super.Model.Selection;
-using Super.Model.Sources;
 
 namespace Super.Runtime.Activation
 {
@@ -14,11 +14,11 @@ namespace Super.Runtime.Activation
 		public static Activator Default { get; } = new Activator();
 
 		Activator() : base(TypeMetadataSelector.Default
-		                                      .Out(YieldSelector<TypeInfo>.Default)
-		                                      .Out(ImmutableArraySelector<Type>.Default)
-		                                      .Out(new Generic<ISource<object>>(typeof(ActivatorSource<>)))
-		                                      .Out(Invoke<ISource<object>>.Default)
-		                                      .Out(ValueSelector<object>.Default)) {}
+		                                       .Out(YieldSelector<TypeInfo>.Default)
+		                                       .Out(ImmutableArraySelector<Type>.Default)
+		                                       .Out(new Generic<ISource<object>>(typeof(ActivatorSource<>)))
+		                                       .Out(Invoke<ISource<object>>.Default)
+		                                       .Out(ValueSelector<object>.Default)) {}
 	}
 
 	public sealed class Activator<T> : Decorated<T>, IActivator<T>
