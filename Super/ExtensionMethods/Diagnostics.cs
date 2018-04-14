@@ -1,5 +1,6 @@
 ﻿using Polly;
 using Serilog;
+using Serilog.Core;
 using Super.Diagnostics;
 using Super.Model.Commands;
 using Super.Model.Selection.Alterations;
@@ -29,5 +30,11 @@ namespace Super.ExtensionMethods
 
 		public static IAlteration<LoggerConfiguration> ToConfiguration(this ILoggingDestructureConfiguration @this)
 			=> @this.In(LoggerDestructureSelector.Default).ToAlteration();
+
+		public static ILoggingConfiguration WithProjections(this ILoggingSinkConfiguration @this)
+			=> @this.To(I<ProjectionAwareSinkDecoration>.Default);
+
+		public static ILoggingConfiguration WithProjections(this ILogEventSink @this)
+			=> @this.To(I<ProjectionAwareSinkDecoration>.Default);
 	}
 }

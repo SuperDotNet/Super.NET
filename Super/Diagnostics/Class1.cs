@@ -21,7 +21,8 @@ using System.Linq;
 
 namespace Super.Diagnostics
 {
-	sealed class ProjectionAwareSinkDecoration : LoggerSinkDecoration, IActivateMarker<ILoggingSinkConfiguration>
+	public sealed class ProjectionAwareSinkDecoration : LoggerSinkDecoration, IActivateMarker<ILoggingSinkConfiguration>,
+	                                                    IActivateMarker<ILogEventSink>
 	{
 		public ProjectionAwareSinkDecoration(ILogEventSink sink) : this(new SinkConfiguration(sink)) {}
 
@@ -39,7 +40,7 @@ namespace Super.Diagnostics
 		public ProjectionAwareSink(ILogEventSink sink) : this(sink, sink.ToDisposable()) {}
 
 		public ProjectionAwareSink(ILogEventSink sink, IDisposable disposable)
-			: base(sink.Emit, Implementations.ViewLogEvents) => _disposable = disposable;
+			: base(sink.Emit, Implementations.Projections) => _disposable = disposable;
 
 		public void Emit(LogEvent logEvent)
 		{
@@ -60,8 +61,7 @@ namespace Super.Diagnostics
 		                                  KnownProjectors.Default.Select(x => x.Key).ToImmutableArray()) {}
 
 		public ProjectionsConfiguration(IProjectors projectors, ImmutableArray<Type> projectionTypes)
-			: base(new SinkConfiguration(new ApplyProjectionsLogEventSink(projectors)).ToConfiguration(),
-				   new EnrichmentConfiguration(PropertyFactories.Default).ToConfiguration(),
+			: base(new EnrichmentConfiguration(new ProjectionEnricher(projectors)).ToConfiguration(),
 			       new ScalarConfiguration(projectionTypes.AsEnumerable()).ToConfiguration()) {}
 	}
 
@@ -125,22 +125,22 @@ namespace Super.Diagnostics
 		public LoggerConfiguration Get(LoggerSinkConfiguration parameter) => parameter.Sink(_sink);
 	}
 
-	sealed class ApplyProjectionsLogEventSink : ILogEventSink
+	sealed class ApplyProjectionsCommand : ICommand<LogEvent>
 	{
 		readonly Func<LogEvent, IScalar> _scalars;
 		readonly IProjectors             _projectors;
 
-		public ApplyProjectionsLogEventSink(IProjectors projectors) : this(Implementations.Scalars, projectors) {}
+		public ApplyProjectionsCommand(IProjectors projectors) : this(Implementations.Scalars, projectors) {}
 
-		public ApplyProjectionsLogEventSink(Func<LogEvent, IScalar> scalars, IProjectors projectors)
+		public ApplyProjectionsCommand(Func<LogEvent, IScalar> scalars, IProjectors projectors)
 		{
 			_scalars    = scalars;
 			_projectors = projectors;
 		}
 
-		public void Emit(LogEvent logEvent)
+		public void Execute(LogEvent parameter)
 		{
-			foreach (var scalar in _scalars(logEvent))
+			foreach (var scalar in _scalars(parameter))
 			{
 				var instance  = scalar.Value.Instance;
 				var projector = _projectors.Get(instance.GetType());
@@ -149,7 +149,7 @@ namespace Super.Diagnostics
 					var format     = scalar.Value.Get();
 					var projection = projector(format)(instance);
 					var value      = new ScalarValue(projection);
-					logEvent.AddOrUpdateProperty(new LogEventProperty(scalar.Key, value));
+					parameter.AddOrUpdateProperty(new LogEventProperty(scalar.Key, value));
 				}
 			}
 		}
@@ -188,7 +188,7 @@ namespace Super.Diagnostics
 		{
 			Key      = key;
 			_formats = formats;
-			Instance    = instance;
+			Instance = instance;
 		}
 
 		public string Key { get; }
@@ -254,7 +254,7 @@ namespace Super.Diagnostics
 		}
 	}
 
-	class LoggerSinkDecoration : IAlteration<LoggerConfiguration>
+	public class LoggerSinkDecoration : ILoggingConfiguration
 	{
 		readonly Func<ILogEventSink, ILogEventSink> _sink;
 		readonly Action<LoggerSinkConfiguration>    _configure;
@@ -279,36 +279,49 @@ namespace Super.Diagnostics
 	{
 		public static Func<LogEvent, IScalar> Scalars { get; } = Diagnostics.Scalars.Default.ToStore().ToDelegate();
 
-		public static Func<LogEvent, LogEvent> ViewLogEvents { get; } =
-			Diagnostics.ViewLogEvents.Default.ToStore().ToDelegate();
+		public static Func<LogEvent, LogEvent> Projections { get; }
+			= ProjectionLogEvents.Default.ToStore().ToDelegate();
 	}
 
-	sealed class PropertyFactories : Decorated<LogEvent, ILogEventPropertyFactory>, ILogEventEnricher
+	sealed class ProjectionEnricher : ILogEventEnricher
 	{
-		public static PropertyFactories Default { get; } = new PropertyFactories();
+		public ProjectionEnricher(IProjectors projectors)
+			: this(new ApplyProjectionsCommand(projectors), PropertyFactories.Default) {}
 
-		PropertyFactories() : this(ReferenceTables<LogEvent, ILogEventPropertyFactory>.Default.Get(x => null)) {}
+		readonly ICommand<LogEvent>                              _command;
+		readonly IAssignable<LogEvent, ILogEventPropertyFactory> _table;
 
-		readonly ITable<LogEvent, ILogEventPropertyFactory> _table;
-
-		public PropertyFactories(ITable<LogEvent, ILogEventPropertyFactory> table) : base(table) => _table = table;
+		public ProjectionEnricher(ICommand<LogEvent> command, IAssignable<LogEvent, ILogEventPropertyFactory> table)
+		{
+			_command = command;
+			_table   = table;
+		}
 
 		public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
 		{
+			_command.Execute(logEvent);
+
 			_table.Assign(logEvent, propertyFactory);
 		}
 	}
 
-	sealed class ViewLogEvents : IAlteration<LogEvent>
+	sealed class PropertyFactories : DecoratedTable<LogEvent, ILogEventPropertyFactory>
 	{
-		public static ViewLogEvents Default { get; } = new ViewLogEvents();
+		public static PropertyFactories Default { get; } = new PropertyFactories();
 
-		ViewLogEvents() : this(Implementations.Scalars, PropertyFactories.Default.ToDelegate()) {}
+		PropertyFactories() : base(ReferenceTables<LogEvent, ILogEventPropertyFactory>.Default.Get(x => null)) {}
+	}
+
+	sealed class ProjectionLogEvents : IAlteration<LogEvent>
+	{
+		public static ProjectionLogEvents Default { get; } = new ProjectionLogEvents();
+
+		ProjectionLogEvents() : this(Implementations.Scalars, PropertyFactories.Default.ToSelect()) {}
 
 		readonly Func<LogEvent, IScalar>                  _scalars;
 		readonly Func<LogEvent, ILogEventPropertyFactory> _factories;
 
-		public ViewLogEvents(Func<LogEvent, IScalar> scalars, Func<LogEvent, ILogEventPropertyFactory> factories)
+		public ProjectionLogEvents(Func<LogEvent, IScalar> scalars, Func<LogEvent, ILogEventPropertyFactory> factories)
 		{
 			_scalars   = scalars;
 			_factories = factories;
@@ -326,7 +339,7 @@ namespace Super.Diagnostics
 		}
 
 		static IEnumerable<LogEventProperty> Properties(IReadOnlyDictionary<string, LogEventPropertyValue> source,
-		                                     IReadOnlyDictionary<string, LogEventProperty> structures)
+		                                                IReadOnlyDictionary<string, LogEventProperty> structures)
 		{
 			var keys   = source.Keys.ToArray();
 			var length = keys.Length;

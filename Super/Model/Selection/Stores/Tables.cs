@@ -22,9 +22,9 @@ namespace Super.Model.Selection.Stores
 			                  .ToDelegate()) {}
 	}
 
-	public static class Tables
+/*	public static class Tables
 	{
 		public static ITable<TParameter, TResult> From<TParameter, TResult>(this Func<TParameter, TResult> @this)
 			=> Tables<TParameter, TResult>.Default.Get(@this);
-	}
+	}*/
 }

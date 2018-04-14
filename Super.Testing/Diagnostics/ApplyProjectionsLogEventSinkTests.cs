@@ -13,14 +13,52 @@ using Xunit;
 
 namespace Super.Testing.Diagnostics
 {
-	public sealed class ApplyProjectionsLogEventSinkTests
+	public sealed class ApplyProjectionsCommandTests
 	{
 		[Fact]
 		void Verify()
 		{
+			var sink = new TextSink();
+
+			using (var logger = new LoggerConfiguration().To(ProjectionsConfiguration.Default)
+			                                             .WriteTo.Sink(sink)
+			                                             .CreateLogger())
+			{
+				logger.Information("Testing: {AppDomain}", AppDomain.CurrentDomain);
+				logger.Information("Testing: {AppDomain:F}", AppDomain.CurrentDomain);
+				logger.Information("Testing: {AppDomain:I}", AppDomain.CurrentDomain);
+			}
+
+			sink.Should().Equal("Testing: AppDomain: Super.Testing", "Testing: Super.Testing", $"Testing: {AppDomain.CurrentDomain.Id}");
+		}
+
+		[Fact]
+		void VerifyMultiple()
+		{
 			var sink = new TextSink(Provider.Default);
 
 			using (var logger = new LoggerConfiguration().To(ProjectionsConfiguration.Default)
+			                                             .WriteTo.Sink<TextSink>()
+			                                             .WriteTo.Sink(new StructureSink())
+			                                             .WriteTo.Sink(sink)
+			                                             .CreateLogger())
+			{
+				logger.Information("Testing: {AppDomain}", AppDomain.CurrentDomain);
+				logger.Information("Testing: {AppDomain:F}", AppDomain.CurrentDomain);
+				logger.Information("Testing: {AppDomain:I}", AppDomain.CurrentDomain);
+			}
+
+			sink.Should().Equal("Testing: AppDomain: Super.Testing", "Testing: Super.Testing", $"Testing: {AppDomain.CurrentDomain.Id}");
+		}
+
+		[Fact]
+		void VerifyMultipleEnabled()
+		{
+			var sink = new TextSink(Provider.Default);
+
+			using (var logger = new LoggerConfiguration().To(ProjectionsConfiguration.Default)
+			                                             .WriteTo.Sink<TextSink>()
+			                                             .To(new StructureSink().WithProjections())
 			                                             .WriteTo.Sink(sink)
 			                                             .CreateLogger())
 			{
@@ -37,7 +75,7 @@ namespace Super.Testing.Diagnostics
 		{
 			var sink = new StructureSink();
 			using (var logger = new LoggerConfiguration().To(ProjectionsConfiguration.Default)
-			                                             .To(new ProjectionAwareSinkDecoration(sink))
+			                                             .To(sink.WithProjections())
 			                                             .CreateLogger())
 			{
 				logger.Information("Testing: {AppDomain}", AppDomain.CurrentDomain);
@@ -70,6 +108,8 @@ namespace Super.Testing.Diagnostics
 		sealed class TextSink : Collection<string>, ILogEventSink
 		{
 			readonly IFormatProvider _services;
+
+			public TextSink() : this(Provider.Default) {}
 
 			public TextSink(IFormatProvider services) => _services = services;
 
