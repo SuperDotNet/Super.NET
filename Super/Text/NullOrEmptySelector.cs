@@ -19,7 +19,7 @@ namespace Super.Text
 	class TextSelect<TParameter, TResult> : Select<string, TParameter, TResult>
 	{
 		public TextSelect(ISelect<TParameter, TResult> @default, params KeyValuePair<string, Func<TParameter, TResult>>[] pairs)
-			: this(Pairs.From(pairs).Or(@default.AsDefault())) {}
+			: this(Pairs.Select(pairs).Or(@default.AsDefault())) {}
 
 		public TextSelect(ISelect<string, Func<TParameter, TResult>> @select)
 			: base(select.In(NullOrEmptySelector.Default).ToDelegate()) {}

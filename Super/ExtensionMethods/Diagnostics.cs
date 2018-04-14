@@ -2,6 +2,7 @@
 using Serilog;
 using Super.Diagnostics;
 using Super.Model.Commands;
+using Super.Model.Selection.Alterations;
 using Super.Reflection;
 using Super.Runtime.Activation;
 using System;
@@ -19,5 +20,11 @@ namespace Super.ExtensionMethods
 		public static void Execute<T>(this ICommand<ExceptionParameter<TimeSpan>> @this, DelegateResult<T> result,
 		                              TimeSpan span, Context context)
 			=> @this.Execute(new ExceptionParameter<TimeSpan>(result.Exception, span));
+
+		public static IAlteration<LoggerConfiguration> ToConfiguration(this ILoggingSinkConfiguration @this)
+			=> @this.In(LoggerSinkSelector.Default).ToAlteration();
+
+		public static IAlteration<LoggerConfiguration> ToConfiguration(this ILoggingDestructureConfiguration @this)
+			=> @this.In(LoggerDestructureSelector.Default).ToAlteration();
 	}
 }

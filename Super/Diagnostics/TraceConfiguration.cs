@@ -1,12 +1,13 @@
 ﻿using Serilog;
-using Super.Model.Selection.Alterations;
+using Serilog.Configuration;
+using Super.Model.Selection;
 
 namespace Super.Diagnostics
 {
-	sealed class TraceConfiguration : DelegatedAlteration<LoggerConfiguration>, ILoggingConfiguration
+	sealed class TraceConfiguration : Delegated<LoggerSinkConfiguration, LoggerConfiguration>, ILoggingSinkConfiguration
 	{
 		public static TraceConfiguration Default { get; } = new TraceConfiguration();
 
-		TraceConfiguration() : base(x => x.WriteTo.Trace()) {}
+		TraceConfiguration() : base(x => x.Trace()) {}
 	}
 }

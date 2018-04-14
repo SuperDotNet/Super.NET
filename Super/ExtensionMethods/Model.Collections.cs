@@ -1,8 +1,9 @@
 ﻿using Super.Model.Collections;
+using Super.Model.Selection;
 using Super.Reflection;
 using Super.Runtime.Activation;
 using System.Collections.Generic;
-using Super.Model.Selection;
+using System.Collections.Immutable;
 
 namespace Super.ExtensionMethods
 {
@@ -13,6 +14,9 @@ namespace Super.ExtensionMethods
 
 		public static ISelect<IEnumerable<TFrom>, IEnumerable<TTo>> Select<TFrom, TTo>(this ISelect<TFrom, TTo> @this)
 			=> @this.ToDelegate().To(I<SelectSelector<TFrom, TTo>>.Default);
+
+		public static IEnumerable<T> AsEnumerable<T>(this ImmutableArray<T> @this)
+			=> EnumerableSelector<T>.Default.Get(@this);
 
 		/*public static IContainer<T> Enclose<T>(this IInstance<T> @this) => Activations<IInstance<T>, Container<T>>.Default.Get(@this);
 

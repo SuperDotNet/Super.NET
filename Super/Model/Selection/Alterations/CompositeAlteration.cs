@@ -1,10 +1,10 @@
-﻿using System.Collections.Immutable;
+﻿using Super.ExtensionMethods;
+using System.Collections.Immutable;
 using System.Linq;
-using Super.ExtensionMethods;
 
 namespace Super.Model.Selection.Alterations
 {
-	class CompositeAlteration<T> : IAlteration<T>
+	public class CompositeAlteration<T> : IAlteration<T>
 	{
 		readonly ImmutableArray<IAlteration<T>> _alterations;
 

@@ -8,4 +8,6 @@ namespace Super.Diagnostics
 	public interface ILoggingConfiguration : IAlteration<LoggerConfiguration> {}
 
 	public interface ILoggingSinkConfiguration : ISelect<LoggerSinkConfiguration, LoggerConfiguration> {}
+
+	public interface ILoggingDestructureConfiguration : ISelect<LoggerDestructuringConfiguration, LoggerConfiguration> {}
 }

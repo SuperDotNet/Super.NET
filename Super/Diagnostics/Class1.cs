@@ -1,13 +1,22 @@
-﻿using Serilog;
+﻿using JetBrains.Annotations;
+using Serilog;
 using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;
+using Serilog.Parsing;
 using Super.ExtensionMethods;
 using Super.Model.Commands;
+using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
+using Super.Model.Selection.Stores;
+using Super.Model.Sources;
 using Super.Reflection;
 using Super.Runtime.Activation;
+using Super.Runtime.Objects;
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 
 namespace Super.Diagnostics
 {
@@ -26,6 +35,120 @@ namespace Super.Diagnostics
 		public void Emit(LogEvent logEvent)
 		{
 			Execute(logEvent);
+		}
+	}
+
+	public sealed class ProjectionsConfiguration : LoggerConfigurations
+	{
+		public static ProjectionsConfiguration Default { get; } = new ProjectionsConfiguration();
+
+		ProjectionsConfiguration() : this(Projectors.Default, KnownProjectors.Default.Select(x => x.Key).ToImmutableArray()) {}
+
+		public ProjectionsConfiguration(IProjectors projectors, ImmutableArray<Type> projectionTypes)
+			: base(new SinkConfiguration(new ApplyProjectionsLogEventSink(projectors)).ToConfiguration(),
+			       new ScalarConfiguration(projectionTypes.AsEnumerable()).ToConfiguration()) {}
+	}
+
+	sealed class ScalarConfiguration<T> : Delegated<LoggerDestructuringConfiguration, LoggerConfiguration>,
+	                                      ILoggingDestructureConfiguration
+	{
+		public static ScalarConfiguration<T> Default { get; } = new ScalarConfiguration<T>();
+
+		ScalarConfiguration() : base(x => x.AsScalar<T>()) {}
+	}
+
+	sealed class ScalarConfiguration : ILoggingDestructureConfiguration
+	{
+		readonly IEnumerable<Type> _types;
+
+		public ScalarConfiguration(params Type[] types) : this(types.Hide()) {}
+
+		public ScalarConfiguration(IEnumerable<Type> types) => _types = types;
+
+		public LoggerConfiguration Get(LoggerDestructuringConfiguration parameter) => _types.Alter(parameter.AsScalar);
+	}
+
+	sealed class LoggerSinkSelector : Delegated<LoggerConfiguration, LoggerSinkConfiguration>
+	{
+		public static LoggerSinkSelector Default { get; } = new LoggerSinkSelector();
+
+		LoggerSinkSelector() : base(x => x.WriteTo) {}
+	}
+
+	sealed class LoggerDestructureSelector : Delegated<LoggerConfiguration, LoggerDestructuringConfiguration>
+	{
+		public static LoggerDestructureSelector Default { get; } = new LoggerDestructureSelector();
+
+		LoggerDestructureSelector() : base(x => x.Destructure) {}
+	}
+
+	sealed class SinkConfiguration : ILoggingSinkConfiguration
+	{
+		readonly ILogEventSink _sink;
+
+		public SinkConfiguration(ILogEventSink sink) => _sink = sink;
+
+		public LoggerConfiguration Get(LoggerSinkConfiguration parameter) => parameter.Sink(_sink);
+	}
+
+	sealed class ApplyProjectionsLogEventSink : ILogEventSink
+	{
+		readonly ISelect<MessageTemplate, IFormats> _format;
+		readonly IProjectors                        _projectors;
+
+		public ApplyProjectionsLogEventSink(IProjectors projectors) : this(Formats.Default, projectors) {}
+
+		public ApplyProjectionsLogEventSink(ISelect<MessageTemplate, IFormats> format, IProjectors projectors)
+		{
+			_format     = format;
+			_projectors = projectors;
+		}
+
+		public void Emit(LogEvent logEvent)
+		{
+			var formats    = _format.Get(logEvent.MessageTemplate);
+			var properties = logEvent.Properties;
+			foreach (var name in formats.Get())
+			{
+				var property = properties[name];
+				if (property is ScalarValue scalar)
+				{
+					var projector = _projectors.Get(scalar.Value.GetType());
+					if (projector != null)
+					{
+						var format     = formats.Get(name);
+						var projection = projector(format)(scalar.Value);
+						var value      = new ScalarValue(projection);
+						logEvent.AddOrUpdateProperty(new LogEventProperty(name, value));
+					}
+				}
+			}
+		}
+	}
+
+	public interface IFormats : ISelect<string, string>, ISource<ImmutableArray<string>> {}
+
+	sealed class Formats : ReferenceStore<MessageTemplate, IFormats>
+	{
+		public static Formats Default { get; } = new Formats();
+
+		Formats() : base(x => x.Tokens
+		                       .OfType<PropertyToken>()
+		                       .ToDictionary(y => y.PropertyName, y => y.Format)
+		                       .AsReadOnly()
+		                       .To(I<Selection>.Default)) {}
+
+		sealed class Selection : Delegated<string, string>, IFormats, IActivateMarker<IReadOnlyDictionary<string, string>>
+		{
+			readonly ImmutableArray<string> _names;
+
+			[UsedImplicitly]
+			public Selection(IReadOnlyDictionary<string, string> source)
+				: this(source.ToStore().ToSelect(), source.Keys.ToImmutableArray()) {}
+
+			public Selection(Func<string, string> source, ImmutableArray<string> names) : base(source) => _names = names;
+
+			public ImmutableArray<string> Get() => _names;
 		}
 	}
 
@@ -164,6 +287,4 @@ namespace Super.Diagnostics
 			}
 		}
 	}*/
-
-
 }

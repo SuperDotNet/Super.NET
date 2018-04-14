@@ -50,29 +50,41 @@ namespace Super.Runtime.Objects
 		public override string ToString() => _text;
 	}
 
-	sealed class ApplicationDomainProjection : Projection<AppDomain>
+	sealed class KnownProjectors : Items<KeyValuePair<Type, Func<string, Func<object, Projection>>>>
+	{
+		public static KnownProjectors Default { get; } = new KnownProjectors();
+
+		KnownProjectors() : this(ApplicationDomainProjection.Default.Entry()) {}
+
+		public KnownProjectors(params KeyValuePair<Type, Func<string, Func<object, Projection>>>[] items) : base(items) {}
+	}
+
+	public interface IProjectors : ISelect<Type, string, Func<object, Projection>> {}
+
+	sealed class Projectors : Select<Type, string, Func<object, Projection>>, IProjectors
+	{
+		public static Projectors Default { get; } = new Projectors();
+
+		Projectors() : base(KnownProjectors.Default.ToStore().ToSelect()) {}
+	}
+
+	sealed class ApplicationDomainProjection : FormattedProjection<AppDomain>
 	{
 		public static ApplicationDomainProjection Default { get; } = new ApplicationDomainProjection();
 
 		ApplicationDomainProjection()
-			: base(DefaultApplicationDomainFormatter.Default, x => x.FriendlyName, x => x.Id) {}
-	}
-
-	sealed class ApplicationDomainProjections : Projections<AppDomain>
-	{
-		public static ApplicationDomainProjections Default { get; } = new ApplicationDomainProjections();
-
-		ApplicationDomainProjections()
-			: base(ApplicationDomainProjection.Default,
-			       ApplicationDomainName.Default.Project(x => x.FriendlyName, x => x.Id, x => x.IsFullyTrusted),
-			       ApplicationDomainIdentifier.Default.Project(x => x.FriendlyName, x => x.Id, x => x.BaseDirectory,
+			: base(DefaultApplicationDomainFormatter.Default.Project(x => x.FriendlyName, x => x.Id),
+			       ApplicationDomainName.Default.Entry(x => x.FriendlyName, x => x.Id, x => x.IsFullyTrusted),
+			       ApplicationDomainIdentifier.Default.Entry(x => x.FriendlyName, x => x.Id, x => x.BaseDirectory,
 			                                                   x => x.RelativeSearchPath)) {}
 	}
 
-	class Projections<T> : TextSelect<T, Projection>
+	public interface IFormattedProjection<in T> : ISelect<string, T, Projection> {}
+
+	class FormattedProjection<T> : TextSelect<T, Projection>, IFormattedProjection<T>
 	{
-		public Projections(ISelect<T, Projection> @default, params KeyValuePair<string, Func<T, Projection>>[] pairs) :
-			base(@default, pairs) {}
+		public FormattedProjection(ISelect<T, Projection> @default, params KeyValuePair<string, Func<T, Projection>>[] pairs)
+			: base(@default, pairs) {}
 	}
 
 	public class Projection<T> : ISelect<T, Projection>

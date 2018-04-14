@@ -26,7 +26,7 @@ namespace Super.Testing.Runtime.Objects
 		[Fact]
 		void VerifySelection()
 		{
-			var projection = ApplicationDomainProjections.Default.Get("F")(AppDomain.CurrentDomain);
+			var projection = ApplicationDomainProjection.Default.Get("F")(AppDomain.CurrentDomain);
 			projection.InstanceType.Should().Be(typeof(AppDomain));
 			projection.GetDynamicMemberNames()
 			          .Should()
@@ -36,7 +36,7 @@ namespace Super.Testing.Runtime.Objects
 		[Fact]
 		void VerifyDefaultSelection()
 		{
-			var projection = ApplicationDomainProjections.Default.Get(null)(AppDomain.CurrentDomain);
+			var projection = ApplicationDomainProjection.Default.Get(null)(AppDomain.CurrentDomain);
 			projection.InstanceType.Should().Be(typeof(AppDomain));
 			projection.GetDynamicMemberNames()
 			          .Should()

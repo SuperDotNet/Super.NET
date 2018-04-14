@@ -1,0 +1,33 @@
+﻿using Super.Model.Selection;
+using Super.Reflection;
+using Super.Runtime;
+using Super.Runtime.Objects;
+using Super.Text;
+using Super.Text.Formatting;
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+
+namespace Super.ExtensionMethods
+{
+	partial class Objects
+	{
+		public static KeyValuePair<Type, Func<string, Func<object, Projection>>> Entry<T>(
+			this IFormattedProjection<T> @this)
+			=> Pairs.Create(Types<T>.Identity, @this.Out(x => x.ToSource().In(Cast<object>.Default).ToDelegate()).ToDelegate());
+
+		public static Projection Get<T>(this IFormattedProjection<T> @this, T parameter) => @this.Get(null)(parameter);
+
+		public static ISelect<T, Projection> Project<T>(this IFormatter<T> @this,
+		                                                params Expression<Func<T, object>>[] expressions)
+			=> new Projection<T>(@this, expressions);
+
+		public static KeyValuePair<string, Func<T, Projection>> Entry<T>(this IFormat<T> @this,
+		                                                                 params Expression<Func<T, object>>[] expressions)
+			=> @this.Get().Entry(expressions);
+
+		public static KeyValuePair<string, Func<T, Projection>> Entry<T>(this KeyValuePair<string, Func<T, string>> @this,
+		                                                                 params Expression<Func<T, object>>[] expressions)
+			=> Pairs.Create(@this.Key, new Projection<T>(@this.Value, expressions).ToDelegate());
+	}
+}

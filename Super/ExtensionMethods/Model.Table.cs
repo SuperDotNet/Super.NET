@@ -11,6 +11,10 @@ namespace Super.ExtensionMethods
 {
 	partial class Model
 	{
+		public static ISpecification<TParameter, TResult> ToStore<TParameter, TResult>(
+			this IEnumerable<KeyValuePair<TParameter, TResult>> @this)
+			=> @this.ToOrderedDictionary().AsReadOnly().ToStore();
+
 		public static ISelect<TParameter, TIn, TOut> ToSelect<TParameter, TIn, TOut>(
 			this IEnumerable<KeyValuePair<TParameter, Func<TIn, TOut>>> @this)
 			=> @this.ToOrderedDictionary().AsReadOnly().ToStore().ToSelect().To(I<Select<TParameter, TIn, TOut>>.Default);

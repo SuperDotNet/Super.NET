@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Super.ExtensionMethods
 {
-	public static class Objects
+	public static partial class Objects
 	{
 		public static T With<T>(this T @this, Action<T> action)
 		{
