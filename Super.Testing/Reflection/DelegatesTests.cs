@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Super.Reflection;
+using Super.Runtime;
 using Xunit;
 
 namespace Super.Testing.Reflection

@@ -23,10 +23,9 @@ namespace Super.Reflection
 			var constructor = parameter.GetTypeInfo().DeclaredConstructors.Only() ??
 			                  parameter.GetConstructors().Only() ??
 			                  parameter.GetConstructor(_types.ToArray());
-			var expressions = _expressions.ToArray();
 			var types = constructor.GetParameters()
 			                       .Select(x => x.ParameterType);
-			var parameters = expressions.Zip(types, Defaults.ExpressionZip);
+			var parameters = _expressions.AsEnumerable().Zip(types, Defaults.ExpressionZip);
 			var result     = Expression.New(constructor, parameters);
 			return result;
 		}

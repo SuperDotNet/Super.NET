@@ -1,6 +1,5 @@
 ﻿using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
-using Super.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +10,7 @@ namespace Super.Model.Collections
 	{
 		public static OnlySelector<T> Default { get; } = new OnlySelector<T>();
 
-		OnlySelector() : this(Where<T>.Always) {}
+		OnlySelector() : this(x => true) {}
 
 		readonly Func<T, bool> _where;
 

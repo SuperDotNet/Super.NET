@@ -1,9 +1,9 @@
-﻿using System;
-using Super.ExtensionMethods;
+﻿using Super.ExtensionMethods;
 using Super.Model.Selection;
 using Super.Model.Selection.Stores;
 using Super.Model.Specifications;
 using Super.Reflection;
+using System;
 
 namespace Super.Runtime.Invocation.Expressions
 {
@@ -11,7 +11,7 @@ namespace Super.Runtime.Invocation.Expressions
 	{
 		public static ShouldConvertExpression Default { get; } = new ShouldConvertExpression();
 
-		ShouldConvertExpression() : this(Types.Void.Not()) {}
+		ShouldConvertExpression() : this(Defaults.Void.Not()) {}
 
 		readonly ISpecification<Type> _null;
 

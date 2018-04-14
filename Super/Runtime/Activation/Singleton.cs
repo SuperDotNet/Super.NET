@@ -9,6 +9,6 @@ namespace Super.Runtime.Activation
 	{
 		public static Singleton<T> Default { get; } = new Singleton<T>();
 
-		Singleton() : base(Singletons.Default.Select(Types<T>.Identity).Select(Cast<T>.Default).Get) {}
+		Singleton() : base(Singletons.Default.Select(Type<T>.Instance).Select(Cast<T>.Default).Get) {}
 	}
 }

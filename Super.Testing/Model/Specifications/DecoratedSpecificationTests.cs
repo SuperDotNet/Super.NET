@@ -9,7 +9,7 @@ namespace Super.Testing.Model.Specifications
 		[Fact]
 		public void Verify()
 		{
-			new DecoratedSpecification<object>(AlwaysSpecification<object>.Default).IsSatisfiedBy(new object())
+			new DecoratedSpecification<object>(Always<object>.Default).IsSatisfiedBy(new object())
 			                                                                       .Should()
 			                                                                       .BeTrue();
 		}

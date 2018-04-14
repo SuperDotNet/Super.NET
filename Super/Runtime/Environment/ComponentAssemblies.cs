@@ -1,6 +1,6 @@
 ﻿using Super.ExtensionMethods;
 using Super.Model.Collections;
-using Super.Reflection;
+using Super.Reflection.Assemblies;
 using System.Reflection;
 
 namespace Super.Runtime.Environment
@@ -10,8 +10,7 @@ namespace Super.Runtime.Environment
 		public static ComponentAssemblies Default { get; } = new ComponentAssemblies();
 
 		ComponentAssemblies() : base(PrimaryAssembly.Default
-		                                            /*.Allow()
-		                                            .Guard(PrimaryAssemblyMessage.Default)*/
+		                                            .Select(PrimaryAssemblyMessage.Default.Guard<Assembly>())
 		                                            .Select(AssemblyNameSelector.Default)
 		                                            .Select(ComponentAssemblyNames.Default)
 		                                            .Select(Load.Default.Select())

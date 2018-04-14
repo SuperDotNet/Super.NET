@@ -1,9 +1,8 @@
 ﻿using Super.Text;
-using System.Reactive;
 
 namespace Super.Runtime.Environment
 {
-	sealed class PrimaryAssemblyMessage : Message<Unit>
+	sealed class PrimaryAssemblyMessage : Message<object>
 	{
 		public static PrimaryAssemblyMessage Default { get; } = new PrimaryAssemblyMessage();
 

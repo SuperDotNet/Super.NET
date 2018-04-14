@@ -2,12 +2,12 @@
 
 namespace Super.Model.Specifications
 {
-	sealed class FixedResultSpecification : ISpecification<object>, IActivateMarker<bool>
+	public class FixedResultSpecification<T> : ISpecification<T>, IActivateMarker<bool>
 	{
 		readonly bool _result;
 
 		public FixedResultSpecification(bool result) => _result = result;
 
-		public bool IsSatisfiedBy(object _) => _result;
+		public bool IsSatisfiedBy(T _) => _result;
 	}
 }

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Super.Model.Selection;
+using Super.Reflection;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using Super.Model.Selection;
-using Super.Reflection;
 
 namespace Super.ExtensionMethods
 {
@@ -44,6 +44,6 @@ namespace Super.ExtensionMethods
 			=> @this.Get(parameter.AsType());
 
 		public static bool Has<T>(this ICustomAttributeProvider @this, bool inherit = false) where T : Attribute
-			=> @this.IsDefined(Types<T>.Identity, inherit);
+			=> inherit.If(IsDefined<T>.Default, IsDefined<T>.Inherited).IsSatisfiedBy(@this);
 	}
 }

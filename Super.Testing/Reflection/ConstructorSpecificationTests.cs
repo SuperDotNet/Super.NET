@@ -18,13 +18,13 @@ namespace Super.Testing.Reflection
 		[Fact]
 		void Verify()
 		{
-			ConstructorSpecification.Default.IsSatisfiedBy(Types<object>.Identity.GetConstructor(Empty<Type>.Array));
+			ConstructorSpecification.Default.IsSatisfiedBy(Type<object>.Instance.GetConstructor(Empty<Type>.Array));
 		}
 
 		[Fact]
 		void VerifyOptional()
 		{
-			ConstructorSpecification.Default.IsSatisfiedBy(Types<Optional>.Identity.GetConstructors().Only());
+			ConstructorSpecification.Default.IsSatisfiedBy(Type<Optional>.Instance.GetConstructors().Only());
 		}
 	}
 }

@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-namespace Super.Reflection
+namespace Super.Reflection.Assemblies
 {
 	public sealed class Assemblies : Items<Assembly>
 	{

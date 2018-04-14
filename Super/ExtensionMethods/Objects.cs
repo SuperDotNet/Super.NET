@@ -15,6 +15,8 @@ namespace Super.ExtensionMethods
 			return @this;
 		}
 
+		public static T If<T>(this bool @this, T @true, T @false) => @this ? @true : @false;
+
 		public static TResult Return<T, TResult>(this T _, TResult result) => result;
 
 		public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> @this,

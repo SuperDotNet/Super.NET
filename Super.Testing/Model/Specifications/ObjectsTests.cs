@@ -12,7 +12,7 @@ namespace Super.Testing.Model.Specifications
 		public void Coverage()
 		{
 			var typeInfo = GetType().GetTypeInfo();
-			AlwaysSpecification<Type>.Default.IsSatisfiedBy(typeInfo).Should().BeTrue();
+			Always<Type>.Default.IsSatisfiedBy(typeInfo).Should().BeTrue();
 		}
 	}
 }

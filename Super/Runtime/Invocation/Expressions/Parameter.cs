@@ -1,15 +1,15 @@
-﻿using System;
-using System.Linq.Expressions;
-using Super.ExtensionMethods;
+﻿using Super.ExtensionMethods;
 using Super.Model.Selection;
 using Super.Model.Sources;
 using Super.Reflection;
+using System;
+using System.Linq.Expressions;
 
 namespace Super.Runtime.Invocation.Expressions
 {
 	sealed class Parameter<T> : Source<ParameterExpression>
 	{
-		readonly static ISelect<string, ParameterExpression> Select = new Parameter(Types<T>.Identity).ToReferenceStore();
+		readonly static ISelect<string, ParameterExpression> Select = new Parameter(Type<T>.Instance).ToReferenceStore();
 
 		public static Parameter<T> Default { get; } = new Parameter<T>();
 
@@ -20,7 +20,7 @@ namespace Super.Runtime.Invocation.Expressions
 	{
 		public static Parameter Default { get; } = new Parameter();
 
-		Parameter() : this(Types<object[]>.Identity) {}
+		Parameter() : this(Type<object[]>.Instance) {}
 
 		public Parameter(Type parameter) : base(Expression.Parameter, parameter) {}
 	}

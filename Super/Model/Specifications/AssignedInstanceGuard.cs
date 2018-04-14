@@ -1,17 +1,19 @@
 ﻿using Super.ExtensionMethods;
+using Super.Model.Selection;
 using Super.Runtime;
-using Super.Text;
 using System;
 
 namespace Super.Model.Specifications
 {
 	sealed class AssignedInstanceGuard<T> : GuardedSpecification<T, InvalidOperationException>
 	{
-		public AssignedInstanceGuard(ISpecification<T> specification, IMessage<T> message)
+		public AssignedInstanceGuard(ISelect<T, string> message) : this(IsAssigned<T>.Default, message) {}
+
+		public AssignedInstanceGuard(ISpecification<T> specification, ISelect<T, string> message)
 			: this(specification,
 			       Exception<InvalidOperationException>.Default.In(message).Get) {}
 
-		public AssignedInstanceGuard(ISpecification<T> specification, Func<T, InvalidOperationException> exception) :
-			base(specification, exception) {}
+		public AssignedInstanceGuard(ISpecification<T> specification, Func<T, InvalidOperationException> exception)
+			: base(specification, exception) {}
 	}
 }

@@ -14,7 +14,7 @@ namespace Super.Reflection
 		where TAttribute : Attribute, ISource<T>
 		where TMember : MemberInfo
 	{
-		public MetadataValues() : this(IsDefinedSpecification<TAttribute>.Default) {}
+		public MetadataValues() : this(IsDefined<TAttribute>.Default) {}
 
 		public MetadataValues(ISpecification<TMember> specification)
 			: base(specification,

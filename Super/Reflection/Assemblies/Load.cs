@@ -1,9 +1,9 @@
 ﻿using Super.ExtensionMethods;
+using Super.Model.Selection;
 using System.IO;
 using System.Reflection;
-using Super.Model.Selection;
 
-namespace Super.Reflection
+namespace Super.Reflection.Assemblies
 {
 	sealed class Load : Decorated<AssemblyName, Assembly>
 	{

@@ -8,6 +8,6 @@ namespace Super.Runtime.Invocation.Expressions
 	{
 		public static ReturnType<T> Default { get; } = new ReturnType<T>();
 
-		ReturnType() : base(Types<T>.Key.GetDeclaredMethod(nameof(Func<object>.Invoke)).ReturnType) {}
+		ReturnType() : base(Type<T>.Metadata.GetDeclaredMethod(nameof(Func<object>.Invoke)).ReturnType) {}
 	}
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Super.Reflection
+namespace Super.Runtime
 {
 	public static class Delegates<T>
 	{

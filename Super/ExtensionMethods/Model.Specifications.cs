@@ -8,24 +8,8 @@ namespace Super.ExtensionMethods
 	{
 		public static ISpecification<T> ToSpecification<T>(this Func<T, bool> @this) => Specifications<T>.Default.Get(@this);
 
-		/*public static ISpecification<T> ToSpecification<T>(this ISource<T, bool> @this)
-			=> @this.ToDelegate().ToSpecification();
-
-				public static ISpecification<object> ToSpecification(this IInstance<bool> @this) => @this.ToDelegate().ToSpecification();
-
-		public static ISpecification<object> ToSpecification(this Func<bool> @this) => @this.To(I<FixedDelegatedSpecification<object>>.Default);*/
-
-		/*public static ISource<TParameter, ISource<T, bool>> Adapt<TParameter, T>(
-			this ISource<TParameter, ISpecification<T>> @this)
-			=> @this.Out(SpecificationSourceCoercer<T>.Default);
-
-		public static ISpecification<TTo> Adapt<TFrom, TTo>(this ISpecification<TFrom> @this, ISource<TTo, TFrom> coercer)
-			=> @this.Adapt(coercer.ToDelegate());*/
-
-		/*public static ISpecification<TTo> Adapt<TFrom, TTo>(this ISpecification<TFrom> @this, Func<TTo, TFrom> coercer)
-			=> @this.Adapt().In(coercer).ToSpecification();*/
-
-		/*public static ISource<T, bool> Adapt<T>(this ISpecification<T> @this) => Model.Specifications.Adapters<T>.Default.Get(@this);*/
+		public static ISpecification<T> Select<T>(this ISpecification<T> @this, T parameter)
+			=> @this.IsSatisfiedBy(parameter) ? Always<T>.Default : Never<T>.Default;
 
 		public static ISpecification<TFrom> Select<TFrom, TTo>(this ISpecification<TTo> @this, ISelect<TFrom> select)
 			=> @this.Select(select.In<TTo>());

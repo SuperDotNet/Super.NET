@@ -10,7 +10,7 @@ namespace Super.Testing.Model.Specifications
 		[Fact]
 		public void Is()
 		{
-			AlwaysSpecification<object>.Default.Or(NeverSpecification<object>.Default)
+			Always<object>.Default.Or(Never<object>.Default)
 			                           .IsSatisfiedBy(null)
 			                           .Should()
 			                           .BeTrue();
@@ -19,7 +19,7 @@ namespace Super.Testing.Model.Specifications
 		[Fact]
 		public void IsNot()
 		{
-			NeverSpecification<object>.Default.Or(NeverSpecification<object>.Default)
+			Never<object>.Default.Or(Never<object>.Default)
 			                          .IsSatisfiedBy(null)
 			                          .Should()
 			                          .BeFalse();

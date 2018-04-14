@@ -5,12 +5,12 @@ using Xunit;
 
 namespace Super.Testing.Model.Specifications
 {
-	public class NeverSpecificationTests
+	public class NeverTests
 	{
 		[Fact]
 		public void Coverage()
 		{
-			NeverSpecification.Default.IsSatisfiedBy(It.IsAny<object>())
+			Never.Default.IsSatisfiedBy(It.IsAny<object>())
 			                  .Should()
 			                  .BeFalse();
 		}

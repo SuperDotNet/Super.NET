@@ -18,7 +18,7 @@ namespace Super.Runtime.Activation
 		                         .Assigned())
 		                    .Or(new ParameterConstructors<TParameter, TResult>(Instances.Default)
 			                        .In(ConstructorLocator.Default))
-		                    .Get(Types<TResult>.Key)) {}
+		                    .Get(Type<TResult>.Metadata)) {}
 	}
 
 	public sealed class Activation<T> : FixedSelection<Type, T>, IActivator<T>
@@ -28,6 +28,6 @@ namespace Super.Runtime.Activation
 		Activation() : base(Constructors<T>.Default
 		                                   .In(ConstructorLocator.Default)
 		                                   .In(TypeMetadataSelector.Default)
-		                                   .Out(Invoke<T>.Default), Types<T>.Identity) {}
+		                                   .Out(Invoke<T>.Default), Type<T>.Instance) {}
 	}
 }

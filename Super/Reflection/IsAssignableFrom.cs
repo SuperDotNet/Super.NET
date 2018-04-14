@@ -8,7 +8,7 @@ namespace Super.Reflection
 	{
 		public static IsAssignableFrom<T> Default { get; } = new IsAssignableFrom<T>();
 
-		IsAssignableFrom() : base(new IsAssignableFrom(Types<T>.Key)) {}
+		IsAssignableFrom() : base(new IsAssignableFrom(Type<T>.Metadata)) {}
 	}
 
 	public sealed class IsAssignableFrom : DelegatedSpecification<TypeInfo>, IActivateMarker<TypeInfo>

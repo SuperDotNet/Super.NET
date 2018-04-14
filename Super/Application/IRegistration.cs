@@ -3,7 +3,9 @@ using LightInject;
 using Super.ExtensionMethods;
 using Super.Model.Collections;
 using Super.Model.Commands;
-using Super.Model.Specifications;
+using Super.Model.Selection;
+using Super.Model.Selection.Alterations;
+using Super.Model.Sources;
 using Super.Reflection;
 using Super.Runtime.Activation;
 using Super.Runtime.Environment;
@@ -11,9 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using Super.Model.Selection;
-using Super.Model.Selection.Alterations;
-using Super.Model.Sources;
 
 namespace Super.Application
 {
@@ -104,8 +103,8 @@ namespace Super.Application
 	sealed class GenericTypeDependencySelector : DecoratedAlteration<Type>, IActivateMarker<Type>
 	{
 		public GenericTypeDependencySelector(Type type)
-			: base(IsGenericTypeDefinition.Default.IsSatisfiedBy(type)
-			                              .To(I<FixedResultSpecification>.Default)
+			: base(IsGenericTypeDefinition.Default
+			                              .Select(type)
 			                              .And(IsConstructedGenericType.Default, IsGenericTypeDefinition.Default.Inverse())
 			                              .If(GenericTypeDefinitionAlteration.Default)) {}
 	}

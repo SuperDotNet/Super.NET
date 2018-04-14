@@ -18,6 +18,6 @@ namespace Super.Reflection
 	{
 		public static MethodDelegates<T> Default { get; } = new MethodDelegates<T>();
 
-		MethodDelegates() : base(new MethodDelegates(Types<T>.Identity).Out(Cast<T>.Default)) {}
+		MethodDelegates() : base(new MethodDelegates(Type<T>.Instance).Out(Cast<T>.Default)) {}
 	}
 }

@@ -9,7 +9,7 @@ namespace Super.Model.Selection.Stores
 		public static Stores<TParameter, TResult> Default { get; } = new Stores<TParameter, TResult>();
 
 		Stores() :
-			base(IsValueTypeSpecification.Default.IsSatisfiedBy(Types<TParameter>.Key)
+			base(IsValueTypeSpecification.Default.IsSatisfiedBy(Type<TParameter>.Metadata)
 				     ? Selections<TParameter, TResult>.Default.ToDelegate()
 				     : new Generic<ISelect<Func<TParameter, TResult>, ISelect<TParameter, TResult>>>(typeof(ReferenceTables<,>))
 				       .Get(typeof(TParameter), typeof(TResult))()

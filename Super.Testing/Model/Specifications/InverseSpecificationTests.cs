@@ -10,7 +10,7 @@ namespace Super.Testing.Model.Specifications
 		[Fact]
 		public void Verify()
 		{
-			AlwaysSpecification<object>.Default.Inverse()
+			Always<object>.Default.Inverse()
 			                           .IsSatisfiedBy(new object())
 			                           .Should()
 			                           .BeFalse();

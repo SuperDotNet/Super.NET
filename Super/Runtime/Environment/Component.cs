@@ -19,6 +19,6 @@ namespace Super.Runtime.Environment
 
 		public Component(IActivator activator, ISource<T> fallback)
 			: base(activator.Out(CastOrValue<T>.Default).Or(fallback).Guard(LocateMessage.Default).Protect(),
-			       Types<T>.Identity) {}
+			       Type<T>.Instance) {}
 	}
 }

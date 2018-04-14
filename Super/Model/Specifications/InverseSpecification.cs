@@ -1,6 +1,8 @@
-﻿namespace Super.Model.Specifications
+﻿using Super.Runtime.Activation;
+
+namespace Super.Model.Specifications
 {
-	public class InverseSpecification<T> : ISpecification<T>
+	public class InverseSpecification<T> : ISpecification<T>, IActivateMarker<ISpecification<T>>
 	{
 		readonly ISpecification<T> _specification;
 

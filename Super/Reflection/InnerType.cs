@@ -11,7 +11,7 @@ namespace Super.Reflection
 	{
 		public static InnerType Default { get; } = new InnerType();
 
-		InnerType() : this(AlwaysSpecification<TypeInfo>.Default) {}
+		InnerType() : this(Always<TypeInfo>.Default) {}
 
 		readonly Func<TypeInfo, ImmutableArray<TypeInfo>> _hierarchy;
 		readonly Func<Type[], TypeInfo>                   _select;

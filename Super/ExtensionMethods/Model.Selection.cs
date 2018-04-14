@@ -21,6 +21,8 @@ namespace Super.ExtensionMethods
 		public static ISelect<TParameter, TIn, TOut> Allow<TParameter, TIn, TOut>(this Func<TIn, TOut> @this, I<TParameter> infer)
 			=> I<Select<TParameter, TIn, TOut>>.Default.From(@this.ToInstance().Allow(infer).ToDelegate());
 
+		public static ISelect<T, T> Guard<T>(this IMessage<object> @this) => new AssignedInstanceGuard<T>(@this.In(Cast<T>.Default)).If(Self<T>.Default);
+
 		public static ISelect<TParameter, TResult> Guard<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this) => @this.Or(GuardedFallback<TParameter, TResult>.Default);
 
@@ -108,11 +110,11 @@ namespace Super.ExtensionMethods
 		public static ISelect<TParameter, TResult> ToStore<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
 			where TParameter : class => @this.ToDelegate().ToStore();
 
-		public static ISpecification<TParameter, TResult> ToStore<TParameter, TResult>(
+		/*public static ISpecification<TParameter, TResult> ToStore<TParameter, TResult>(
 			this ISpecification<TParameter, TResult> @this)
 			where TParameter : class
 			=> new Specification<TParameter, TResult>(@this.ToPredicate().ToStore().ToDelegate(),
-			                                          @this.ToSelect().ToStore().ToDelegate());
+			                                          @this.ToSelect().ToStore().ToDelegate());*/
 
 		public static ISelect<TParameter, TResult> ToStore<TParameter, TResult>(this Func<TParameter, TResult> @this)
 			where TParameter : class => ReferenceStores<TParameter, TResult>.Default.Get(@this);
@@ -129,7 +131,7 @@ namespace Super.ExtensionMethods
 
 		public static ISelect<TParameter, TResult> ToSource<TParameter, TResult, TAttribute>(
 			this TResult @this, I<TAttribute> _) where TAttribute : Attribute
-			=> @this.OrDefault(IsDefinedSpecification<TAttribute>.Default.Select(InstanceMetadataSelector<TParameter>.Default));
+			=> @this.OrDefault(IsDefined<TAttribute>.Default.Select(InstanceMetadataSelector<TParameter>.Default));
 
 		public static ISpecification<TParameter, TResult> ToSpecification<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this,

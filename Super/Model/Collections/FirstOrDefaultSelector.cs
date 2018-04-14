@@ -10,4 +10,11 @@ namespace Super.Model.Collections
 
 		FirstOrDefaultSelector() : base(enumerable => enumerable.FirstOrDefault()) {}
 	}
+
+	public sealed class SingleSelector<T> : Delegated<IEnumerable<T>, T>
+	{
+		public static SingleSelector<T> Default { get; } = new SingleSelector<T>();
+
+		SingleSelector() : base(x => x.Single()) {}
+	}
 }

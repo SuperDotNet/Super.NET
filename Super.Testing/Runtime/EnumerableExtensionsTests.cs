@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using AutoFixture.Xunit2;
+﻿using AutoFixture.Xunit2;
 using FluentAssertions;
 using Super.ExtensionMethods;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 using Enumerable = Super.ExtensionMethods.Enumerable;
 
@@ -100,23 +99,14 @@ namespace Super.Testing.Runtime
 			Assert.True(sut.Introduce(7).Only());
 		}
 
-		[Fact]
-		public void IntroduceImmutableArray()
-		{
-			var sut  = new[] {5}.ToImmutableArray().Introduce(true);
-			var only = sut.Only();
-			Assert.Equal(5, only.Item1);
-			Assert.True(only.Item2);
-		}
-
-		[Fact]
+		/*[Fact]
 		public void IntroduceImmutableArrayFactory()
 		{
 			var sut = new Func<int, int>[] {x => x + 1}.ToImmutableArray().Introduce(1);
 			sut.Only()
 			   .Should()
 			   .Be(2);
-		}
+		}*/
 
 		[Fact]
 		public void IntroduceTuple()

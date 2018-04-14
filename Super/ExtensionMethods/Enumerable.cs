@@ -1,11 +1,10 @@
 ﻿using Super.Model.Collections;
-using Super.Reflection;
 using Super.Runtime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
+
 // ReSharper disable TooManyArguments
 
 namespace Super.ExtensionMethods
@@ -29,47 +28,19 @@ namespace Super.ExtensionMethods
 		public static T[] Fixed<T>(this IEnumerable<T> @this, params T[] items) => @this.Append(items)
 		                                                                                .Fixed();
 
-		public static IEnumerable<(T1, T2)> Introduce<T1, T2>(this ImmutableArray<T1> @this, T2 instance) =>
-			Introduce(@this, instance, Where<(T1, T2)>.Always, Delegates<(T1, T2)>.Self);
-
 		public static IEnumerable<T1> Introduce<T1, T2>(this IEnumerable<Func<T2, T1>> @this, T2 instance) =>
-			Introduce(@this, instance, tuple => tuple.Item1(tuple.Item2));
-
-		public static IEnumerable<T1> Introduce<T1, T2>(this ImmutableArray<Func<T2, T1>> @this, T2 instance) =>
-			Introduce(@this, instance, tuple => tuple.Item1(tuple.Item2));
-
-		public static IEnumerable<T1> Introduce<T1, T2>(this ImmutableArray<T1> @this, T2 instance,
-		                                                Func<(T1, T2), bool> where) =>
-			Introduce(@this, instance, where, tuple => tuple.Item1);
-
-		public static IEnumerable<TResult> Introduce<T1, T2, TResult>(this ImmutableArray<T1> @this, T2 instance,
-		                                                              Func<(T1, T2), TResult> select) =>
-			Introduce(@this, instance, Where<(T1, T2)>.Always, select);
-
-		public static IEnumerable<TResult> Introduce<T1, T2, TResult>(this ImmutableArray<T1> @this, T2 instance,
-		                                                              Func<(T1, T2), bool> where,
-		                                                              Func<(T1, T2), TResult> select)
-		{
-			foreach (var item in @this)
-			{
-				var tuple = (item, instance);
-				if (where(tuple))
-				{
-					yield return select(tuple);
-				}
-			}
-		}
+			@this.Introduce(instance, tuple => tuple.Item1(tuple.Item2));
 
 		public static IEnumerable<(T1, T2)> Introduce<T1, T2>(this IEnumerable<T1> @this, T2 instance) =>
-			Introduce(@this, instance, Where<(T1, T2)>.Always, Delegates<(T1, T2)>.Self);
+			@this.Introduce(instance, x => true, Delegates<(T1, T2)>.Self);
 
 		public static IEnumerable<T1> Introduce<T1, T2>(this IEnumerable<T1> @this, T2 instance,
 		                                                Func<(T1, T2), bool> where) =>
-			Introduce(@this, instance, where, tuple => tuple.Item1);
+			@this.Introduce(instance, where, tuple => tuple.Item1);
 
 		public static IEnumerable<TResult> Introduce<T1, T2, TResult>(this IEnumerable<T1> @this, T2 instance,
 		                                                              Func<(T1, T2), TResult> select) =>
-			Introduce(@this, instance, Where<(T1, T2)>.Always, select);
+			@this.Introduce(instance, x => true, select);
 
 		public static IEnumerable<TResult> Introduce<T1, T2, TResult>(this IEnumerable<T1> @this, T2 instance,
 		                                                              Func<(T1, T2), bool> where,

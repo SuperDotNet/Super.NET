@@ -1,10 +1,17 @@
-﻿using System.Reflection;
-using Super.ExtensionMethods;
+﻿using Super.ExtensionMethods;
 using Super.Model.Sources;
-using Super.Reflection;
+using Super.Reflection.Assemblies;
+using System.Reflection;
 
 namespace Super.Runtime.Environment
 {
+	sealed class PrimaryAssemblyDetails : FixedDeferredSingleton<Assembly, AssemblyDetails>
+	{
+		public static PrimaryAssemblyDetails Default { get; } = new PrimaryAssemblyDetails();
+
+		PrimaryAssemblyDetails() : base(AssemblyDetailsSelector.Default, PrimaryAssembly.Default) {}
+	}
+
 	sealed class PrimaryAssembly : Source<Assembly>
 	{
 		public static PrimaryAssembly Default { get; } = new PrimaryAssembly();

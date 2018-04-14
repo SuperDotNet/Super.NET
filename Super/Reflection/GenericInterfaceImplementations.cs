@@ -1,8 +1,8 @@
-using System.Collections.Immutable;
-using System.Reflection;
 using Super.ExtensionMethods;
 using Super.Model.Selection;
 using Super.Runtime.Activation;
+using System.Collections.Immutable;
+using System.Reflection;
 
 namespace Super.Reflection
 {
@@ -17,8 +17,8 @@ namespace Super.Reflection
 		public GenericInterfaceImplementations(ImmutableArray<TypeInfo> candidates) => _candidates = candidates;
 
 		public ImmutableArray<TypeInfo> Get(TypeInfo parameter)
-			=> _candidates.Introduce(parameter.GetGenericTypeDefinition(),
-			                         t => t.Item1.GetGenericTypeDefinition() == t.Item2)
+			=> _candidates.AsEnumerable()
+			              .Introduce(parameter.GetGenericTypeDefinition(), t => t.Item1.GetGenericTypeDefinition() == t.Item2)
 			              .ToImmutableArray();
 	}
 }
