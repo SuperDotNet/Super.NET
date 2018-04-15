@@ -7,6 +7,8 @@ using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
 using Super.Model.Sources;
 using Super.Reflection;
+using Super.Reflection.Members;
+using Super.Reflection.Types;
 using Super.Runtime.Activation;
 using Super.Runtime.Environment;
 using System;

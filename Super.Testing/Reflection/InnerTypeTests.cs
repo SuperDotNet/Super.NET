@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Super.ExtensionMethods;
-using Super.Reflection;
+using Super.Reflection.Collections;
 using Xunit;
 
 namespace Super.Testing.Reflection

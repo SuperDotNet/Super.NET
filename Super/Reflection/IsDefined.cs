@@ -1,4 +1,5 @@
 ﻿using Super.Model.Specifications;
+using Super.Reflection.Types;
 using System;
 using System.Reflection;
 
@@ -12,14 +13,15 @@ namespace Super.Reflection
 
 		IsDefined() : this(true) {}
 
-		readonly Type _type;
 		readonly bool _inherit;
+
+		readonly Type _type;
 
 		public IsDefined(bool inherit) : this(Type<T>.Instance, inherit) {}
 
 		public IsDefined(Type type, bool inherit)
 		{
-			_type = type;
+			_type    = type;
 			_inherit = inherit;
 		}
 

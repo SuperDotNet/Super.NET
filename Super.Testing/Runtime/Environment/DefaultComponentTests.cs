@@ -14,7 +14,7 @@ namespace Super.Testing.Runtime.Environment
 			DefaultComponent<IHelloWorld>.Default.Get()
 			                   .GetMessage()
 			                   .Should()
-			                   .Be($"Hello From {ExecutionConfiguration.Default.Get()}!");
+			                   .Be($"Hello From {PrimaryAssemblyDetails.Default.Get().Configuration}!");
 		}
 
 		[Fact]

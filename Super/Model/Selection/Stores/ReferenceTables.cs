@@ -1,7 +1,7 @@
-﻿using System;
-using Super.ExtensionMethods;
+﻿using Super.ExtensionMethods;
 using Super.Model.Specifications;
-using Super.Reflection;
+using Super.Reflection.Types;
+using System;
 
 namespace Super.Model.Selection.Stores
 {
@@ -11,7 +11,7 @@ namespace Super.Model.Selection.Stores
 	{
 		public static ReferenceTables<TParameter, TResult> Default { get; } = new ReferenceTables<TParameter, TResult>();
 
-		ReferenceTables() : this(IsValueTypeSpecification.Default.IsSatisfiedBy(typeof(TResult))
+		ReferenceTables() : this(IsValueType.Default.IsSatisfiedBy(typeof(TResult))
 			                         ? typeof(StructureValueTable<,>)
 			                         : typeof(ReferenceValueTable<,>)) {}
 

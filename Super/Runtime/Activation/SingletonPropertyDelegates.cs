@@ -1,9 +1,9 @@
 ﻿using Super.ExtensionMethods;
-using Super.Reflection;
-using System;
-using System.Reflection;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
+using Super.Reflection.Members;
+using System;
+using System.Reflection;
 
 namespace Super.Runtime.Activation
 {

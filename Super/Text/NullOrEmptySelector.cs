@@ -16,7 +16,7 @@ namespace Super.Text
 		public string Get(string parameter) => parameter ?? string.Empty;
 	}
 
-	class TextSelect<TParameter, TResult> : Select<string, TParameter, TResult>
+	public class TextSelect<TParameter, TResult> : Select<string, TParameter, TResult>
 	{
 		public TextSelect(ISelect<TParameter, TResult> @default, params KeyValuePair<string, Func<TParameter, TResult>>[] pairs)
 			: this(Pairs.Select(pairs).Or(@default.AsDefault())) {}

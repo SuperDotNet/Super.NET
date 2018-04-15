@@ -13,12 +13,12 @@ namespace Super.ExtensionMethods
 						.RegisterDependencies(to);
 		}
 
-		/*public static IServiceRepository RegisterSingleton<T>(this IServiceRepository @this)
+		public static IServiceRegistry RegisterSingleton<T>(this IServiceRegistry @this)
 		{
 			var to = typeof(T).GetGenericTypeDefinition();
 			return @this.Register(to)
 						.RegisterDependencies(to);
-		}*/
+		}
 
 		public static IServiceRegistry RegisterDefinition<TFrom, TTo>(this IServiceRegistry @this) where TTo : TFrom
 		{

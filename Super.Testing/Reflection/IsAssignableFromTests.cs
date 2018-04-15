@@ -1,7 +1,7 @@
-﻿using System.IO;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Super.Model.Specifications;
-using Super.Reflection;
+using Super.Reflection.Types;
+using System.IO;
 using Xunit;
 
 namespace Super.Testing.Reflection

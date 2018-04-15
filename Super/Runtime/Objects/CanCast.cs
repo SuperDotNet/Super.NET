@@ -1,6 +1,6 @@
 ﻿using Super.ExtensionMethods;
 using Super.Model.Specifications;
-using Super.Reflection;
+using Super.Reflection.Types;
 
 namespace Super.Runtime.Objects
 {

@@ -1,4 +1,4 @@
-using Super.Reflection;
+using Super.Reflection.Types;
 
 namespace Super.Model.Collections
 {

@@ -1,13 +1,13 @@
 ﻿using FluentAssertions;
 using Super.ExtensionMethods;
 using Super.Model.Commands;
-using Super.Reflection;
+using Super.Model.Sources;
+using Super.Reflection.Collections;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
-using Super.Model.Sources;
 using Xunit;
 
 namespace Super.Testing.Reflection

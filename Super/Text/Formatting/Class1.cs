@@ -98,11 +98,12 @@ namespace Super.Text.Formatting
 
 	public interface IFormat<T> : IPair<string, Func<T, string>> {}
 
-	class Format<T> : Pair<string, Func<T, string>>, IFormat<T>
+	public class Format<T> : Pair<string, Func<T, string>>, IFormat<T>
 	{
 		protected Format(string key, Func<T, string> value) : base(key, value) {}
 	}
 
+	// TODO: Move to Testing Objects.
 	sealed class ApplicationDomainName : Format<AppDomain>
 	{
 		public static ApplicationDomainName Default { get; } = new ApplicationDomainName();
@@ -110,6 +111,7 @@ namespace Super.Text.Formatting
 		ApplicationDomainName() : base("F", x => x.FriendlyName) {}
 	}
 
+	// TODO: Move to Testing Objects.
 	sealed class ApplicationDomainIdentifier : Format<AppDomain>
 	{
 		public static ApplicationDomainIdentifier Default { get; } = new ApplicationDomainIdentifier();
@@ -117,7 +119,7 @@ namespace Super.Text.Formatting
 		ApplicationDomainIdentifier() : base("I", x => x.Id.ToString()) {}
 	}
 
-
+	// TODO: Move to Testing Objects.
 	sealed class ApplicationDomainFormatter : TextSelect<AppDomain, string>, ISelectFormatter<AppDomain>
 	{
 		public static ApplicationDomainFormatter Default { get; } = new ApplicationDomainFormatter();

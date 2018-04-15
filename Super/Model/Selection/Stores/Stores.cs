@@ -1,6 +1,6 @@
-﻿using System;
-using Super.ExtensionMethods;
-using Super.Reflection;
+﻿using Super.ExtensionMethods;
+using Super.Reflection.Types;
+using System;
 
 namespace Super.Model.Selection.Stores
 {
@@ -9,7 +9,7 @@ namespace Super.Model.Selection.Stores
 		public static Stores<TParameter, TResult> Default { get; } = new Stores<TParameter, TResult>();
 
 		Stores() :
-			base(IsValueTypeSpecification.Default.IsSatisfiedBy(Type<TParameter>.Metadata)
+			base(IsValueType.Default.IsSatisfiedBy(Type<TParameter>.Metadata)
 				     ? Selections<TParameter, TResult>.Default.ToDelegate()
 				     : new Generic<ISelect<Func<TParameter, TResult>, ISelect<TParameter, TResult>>>(typeof(ReferenceTables<,>))
 				       .Get(typeof(TParameter), typeof(TResult))()

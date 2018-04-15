@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Super.Runtime.Environment
 {
-	sealed class PrimaryAssemblyDetails : FixedDeferredSingleton<Assembly, AssemblyDetails>
+	public sealed class PrimaryAssemblyDetails : FixedDeferredSingleton<Assembly, AssemblyDetails>
 	{
 		public static PrimaryAssemblyDetails Default { get; } = new PrimaryAssemblyDetails();
 

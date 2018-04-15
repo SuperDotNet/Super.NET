@@ -1,6 +1,6 @@
-﻿using System;
-using Super.ExtensionMethods;
+﻿using Super.ExtensionMethods;
 using Super.Model.Selection;
+using System;
 
 namespace Super.Model.Sources
 {
@@ -12,14 +12,4 @@ namespace Super.Model.Sources
 
 		public Func<T> Get(ISource<T> parameter) => parameter.ToDelegate();
 	}
-
-	/*sealed class DelegateCoercer<TParameter, TResult> : ISource<IInstance<ISource<TParameter, TResult>>, IInstance<Func<TParameter, TResult>>>
-	{
-		public static DelegateCoercer<TParameter, TResult> Default { get; } = new DelegateCoercer<TParameter, TResult>();
-
-		DelegateCoercer() {}
-
-		public IInstance<Func<TParameter, TResult>> Get(IInstance<ISource<TParameter, TResult>> parameter)
-			=> parameter.Adapt(Sources.DelegateCoercer<TParameter, TResult>.Default);
-	}*/
 }

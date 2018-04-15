@@ -1,7 +1,8 @@
-﻿using System;
-using Super.ExtensionMethods;
-using Super.Reflection;
+﻿using Super.ExtensionMethods;
+using Super.Reflection.Members;
+using Super.Reflection.Types;
 using Super.Runtime;
+using System;
 using Xunit;
 
 // ReSharper disable All

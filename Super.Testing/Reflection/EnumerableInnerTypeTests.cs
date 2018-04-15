@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Super.ExtensionMethods;
-using Super.Reflection;
+using Super.Reflection.Collections;
+using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace Super.Testing.Reflection
