@@ -1,4 +1,4 @@
-﻿using Super.Diagnostics;
+﻿using Super.Diagnostics.Logging;
 using Super.Runtime.Invocation;
 
 namespace Super.Services

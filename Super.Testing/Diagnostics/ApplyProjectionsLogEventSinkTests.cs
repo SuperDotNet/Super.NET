@@ -2,7 +2,7 @@
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
-using Super.Diagnostics;
+using Super.Diagnostics.Logging.Configuration;
 using Super.ExtensionMethods;
 using Super.Model.Selection;
 using Super.Text.Formatting;

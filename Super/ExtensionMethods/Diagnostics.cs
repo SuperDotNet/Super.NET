@@ -1,7 +1,8 @@
 ﻿using Polly;
 using Serilog;
 using Serilog.Core;
-using Super.Diagnostics;
+using Super.Diagnostics.Logging;
+using Super.Diagnostics.Logging.Configuration;
 using Super.Model.Commands;
 using Super.Model.Selection.Alterations;
 using Super.Reflection;

@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Super.Diagnostics;
+using Super.Diagnostics.Logging.Configuration;
 using Xunit;
 
 namespace Super.Testing.Diagnostics

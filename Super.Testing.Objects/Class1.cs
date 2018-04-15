@@ -1,5 +1,5 @@
 ﻿using Serilog;
-using Super.Diagnostics;
+using Super.Diagnostics.Logging;
 using Super.Text;
 using Super.Text.Formatting;
 using System;

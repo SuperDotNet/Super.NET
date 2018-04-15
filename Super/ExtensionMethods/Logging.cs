@@ -1,5 +1,5 @@
 ﻿using Polly;
-using Super.Diagnostics;
+using Super.Diagnostics.Logging;
 using Super.Model.Commands;
 using System;
 using System.Collections.Immutable;

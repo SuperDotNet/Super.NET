@@ -2,7 +2,7 @@
 
 namespace Super.Environment
 {
-	sealed class SeqConfiguration : Diagnostics.SeqConfiguration
+	sealed class SeqConfiguration : Diagnostics.Logging.Configuration.SeqConfiguration
 	{
 		public static SeqConfiguration Default { get; } = new SeqConfiguration();
 

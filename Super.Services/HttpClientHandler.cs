@@ -1,5 +1,5 @@
 ﻿using Serilog;
-using Super.Diagnostics;
+using Super.Diagnostics.Logging;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;

@@ -1,6 +1,7 @@
 ﻿using Serilog;
 using Serilog.Configuration;
-using Super.Diagnostics;
+using Super.Diagnostics.Logging;
+using Super.Diagnostics.Logging.Configuration;
 using Super.Model.Sources;
 using System;
 

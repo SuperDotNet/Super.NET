@@ -1,5 +1,6 @@
 ﻿using Polly;
 using Super.Diagnostics;
+using Super.Diagnostics.Logging;
 using Super.ExtensionMethods;
 
 namespace Super.Runtime.Invocation
