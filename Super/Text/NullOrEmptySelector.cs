@@ -1,9 +1,4 @@
-﻿using Super.ExtensionMethods;
-using Super.Model.Selection;
-using Super.Model.Selection.Alterations;
-using Super.Runtime;
-using System;
-using System.Collections.Generic;
+﻿using Super.Model.Selection.Alterations;
 
 namespace Super.Text
 {
@@ -14,14 +9,5 @@ namespace Super.Text
 		NullOrEmptySelector() {}
 
 		public string Get(string parameter) => parameter ?? string.Empty;
-	}
-
-	public class TextSelect<TParameter, TResult> : Select<string, TParameter, TResult>
-	{
-		public TextSelect(ISelect<TParameter, TResult> @default, params KeyValuePair<string, Func<TParameter, TResult>>[] pairs)
-			: this(Pairs.Select(pairs).Or(@default.AsDefault())) {}
-
-		public TextSelect(ISelect<string, Func<TParameter, TResult>> @select)
-			: base(select.In(NullOrEmptySelector.Default).ToDelegate()) {}
 	}
 }

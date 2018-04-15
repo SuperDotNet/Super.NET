@@ -1,4 +1,6 @@
-﻿using Super.Text;
+﻿using Serilog;
+using Super.Diagnostics;
+using Super.Text;
 using Super.Text.Formatting;
 using System;
 
@@ -36,5 +38,10 @@ namespace Super.Testing.Objects
 		DefaultApplicationDomainFormatter() {}
 
 		public string Get(AppDomain parameter) => $"AppDomain: {parameter.FriendlyName}";
+	}
+
+	sealed class Template : LogMessage<AppDomain>
+	{
+		public Template(ILogger logger) : base(logger, "Hello World: {@AppDomain:F}") {}
 	}
 }

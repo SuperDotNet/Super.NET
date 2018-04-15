@@ -1,5 +1,5 @@
-﻿using Super.Model.Selection;
-using System.Text;
+﻿using System.Text;
+using Super.Model.Selection;
 
 namespace Super.Text
 {
@@ -10,12 +10,5 @@ namespace Super.Text
 		TextDataSelector() : this(Encoding.UTF8) {}
 
 		public TextDataSelector(Encoding encoding) : base(encoding.GetBytes) {}
-	}
-
-	public sealed class TextSelector<T> : Message<T>
-	{
-		public static TextSelector<T> Default { get; } = new TextSelector<T>();
-
-		TextSelector() : base(x => x.ToString()) {}
 	}
 }
