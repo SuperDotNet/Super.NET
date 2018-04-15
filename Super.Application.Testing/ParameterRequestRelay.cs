@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using AutoFixture.Kernel;
 
-namespace Super.Testing.Framework
+namespace Super.Application.Testing
 {
 	public class ParameterRequestRelay : ISpecimenBuilder
 	{

@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using AutoFixture.Kernel;
 using JetBrains.Annotations;
 
-namespace Super.Testing.Framework
+namespace Super.Application.Testing
 {
 	public sealed class DefaultEngineParts : AutoFixture.DefaultEngineParts
 	{

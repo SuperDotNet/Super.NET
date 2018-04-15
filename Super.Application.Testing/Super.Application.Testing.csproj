@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net471</TargetFramework>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
@@ -11,9 +11,10 @@
     <PackageReference Include="FluentAssertions" Version="5.2.0" />
     <PackageReference Include="System.ComponentModel.TypeConverter" Version="4.3.0" />
     <PackageReference Include="xunit" Version="2.3.1" />
+    <PackageReference Include="xunit.extensibility.execution" Version="2.3.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Super\Super.csproj" />
+    <ProjectReference Include="..\Super.Diagnostics\Super.Diagnostics.csproj" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-﻿namespace Super.Testing.Framework
+﻿namespace Super.Application.Testing
 {
 	public sealed class AutoMoqCustomization : AutoFixture.AutoMoq.AutoMoqCustomization
 	{

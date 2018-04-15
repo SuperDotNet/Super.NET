@@ -1,12 +1,12 @@
-﻿using System.Collections.Immutable;
-using System.Linq;
-using Serilog;
+﻿using Serilog;
 using Serilog.Configuration;
 using Serilog.Core;
+using System.Collections.Immutable;
+using System.Linq;
 
 namespace Super.Diagnostics.Logging.Configuration
 {
-	sealed class EnrichmentConfiguration : ILoggingEnrichmentConfiguration
+	public class EnrichmentConfiguration : ILoggingEnrichmentConfiguration
 	{
 		readonly ImmutableArray<ILogEventEnricher> _enrichers;
 

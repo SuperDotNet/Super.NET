@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Moq;
+using Super.Application.Testing;
 using Super.Runtime.Activation;
-using Super.Testing.Framework;
 using Xunit;
 
 namespace Super.Testing.Runtime.Activation

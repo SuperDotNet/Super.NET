@@ -11,9 +11,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Super.Application.Console\Super.Application.Console.csproj" />
+    <ProjectReference Include="..\Super.Application.Testing\Super.Application.Testing.csproj" />
     <ProjectReference Include="..\Super.Testing.Environment.Development\Super.Testing.Environment.Development.csproj" Condition="'$(Configuration)' == 'Debug'" />
     <ProjectReference Include="..\Super.Testing.Environment\Super.Testing.Environment.csproj" Condition="'$(Configuration)' == 'Release'" />
-    <ProjectReference Include="..\Super.Testing.Framework\Super.Testing.Framework.csproj" />
     <ProjectReference Include="..\Super.Testing.Objects\Super.Testing.Objects.csproj" />
     <ProjectReference Include="..\Super.Testing.Platform.NetCore\Super.Testing.Platform.NetCore.csproj" Condition="'$(TargetFramework)' == 'netcoreapp2.0'" />
     <ProjectReference Include="..\Super.Testing.Platform.NetFramework\Super.Testing.Platform.NetFramework.csproj" Condition="'$(TargetFramework)' == 'net471'" />

@@ -1,8 +1,9 @@
 ﻿using Serilog;
 using Serilog.Configuration;
+using Super.Diagnostics.Logging.Configuration;
 using Super.Model.Selection;
 
-namespace Super.Diagnostics.Logging.Configuration
+namespace Super.Diagnostics
 {
 	sealed class TraceConfiguration : Delegated<LoggerSinkConfiguration, LoggerConfiguration>, ILoggingSinkConfiguration
 	{

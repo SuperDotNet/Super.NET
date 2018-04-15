@@ -6,7 +6,9 @@ namespace Super.Diagnostics.Logging.Configuration
 	{
 		public static DefaultLoggingConfiguration Default { get; } = new DefaultLoggingConfiguration();
 
-		DefaultLoggingConfiguration() : base(ControlledLoggingLevelConfiguration.Default,
-		                                     TraceConfiguration.Default.ToConfiguration()) {}
+		DefaultLoggingConfiguration() : base(LoggingLevelControllerConfiguration.Default,
+		                                     new EnrichmentConfiguration(PrimaryAssemblyEnricher.Default).ToConfiguration(),
+											 /*EnhancedExceptionStackTraceConfiguration.Default.ToConfiguration(),*/
+		                                     LogContextEnricher.Default.ToConfiguration()) {}
 	}
 }

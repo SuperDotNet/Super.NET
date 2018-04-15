@@ -1,8 +1,8 @@
-﻿using AutoFixture;
+﻿using System;
+using AutoFixture;
 using JetBrains.Annotations;
-using System;
 
-namespace Super.Testing.Framework
+namespace Super.Application.Testing
 {
 	public class AutoDataAttribute : AutoFixture.Xunit2.AutoDataAttribute
 	{

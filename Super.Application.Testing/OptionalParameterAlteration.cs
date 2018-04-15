@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
 
-namespace Super.Testing.Framework
+namespace Super.Application.Testing
 {
 	public class OptionalParameterAlteration : EngineParts<AutoFixture.Kernel.ParameterRequestRelay>
 	{

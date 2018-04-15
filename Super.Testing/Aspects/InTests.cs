@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
+using Super.Application.Testing;
 using Super.ExtensionMethods;
 using Super.Model.Selection;
 using Super.Reflection;
-using Super.Testing.Framework;
 using Xunit;
 
 // ReSharper disable All

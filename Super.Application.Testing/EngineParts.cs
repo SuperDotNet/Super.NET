@@ -3,7 +3,7 @@ using AutoFixture.Kernel;
 using Super.ExtensionMethods;
 using Super.Model.Selection;
 
-namespace Super.Testing.Framework
+namespace Super.Application.Testing
 {
 	public class EngineParts<T> : Delegated<T, ISpecimenBuilder>, ISpecimenBuilderTransformation
 		where T : ISpecimenBuilder
