@@ -1,16 +1,16 @@
-﻿using System;
-using AutoFixture.Kernel;
+﻿using AutoFixture.Kernel;
 using Super.ExtensionMethods;
 using Super.Model.Selection;
+using System;
 
 namespace Super.Application.Testing
 {
-	public class EngineParts<T> : Delegated<T, ISpecimenBuilder>, ISpecimenBuilderTransformation
+	public class BuilderSelection<T> : Delegated<T, ISpecimenBuilder>, ISpecimenBuilderTransformation
 		where T : ISpecimenBuilder
 	{
 		readonly Func<T, ISpecimenBuilderNode> _delegate;
 
-		protected EngineParts(Func<T, ISpecimenBuilderNode> @delegate) : base(@delegate) => _delegate = @delegate;
+		protected BuilderSelection(Func<T, ISpecimenBuilderNode> @delegate) : base(@delegate) => _delegate = @delegate;
 
 		public ISpecimenBuilderNode Transform(ISpecimenBuilder builder) => builder.AsTo(_delegate);
 	}

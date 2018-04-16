@@ -2,7 +2,6 @@
 using Serilog.Configuration;
 using Super.Diagnostics.Logging;
 using Super.Diagnostics.Logging.Configuration;
-using Super.Model.Sources;
 using System;
 
 namespace Super.Application.Console
@@ -26,10 +25,10 @@ namespace Super.Application.Console
 		public LoggerConfiguration Get(LoggerSinkConfiguration parameter) => parameter.Console(formatProvider: _provider, outputTemplate: _template, levelSwitch: _controller);
 	}
 
-	sealed class ConsoleMessageTemplate : Source<string>
+	sealed class ConsoleMessageTemplate : Text.Text
 	{
 		public static ConsoleMessageTemplate Default { get; } = new ConsoleMessageTemplate();
 
-		ConsoleMessageTemplate() : base("[{Timestamp:HH:mm:ss} {Level:u3}] {Message:l}{NewLine}{Exception}") {}
+		ConsoleMessageTemplate() : base($"{TemplateHeader.Default} {{Message:l}}{{NewLine}}{{Exception}}") {}
 	}
 }

@@ -1,12 +1,12 @@
-﻿using System;
-using AutoFixture;
+﻿using AutoFixture;
 using JetBrains.Annotations;
+using System;
 
 namespace Super.Application.Testing
 {
 	public class AutoDataAttribute : AutoFixture.Xunit2.AutoDataAttribute
 	{
-		readonly static Func<IFixture> DefaultFixtureFactory = Fixtures<AutoMoqCustomization>.Default.Get;
+		readonly static Func<IFixture> DefaultFixtureFactory = Fixtures<DefaultCustomization>.Default.Get;
 
 		public AutoDataAttribute() : this(DefaultFixtureFactory) {}
 

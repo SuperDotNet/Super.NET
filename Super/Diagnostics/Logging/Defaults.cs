@@ -1,7 +1,23 @@
 ﻿namespace Super.Diagnostics.Logging
 {
-	public static class Defaults
+	public sealed class OutputTemplate : Text.Text
 	{
-		public const string Template = "{Timestamp:HH:mm:ss:fff} [{Level}] ({SourceContext}) {Message}{NewLine}{Exception}";
+		public static OutputTemplate Default { get; } = new OutputTemplate();
+
+		OutputTemplate() : base($"{TemplateHeader.Default} ({{SourceContext}}) {{Message}}{{NewLine}}{{Exception}}") {}
+	}
+
+	public sealed class TemplateHeader : Text.Text
+	{
+		public static TemplateHeader Default { get; } = new TemplateHeader();
+
+		TemplateHeader() : base($"[{{Timestamp:{TimestampFormat.Default}}} {{Level:u3}}]") {}
+	}
+
+	public sealed class TimestampFormat : Text.Text
+	{
+		public static TimestampFormat Default { get; } = new TimestampFormat();
+
+		TimestampFormat() : base("HH:mm:ss:fff") {}
 	}
 }

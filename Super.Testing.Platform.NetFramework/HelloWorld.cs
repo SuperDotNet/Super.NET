@@ -1,9 +1,10 @@
-﻿using System;
-using Super.Model.Sources;
+﻿using JetBrains.Annotations;
+using System;
 
 namespace Super.Testing.Platform
 {
-	public sealed class HelloWorld : Source<string>
+	[UsedImplicitly]
+	public sealed class HelloWorld : Text.Text
 	{
 		public static HelloWorld Default { get; } = new HelloWorld();
 

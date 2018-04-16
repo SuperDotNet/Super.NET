@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using Super.Diagnostics.Logging;
 using Super.ExtensionMethods;
 using Super.Model.Commands;
 using Super.Model.Selection;
@@ -20,8 +21,8 @@ namespace Super.Runtime
 		public ObservedExecutionContext(IExecutionContextInformation parent, Action dispose)
 			: this(new ObservedExecutionContextInformation(parent), dispose) {}
 
-		public ObservedExecutionContext(ObservedExecutionContextInformation instance, Action dispose) :
-			base(instance, dispose) {}
+		public ObservedExecutionContext(ObservedExecutionContextInformation instance, Action dispose)
+			: base(instance, dispose) {}
 	}
 
 	sealed class ObservedExecutionContextInformation : ExecutionContextInformation<ObservedExecutionContextDetails>
@@ -46,10 +47,53 @@ namespace Super.Runtime
 		public static ObservedExecutionContextDetailsFormatter Default { get; } =
 			new ObservedExecutionContextDetailsFormatter();
 
-		ObservedExecutionContextDetailsFormatter() {}
+		ObservedExecutionContextDetailsFormatter() : this(TaskDetailsFormatter.Default, ThreadingDetailsFormatter.Default) {}
+
+		readonly IFormatter<TaskDetails> _task;
+		readonly IFormatter<ThreadingDetails> _thread;
+
+		public ObservedExecutionContextDetailsFormatter(IFormatter<TaskDetails> task, IFormatter<ThreadingDetails> thread)
+		{
+			_task = task;
+			_thread = thread;
+		}
 
 		public string Get(ObservedExecutionContextDetails parameter)
-			=> $"{parameter.Observed.ToString()} - Task: {parameter.Task.TaskId?.ToString()}, Thread: {parameter.Threading.Thread.Name} ({parameter.Threading.Thread.ManagedThreadId.ToString()}), Default/Current Scheduler: {parameter.Task.Default.Id.ToString()}/{parameter.Task.Current.Id.ToString()}, SynchronizationContext: {parameter.Threading.Synchronization}";
+			=> $"[{parameter.Observed.ToString(TimestampFormat.Default)}] {_task.Get(parameter.Task)}, {_thread.Get(parameter.Threading)}";
+	}
+
+	sealed class ThreadingDetailsFormatter : IFormatter<ThreadingDetails>
+	{
+		public static ThreadingDetailsFormatter Default { get; } = new ThreadingDetailsFormatter();
+
+		ThreadingDetailsFormatter() : this(ThreadFormatter.Default) {}
+
+		readonly IFormatter<Thread> _thread;
+
+		public ThreadingDetailsFormatter(IFormatter<Thread> thread) => _thread = thread;
+
+		public string Get(ThreadingDetails parameter)
+			=> $"Thread: {_thread.Get(parameter.Thread)}, SynchronizationContext: {parameter.Synchronization.OrNone()}";
+	}
+
+	sealed class ThreadFormatter : IFormatter<Thread>
+	{
+		public static ThreadFormatter Default { get; } = new ThreadFormatter();
+
+		ThreadFormatter() {}
+
+		public string Get(Thread parameter)
+			=> $"#{parameter.ManagedThreadId.ToString()} {parameter.Priority.ToString()} {parameter.Name ?? parameter.CurrentCulture.DisplayName}";
+	}
+
+	sealed class TaskDetailsFormatter : IFormatter<TaskDetails>
+	{
+		public static TaskDetailsFormatter Default { get; } = new TaskDetailsFormatter();
+
+		TaskDetailsFormatter() {}
+
+		public string Get(TaskDetails parameter)
+			=> $"Task: {parameter.TaskId.OrNone()}, Default/Current Scheduler: {parameter.Default.Id.ToString()}/{parameter.Current.Id.ToString()}";
 	}
 
 	sealed class TaskDetails
@@ -152,19 +196,19 @@ namespace Super.Runtime
 		public ExecutionContextStack(IEnumerable<IIExecutionContext> collection) : base(collection) {}
 	}
 
-	sealed class ExecutionContext : Delegated<IExecutionContextInformation>
+	sealed class ExecutionContext : Decorated<IExecutionContextInformation>
 	{
 		public static ExecutionContext Default { get; } = new ExecutionContext();
 
-		ExecutionContext() : base(() => ExecutionContexts.Default.Get().Peek().Get()) {}
+		ExecutionContext() : base(ExecutionContexts.Default.Select(x => x.Peek().Get())) {}
 	}
 
 	sealed class RootExecutionContext : ExecutionContext<AppDomain>
 	{
 		public static RootExecutionContext Default { get; } = new RootExecutionContext();
 
-		RootExecutionContext() :
-			this("An attempt was made to dispose of the root execution context, which is not allowed.") {}
+		RootExecutionContext()
+			: this("An attempt was made to dispose of the root execution context, which is not allowed.") {}
 
 		public RootExecutionContext(string message)
 			: base(RootExecutionContextInformation.Default, message.New(I<InvalidOperationException>.Default)
