@@ -52,6 +52,7 @@ namespace Super.ExtensionMethods
 
 		public static TResult Any<TParameter, TResult>(this ISource<TResult> @this, TParameter _) => @this.Get();
 
+		public static ISelect<object, T> Any<T>(this ISource<T> @this) => @this.Allow(I<object>.Default);
 		public static ISelect<Unit, T> In<T>(this ISource<T> @this) => @this.Allow(I<Unit>.Default);
 
 		public static ISpecification<TParameter, TResult> Allow<TParameter, TResult>(
@@ -67,6 +68,8 @@ namespace Super.ExtensionMethods
 		public static ISource<T> Singleton<T>(this ISource<T> @this) => SingletonSelector<T>.Default.Get(@this);
 
 		public static ISource<T> ToInstance<T>(this T @this) => Sources<T>.Default.Get(@this);
+
+		public static ISource<T> ToInstance<T>(this Func<T> @this) => I<DelegatedSource<T>>.Default.From(@this);
 
 		public static Func<T> ToDelegate<T>(this ISource<T> @this) => Super.Model.Sources.Delegates<T>.Default.Get(@this);
 	}
