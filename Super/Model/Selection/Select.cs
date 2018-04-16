@@ -1,22 +1,23 @@
-﻿using System;
-using Super.ExtensionMethods;
+﻿using Super.ExtensionMethods;
 using Super.Model.Sources;
 using Super.Runtime.Activation;
+using System;
 
 namespace Super.Model.Selection
 {
-	public class Delegated<TParameter, TResult> : ISelect<TParameter, TResult>,
-	                                                    IActivateMarker<Func<TParameter, TResult>>
+	public class Select<TParameter, TResult> : ISelect<TParameter, TResult>,
+	                                           IActivateMarker<Func<TParameter, TResult>>
 	{
 		readonly Func<TParameter, TResult> _source;
 
-		public Delegated(Func<TParameter, TResult> source) => _source = source;
+		public Select(Func<TParameter, TResult> source) => _source = source;
 
 		public TResult Get(TParameter parameter) => _source(parameter);
 	}
 
 	public class DelegatedInstanceSelector<TParameter, TResult> : ISelect<TParameter, TResult>,
-	                                                            IActivateMarker<Func<Func<TParameter, TResult>>>
+	                                                              IActivateMarker<ISource<ISelect<TParameter, TResult>>>,
+	                                                              IActivateMarker<Func<Func<TParameter, TResult>>>
 	{
 		readonly Func<Func<TParameter, TResult>> _source;
 

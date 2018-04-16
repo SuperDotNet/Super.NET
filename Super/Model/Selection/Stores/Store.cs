@@ -4,7 +4,7 @@ using Super.Runtime.Activation;
 
 namespace Super.Model.Selection.Stores
 {
-	class Store<TParameter, TResult> : Delegated<TParameter, TResult>
+	class Store<TParameter, TResult> : Select<TParameter, TResult>
 	{
 		public Store() : this(Activation<TParameter, TResult>.Default.ToDelegate()) {}
 

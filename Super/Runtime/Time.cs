@@ -3,7 +3,7 @@ using Super.Model.Sources;
 
 namespace Super.Runtime
 {
-	public sealed class Time : Delegated<DateTimeOffset>, ITime
+	public sealed class Time : DelegatedSource<DateTimeOffset>, ITime
 	{
 		public static Time Default { get; } = new Time();
 

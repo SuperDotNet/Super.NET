@@ -4,7 +4,7 @@ using Super.Model.Selection;
 
 namespace Super.Diagnostics.Logging
 {
-	sealed class LoggerDestructureSelector : Delegated<LoggerConfiguration, LoggerDestructuringConfiguration>
+	sealed class LoggerDestructureSelector : Select<LoggerConfiguration, LoggerDestructuringConfiguration>
 	{
 		public static LoggerDestructureSelector Default { get; } = new LoggerDestructureSelector();
 

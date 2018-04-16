@@ -2,7 +2,7 @@
 
 namespace Super.Runtime
 {
-	public sealed class EnvironmentSetting : Delegated<string, string>
+	public sealed class EnvironmentSetting : Select<string, string>
 	{
 		public static EnvironmentSetting Default { get; } = new EnvironmentSetting();
 

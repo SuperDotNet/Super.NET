@@ -5,7 +5,7 @@ using Super.Model.Selection;
 
 namespace Super.Diagnostics
 {
-	sealed class TraceConfiguration : Delegated<LoggerSinkConfiguration, LoggerConfiguration>, ILoggingSinkConfiguration
+	sealed class TraceConfiguration : Select<LoggerSinkConfiguration, LoggerConfiguration>, ILoggingSinkConfiguration
 	{
 		public static TraceConfiguration Default { get; } = new TraceConfiguration();
 

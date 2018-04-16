@@ -18,7 +18,7 @@ namespace Super.Runtime.Invocation.Expressions
 		public static Instances Default { get; } = new Instances();
 
 		Instances() :
-			this(new Delegated<ConstructorInfo, IEnumerable<Expression>>(Empty<Expression>.Enumerable.Accept)) {}
+			this(new Select<ConstructorInfo, IEnumerable<Expression>>(Empty<Expression>.Enumerable.Accept)) {}
 
 		readonly ISelect<ConstructorInfo, IEnumerable<Expression>> _parameters;
 

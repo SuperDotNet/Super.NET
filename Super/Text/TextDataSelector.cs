@@ -3,7 +3,7 @@ using Super.Model.Selection;
 
 namespace Super.Text
 {
-	sealed class TextDataSelector : Delegated<string, byte[]>
+	sealed class TextDataSelector : Select<string, byte[]>
 	{
 		public static TextDataSelector Default { get; } = new TextDataSelector();
 

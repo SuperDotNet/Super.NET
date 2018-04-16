@@ -4,7 +4,7 @@ using Super.Model.Selection;
 
 namespace Super.Model.Collections
 {
-	sealed class AddItemCommands<T> : Delegated<IList<T>, ICommand<T>>
+	sealed class AddItemCommands<T> : Select<IList<T>, ICommand<T>>
 	{
 		public static AddItemCommands<T> Default { get; } = new AddItemCommands<T>();
 

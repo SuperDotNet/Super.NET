@@ -10,7 +10,7 @@ namespace Super.Services
 		Request() : base(Retry<T>.Default) {}
 	}
 
-	sealed class Request<TParameter, TResult> : Delegated<TParameter, IObservable<TResult>>
+	sealed class Request<TParameter, TResult> : Select<TParameter, IObservable<TResult>>
 	{
 		public Request(Func<TParameter, IObservable<TResult>> source) : base(source) {}
 	}

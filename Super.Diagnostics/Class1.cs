@@ -8,14 +8,14 @@ using System.Diagnostics;
 
 namespace Super.Diagnostics
 {
-	sealed class DomainUserNameEnricher : Delegated<LoggerEnrichmentConfiguration, LoggerConfiguration>, ILoggingEnrichmentConfiguration
+	sealed class DomainUserNameEnricher : Select<LoggerEnrichmentConfiguration, LoggerConfiguration>, ILoggingEnrichmentConfiguration
 	{
 		public static DomainUserNameEnricher Default { get; } = new DomainUserNameEnricher();
 
 		DomainUserNameEnricher() : base(x => x.WithEnvironmentUserName()) {}
 	}
 
-	sealed class UserNameEnricher : Delegated<LoggerEnrichmentConfiguration, LoggerConfiguration>, ILoggingEnrichmentConfiguration
+	sealed class UserNameEnricher : Select<LoggerEnrichmentConfiguration, LoggerConfiguration>, ILoggingEnrichmentConfiguration
 	{
 		public static UserNameEnricher Default { get; } = new UserNameEnricher();
 
@@ -29,7 +29,7 @@ namespace Super.Diagnostics
 		EnhancedExceptions() : base(ReferenceTables<Exception, Exception>.Default.Get(x => x.Demystify())) {}
 	}
 
-	sealed class EnhancedExceptionStackTraceConfiguration : Delegated<LoggerEnrichmentConfiguration, LoggerConfiguration>, ILoggingEnrichmentConfiguration
+	sealed class EnhancedExceptionStackTraceConfiguration : Select<LoggerEnrichmentConfiguration, LoggerConfiguration>, ILoggingEnrichmentConfiguration
 	{
 		public static EnhancedExceptionStackTraceConfiguration Default { get; } = new EnhancedExceptionStackTraceConfiguration();
 
@@ -52,42 +52,42 @@ namespace Super.Diagnostics
 		public LoggerConfiguration Get(LoggerEnrichmentConfiguration parameter) => parameter.WithCorrelationIdHeader(_header);
 	}*/
 
-	sealed class ExceptionHashEnricher : Delegated<LoggerEnrichmentConfiguration, LoggerConfiguration>, ILoggingEnrichmentConfiguration
+	sealed class ExceptionHashEnricher : Select<LoggerEnrichmentConfiguration, LoggerConfiguration>, ILoggingEnrichmentConfiguration
 	{
 		public static ExceptionHashEnricher Default { get; } = new ExceptionHashEnricher();
 
 		ExceptionHashEnricher() : base(x => x.WithExceptionStackTraceHash()) {}
 	}
 
-	sealed class MemoryEnricher : Delegated<LoggerEnrichmentConfiguration, LoggerConfiguration>, ILoggingEnrichmentConfiguration
+	sealed class MemoryEnricher : Select<LoggerEnrichmentConfiguration, LoggerConfiguration>, ILoggingEnrichmentConfiguration
 	{
 		public static MemoryEnricher Default { get; } = new MemoryEnricher();
 
 		MemoryEnricher() : base(x => x.WithMemoryUsage()) {}
 	}
 
-	sealed class ProcessIdEnricher : Delegated<LoggerEnrichmentConfiguration, LoggerConfiguration>, ILoggingEnrichmentConfiguration
+	sealed class ProcessIdEnricher : Select<LoggerEnrichmentConfiguration, LoggerConfiguration>, ILoggingEnrichmentConfiguration
 	{
 		public static ProcessIdEnricher Default { get; } = new ProcessIdEnricher();
 
 		ProcessIdEnricher() : base(x => x.WithProcessId()) {}
 	}
 
-	sealed class ProcessNameEnricher : Delegated<LoggerEnrichmentConfiguration, LoggerConfiguration>, ILoggingEnrichmentConfiguration
+	sealed class ProcessNameEnricher : Select<LoggerEnrichmentConfiguration, LoggerConfiguration>, ILoggingEnrichmentConfiguration
 	{
 		public static ProcessNameEnricher Default { get; } = new ProcessNameEnricher();
 
 		ProcessNameEnricher() : base(x => x.WithProcessName()) {}
 	}
 
-	sealed class ThreadEnricher : Delegated<LoggerEnrichmentConfiguration, LoggerConfiguration>, ILoggingEnrichmentConfiguration
+	sealed class ThreadEnricher : Select<LoggerEnrichmentConfiguration, LoggerConfiguration>, ILoggingEnrichmentConfiguration
 	{
 		public static ThreadEnricher Default { get; } = new ThreadEnricher();
 
 		ThreadEnricher() : base(x => x.WithThreadId()) {}
 	}
 
-	sealed class MachineNameEnricher : Delegated<LoggerEnrichmentConfiguration, LoggerConfiguration>, ILoggingEnrichmentConfiguration
+	sealed class MachineNameEnricher : Select<LoggerEnrichmentConfiguration, LoggerConfiguration>, ILoggingEnrichmentConfiguration
 	{
 		public static MachineNameEnricher Default { get; } = new MachineNameEnricher();
 

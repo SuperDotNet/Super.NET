@@ -33,7 +33,7 @@ namespace Super.Application.Testing
 		bool ISpecification<Type>.IsSatisfiedBy(Type parameter) => false;
 	}
 
-	sealed class SelectCustomizations : Delegated<IFixture, IList<ISpecimenBuilder>>
+	sealed class SelectCustomizations : Select<IFixture, IList<ISpecimenBuilder>>
 	{
 		public static SelectCustomizations Default { get; } = new SelectCustomizations();
 

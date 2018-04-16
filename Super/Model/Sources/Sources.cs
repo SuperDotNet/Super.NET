@@ -3,7 +3,7 @@ using Super.Model.Selection.Stores;
 
 namespace Super.Model.Sources
 {
-	sealed class ValueSelector<T> : Delegated<ISource<T>, T>
+	sealed class ValueSelector<T> : Select<ISource<T>, T>
 	{
 		public static ValueSelector<T> Default { get; } = new ValueSelector<T>();
 

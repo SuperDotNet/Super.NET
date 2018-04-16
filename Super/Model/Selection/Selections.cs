@@ -10,6 +10,6 @@ namespace Super.Model.Selection
 		public static Selections<TParameter, TResult> Default { get; } = new Selections<TParameter, TResult>();
 
 		Selections() : base(x => x.Target as ISelect<TParameter, TResult> ??
-		                      I<Delegated<TParameter, TResult>>.Default.From(x)) {}
+		                      I<Select<TParameter, TResult>>.Default.From(x)) {}
 	}
 }

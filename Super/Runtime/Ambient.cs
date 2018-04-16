@@ -1,5 +1,6 @@
 ﻿using Super.ExtensionMethods;
 using Super.Model.Commands;
+using Super.Model.Selection;
 using Super.Model.Sources;
 using Super.Runtime.Activation;
 using System;
@@ -7,11 +8,16 @@ using System.Threading;
 
 namespace Super.Runtime
 {
-	public class Ambient<T> : Decorated<T>, IActivateMarker<ISource<T>>, IDisposable
+	static class Ambient
+	{
+		public static ISource<T> For<T>() where T : class => Activator<T>.Default.To(AmbientAlteration<T>.Default);
+	}
+
+	public class Ambient<T> : DecoratedSource<T>, IActivateMarker<ISource<T>>, IDisposable
 	{
 		readonly Action _dispose;
 
-		public Ambient(Func<T> factory) : this(new Delegated<T>(factory)) {}
+		public Ambient(Func<T> factory) : this(new DelegatedSource<T>(factory)) {}
 
 		public Ambient(ISource<T> source) : this(source, new Logical<T>()) {}
 

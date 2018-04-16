@@ -4,7 +4,7 @@ using System;
 
 namespace Super.Model.Selection.Stores
 {
-	sealed class Stores<TParameter, TResult> : Delegated<Func<TParameter, TResult>, ISelect<TParameter, TResult>>
+	sealed class Stores<TParameter, TResult> : Select<Func<TParameter, TResult>, ISelect<TParameter, TResult>>
 	{
 		public static Stores<TParameter, TResult> Default { get; } = new Stores<TParameter, TResult>();
 

@@ -15,11 +15,10 @@ namespace Super.ExtensionMethods
 {
 	partial class Model
 	{
-		public static ICommand<Unit> Select<T>(this ICommand<T> @this, T parameter)
-			=> Select(@this, new FixedResult<Unit, T>(parameter));
+		public static ICommand<Unit> Select<T>(this ICommand<T> @this, T parameter) => @this.Select(parameter.ToSource());
 
 		public static ICommand<TFrom> Select<TFrom, TTo>(this ICommand<TTo> @this, ISelect<TFrom, TTo> select)
-			=> Select(@this, @select.ToDelegate());
+			=> @this.Select(select.ToDelegate());
 
 		public static ICommand<TFrom> Select<TFrom, TTo>(this ICommand<TTo> @this, Func<TFrom, TTo> select)
 			=> new SelectedParameterCommand<TFrom, TTo>(@this.ToDelegate(), select);
@@ -46,7 +45,7 @@ namespace Super.ExtensionMethods
 		public static ICommand<T> ToCommand<T>(this Action<T> @this) => DelegateCommands<T>.Default.Get(@this);
 
 		public static ICommand<T> ToCommand<T>(this ISource<ICommand<T>> @this)
-			=> Activations<ISource<ICommand<T>>, DelegatedInstanceCommand<T>>.Default.Get(@this);
+			=> I<DelegatedInstanceCommand<T>>.Default.From(@this);
 
 		public static ICommand<TParameter> ToCommand<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
 			=> @this.ToDelegate().ToCommand();

@@ -1,65 +1,44 @@
-﻿using JetBrains.Annotations;
-using Super.Diagnostics.Logging;
+﻿using Super.Diagnostics.Logging;
 using Super.ExtensionMethods;
-using Super.Model.Commands;
-using Super.Model.Selection;
-using Super.Model.Selection.Alterations;
-using Super.Model.Sources;
-using Super.Reflection;
 using Super.Runtime.Activation;
 using Super.Text;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Super.Runtime
 {
-	sealed class ObservedExecutionContext : ExecutionContext<ObservedExecutionContextDetails>
+	sealed class DetailsFormatter : IFormatter<Details>
 	{
-		public ObservedExecutionContext(IExecutionContextInformation parent, Action dispose)
-			: this(new ObservedExecutionContextInformation(parent), dispose) {}
+		public static DetailsFormatter Default { get; } = new DetailsFormatter();
 
-		public ObservedExecutionContext(ObservedExecutionContextInformation instance, Action dispose)
-			: base(instance, dispose) {}
+		DetailsFormatter() {}
+
+		public string Get(Details parameter)
+			=> $"[{parameter.Observed.ToString(TimestampFormat.Default)}] {parameter.Name}";
 	}
 
-	sealed class ObservedExecutionContextInformation : ExecutionContextInformation<ObservedExecutionContextDetails>
+	sealed class ContextFormatter : IFormatter<Context>
 	{
-		public ObservedExecutionContextInformation(IExecutionContextInformation parent)
-			: this(parent, Time.Default) {}
+		public static ContextFormatter Default { get; } = new ContextFormatter();
 
-		public ObservedExecutionContextInformation(IExecutionContextInformation parent, ITime time)
-			: this(parent, new ObservedExecutionContextDetails(time.Get())) {}
+		ContextFormatter() : this(DetailsFormatter.Default, TaskDetailsFormatter.Default,
+		                          ThreadingDetailsFormatter.Default) {}
 
-		public ObservedExecutionContextInformation(IExecutionContextInformation parent,
-		                                           ObservedExecutionContextDetails reference)
-			: this(ObservedExecutionContextDetailsFormatter.Default.Get(reference), parent, reference) {}
-
-		public ObservedExecutionContextInformation(string name, IExecutionContextInformation parent,
-		                                           ObservedExecutionContextDetails reference)
-			: base(name, parent, reference) {}
-	}
-
-	sealed class ObservedExecutionContextDetailsFormatter : IFormatter<ObservedExecutionContextDetails>
-	{
-		public static ObservedExecutionContextDetailsFormatter Default { get; } =
-			new ObservedExecutionContextDetailsFormatter();
-
-		ObservedExecutionContextDetailsFormatter() : this(TaskDetailsFormatter.Default, ThreadingDetailsFormatter.Default) {}
-
-		readonly IFormatter<TaskDetails> _task;
+		readonly IFormatter<Details>          _details;
+		readonly IFormatter<TaskDetails>      _task;
 		readonly IFormatter<ThreadingDetails> _thread;
 
-		public ObservedExecutionContextDetailsFormatter(IFormatter<TaskDetails> task, IFormatter<ThreadingDetails> thread)
+		public ContextFormatter(IFormatter<Details> details, IFormatter<TaskDetails> task,
+		                        IFormatter<ThreadingDetails> thread)
 		{
-			_task = task;
-			_thread = thread;
+			_details = details;
+			_task    = task;
+			_thread  = thread;
 		}
 
-		public string Get(ObservedExecutionContextDetails parameter)
-			=> $"[{parameter.Observed.ToString(TimestampFormat.Default)}] {_task.Get(parameter.Task)}, {_thread.Get(parameter.Threading)}";
+		public string Get(Context parameter)
+			=> $"{_details.Get(parameter.Details)}: {_task.Get(parameter.Task)}, {_thread.Get(parameter.Threading)}";
 	}
 
 	sealed class ThreadingDetailsFormatter : IFormatter<ThreadingDetails>
@@ -129,21 +108,36 @@ namespace Super.Runtime
 		public Thread Thread { get; }
 	}
 
-	sealed class ObservedExecutionContextDetails
+	public struct Details
 	{
-		public ObservedExecutionContextDetails(DateTimeOffset observed)
-			: this(new ThreadingDetails(), new TaskDetails(), observed) {}
-
-		public ObservedExecutionContextDetails(ThreadingDetails threading, TaskDetails task, DateTimeOffset observed)
+		public Details(string name, DateTimeOffset observed)
 		{
-			Threading = threading;
-			Task      = task;
-			Observed  = observed;
+			Name     = name;
+			Observed = observed;
 		}
 
+		public string Name { get; }
+
+		public DateTimeOffset Observed { get; }
+	}
+
+	sealed class Context : IActivateMarker<string>
+	{
+		public Context(string name) : this(name, Time.Default.Get()) {}
+
+		public Context(string name, DateTimeOffset observed)
+			: this(new Details(name, observed), new ThreadingDetails(), new TaskDetails()) {}
+
+		public Context(Details details, ThreadingDetails threading, TaskDetails task)
+		{
+			Details   = details;
+			Threading = threading;
+			Task      = task;
+		}
+
+		public Details Details { get; }
 		public ThreadingDetails Threading { get; }
 		public TaskDetails Task { get; }
-		public DateTimeOffset Observed { get; }
 	}
 
 	/*class Execution<T> : Contextual<IIExecutionContext, T>
@@ -160,43 +154,7 @@ namespace Super.Runtime
 		public Contextual(ISource<TContext, T> source, IInstance<TContext> parameter) : base(source, parameter) {}
 	}*/
 
-	public interface IIExecutionContext : ISource<IExecutionContextInformation>, IDisposable {}
-
-	class ExecutionContext<T> : Source<IExecutionContextInformation>, IIExecutionContext where T : class
-	{
-		readonly Action _dispose;
-
-		protected ExecutionContext(ExecutionContextInformation<T> instance, Action dispose) : base(instance)
-			=> _dispose = dispose;
-
-		public void Dispose()
-		{
-			_dispose();
-		}
-	}
-
-	sealed class Observe : IAlteration<IIExecutionContext>
-	{
-		public static Observe Default { get; } = new Observe();
-
-		Observe() {}
-
-		public IIExecutionContext Get(IIExecutionContext parameter) => new ObservedExecutionContext(parameter.Get(), () => {});
-	}
-
-	sealed class ExecutionContextStack : Stack<IIExecutionContext>
-	{
-		[UsedImplicitly]
-		public ExecutionContextStack() : this(RootExecutionContext.Default) {}
-
-		public ExecutionContextStack(IIExecutionContext root) : this(root, root.To(Observe.Default)) {}
-
-		public ExecutionContextStack(params IIExecutionContext[] contexts) : this(contexts.AsEnumerable()) {}
-
-		public ExecutionContextStack(IEnumerable<IIExecutionContext> collection) : base(collection) {}
-	}
-
-	sealed class ExecutionContext : Decorated<IExecutionContextInformation>
+	/*sealed class ExecutionContext : Decorated<IExecutionContextInformation>
 	{
 		public static ExecutionContext Default { get; } = new ExecutionContext();
 
@@ -208,19 +166,19 @@ namespace Super.Runtime
 		public static RootExecutionContext Default { get; } = new RootExecutionContext();
 
 		RootExecutionContext()
-			: this("An attempt was made to dispose of the root execution context, which is not allowed.") {}
+			: this() {}
 
 		public RootExecutionContext(string message)
 			: base(RootExecutionContextInformation.Default, message.New(I<InvalidOperationException>.Default)
 			                                                       .New(I<ThrowCommand<InvalidOperationException>>.Default)
 			                                                       .Execute) {}
-	}
+	}*/
 
-	public interface IExecutionContextInformation
+	/*public interface IExecutionContextInformation
 	{
 		string Name { get; }
 
-		IExecutionContextInformation Parent { get; }
+		/*IExecutionContextInformation Parent { get; }#1#
 
 		object Reference { get; }
 	}
@@ -248,5 +206,5 @@ namespace Super.Runtime
 		public T Reference { get; }
 
 		object IExecutionContextInformation.Reference => Reference;
-	}
+	}*/
 }

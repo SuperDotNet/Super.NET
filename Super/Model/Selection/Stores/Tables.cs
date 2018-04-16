@@ -8,7 +8,7 @@ using System.Collections.Concurrent;
 namespace Super.Model.Selection.Stores
 {
 	public sealed class Tables<TParameter, TResult>
-		: Delegated<Func<TParameter, TResult>, ITable<TParameter, TResult>>
+		: Select<Func<TParameter, TResult>, ITable<TParameter, TResult>>
 	{
 		public static Tables<TParameter, TResult> Default { get; } = new Tables<TParameter, TResult>();
 

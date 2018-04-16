@@ -9,7 +9,7 @@ using Instances = Super.Runtime.Invocation.Expressions.Instances;
 
 namespace Super.Runtime.Activation
 {
-	public sealed class Activation<TParameter, TResult> : Delegated<TParameter, TResult>
+	public sealed class Activation<TParameter, TResult> : Select<TParameter, TResult>
 	{
 		public static ISelect<TParameter, TResult> Default { get; } = new Activation<TParameter, TResult>();
 

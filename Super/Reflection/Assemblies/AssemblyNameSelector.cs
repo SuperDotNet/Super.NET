@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Super.Reflection.Assemblies
 {
-	public sealed class AssemblyNameSelector : Delegated<Assembly, AssemblyName>
+	public sealed class AssemblyNameSelector : Select<Assembly, AssemblyName>
 	{
 		public static AssemblyNameSelector Default { get; } = new AssemblyNameSelector();
 

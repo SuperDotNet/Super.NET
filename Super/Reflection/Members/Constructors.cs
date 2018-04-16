@@ -4,7 +4,7 @@ using Super.Model.Selection;
 
 namespace Super.Reflection.Members
 {
-	sealed class Constructors : Delegated<TypeInfo, ICollection<ConstructorInfo>>, IConstructors
+	sealed class Constructors : Select<TypeInfo, ICollection<ConstructorInfo>>, IConstructors
 	{
 		public static Constructors Default { get; } = new Constructors();
 

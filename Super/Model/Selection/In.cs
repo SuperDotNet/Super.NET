@@ -7,7 +7,7 @@ namespace Super.Model.Selection
 {
 	public static class In<T>
 	{
-		public static Func<T, TResult> From<TResult>(Func<T, TResult> select) => select;
+		/*public static Func<T, TResult> From<TResult>(Func<T, TResult> select) => select;*/
 
 		public static ISelect<T, TResult> Out<TResult>() where TResult : IActivateMarker<T> => Activations<T, TResult>.Default;
 

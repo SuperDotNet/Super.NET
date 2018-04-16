@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Super.Diagnostics.Logging.Configuration
 {
-	sealed class ScalarConfiguration<T> : Delegated<LoggerDestructuringConfiguration, LoggerConfiguration>,
+	sealed class ScalarConfiguration<T> : Select<LoggerDestructuringConfiguration, LoggerConfiguration>,
 	                                      ILoggingDestructureConfiguration
 	{
 		public static ScalarConfiguration<T> Default { get; } = new ScalarConfiguration<T>();

@@ -3,7 +3,7 @@ using Super.Model.Selection;
 
 namespace Super.Services
 {
-	sealed class RequestStateSelector : Delegated<HttpRequest, IRequestCookieCollection>
+	sealed class RequestStateSelector : Select<HttpRequest, IRequestCookieCollection>
 	{
 		public static RequestStateSelector Default { get; } = new RequestStateSelector();
 

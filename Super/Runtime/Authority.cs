@@ -3,7 +3,7 @@ using Super.Model.Selection;
 
 namespace Super.Runtime
 {
-	public sealed class Authority : Delegated<Uri, string>
+	public sealed class Authority : Select<Uri, string>
 	{
 		public static Authority Default { get; } = new Authority();
 

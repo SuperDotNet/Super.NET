@@ -4,7 +4,7 @@ using Super.Model.Selection;
 
 namespace Super.Diagnostics.Logging.Configuration
 {
-	sealed class LogContextEnricher : Delegated<LoggerEnrichmentConfiguration, LoggerConfiguration>, ILoggingEnrichmentConfiguration
+	sealed class LogContextEnricher : Select<LoggerEnrichmentConfiguration, LoggerConfiguration>, ILoggingEnrichmentConfiguration
 	{
 		public static LogContextEnricher Default { get; } = new LogContextEnricher();
 

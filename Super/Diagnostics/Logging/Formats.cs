@@ -23,7 +23,7 @@ namespace Super.Diagnostics.Logging
 		                       .AsReadOnly()
 		                       .To(I<Selection>.Default)) {}
 
-		sealed class Selection : Delegated<string, string>, IFormats, IActivateMarker<IReadOnlyDictionary<string, string>>
+		sealed class Selection : Select<string, string>, IFormats, IActivateMarker<IReadOnlyDictionary<string, string>>
 		{
 			readonly ImmutableArray<string> _names;
 

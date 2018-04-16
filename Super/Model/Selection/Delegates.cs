@@ -4,7 +4,7 @@ using Super.Model.Selection.Stores;
 namespace Super.Model.Selection
 {
 	sealed class Delegates<TParameter, TResult>
-		: Delegated<ISelect<TParameter, TResult>, Func<TParameter, TResult>>
+		: Select<ISelect<TParameter, TResult>, Func<TParameter, TResult>>
 	{
 		public static Delegates<TParameter, TResult> Default { get; } = new Delegates<TParameter, TResult>();
 

@@ -1,13 +1,14 @@
 ﻿using Super.Model.Selection.Alterations;
 using Super.Model.Sources;
+using Super.Reflection;
 using Super.Runtime.Activation;
 
 namespace Super.Runtime
 {
-	sealed class AmbientAlteration<T> : DecoratedAlteration<ISource<T>>
+	sealed class AmbientAlteration<T> : DelegatedAlteration<ISource<T>>
 	{
 		public static AmbientAlteration<T> Default { get; } = new AmbientAlteration<T>();
 
-		AmbientAlteration() : base(Activations<ISource<T>, Ambient<T>>.Default) {}
+		AmbientAlteration() : base(I<Ambient<T>>.Default.From) {}
 	}
 }

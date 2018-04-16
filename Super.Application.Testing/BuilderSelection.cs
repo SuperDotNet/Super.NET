@@ -5,7 +5,7 @@ using System;
 
 namespace Super.Application.Testing
 {
-	public class BuilderSelection<T> : Delegated<T, ISpecimenBuilder>, ISpecimenBuilderTransformation
+	public class BuilderSelection<T> : Select<T, ISpecimenBuilder>, ISpecimenBuilderTransformation
 		where T : ISpecimenBuilder
 	{
 		readonly Func<T, ISpecimenBuilderNode> _delegate;

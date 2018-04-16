@@ -5,7 +5,7 @@ using Super.Model.Selection;
 
 namespace Super.Reflection.Members
 {
-	sealed class InstanceConstructors : Delegated<TypeInfo, IEnumerable<ConstructorInfo>>
+	sealed class InstanceConstructors : Select<TypeInfo, IEnumerable<ConstructorInfo>>
 	{
 		public static InstanceConstructors Default { get; } = new InstanceConstructors();
 

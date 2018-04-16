@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 namespace Super.Model.Selection.Stores
 {
 	sealed class DefaultReferenceValueTables<TParameter, TResult>
-		: Delegated<Func<TParameter, TResult>, ITable<TParameter, TResult>>
+		: Select<Func<TParameter, TResult>, ITable<TParameter, TResult>>
 		where TParameter : class
 		where TResult : class
 	{

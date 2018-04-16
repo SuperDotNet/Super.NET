@@ -4,7 +4,7 @@ using Super.Model.Selection;
 
 namespace Super.Runtime
 {
-	public sealed class Exception<T> : Delegated<string, T> where T : Exception
+	public sealed class Exception<T> : Select<string, T> where T : Exception
 	{
 		public static Exception<T> Default { get; } = new Exception<T>();
 

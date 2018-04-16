@@ -4,7 +4,7 @@ using Super.Model.Selection;
 
 namespace Super.Diagnostics.Logging
 {
-	sealed class LoggerSinkSelector : Delegated<LoggerConfiguration, LoggerSinkConfiguration>
+	sealed class LoggerSinkSelector : Select<LoggerConfiguration, LoggerSinkConfiguration>
 	{
 		public static LoggerSinkSelector Default { get; } = new LoggerSinkSelector();
 

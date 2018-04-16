@@ -21,7 +21,7 @@ namespace Super.Runtime.Activation
 		                                       .Out(ValueSelector<object>.Default)) {}
 	}
 
-	public sealed class Activator<T> : Decorated<T>, IActivator<T>
+	public sealed class Activator<T> : DecoratedSource<T>, IActivator<T>
 	{
 		public static Activator<T> Default { get; } = new Activator<T>();
 

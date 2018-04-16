@@ -6,7 +6,7 @@ using System;
 namespace Super.Model.Selection.Stores
 {
 	public sealed class ReferenceTables<TParameter, TResult>
-		: Delegated<Func<TParameter, TResult>, ITable<TParameter, TResult>>
+		: Select<Func<TParameter, TResult>, ITable<TParameter, TResult>>
 		where TParameter : class
 	{
 		public static ReferenceTables<TParameter, TResult> Default { get; } = new ReferenceTables<TParameter, TResult>();

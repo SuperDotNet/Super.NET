@@ -17,6 +17,11 @@ namespace Super.ExtensionMethods
 		public static ISource<TTo> Select<TFrom, TTo>(this ISource<TFrom> @this, ISelect<TFrom, TTo> select)
 			=> @this.Select(select.ToDelegate());
 
+		public static ISource<T> Select<T>(this ISource<ISource<T>> @this) => @this.Select(ValueSelector<T>.Default);
+
+		public static ISelect<TParameter, TResult> Select<TParameter, TResult>(this ISource<ISelect<TParameter, TResult>> @this)
+			=> I<DelegatedInstanceSelector<TParameter, TResult>>.Default.From(@this);
+
 		public static ISource<TTo> Select<TFrom, TTo>(this ISource<TFrom> @this, Func<TFrom, TTo> select)
 			=> new DelegatedSelection<TFrom, TTo>(select, @this.ToDelegate());
 

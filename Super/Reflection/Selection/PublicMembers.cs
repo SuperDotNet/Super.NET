@@ -4,7 +4,7 @@ using Super.Model.Selection;
 
 namespace Super.Reflection.Selection
 {
-	public sealed class PublicMembers : Delegated<TypeInfo, IEnumerable<MemberInfo>>
+	public sealed class PublicMembers : Select<TypeInfo, IEnumerable<MemberInfo>>
 	{
 		public static PublicMembers Default { get; } = new PublicMembers();
 

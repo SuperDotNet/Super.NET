@@ -4,7 +4,7 @@ using Super.Model.Selection;
 
 namespace Super.Reflection.Types
 {
-	sealed class GenericParametersSelector : Delegated<TypeInfo, Type[]>
+	sealed class GenericParametersSelector : Select<TypeInfo, Type[]>
 	{
 		public static GenericParametersSelector Default { get; } = new GenericParametersSelector();
 

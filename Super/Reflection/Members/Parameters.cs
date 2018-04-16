@@ -4,7 +4,7 @@ using Super.Model.Selection;
 
 namespace Super.Reflection.Members
 {
-	sealed class Parameters : Delegated<ConstructorInfo, ICollection<ParameterInfo>>
+	sealed class Parameters : Select<ConstructorInfo, ICollection<ParameterInfo>>
 	{
 		public static Parameters Default { get; } = new Parameters();
 

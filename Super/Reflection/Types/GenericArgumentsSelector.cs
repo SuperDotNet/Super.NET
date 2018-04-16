@@ -4,7 +4,7 @@ using Super.Model.Selection;
 
 namespace Super.Reflection.Types
 {
-	sealed class GenericArgumentsSelector : Delegated<TypeInfo, Type[]>
+	sealed class GenericArgumentsSelector : Select<TypeInfo, Type[]>
 	{
 		public static GenericArgumentsSelector Default { get; } = new GenericArgumentsSelector();
 

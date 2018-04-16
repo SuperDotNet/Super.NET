@@ -1,30 +1,37 @@
 ﻿using FluentAssertions;
+using Super.ExtensionMethods;
 using Super.Runtime;
+using System;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Super.Testing.Runtime
 {
-	public sealed class ExecutionContextsTests
+	public sealed class ContextsTests
 	{
-		readonly ITestOutputHelper _output;
+		readonly object _context;
 
-		public ExecutionContextsTests(ITestOutputHelper output) => _output = output;
+		public ContextsTests() : this(ExecutionContext.Default.Get()) {}
+
+		ContextsTests(object context) => _context = context;
 
 		[Fact]
 		void Verify()
 		{
-			var stack = ExecutionContexts.Default.Get();
-			stack.Should().BeSameAs(ExecutionContexts.Default.Get());
-			var current = ExecutionContext.Default.Get();
-			_output.WriteLine(current.Name);
-			stack.Should().HaveCount(2);
-			var reference = stack.Pop().Get();
+			var contexts = Implementations.Contexts.Get();
+			contexts.Should().BeSameAs(Implementations.Contexts.Get());
+			var current = Implementations.Contexts.Get().Get().To<Context>();
+			ExecutionContext.Default.Get().Should().BeSameAs(current);
 
-			reference.Reference.Should().BeOfType<ObservedExecutionContextDetails>();
+			ExecutionContext.Default.Get().Should().BeSameAs(_context);
 
-			reference.Should().BeSameAs(current);
-			ExecutionContexts.Default.Get().Should().HaveCount(1);
+			contexts.Invoking(x => x.Execute()).Should().Throw<InvalidOperationException>();
+		}
+
+		[Fact]
+		void References()
+		{
+			Ambient.For<Contexts>().Should().BeSameAs(Ambient.For<Contexts>());
+			Ambient.For<ChildContexts>().Should().BeSameAs(Ambient.For<ChildContexts>());
 		}
 	}
 }

@@ -6,7 +6,7 @@ using Super.Model.Selection;
 
 namespace Super.Model.Collections
 {
-	public class GroupCollection<T> : Delegated<GroupName, IList<T>>, IGroupCollection<T>
+	public class GroupCollection<T> : Select<GroupName, IList<T>>, IGroupCollection<T>
 	{
 		readonly Func<IEnumerable<T>, IEnumerable<T>>    _select;
 		readonly IOrderedDictionary<GroupName, IList<T>> _store;
