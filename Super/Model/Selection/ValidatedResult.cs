@@ -1,8 +1,7 @@
-﻿using System;
-using Super.Model.Selection;
-using Super.Model.Specifications;
+﻿using Super.Model.Specifications;
+using System;
 
-namespace Super.Runtime
+namespace Super.Model.Selection
 {
 	class ValidatedResult<TParameter, TResult> : ISelect<TParameter, TResult>
 	{

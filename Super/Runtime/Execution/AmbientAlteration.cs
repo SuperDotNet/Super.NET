@@ -3,7 +3,7 @@ using Super.Model.Sources;
 using Super.Reflection;
 using Super.Runtime.Activation;
 
-namespace Super.Runtime
+namespace Super.Runtime.Execution
 {
 	sealed class AmbientAlteration<T> : DelegatedAlteration<ISource<T>>
 	{

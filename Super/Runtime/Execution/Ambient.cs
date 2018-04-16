@@ -4,9 +4,8 @@ using Super.Model.Selection;
 using Super.Model.Sources;
 using Super.Runtime.Activation;
 using System;
-using System.Threading;
 
-namespace Super.Runtime
+namespace Super.Runtime.Execution
 {
 	static class Ambient
 	{
@@ -31,24 +30,6 @@ namespace Super.Runtime
 		public void Dispose()
 		{
 			_dispose();
-		}
-	}
-
-	public class Logical<T> : IMutable<T>
-	{
-		readonly AsyncLocal<T> _local;
-
-		public Logical() : this(default(T)) {}
-
-		public Logical(T instance) : this(new AsyncLocal<T> {Value = instance}) {}
-
-		public Logical(AsyncLocal<T> local) => _local = local;
-
-		public T Get() => _local.Value;
-
-		public void Execute(T parameter)
-		{
-			_local.Value = parameter;
 		}
 	}
 }
