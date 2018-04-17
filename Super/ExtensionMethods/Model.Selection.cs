@@ -12,7 +12,6 @@ using Super.Text;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Reactive;
 
 namespace Super.ExtensionMethods
@@ -20,7 +19,7 @@ namespace Super.ExtensionMethods
 	partial class Model
 	{
 		public static ISelect<TParameter, TIn, TOut> Allow<TParameter, TIn, TOut>(this Func<TIn, TOut> @this, I<TParameter> infer)
-			=> I<Select<TParameter, TIn, TOut>>.Default.From(@this.ToInstance().Allow(infer).ToDelegate());
+			=> I<Select<TParameter, TIn, TOut>>.Default.From(@this.ToSource().Allow(infer).ToDelegate());
 
 		public static ISelect<T, T> Guard<T>(this IMessage<object> @this)
 			=> new AssignedInstanceGuard<T>(@this.In(Cast<T>.Default)).If(Self<T>.Default);
@@ -72,7 +71,7 @@ namespace Super.ExtensionMethods
 		public static ISelect<TSelect, Func<TParameter, TResult>> Unless<TSelect, TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, ISpecification<TSelect> select, ISelect<TParameter, TResult> then)
 			=> @this.ToDelegate()
-			        .ToInstance()
+			        .ToSource()
 			        .Allow(I<TSelect>.Default)
 			        .Unless(select, then);
 
@@ -80,7 +79,7 @@ namespace Super.ExtensionMethods
 			this ISelect<TSelect, Func<TParameter, TResult>> @this, ISpecification<TSelect> select,
 			ISelect<TParameter, TResult> then)
 			=> @this.Unless<TSelect, Func<TParameter, TResult>>(select,
-			                                                    then.ToDelegate().ToInstance().Allow(I<TSelect>.Default));
+			                                                    then.ToDelegate().ToSource().Allow(I<TSelect>.Default));
 
 		public static ISelect<TParameter, TResult> Unless<TParameter, TResult, TOther>(
 			this ISelect<TParameter, TResult> @this, ISelect<TOther, TResult> then)
@@ -116,16 +115,15 @@ namespace Super.ExtensionMethods
 			where TParameter : class => ReferenceStores<TParameter, TResult>.Default.Get(@this);
 
 
-		public static ISelect<Unit, T> ToSource<T>(this T @this)
-			=> @this.ToSource(I<Unit>.Default);
+		public static ISelect<Unit, T> ToSelect<T>(this T @this) => @this.ToSelect(I<Unit>.Default);
 
-		public static ISelect<TParameter, TResult> ToSource<TParameter, TResult>(this TResult @this, I<TParameter> _)
+		public static ISelect<TParameter, TResult> ToSelect<TParameter, TResult>(this TResult @this, I<TParameter> _)
 			=> new FixedResult<TParameter, TResult>(@this);
 
-		public static ISelect<TParameter, TResult> ToSource<TParameter, TResult>(this Func<TParameter, TResult> @this)
+		public static ISelect<TParameter, TResult> ToSelect<TParameter, TResult>(this Func<TParameter, TResult> @this)
 			=> Selections<TParameter, TResult>.Default.Get(@this);
 
-		public static ISelect<TParameter, TResult> ToSource<TParameter, TResult, TAttribute>(
+		public static ISelect<TParameter, TResult> ToSelect<TParameter, TResult, TAttribute>(
 			this TResult @this, I<TAttribute> _) where TAttribute : Attribute
 			=> @this.OrDefault(IsDefined<TAttribute>.Default.Select(InstanceMetadataSelector<TParameter>.Default));
 
@@ -145,9 +143,5 @@ namespace Super.ExtensionMethods
 		public static ISelect<TParameter, TResult> OrDefault<TParameter, TResult>(
 			this TResult @this, ISpecification<TParameter> specification)
 			=> new Conditional<TParameter, TResult>(specification, @this, default);
-
-		public static ISelect<TParameter, TResult> Composite<TParameter, TResult>(
-			this IEnumerable<ISelect<TParameter, TResult>> @this)
-			=> @this.Fixed().To(x => x.Skip(1).Aggregate(x.First(), (current, alteration) => alteration.Or(current)));
 	}
 }

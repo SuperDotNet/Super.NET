@@ -4,6 +4,7 @@ using Super.Reflection;
 using Super.Runtime.Activation;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace Super.ExtensionMethods
 {
@@ -17,5 +18,9 @@ namespace Super.ExtensionMethods
 
 		public static IEnumerable<T> AsEnumerable<T>(this ImmutableArray<T> @this)
 			=> EnumerableSelector<T>.Default.Get(@this);
+
+		public static ISelect<TParameter, TResult> Composite<TParameter, TResult>(
+			this IEnumerable<ISelect<TParameter, TResult>> @this)
+			=> @this.Fixed().To(x => x.Skip(1).Aggregate(x.First(), (current, alteration) => alteration.Or(current)));
 	}
 }

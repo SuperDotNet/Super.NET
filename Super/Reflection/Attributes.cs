@@ -18,7 +18,7 @@ namespace Super.Reflection
 
 		public Attributes(ISpecification<ICustomAttributeProvider> specification,
 		                  IDeclared<TAttribute> attribute, Func<TAttribute, T> select)
-			: base(specification, specification.If(attribute.Out(select.ToSource().Select()).Out(Set<T>.Enumerate).ToStore())) {}
+			: base(specification, specification.If(attribute.Out(select.ToSelect().Select()).Out(Set<T>.Enumerate).ToStore())) {}
 	}
 
 	sealed class Attributes<T> : Decorated<ICustomAttributeProvider, ImmutableArray<T>>, IAttributes<T>

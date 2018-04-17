@@ -13,7 +13,7 @@ namespace Super.Runtime.Environment
 
 		public Component(IActivator activator) : this(activator, Model.Sources.Default<T>.Instance) {}
 
-		public Component(T fallback) : this(fallback.ToInstance()) {}
+		public Component(T fallback) : this(fallback.ToSource()) {}
 
 		public Component(ISource<T> fallback) : this(ComponentLocator<T>.Default, fallback) {}
 

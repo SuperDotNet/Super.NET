@@ -44,8 +44,8 @@ namespace Super.Model.Selection
 			public static Func<TFrom, TTo> Instance { get; } = new Delegate<TFrom, TTo>().ToDelegate();
 
 			Delegate()
-				: base(Cast<T>.Delegate<TFrom, TTo>.Instance.ToSource()
-				              .Or(Cast<T>.Delegate<TFrom, ISource<TTo>>.Instance.ToSource()
+				: base(Cast<T>.Delegate<TFrom, TTo>.Instance.ToSelect()
+				              .Or(Cast<T>.Delegate<TFrom, ISource<TTo>>.Instance.ToSelect()
 				                         .Out(ValueSelector<TTo>.Default.Assigned()))) {}
 		}
 	}

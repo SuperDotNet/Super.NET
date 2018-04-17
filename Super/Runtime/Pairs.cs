@@ -18,7 +18,7 @@ namespace Super.Runtime
 
 		public static ISelect<TParameter, TIn, TOut> Select<TParameter, TIn, TOut>(
 			params KeyValuePair<TParameter, Func<TIn, TOut>>[] pairs)
-			=> @pairs.ToSelect();
+			=> @pairs.ToSelect<TParameter, TIn, TOut>();
 	}
 
 	public interface IPair<TKey, TValue> : ISource<KeyValuePair<TKey, TValue>> {}

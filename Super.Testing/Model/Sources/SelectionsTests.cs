@@ -52,7 +52,7 @@ namespace Super.Testing.Model.Sources
 			subject.Should()
 			       .BeSameAs(Subject<string, int>.Default.ToDelegate());
 
-			subject.ToSource().Should().BeSameAs(subject.ToSource());
+			subject.ToSelect().Should().BeSameAs(subject.ToSelect());
 		}
 	}
 }

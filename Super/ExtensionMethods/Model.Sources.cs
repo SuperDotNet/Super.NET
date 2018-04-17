@@ -57,19 +57,19 @@ namespace Super.ExtensionMethods
 
 		public static ISpecification<TParameter, TResult> Allow<TParameter, TResult>(
 			this TResult @this, ISpecification<TParameter> specification)
-			=> @this.ToSource(I<TParameter>.Default).ToSpecification(specification);
+			=> @this.ToSelect(I<TParameter>.Default).ToSpecification(specification);
 
 		public static ISelect<TParameter, TResult> Allow<TParameter, TResult>(this TResult @this, I<TParameter> infer)
-			=> @this.ToInstance().Allow(infer);
+			=> @this.ToSource().Allow(infer);
 
 		public static ISelect<TParameter, TResult> Allow<TParameter, TResult>(this ISource<TResult> @this, I<TParameter> _)
 			=> new DelegatedResult<TParameter, TResult>(@this.ToDelegate());
 
 		public static ISource<T> Singleton<T>(this ISource<T> @this) => SingletonSelector<T>.Default.Get(@this);
 
-		public static ISource<T> ToInstance<T>(this T @this) => Sources<T>.Default.Get(@this);
+		public static ISource<T> ToSource<T>(this T @this) => Sources<T>.Default.Get(@this);
 
-		public static ISource<T> ToInstance<T>(this Func<T> @this) => I<DelegatedSource<T>>.Default.From(@this);
+		public static ISource<T> ToSource<T>(this Func<T> @this) => I<DelegatedSource<T>>.Default.From(@this);
 
 		public static Func<T> ToDelegate<T>(this ISource<T> @this) => Super.Model.Sources.Delegates<T>.Default.Get(@this);
 	}

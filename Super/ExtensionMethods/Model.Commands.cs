@@ -15,7 +15,7 @@ namespace Super.ExtensionMethods
 {
 	partial class Model
 	{
-		public static ICommand<Unit> Select<T>(this ICommand<T> @this, T parameter) => @this.Select(parameter.ToSource());
+		public static ICommand<Unit> Select<T>(this ICommand<T> @this, T parameter) => @this.Select(parameter.ToSelect());
 
 		public static ICommand<TFrom> Select<TFrom, TTo>(this ICommand<TTo> @this, ISelect<TFrom, TTo> select)
 			=> @this.Select(select.ToDelegate());

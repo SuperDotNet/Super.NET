@@ -8,7 +8,7 @@ namespace Super.Runtime.Execution
 {
 	class Contextual<T> : DelegatedSelection<object, T>
 	{
-		public Contextual(Func<T> source) : this(source.ToInstance()) {}
+		public Contextual(Func<T> source) : this(source.ToSource()) {}
 
 		public Contextual(ISource<T> source)
 			: this(Tables<object, T>.Default.Get(source.Any().ToDelegate()), ExecutionContext.Default) {}

@@ -52,7 +52,7 @@ namespace Super.Model.Commands
 	{
 		readonly Func<TException> _exception;
 
-		public ThrowCommand(TException exception) : this(exception.ToInstance()) {}
+		public ThrowCommand(TException exception) : this(exception.ToSource()) {}
 
 		public ThrowCommand(ISource<TException> source) : this(source.ToDelegate()) {}
 

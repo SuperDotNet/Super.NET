@@ -21,7 +21,7 @@ namespace Super.ExtensionMethods
 
 		public static ISpecification<TFrom, TResult> In<TFrom, TTo, TResult>(
 			this ISpecification<TTo, TResult> @this, ISelect<TFrom, TTo> coercer)
-			=> @this.ToSelect().ToSource().In(coercer).ToSpecification(@this.Select(coercer));
+			=> @this.ToSelect().ToSelect().In(coercer).ToSpecification(@this.Select(coercer));
 
 		public static ISelect<TParameter, TResult> Into<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, ISelect<Decoration<TParameter, TResult>, TResult> other)
