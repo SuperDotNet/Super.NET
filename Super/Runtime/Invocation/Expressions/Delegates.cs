@@ -5,7 +5,7 @@ using Super.Model.Selection;
 
 namespace Super.Runtime.Invocation.Expressions
 {
-	class Delegates<TParameter, TResult> : Decorated<TParameter, TResult>
+	class Delegates<TParameter, TResult> : DecoratedSelect<TParameter, TResult>
 	{
 		public Delegates(ISelect<TParameter, Expression> @select) : this(@select, Empty<ParameterExpression>.Array) {}
 

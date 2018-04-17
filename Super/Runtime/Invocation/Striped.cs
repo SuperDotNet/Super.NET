@@ -5,7 +5,7 @@ using Super.Runtime.Activation;
 
 namespace Super.Runtime.Invocation
 {
-	sealed class Striped<TParameter, TResult> : Decorated<TParameter, TResult>,
+	sealed class Striped<TParameter, TResult> : DecoratedSelect<TParameter, TResult>,
 	                                            IActivateMarker<ISelect<TParameter, TResult>>
 	{
 		public Striped(ISelect<TParameter, TResult> @select)

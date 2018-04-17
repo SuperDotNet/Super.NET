@@ -16,9 +16,9 @@ namespace Super.Model.Collections
 		public override int GetHashCode() => Name != null ? Name.GetHashCode() : 0;
 	}
 
-	sealed class GroupName<T> : Decorated<T, GroupName>, IGroupName<T>
+	sealed class GroupName<T> : DecoratedSelect<T, GroupName>, IGroupName<T>
 	{
 		public GroupName(GroupName defaultName, ISpecification<string, GroupName> names)
-			: base(new MetadataGroupName<T>(names).Or(In<T>.New(defaultName))) {}
+			: base(new MetadataGroupName<T>(names).Or(In<T>.Result(defaultName))) {}
 	}
 }

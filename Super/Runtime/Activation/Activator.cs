@@ -9,7 +9,7 @@ using System.Reflection;
 
 namespace Super.Runtime.Activation
 {
-	sealed class Activator : Decorated<Type, object>, IActivator
+	sealed class Activator : DecoratedSelect<Type, object>, IActivator
 	{
 		public static Activator Default { get; } = new Activator();
 

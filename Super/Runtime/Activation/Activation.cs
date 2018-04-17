@@ -14,9 +14,7 @@ namespace Super.Runtime.Activation
 		public static ISelect<TParameter, TResult> Default { get; } = new Activation<TParameter, TResult>();
 
 		Activation() : base(new ConstructorLocator(HasSingleParameterConstructor<TParameter>.Default)
-		                    .Out(ParameterConstructors<TParameter, TResult>
-		                         .Default
-		                         .Assigned())
+		                    .Out(ParameterConstructors<TParameter, TResult>.Default.Assigned())
 		                    .Or(new ParameterConstructors<TParameter, TResult>(Instances.Default)
 			                        .In(ConstructorLocator.Default))
 		                    .Get(Type<TResult>.Metadata)) {}

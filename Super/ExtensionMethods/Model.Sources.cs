@@ -5,7 +5,6 @@ using Super.Model.Specifications;
 using Super.Reflection;
 using Super.Runtime.Activation;
 using System;
-using System.Reactive;
 
 namespace Super.ExtensionMethods
 {
@@ -29,6 +28,17 @@ namespace Super.ExtensionMethods
 		                                                           TParameter parameter)
 			=> new FixedSelection<TParameter, TResult>(@this, parameter);
 
+		public static ISource<TResult> Select<TParameter, TResult>(this ISource<TParameter> @this, I<TResult> _)
+			where TResult : IActivateMarker<TParameter>
+			=> @this.Select(Activations<TParameter, TResult>.Default);
+
+		public static TResult Get<TParameter, TResult>(this ISource<TParameter> @this,
+		                                               ISelect<TParameter, TResult> @select)
+			=> @this.Get(@select.ToDelegate());
+
+		public static TTo Get<TFrom, TTo>(this ISource<TFrom> @this, Func<TFrom, TTo> select)
+			=> @this.Select(select).Get();
+
 		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(this ISource<TResult> @this,
 		                                                                   ISelect<TParameter, TResult> @select)
 			=> @this.Allow(I<TParameter>.Default).Or(@select);
@@ -39,28 +49,12 @@ namespace Super.ExtensionMethods
 		public static ISource<T> Or<T>(this ISource<T> @this, ISpecification<T> specification, ISource<T> fallback)
 			=> new ValidatedSource<T>(specification, @this, fallback);
 
-		public static ISource<TResult> Select<TParameter, TResult>(this ISource<TParameter> @this, I<TResult> _)
-			where TResult : IActivateMarker<TParameter>
-			=> @this.Select(Activations<TParameter, TResult>.Default);
-
-		public static TTo Get<TFrom, TTo>(this ISource<TFrom> @this, Func<TFrom, TTo> select)
-			=> @this.Select(select).Get();
-
-		public static TResult Get<TParameter, TResult>(this ISource<TParameter> @this,
-		                                               ISelect<TParameter, TResult> @select)
-			=> @this.Get(@select.ToDelegate());
-
-		public static TResult Any<TParameter, TResult>(this ISource<TResult> @this, TParameter _) => @this.Get();
-
-		public static ISelect<object, T> Any<T>(this ISource<T> @this) => @this.Allow(I<object>.Default);
-		public static ISelect<Unit, T> In<T>(this ISource<T> @this) => @this.Allow(I<Unit>.Default);
-
 		public static ISpecification<TParameter, TResult> Allow<TParameter, TResult>(
 			this TResult @this, ISpecification<TParameter> specification)
 			=> @this.ToSelect(I<TParameter>.Default).ToSpecification(specification);
 
-		public static ISelect<TParameter, TResult> Allow<TParameter, TResult>(this TResult @this, I<TParameter> infer)
-			=> @this.ToSource().Allow(infer);
+
+		public static ISelect<object, T> Allow<T>(this ISource<T> @this) => @this.Allow(I<object>.Default);
 
 		public static ISelect<TParameter, TResult> Allow<TParameter, TResult>(this ISource<TResult> @this, I<TParameter> _)
 			=> new DelegatedResult<TParameter, TResult>(@this.ToDelegate());

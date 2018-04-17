@@ -19,7 +19,7 @@ namespace Super.Reflection
 			: base(specification, specification.If(attribute.Out(select).ToStore())) {}
 	}
 
-	sealed class Attribute<T> : Decorated<ICustomAttributeProvider, T>, IAttribute<T>
+	sealed class Attribute<T> : DecoratedSelect<ICustomAttributeProvider, T>, IAttribute<T>
 	{
 		public static Attribute<T> Default { get; } = new Attribute<T>();
 

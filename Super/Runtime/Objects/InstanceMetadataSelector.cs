@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Super.Runtime.Objects
 {
-	sealed class InstanceMetadataSelector<T> : Decorated<T, TypeInfo>
+	sealed class InstanceMetadataSelector<T> : DecoratedSelect<T, TypeInfo>
 	{
 		public static InstanceMetadataSelector<T> Default { get; } = new InstanceMetadataSelector<T>();
 

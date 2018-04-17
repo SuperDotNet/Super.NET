@@ -14,7 +14,6 @@ namespace Super.Diagnostics.Logging
 		Logger() : base(LoggingConfiguration.Default
 		                                    .Select(Activation<LoggerConfiguration>.Default.Get)
 		                                    .Select(LoggerSelector.Default)
-		                                    .Select(New<PrimaryLogger>.Default)
-		                                    .Get) {}
+		                                    .Select(New<PrimaryLogger>.Default)) {}
 	}
 }

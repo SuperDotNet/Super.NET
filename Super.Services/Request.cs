@@ -3,7 +3,7 @@ using Super.Model.Selection;
 
 namespace Super.Services
 {
-	sealed class Request<T> : Decorated<IObservable<T>, T>
+	sealed class Request<T> : DecoratedSelect<IObservable<T>, T>
 	{
 		public static Request<T> Default { get; } = new Request<T>();
 

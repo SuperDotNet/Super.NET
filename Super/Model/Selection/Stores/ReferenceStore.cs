@@ -4,7 +4,7 @@ using Super.Runtime.Activation;
 
 namespace Super.Model.Selection.Stores
 {
-	public class ReferenceStore<TParameter, TResult> : Decorated<TParameter, TResult>
+	public class ReferenceStore<TParameter, TResult> : DecoratedSelect<TParameter, TResult>
 		where TParameter : class
 	{
 		protected ReferenceStore() : this(Activation<TParameter, TResult>.Default.ToDelegate()) {}

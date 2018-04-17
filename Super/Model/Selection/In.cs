@@ -1,4 +1,5 @@
 ﻿using Super.ExtensionMethods;
+using Super.Model.Sources;
 using Super.Reflection;
 using Super.Runtime.Activation;
 using System;
@@ -7,11 +8,13 @@ namespace Super.Model.Selection
 {
 	public static class In<T>
 	{
-		/*public static Func<T, TResult> From<TResult>(Func<T, TResult> select) => select;*/
+		public static ISelect<T, TResult> New<TResult>() => Select(Activator<TResult>.Default);
 
 		public static ISelect<T, TResult> Out<TResult>() where TResult : IActivateMarker<T> => Activations<T, TResult>.Default;
 
-		public static ISelect<T, TResult> New<TResult>(TResult @this) => @this.ToSelect(I<T>.Default);
+		public static ISelect<T, TResult> Result<TResult>(TResult @this) => @this.ToSelect(I<T>.Default);
+
+		public static ISelect<T, TResult> Select<TResult>(ISource<TResult> @this) => @this.Allow(I<T>.Default);
 
 		public static ISelect<T, TResult> Select<TResult>(ISelect<TResult> select) => Select(select.Out<T>());
 

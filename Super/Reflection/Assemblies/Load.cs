@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Super.Reflection.Assemblies
 {
-	sealed class Load : Decorated<AssemblyName, Assembly>
+	sealed class Load : DecoratedSelect<AssemblyName, Assembly>
 	{
 		public static Load Default { get; } = new Load();
 

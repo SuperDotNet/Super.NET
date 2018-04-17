@@ -6,7 +6,7 @@ using Activator = Super.Runtime.Activation.Activator;
 
 namespace Super.Runtime.Environment
 {
-	sealed class ComponentLocator<T> : Decorated<Type, object>, IActivator
+	sealed class ComponentLocator<T> : DecoratedSelect<Type, object>, IActivator
 	{
 		public static ComponentLocator<T> Default { get; } = new ComponentLocator<T>();
 

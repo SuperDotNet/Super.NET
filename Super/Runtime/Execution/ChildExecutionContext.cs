@@ -4,7 +4,7 @@ using Super.Model.Selection;
 using Super.Reflection;
 
 namespace Super.Runtime.Execution {
-	sealed class ChildExecutionContext : Decorated<string, IDisposable>, IChildExecutionContext
+	sealed class ChildExecutionContext : DecoratedSelect<string, IDisposable>, IChildExecutionContext
 	{
 		public static ChildExecutionContext Default { get; } = new ChildExecutionContext();
 

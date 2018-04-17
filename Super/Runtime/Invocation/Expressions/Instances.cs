@@ -6,7 +6,7 @@ using Super.Model.Selection;
 
 namespace Super.Runtime.Invocation.Expressions
 {
-	sealed class Instances<T> : Decorated<ConstructorInfo, Expression>
+	sealed class Instances<T> : DecoratedSelect<ConstructorInfo, Expression>
 	{
 		public static Instances<T> Default { get; } = new Instances<T>();
 

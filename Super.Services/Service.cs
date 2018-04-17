@@ -4,7 +4,7 @@ using Super.Model.Selection;
 
 namespace Super.Services
 {
-	public sealed class Service<T> : Decorated<Uri, T>
+	public sealed class Service<T> : DecoratedSelect<Uri, T>
 	{
 		public static Service<T> Default { get; } = new Service<T>();
 

@@ -1,6 +1,5 @@
-﻿using Super.ExtensionMethods;
+﻿using Super.Model.Selection;
 using Super.Model.Selection.Stores;
-using Super.Runtime.Activation;
 using System;
 
 namespace Super.Services
@@ -9,7 +8,6 @@ namespace Super.Services
 	{
 		public static ClientHandlers Default { get; } = new ClientHandlers();
 
-		ClientHandlers() : base(new StandardTables<Uri, System.Net.Http.HttpClientHandler>(Activator<HttpClientHandler>.Default.Any)
-		                        .Get(RegisteredClientHandlers.Default)) {}
+		ClientHandlers() : base(In<Uri>.New<HttpClientHandler>(), RegisteredClientHandlers.Default) {}
 	}
 }

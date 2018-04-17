@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using Super.ExtensionMethods;
+using System;
 using System.Collections.Generic;
-using Super.ExtensionMethods;
 
 namespace Super.Model.Selection.Stores
 {
-	public class EqualityStore<TParameter, TResult> : Decorated<TParameter, TResult>
+	public class EqualityStore<TParameter, TResult> : DecoratedSelect<TParameter, TResult>
 	{
-		protected EqualityStore(ISelect<TParameter, TResult> @select) : this(@select.ToDelegate()) {}
-
-		protected EqualityStore(Func<TParameter, TResult> source) : this(source, EqualityComparer<TParameter>.Default) {}
-
-		protected EqualityStore(Func<TParameter, TResult> source, IEqualityComparer<TParameter> comparer)
-			: this(source, new ConcurrentDictionary<TParameter, TResult>(comparer)) {}
+		protected EqualityStore(ISelect<TParameter, TResult> source, IDictionary<TParameter, TResult> store)
+			: this(source.ToDelegate(), store) {}
 
 		protected EqualityStore(Func<TParameter, TResult> source, IDictionary<TParameter, TResult> store)
 			: base(new StandardTables<TParameter, TResult>(source).Get(store)) {}

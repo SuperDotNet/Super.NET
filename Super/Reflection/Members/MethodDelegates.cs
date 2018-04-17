@@ -15,7 +15,7 @@ namespace Super.Reflection.Members
 		public Delegate Get(MethodInfo parameter) => parameter.CreateDelegate(_type);
 	}
 
-	sealed class MethodDelegates<T> : Decorated<MethodInfo, T>
+	sealed class MethodDelegates<T> : DecoratedSelect<MethodInfo, T>
 	{
 		public static MethodDelegates<T> Default { get; } = new MethodDelegates<T>();
 

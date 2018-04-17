@@ -2,7 +2,7 @@
 
 namespace Super.Model.Selection.Stores
 {
-	public class DecoratedTable<TParameter, TResult> : Decorated<TParameter, TResult>, ITable<TParameter, TResult>
+	public class DecoratedTable<TParameter, TResult> : DecoratedSelect<TParameter, TResult>, ITable<TParameter, TResult>
 	{
 		readonly ITable<TParameter, TResult> _source;
 

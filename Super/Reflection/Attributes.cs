@@ -21,7 +21,7 @@ namespace Super.Reflection
 			: base(specification, specification.If(attribute.Out(select.ToSelect().Select()).Out(Set<T>.Enumerate).ToStore())) {}
 	}
 
-	sealed class Attributes<T> : Decorated<ICustomAttributeProvider, ImmutableArray<T>>, IAttributes<T>
+	sealed class Attributes<T> : DecoratedSelect<ICustomAttributeProvider, ImmutableArray<T>>, IAttributes<T>
 	{
 		public static Attributes<T> Default { get; } = new Attributes<T>();
 

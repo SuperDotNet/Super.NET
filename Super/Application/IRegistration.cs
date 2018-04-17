@@ -111,7 +111,7 @@ namespace Super.Application
 			                              .If(GenericTypeDefinitionAlteration.Default)) {}
 	}
 
-	sealed class DependencyCandidates : Decorated<Type, ImmutableArray<Type>>, IActivateMarker<Type>
+	sealed class DependencyCandidates : DecoratedSelect<Type, ImmutableArray<Type>>, IActivateMarker<Type>
 	{
 		public DependencyCandidates(Type type)
 			: base(Constructors.Default

@@ -6,7 +6,7 @@ using Super.Model.Selection;
 
 namespace Super.Application
 {
-	sealed class NotRegistered : Decorated<IServiceRegistry, Func<Type, bool>>
+	sealed class NotRegistered : DecoratedSelect<IServiceRegistry, Func<Type, bool>>
 	{
 		public static NotRegistered Default { get; } = new NotRegistered();
 

@@ -5,7 +5,7 @@ using Super.Runtime.Activation;
 
 namespace Super.Runtime.Invocation
 {
-	class Deferred<TParameter, TResult> : Decorated<TParameter, TResult>,
+	class Deferred<TParameter, TResult> : DecoratedSelect<TParameter, TResult>,
 	                                      IActivateMarker<ISelect<TParameter, TResult>>
 	{
 		public Deferred(ISelect<TParameter, TResult> select)

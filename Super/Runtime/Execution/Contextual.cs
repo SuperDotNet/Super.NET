@@ -1,6 +1,5 @@
 ﻿using Super.ExtensionMethods;
 using Super.Model.Selection;
-using Super.Model.Selection.Stores;
 using Super.Model.Sources;
 using System;
 
@@ -10,8 +9,7 @@ namespace Super.Runtime.Execution
 	{
 		public Contextual(Func<T> source) : this(source.ToSource()) {}
 
-		public Contextual(ISource<T> source)
-			: this(Tables<object, T>.Default.Get(source.Any().ToDelegate()), ExecutionContext.Default) {}
+		public Contextual(ISource<T> source) : this(source.Allow().ToStore(), ExecutionContext.Default) {}
 
 		public Contextual(ISelect<object, T> source, ISource<object> parameter) : base(source, parameter) {}
 	}

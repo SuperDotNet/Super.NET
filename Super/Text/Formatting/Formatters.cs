@@ -6,7 +6,7 @@ using System;
 
 namespace Super.Text.Formatting
 {
-	sealed class Formatters : Decorated<object, IFormattable>
+	sealed class Formatters : DecoratedSelect<object, IFormattable>
 	{
 		public static Formatters Default { get; } = new Formatters();
 

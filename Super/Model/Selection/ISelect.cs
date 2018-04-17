@@ -39,7 +39,7 @@ namespace Super.Model.Selection
 
 		public Func<T, TIn> In<TIn>() => Delegate<T, TIn>.Instance;
 
-		sealed class Delegate<TFrom, TTo> : Decorated<TFrom, TTo>
+		sealed class Delegate<TFrom, TTo> : DecoratedSelect<TFrom, TTo>
 		{
 			public static Func<TFrom, TTo> Instance { get; } = new Delegate<TFrom, TTo>().ToDelegate();
 
@@ -60,7 +60,7 @@ namespace Super.Model.Selection
 
 		public Func<T, TTo> In<TTo>() => Delegate<T, TTo>.Instance;
 
-		public sealed class Delegate<TFrom, TTo> : Decorated<TFrom, TTo>
+		public sealed class Delegate<TFrom, TTo> : DecoratedSelect<TFrom, TTo>
 		{
 			public static Func<TFrom, TTo> Instance { get; } = new Delegate<TFrom, TTo>().ToDelegate();
 

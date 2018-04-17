@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace Super.Runtime.Activation
 {
-	sealed class SingletonPropertyDelegates : Decorated<PropertyInfo, Func<object>>
+	sealed class SingletonPropertyDelegates : DecoratedSelect<PropertyInfo, Func<object>>
 	{
 		public static SingletonPropertyDelegates Default { get; } = new SingletonPropertyDelegates();
 

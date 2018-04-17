@@ -15,7 +15,7 @@ namespace Super.Application
 
 	public interface IApplicationContext<in TParameter, out TResult> : ISelect<TParameter, TResult>, IApplicationContext {}
 
-	public class ApplicationContext<TParameter, TResult> : Decorated<TParameter, TResult>,
+	public class ApplicationContext<TParameter, TResult> : DecoratedSelect<TParameter, TResult>,
 	                                                       IApplicationContext<TParameter, TResult>
 	{
 		readonly IDisposable _disposable;
@@ -52,7 +52,7 @@ namespace Super.Application
 
 	public interface IServices<in T> : ISelect<T, IServices> {}
 
-	public sealed class Services<T> : Decorated<T, IServices>, IServices<T>, IActivateMarker<IRegistration>
+	public sealed class Services<T> : DecoratedSelect<T, IServices>, IServices<T>, IActivateMarker<IRegistration>
 	{
 		public static IServices<T> Default { get; } = new Services<T>();
 
@@ -68,16 +68,14 @@ namespace Super.Application
 			            .Out(ServiceConfiguration.Default.ToCommand().ToConfiguration())) {}
 	}
 
-	sealed class ServiceSelector<T> : ISelect<IServiceProvider, T>
+	sealed class ServiceSelector<T> : Select<IServiceProvider, T>
 	{
 		public static ServiceSelector<T> Default { get; } = new ServiceSelector<T>();
 
-		ServiceSelector() {}
-
-		public T Get(IServiceProvider parameter) => parameter.Get<T>();
+		ServiceSelector() : base(x => x.Get<T>()) {}
 	}
 
-	public class ApplicationContexts<TParameter, TContext> : Decorated<TParameter, IApplicationContext<TParameter>>
+	public class ApplicationContexts<TParameter, TContext> : DecoratedSelect<TParameter, IApplicationContext<TParameter>>
 		where TContext : IApplicationContext<TParameter>
 	{
 		protected ApplicationContexts(ISelect<TParameter, IServices> services)
@@ -86,7 +84,7 @@ namespace Super.Application
 	}
 
 	public class ApplicationContexts<TContext, TParameter, TResult>
-		: Decorated<TParameter, IApplicationContext<TParameter, TResult>>
+		: DecoratedSelect<TParameter, IApplicationContext<TParameter, TResult>>
 		where TContext : IApplicationContext<TParameter, TResult>
 	{
 		protected ApplicationContexts(ISelect<TParameter, IServices> services)

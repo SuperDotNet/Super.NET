@@ -119,7 +119,7 @@ namespace Super.Runtime.Objects
 
 	public interface IProperty<in T> : ISelect<T, KeyValuePair<string, object>> {}
 
-	sealed class Property<T> : Decorated<T, KeyValuePair<string, object>>,
+	sealed class Property<T> : DecoratedSelect<T, KeyValuePair<string, object>>,
 	                           IProperty<T>,
 	                           IActivateMarker<Expression<Func<T, object>>>
 	{
