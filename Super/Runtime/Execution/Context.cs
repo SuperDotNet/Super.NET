@@ -1,8 +1,9 @@
-﻿using System;
-using Super.Runtime.Activation;
+﻿using Super.Runtime.Activation;
+using System;
 
-namespace Super.Runtime.Execution {
-	sealed class Context : IActivateMarker<string>
+namespace Super.Runtime.Execution
+{
+	public sealed class Context : IActivateMarker<string>
 	{
 		public Context(string name) : this(name, Time.Default.Get()) {}
 

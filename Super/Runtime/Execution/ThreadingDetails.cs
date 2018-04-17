@@ -1,7 +1,8 @@
 ﻿using System.Threading;
 
-namespace Super.Runtime.Execution {
-	sealed class ThreadingDetails
+namespace Super.Runtime.Execution
+{
+	public sealed class ThreadingDetails
 	{
 		public ThreadingDetails() : this(SynchronizationContext.Current, Thread.CurrentThread) {}
 

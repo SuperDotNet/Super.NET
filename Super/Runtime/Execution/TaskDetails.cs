@@ -1,7 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace Super.Runtime.Execution {
-	sealed class TaskDetails
+namespace Super.Runtime.Execution
+{
+	public sealed class TaskDetails
 	{
 		public TaskDetails() : this(TaskScheduler.Default, TaskScheduler.Current, Task.CurrentId) {}
 
