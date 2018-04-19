@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using Super.ExtensionMethods;
 using Super.Model.Collections;
 
 namespace Super.Reflection.Selection

@@ -1,6 +1,5 @@
-using System;
-using Super.ExtensionMethods;
 using Super.Model.Specifications;
+using System;
 
 namespace Super.Model.Selection
 {

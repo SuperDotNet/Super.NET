@@ -7,9 +7,9 @@ using System.Linq;
 
 // ReSharper disable TooManyArguments
 
-namespace Super.ExtensionMethods
+namespace Super
 {
-	public static class Enumerable
+	public static partial class ExtensionMethods
 	{
 		public static T FirstOf<T>(this IEnumerable @this) => @this.OfType<T>().FirstOrDefault();
 

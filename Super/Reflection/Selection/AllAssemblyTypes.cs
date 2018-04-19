@@ -1,5 +1,4 @@
 ﻿using System;
-using Super.ExtensionMethods;
 using Super.Model.Collections;
 
 namespace Super.Reflection.Selection

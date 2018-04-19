@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using Super.Application.Testing;
-using Super.ExtensionMethods;
 using Super.Model.Selection;
 using Super.Reflection;
 using Xunit;
@@ -14,7 +13,7 @@ namespace Super.Testing.Aspects
 		[Theory, AutoData]
 		void Verify(I<Subject> sut)
 		{
-			sut.Source(x => x).Should().BeSameAs(I<Subject, int, int>.Default);
+			sut.Source<Subject, int, int>(x => x).Should().BeSameAs(I<Subject, int, int>.Default);
 		}
 
 		sealed class Subject : ISelect<int, int>

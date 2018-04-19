@@ -1,5 +1,4 @@
 ﻿using AutoFixture.Kernel;
-using Super.ExtensionMethods;
 using Super.Model.Selection;
 using System;
 

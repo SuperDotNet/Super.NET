@@ -1,6 +1,5 @@
 ﻿using Serilog;
 using Serilog.Configuration;
-using Super.ExtensionMethods;
 using Super.Model.Selection;
 using System;
 using System.Collections.Generic;

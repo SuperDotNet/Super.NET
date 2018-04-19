@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Super.Model.Selection;
+using System;
 using System.Linq;
 using System.Reflection;
-using Super.ExtensionMethods;
-using Super.Model.Selection;
 
 namespace Super.Runtime.Activation
 {

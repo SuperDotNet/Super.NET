@@ -1,8 +1,8 @@
-﻿using Super.ExtensionMethods;
-using Super.Reflection.Members;
+﻿using Super.Reflection.Members;
 using Super.Reflection.Types;
 using Super.Runtime;
 using System;
+using System.Reflection;
 using Xunit;
 
 // ReSharper disable All
@@ -25,7 +25,7 @@ namespace Super.Testing.Reflection
 		[Fact]
 		void VerifyOptional()
 		{
-			ConstructorSpecification.Default.IsSatisfiedBy(Type<Optional>.Instance.GetConstructors().Only());
+			ConstructorSpecification.Default.IsSatisfiedBy(Type<Optional>.Instance.GetConstructors().Only<ConstructorInfo>());
 		}
 	}
 }

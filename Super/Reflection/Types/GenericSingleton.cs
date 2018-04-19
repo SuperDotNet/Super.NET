@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Super.ExtensionMethods;
 using Super.Runtime.Activation;
 
 namespace Super.Reflection.Types

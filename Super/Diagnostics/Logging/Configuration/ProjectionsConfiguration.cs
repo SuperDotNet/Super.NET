@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Immutable;
 using System.Linq;
-using Super.ExtensionMethods;
 using Super.Runtime.Objects;
 
 namespace Super.Diagnostics.Logging.Configuration

@@ -1,7 +1,6 @@
 ﻿using Serilog;
 using Serilog.Core;
 using Serilog.Events;
-using Super.ExtensionMethods;
 using Super.Runtime.Execution;
 using System;
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ using System.Collections.Generic;
 
 namespace Super.Diagnostics.Logging
 {
-	public sealed class Log<T> : Ambient<ILogger>, ILog
+	public sealed class Log<T> : Contextual<ILogger>, ILogger
 	{
 		public static Log<T> Default { get; } = new Log<T>();
 

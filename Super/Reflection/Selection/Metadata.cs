@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Super.ExtensionMethods;
 using Super.Model.Collections;
 
 namespace Super.Reflection.Selection

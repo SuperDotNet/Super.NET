@@ -1,5 +1,4 @@
-﻿using Super.ExtensionMethods;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
 using System.Collections.Generic;
 
 namespace Super.Model.Collections

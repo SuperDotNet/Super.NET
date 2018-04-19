@@ -1,6 +1,5 @@
 ﻿using System;
 using Serilog.Events;
-using Super.ExtensionMethods;
 
 namespace Super.Diagnostics.Logging
 {

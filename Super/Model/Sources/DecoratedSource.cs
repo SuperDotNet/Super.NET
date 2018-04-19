@@ -1,6 +1,4 @@
-﻿using Super.ExtensionMethods;
-
-namespace Super.Model.Sources
+﻿namespace Super.Model.Sources
 {
 	public class DecoratedSource<T> : DelegatedSource<T>
 	{

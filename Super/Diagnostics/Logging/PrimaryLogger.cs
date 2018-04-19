@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using JetBrains.Annotations;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
-using Super.ExtensionMethods;
 using Super.Runtime;
 using Super.Runtime.Activation;
+using System;
+using System.Collections.Generic;
 
 // ReSharper disable TooManyArguments
 
@@ -15,6 +15,7 @@ namespace Super.Diagnostics.Logging
 	{
 		readonly ILogger _logger;
 
+		[UsedImplicitly]
 		public PrimaryLogger(ILogger logger) : this(logger, logger.To<IDisposable>()) {}
 
 		public PrimaryLogger(ILogger logger, IDisposable disposable) : base(disposable.Dispose) => _logger = logger;

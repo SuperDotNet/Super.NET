@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Immutable;
 using System.Reflection;
-using Super.ExtensionMethods;
 using Super.Model.Selection;
 
 namespace Super.Reflection.Types

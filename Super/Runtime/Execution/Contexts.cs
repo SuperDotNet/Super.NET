@@ -1,10 +1,10 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Reactive;
-using JetBrains.Annotations;
-using Super.ExtensionMethods;
 
-namespace Super.Runtime.Execution {
+namespace Super.Runtime.Execution
+{
 	sealed class Contexts : IContexts
 	{
 		readonly Stack<object> _context;
@@ -28,8 +28,10 @@ namespace Super.Runtime.Execution {
 			switch (_context.Count)
 			{
 				case 1:
-					throw new InvalidOperationException("An attempt was made to dispose of the root execution context, which is not allowed.");
+					throw new
+						InvalidOperationException("An attempt was made to dispose of the root execution context, which is not allowed.");
 			}
+
 			_context.Pop();
 		}
 	}

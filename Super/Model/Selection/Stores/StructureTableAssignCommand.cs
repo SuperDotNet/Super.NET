@@ -1,5 +1,4 @@
 using System;
-using Super.ExtensionMethods;
 using Super.Model.Commands;
 
 namespace Super.Model.Selection.Stores

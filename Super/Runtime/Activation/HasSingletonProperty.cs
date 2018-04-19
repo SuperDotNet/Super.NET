@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using Super.ExtensionMethods;
 using Super.Model.Specifications;
 
 namespace Super.Runtime.Activation

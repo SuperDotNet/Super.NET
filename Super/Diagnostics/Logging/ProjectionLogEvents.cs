@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Serilog.Core;
 using Serilog.Events;
-using Super.ExtensionMethods;
 using Super.Model.Selection.Alterations;
 using Super.Runtime.Objects;
 

@@ -6,9 +6,9 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 
-namespace Super.ExtensionMethods
+namespace Super
 {
-	public static class Reflection
+	public static partial class ExtensionMethods
 	{
 		public static IEnumerable<TypeInfo> YieldMetadata(this IEnumerable<Type> @this,
 		                                                  Func<TypeInfo, bool> specification = null)

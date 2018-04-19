@@ -1,5 +1,4 @@
 ﻿using JetBrains.Annotations;
-using Super.ExtensionMethods;
 using Super.Model.Selection;
 using Super.Runtime.Activation;
 using System;

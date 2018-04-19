@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using Super.ExtensionMethods;
 using Super.Model.Commands;
 using System.Collections.Immutable;
 using Xunit;

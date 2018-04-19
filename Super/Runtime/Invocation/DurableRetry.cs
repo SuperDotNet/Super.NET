@@ -1,16 +1,17 @@
 ﻿using Polly;
+using Serilog;
 using Super.Diagnostics;
 using Super.Diagnostics.Logging;
-using Super.ExtensionMethods;
+using Super.Runtime.Invocation.Operations;
 
 namespace Super.Runtime.Invocation
 {
 	public class DurableRetry<T> : DurableObservableSource<T>
 	{
-		public DurableRetry(ILog logger, PolicyBuilder policy)
+		public DurableRetry(ILogger logger, PolicyBuilder policy)
 			: base(new RetryPolicies(new LogRetryException(logger).Execute).Select(policy).Get()) {}
 
-		public DurableRetry(ILog logger, PolicyBuilder<T> policy)
+		public DurableRetry(ILogger logger, PolicyBuilder<T> policy)
 			: base(new RetryPolicies<T>(new LogRetryException(logger).Execute).Select(policy).Get()) {}
 	}
 }

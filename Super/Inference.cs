@@ -2,9 +2,9 @@
 using Super.Reflection;
 using System;
 
-namespace Super.ExtensionMethods
+namespace Super
 {
-	public static class Inference
+	public static partial class ExtensionMethods
 	{
 		public static I<T, TParameter, TResult> Source<T, TParameter, TResult>(this I<T> _,
 		                                                                       Func<T, ISelect<TParameter, TResult>> __)

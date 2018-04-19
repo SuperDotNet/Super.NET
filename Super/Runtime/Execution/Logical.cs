@@ -1,7 +1,8 @@
-﻿using System.Threading;
-using Super.Model.Sources;
+﻿using Super.Model.Sources;
+using System.Threading;
 
-namespace Super.Runtime.Execution {
+namespace Super.Runtime.Execution
+{
 	public class Logical<T> : IMutable<T>
 	{
 		readonly AsyncLocal<T> _local;

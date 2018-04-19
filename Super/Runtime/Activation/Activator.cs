@@ -1,5 +1,4 @@
-﻿using Super.ExtensionMethods;
-using Super.Model.Collections;
+﻿using Super.Model.Collections;
 using Super.Model.Selection;
 using Super.Model.Sources;
 using Super.Reflection.Types;
@@ -17,7 +16,7 @@ namespace Super.Runtime.Activation
 		                                       .Out(YieldSelector<TypeInfo>.Default)
 		                                       .Out(ImmutableArraySelector<Type>.Default)
 		                                       .Out(new Generic<ISource<object>>(typeof(ActivatorSource<>)))
-		                                       .Out(Invoke<ISource<object>>.Default)
+		                                       .Out(Call<ISource<object>>.Default)
 		                                       .Out(ValueSelector<object>.Default)) {}
 	}
 

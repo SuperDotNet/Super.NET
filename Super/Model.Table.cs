@@ -7,9 +7,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace Super.ExtensionMethods
+namespace Super
 {
-	partial class Model
+	public static partial class ExtensionMethods
 	{
 		public static ISpecification<TParameter, TResult> ToStore<TParameter, TResult>(
 			this IEnumerable<KeyValuePair<TParameter, TResult>> @this)
@@ -17,7 +17,7 @@ namespace Super.ExtensionMethods
 
 		public static ISelect<TParameter, TIn, TOut> ToSelect<TParameter, TIn, TOut>(
 			this IEnumerable<KeyValuePair<TParameter, Func<TIn, TOut>>> @this)
-			=> @this.ToOrderedDictionary().AsReadOnly().ToStore().ToSelect().To(I<Select<TParameter, TIn, TOut>>.Default);
+			=> ToSelect(@this.ToOrderedDictionary().AsReadOnly().ToStore()).To(I<Select<TParameter, TIn, TOut>>.Default);
 
 		public static ISpecification<TParameter, TResult> ToStore<TParameter, TResult>(
 			this IDictionary<TParameter, TResult> @this)
@@ -44,15 +44,15 @@ namespace Super.ExtensionMethods
 
 		/*public static ITable<TParameter, TResult> ToTable<TParameter, TResult>(this Func<TParameter, TResult> @this)
 			=> Tables<TParameter, TResult>.Default.Get(@this);*/
-		
+
 		public static ITable<TParameter, TResult> ToStandardTable<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this)
-			=> @this.ToDelegate().ToStandardTable();
+			=> ToDelegate(@this).ToStandardTable();
 
 		public static ITable<TParameter, TResult> ToStandardTable<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this,
 			IDictionary<TParameter, TResult> table)
-			=> @this.ToDelegate().ToStandardTable(table);
+			=> ToDelegate(@this).ToStandardTable(table);
 
 		public static ITable<TParameter, TResult> ToStandardTable<TParameter, TResult>(this Func<TParameter, TResult> @this)
 			=> @this.ToStandardTable(new Dictionary<TParameter, TResult>());
@@ -63,12 +63,12 @@ namespace Super.ExtensionMethods
 
 		public static ITable<TParameter, TResult> ToConcurrentTable<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this)
-			=> @this.ToDelegate().ToConcurrentTable();
+			=> ToDelegate(@this).ToConcurrentTable();
 
 		public static ITable<TParameter, TResult> ToConcurrentTable<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this,
 			ConcurrentDictionary<TParameter, TResult> table)
-			=> @this.ToDelegate().ToConcurrentTable(table);
+			=> ToDelegate(@this).ToConcurrentTable(table);
 
 		public static ITable<TParameter, TResult> ToConcurrentTable<TParameter, TResult>(this Func<TParameter, TResult> @this)
 			=> @this.ToConcurrentTable(new ConcurrentDictionary<TParameter, TResult>());

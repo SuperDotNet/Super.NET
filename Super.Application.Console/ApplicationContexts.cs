@@ -1,5 +1,4 @@
-﻿using Super.ExtensionMethods;
-using Super.Model.Commands;
+﻿using Super.Model.Commands;
 using Super.Model.Selection;
 using System.Collections.Immutable;
 

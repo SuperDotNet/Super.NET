@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Super.ExtensionMethods
+namespace Super
 {
-	partial class Model
+	public static partial class ExtensionMethods
 	{
 		public static T Alter<T>(this IEnumerable<IAlteration<T>> @this, T seed)
 			=> @this.Aggregate(seed, (current, alteration) => alteration.Get(current));
@@ -15,7 +15,7 @@ namespace Super.ExtensionMethods
 		public static TResult Alter<T, TResult>(this IEnumerable<T> @this, Func<T, TResult> alter)
 			=> @this.Select(alter).Last();
 
-		public static IAlteration<T> ToAlteration<T>(this ISelect<T, T> @this) => @this.ToDelegate().ToAlteration();
+		public static IAlteration<T> ToAlteration<T>(this ISelect<T, T> @this) => ToDelegate(@this).ToAlteration();
 
 		public static IAlteration<T> ToAlteration<T>(this Func<T, T> @this) => Alterations<T>.Default.Get(@this);
 

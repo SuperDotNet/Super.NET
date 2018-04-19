@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using Serilog.Events;
 using Serilog.Parsing;
-using Super.ExtensionMethods;
 using Super.Model.Selection;
 using Super.Model.Selection.Stores;
 using Super.Reflection;
 using Super.Runtime.Activation;
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 
 namespace Super.Diagnostics.Logging
 {

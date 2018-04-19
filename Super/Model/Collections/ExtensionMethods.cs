@@ -1,6 +1,4 @@
-﻿using Super.ExtensionMethods;
-
-namespace Super.Model.Collections
+﻿namespace Super.Model.Collections
 {
 	public static class ExtensionMethods
 	{

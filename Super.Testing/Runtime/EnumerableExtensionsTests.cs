@@ -1,11 +1,9 @@
 ﻿using AutoFixture.Xunit2;
 using FluentAssertions;
-using Super.ExtensionMethods;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
-using Enumerable = Super.ExtensionMethods.Enumerable;
 
 // ReSharper disable PossibleMultipleEnumeration
 

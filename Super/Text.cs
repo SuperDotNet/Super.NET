@@ -6,9 +6,9 @@ using Super.Text;
 using Super.Text.Formatting;
 using System;
 
-namespace Super.ExtensionMethods
+namespace Super
 {
-	public static class Text
+	public static partial class ExtensionMethods
 	{
 		public static ISelect<object, Func<object, IFormattable>> Register<T>(this ISelectFormatter<T> @this)
 			=> @this.To(I<Formatters<T>>.Default)

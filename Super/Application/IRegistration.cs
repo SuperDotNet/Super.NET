@@ -1,6 +1,5 @@
 ﻿using JetBrains.Annotations;
 using LightInject;
-using Super.ExtensionMethods;
 using Super.Model.Collections;
 using Super.Model.Commands;
 using Super.Model.Selection;

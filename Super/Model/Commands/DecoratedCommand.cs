@@ -1,6 +1,4 @@
-﻿using Super.ExtensionMethods;
-
-namespace Super.Model.Commands
+﻿namespace Super.Model.Commands
 {
 	public class DecoratedCommand<T> : DelegatedCommand<T>
 	{

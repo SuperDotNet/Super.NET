@@ -1,5 +1,4 @@
 ﻿using LightInject;
-using Super.ExtensionMethods;
 using Super.Model.Collections;
 using System;
 using Super.Model.Selection;

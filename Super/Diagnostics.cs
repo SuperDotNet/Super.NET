@@ -11,9 +11,9 @@ using System;
 
 // ReSharper disable TooManyArguments
 
-namespace Super.ExtensionMethods
+namespace Super
 {
-	public static class Diagnostics
+	public static partial class ExtensionMethods
 	{
 		public static T Load<T>(this ILogger @this) where T : IActivateMarker<ILogger>
 			=> @this.To(I<T>.Default);

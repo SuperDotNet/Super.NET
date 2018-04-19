@@ -1,5 +1,4 @@
-﻿using Super.ExtensionMethods;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
 using Super.Reflection.Members;
 using System;

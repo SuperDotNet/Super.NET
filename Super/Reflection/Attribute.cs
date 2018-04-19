@@ -1,5 +1,4 @@
-﻿using Super.ExtensionMethods;
-using Super.Model.Collections;
+﻿using Super.Model.Collections;
 using Super.Model.Selection;
 using Super.Model.Specifications;
 using System;

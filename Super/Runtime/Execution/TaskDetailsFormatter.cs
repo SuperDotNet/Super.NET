@@ -1,5 +1,4 @@
-﻿using Super.ExtensionMethods;
-using Super.Text;
+﻿using Super.Text;
 
 namespace Super.Runtime.Execution {
 	sealed class TaskDetailsFormatter : IFormatter<TaskDetails>

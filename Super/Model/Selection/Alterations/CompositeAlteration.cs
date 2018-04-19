@@ -1,5 +1,4 @@
-﻿using Super.ExtensionMethods;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Linq;
 
 namespace Super.Model.Selection.Alterations

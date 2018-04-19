@@ -1,9 +1,9 @@
 ﻿using Super.Model.Selection;
 using Super.Model.Selection.Stores;
 
-namespace Super.ExtensionMethods
+namespace Super
 {
-	static class Internal
+	static class ExtensionMethodsInternal
 	{
 		public static ISelect<TParameter, TResult> ToReferenceStore<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this)

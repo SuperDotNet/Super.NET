@@ -1,6 +1,4 @@
-﻿using Super.ExtensionMethods;
-
-namespace Super.Services.Security
+﻿namespace Super.Services.Security
 {
 	sealed class AuthenticationStateAssignment : ResponseStateAssignment
 	{

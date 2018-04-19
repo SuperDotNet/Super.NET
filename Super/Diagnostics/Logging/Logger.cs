@@ -1,13 +1,12 @@
 ﻿using Serilog;
 using Super.Diagnostics.Logging.Configuration;
-using Super.ExtensionMethods;
 using Super.Model.Selection;
+using Super.Model.Sources;
 using Super.Runtime.Activation;
-using Super.Runtime.Execution;
 
 namespace Super.Diagnostics.Logging
 {
-	public sealed class Logger : Ambient<IPrimaryLogger>
+	public sealed class Logger : DecoratedSource<IPrimaryLogger>
 	{
 		public static Logger Default { get; } = new Logger();
 

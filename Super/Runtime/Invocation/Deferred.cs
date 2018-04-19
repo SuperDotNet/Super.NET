@@ -1,5 +1,4 @@
-﻿using Super.ExtensionMethods;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
 using Super.Model.Selection.Stores;
 using Super.Runtime.Activation;
 

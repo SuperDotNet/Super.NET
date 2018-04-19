@@ -2,9 +2,9 @@
 using Super.Application;
 using System;
 
-namespace Super.ExtensionMethods
+namespace Super
 {
-	public static class Services
+	public static partial class ExtensionMethods
 	{
 		public static IServiceRegistry RegisterDefinition<T>(this IServiceRegistry @this)
 		{

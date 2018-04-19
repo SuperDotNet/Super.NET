@@ -1,6 +1,4 @@
-﻿using Super.ExtensionMethods;
-
-namespace Super.Model.Selection
+﻿namespace Super.Model.Selection
 {
 	public class DecoratedSelect<TParameter, TResult> : Select<TParameter, TResult>
 	{

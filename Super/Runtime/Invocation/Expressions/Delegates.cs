@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq.Expressions;
-using Super.ExtensionMethods;
 using Super.Model.Selection;
 
 namespace Super.Runtime.Invocation.Expressions

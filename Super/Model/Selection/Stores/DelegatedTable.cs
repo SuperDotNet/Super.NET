@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Super.ExtensionMethods;
 
 namespace Super.Model.Selection.Stores
 {

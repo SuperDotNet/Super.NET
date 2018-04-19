@@ -8,9 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace Super.ExtensionMethods
+namespace Super
 {
-	partial class Objects
+	public static partial class ExtensionMethods
 	{
 		public static KeyValuePair<Type, Func<string, Func<object, IProjection>>> Entry<T>(
 			this IFormattedProjection<T> @this)

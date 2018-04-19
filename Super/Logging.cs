@@ -6,9 +6,9 @@ using System.Collections.Immutable;
 
 // ReSharper disable TooManyArguments
 
-namespace Super.ExtensionMethods
+namespace Super
 {
-	public static class Logging
+	public static partial class ExtensionMethods
 	{
 		public static void Execute<T>(this ICommand<ExceptionParameter<TimeSpan>> @this, DelegateResult<T> result,
 		                              TimeSpan span)

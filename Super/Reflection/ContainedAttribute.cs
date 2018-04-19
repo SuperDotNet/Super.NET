@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using Super.ExtensionMethods;
 using Super.Model.Selection;
 using Super.Model.Sources;
 using Super.Model.Specifications;

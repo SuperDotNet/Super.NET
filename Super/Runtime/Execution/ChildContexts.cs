@@ -1,11 +1,11 @@
-﻿using System;
-using JetBrains.Annotations;
-using Super.ExtensionMethods;
+﻿using JetBrains.Annotations;
 using Super.Model.Selection;
 using Super.Reflection;
 using Super.Runtime.Activation;
+using System;
 
-namespace Super.Runtime.Execution {
+namespace Super.Runtime.Execution
+{
 	sealed class ChildContexts : ISelect<string, IDisposable>, IActivateMarker<IContexts>
 	{
 		readonly Func<string, object> _context;
@@ -22,8 +22,8 @@ namespace Super.Runtime.Execution {
 
 		public IDisposable Get(string parameter)
 		{
-			var child = _context(parameter);
-			_assign.Execute(child);
+			var context = _context(parameter);
+			_assign.Execute(context);
 			var result = new DelegatedDisposable(_assign.Execute);
 			return result;
 		}

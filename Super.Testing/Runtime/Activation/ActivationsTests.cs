@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using Super.ExtensionMethods;
 using Super.Runtime.Activation;
 using System;
 using Super.Model.Selection;

@@ -3,9 +3,9 @@ using System;
 
 // ReSharper disable TooManyArguments
 
-namespace Super.ExtensionMethods
+namespace Super
 {
-	public static partial class Model
+	public static partial class ExtensionMethods
 	{
 		public static ISelect<TFrom, TResult> In<TFrom, TTo, TResult>(this ISelect<TTo, TResult> @this,
 		                                                              ISelect<TFrom> select)
@@ -13,15 +13,15 @@ namespace Super.ExtensionMethods
 
 		public static ISelect<TFrom, TResult> In<TFrom, TTo, TResult>(this ISelect<TTo, TResult> @this,
 		                                                              ISelect<TFrom, TTo> select)
-			=> @this.In(select.ToDelegate());
+			=> In(@this, ToDelegate(@select));
 
 		public static ISelect<TFrom, TResult> In<TFrom, TTo, TResult>(this ISelect<TTo, TResult> @this,
 		                                                              Func<TFrom, TTo> select)
-			=> new Parameter<TTo, TFrom, TResult>(@this.ToDelegate(), select);
+			=> new Parameter<TTo, TFrom, TResult>(ToDelegate(@this), select);
 
 		public static ISpecification<TFrom, TResult> In<TFrom, TTo, TResult>(
 			this ISpecification<TTo, TResult> @this, ISelect<TFrom, TTo> coercer)
-			=> @this.ToSelect().ToSelect().In(coercer).ToSpecification(@this.Select(coercer));
+			=> ToSpecification(ToSelect(@this).ToSelect().In(coercer), @this.Select(coercer));
 
 		public static ISelect<TParameter, TResult> Into<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, ISelect<Decoration<TParameter, TResult>, TResult> other)
@@ -33,10 +33,10 @@ namespace Super.ExtensionMethods
 
 		public static ISelect<TParameter, TTo> Out<TParameter, TFrom, TTo>(this ISelect<TParameter, TFrom> @this,
 		                                                                   ISelect<TFrom, TTo> select)
-			=> @this.Out(select.ToDelegate());
+			=> Out(@this, ToDelegate(@select));
 
 		public static ISelect<TParameter, TTo> Out<TParameter, TFrom, TTo>(this ISelect<TParameter, TFrom> @this,
 		                                                                   Func<TFrom, TTo> select)
-			=> new Result<TParameter, TFrom, TTo>(@this.ToDelegate(), select);
+			=> new Result<TParameter, TFrom, TTo>(ToDelegate(@this), select);
 	}
 }

@@ -1,4 +1,3 @@
-using Super.ExtensionMethods;
 using Super.Model.Commands;
 using Super.Model.Selection;
 

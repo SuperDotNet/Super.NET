@@ -1,6 +1,5 @@
-﻿using System;
-using Super.ExtensionMethods;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
+using System;
 
 namespace Super.Text.Formatting
 {

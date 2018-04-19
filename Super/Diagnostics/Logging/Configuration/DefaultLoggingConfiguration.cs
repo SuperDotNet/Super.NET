@@ -1,6 +1,4 @@
-﻿using Super.ExtensionMethods;
-
-namespace Super.Diagnostics.Logging.Configuration
+﻿namespace Super.Diagnostics.Logging.Configuration
 {
 	sealed class DefaultLoggingConfiguration : LoggingConfigurations
 	{

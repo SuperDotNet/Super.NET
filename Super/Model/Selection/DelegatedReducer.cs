@@ -1,5 +1,4 @@
 ﻿using System;
-using Super.ExtensionMethods;
 using Super.Runtime.Activation;
 
 namespace Super.Model.Selection

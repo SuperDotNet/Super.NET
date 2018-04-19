@@ -1,6 +1,5 @@
 ﻿using AutoFixture;
 using AutoFixture.Kernel;
-using Super.ExtensionMethods;
 using Super.Model.Collections;
 using Super.Model.Commands;
 using Super.Model.Selection;

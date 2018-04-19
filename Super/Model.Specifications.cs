@@ -2,9 +2,9 @@
 using Super.Model.Specifications;
 using System;
 
-namespace Super.ExtensionMethods
+namespace Super
 {
-	partial class Model
+	public static partial class ExtensionMethods
 	{
 		public static ISpecification<T> ToSpecification<T>(this Func<T, bool> @this) => Specifications<T>.Default.Get(@this);
 
@@ -15,7 +15,7 @@ namespace Super.ExtensionMethods
 			=> @this.Select(select.In<TTo>());
 
 		public static ISpecification<TFrom> Select<TFrom, TTo>(this ISpecification<TTo> @this, ISelect<TFrom, TTo> select)
-			=> @this.Select(select.ToDelegate());
+			=> @this.Select(ToDelegate(@select));
 
 		public static ISpecification<TFrom> Select<TFrom, TTo>(this ISpecification<TTo> @this, Func<TFrom, TTo> select)
 			=> new SelectedParameterSpecification<TFrom,TTo>(@this.ToDelegate(), select);
@@ -23,7 +23,7 @@ namespace Super.ExtensionMethods
 		public static Func<T, bool> ToDelegate<T>(this ISpecification<T> @this) => Delegates<T>.Default.Get(@this);
 
 		public static ISelect<TParameter, TResult> If<TParameter, TResult>(
-			this ISpecification<TParameter> @this, ISelect<TParameter, TResult> @true) => @this.If(@true, @true.Default());
+			this ISpecification<TParameter> @this, ISelect<TParameter, TResult> @true) => If(@this, @true, Default(@true));
 
 		public static ISelect<TParameter, TResult> If<TParameter, TResult>(
 			this ISpecification<TParameter> @this, ISelect<TParameter, TResult> @true, ISelect<TParameter, TResult> @false)
@@ -40,6 +40,6 @@ namespace Super.ExtensionMethods
 
 		public static ISpecification<T> Equal<T>(this T @this) => EqualitySpecifications<T>.Default.Get(@this);
 
-		public static ISpecification<T> Not<T>(this T @this) => @this.Equal().Inverse();
+		public static ISpecification<T> Not<T>(this T @this) => Inverse(@this.Equal());
 	}
 }

@@ -1,5 +1,3 @@
-using Super.ExtensionMethods;
-
 namespace Super.Model.Specifications
 {
 	public class DecoratedSpecification<T> : DelegatedSpecification<T>

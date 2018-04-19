@@ -1,6 +1,5 @@
 ﻿using Serilog.Core;
 using Serilog.Events;
-using Super.ExtensionMethods;
 using Super.Model.Commands;
 using Super.Runtime.Objects;
 

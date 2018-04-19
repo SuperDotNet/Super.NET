@@ -3,7 +3,6 @@ using Serilog;
 using Serilog.Configuration;
 using Serilog.Core;
 using Super.Diagnostics.Logging.Configuration;
-using Super.ExtensionMethods;
 using Super.Model.Selection.Alterations;
 
 namespace Super.Diagnostics.Logging

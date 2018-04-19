@@ -1,11 +1,10 @@
-﻿using Super.ExtensionMethods;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
 using Super.Model.Sources;
 using System;
 
 namespace Super.Runtime.Execution
 {
-	class Contextual<T> : DelegatedSelection<object, T>
+	public class Contextual<T> : DelegatedSelection<object, T>
 	{
 		public Contextual(Func<T> source) : this(source.ToSource()) {}
 

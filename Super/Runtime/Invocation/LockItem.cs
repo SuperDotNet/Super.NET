@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
-using Super.ExtensionMethods;
 using Super.Model.Collections;
 using Super.Model.Selection;
 using Super.Runtime.Activation;

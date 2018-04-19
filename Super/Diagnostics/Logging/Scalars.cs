@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Serilog.Events;
-using Super.ExtensionMethods;
 using Super.Model.Selection;
 
 namespace Super.Diagnostics.Logging

@@ -1,5 +1,4 @@
-﻿using Super.ExtensionMethods;
-using Super.Model.Sources;
+﻿using Super.Model.Sources;
 using Super.Runtime.Activation;
 using System;
 using System.Reactive;

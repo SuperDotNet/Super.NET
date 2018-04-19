@@ -6,15 +6,15 @@ using Super.Reflection;
 using Super.Runtime.Activation;
 using System;
 
-namespace Super.ExtensionMethods
+namespace Super
 {
-	partial class Model
+	public static partial class ExtensionMethods
 	{
 		public static ISource<TTo> Select<TFrom, TTo>(this ISource<TFrom> @this, ISelect<TTo> select)
 			=> @this.Select(select.Out<TFrom>());
 
 		public static ISource<TTo> Select<TFrom, TTo>(this ISource<TFrom> @this, ISelect<TFrom, TTo> select)
-			=> @this.Select(select.ToDelegate());
+			=> @this.Select(ToDelegate(select));
 
 		public static ISource<T> Select<T>(this ISource<ISource<T>> @this) => @this.Select(ValueSelector<T>.Default);
 
@@ -33,28 +33,28 @@ namespace Super.ExtensionMethods
 			=> @this.Select(Activations<TParameter, TResult>.Default);
 
 		public static TResult Get<TParameter, TResult>(this ISource<TParameter> @this,
-		                                               ISelect<TParameter, TResult> @select)
-			=> @this.Get(@select.ToDelegate());
+		                                               ISelect<TParameter, TResult> select)
+			=> Get(@this, ToDelegate(select));
 
 		public static TTo Get<TFrom, TTo>(this ISource<TFrom> @this, Func<TFrom, TTo> select)
 			=> @this.Select(select).Get();
 
 		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(this ISource<TResult> @this,
-		                                                                   ISelect<TParameter, TResult> @select)
-			=> @this.Allow(I<TParameter>.Default).Or(@select);
+		                                                                   ISelect<TParameter, TResult> select)
+			=> Allow(@this, I<TParameter>.Default).Or(select);
 
 		public static ISource<T> Or<T>(this ISource<T> @this, ISource<T> fallback)
-			=> @this.Or(IsAssigned<T>.Default, fallback);
+			=> Or(@this, IsAssigned<T>.Default, fallback);
 
 		public static ISource<T> Or<T>(this ISource<T> @this, ISpecification<T> specification, ISource<T> fallback)
 			=> new ValidatedSource<T>(specification, @this, fallback);
 
 		public static ISpecification<TParameter, TResult> Allow<TParameter, TResult>(
 			this TResult @this, ISpecification<TParameter> specification)
-			=> @this.ToSelect(I<TParameter>.Default).ToSpecification(specification);
+			=> ToSpecification(@this.ToSelect(I<TParameter>.Default), specification);
 
 
-		public static ISelect<object, T> Allow<T>(this ISource<T> @this) => @this.Allow(I<object>.Default);
+		public static ISelect<object, T> Allow<T>(this ISource<T> @this) => Allow(@this, I<object>.Default);
 
 		public static ISelect<TParameter, TResult> Allow<TParameter, TResult>(this ISource<TResult> @this, I<TParameter> _)
 			=> new DelegatedResult<TParameter, TResult>(@this.ToDelegate());
@@ -65,6 +65,6 @@ namespace Super.ExtensionMethods
 
 		public static ISource<T> ToSource<T>(this Func<T> @this) => I<DelegatedSource<T>>.Default.From(@this);
 
-		public static Func<T> ToDelegate<T>(this ISource<T> @this) => Super.Model.Sources.Delegates<T>.Default.Get(@this);
+		public static Func<T> ToDelegate<T>(this ISource<T> @this) => Model.Sources.Delegates<T>.Default.Get(@this);
 	}
 }

@@ -1,5 +1,4 @@
-﻿using Super.ExtensionMethods;
-using Super.Runtime.Activation;
+﻿using Super.Runtime.Activation;
 using System;
 using Super.Model.Selection;
 using Activator = Super.Runtime.Activation.Activator;

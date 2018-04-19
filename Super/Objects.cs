@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace Super.ExtensionMethods
+namespace Super
 {
-	public static partial class Objects
+	public static partial class ExtensionMethods
 	{
 		public static T With<T>(this T @this, Action<T> action)
 		{

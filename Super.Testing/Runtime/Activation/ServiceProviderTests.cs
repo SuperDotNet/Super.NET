@@ -1,7 +1,6 @@
 ﻿using System;
 using AutoFixture.Xunit2;
 using FluentAssertions;
-using Super.ExtensionMethods;
 using Super.Runtime.Activation;
 using Xunit;
 

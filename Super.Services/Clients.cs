@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net.Http;
-using Super.ExtensionMethods;
 using Super.Model.Selection;
 using Super.Model.Selection.Stores;
 
