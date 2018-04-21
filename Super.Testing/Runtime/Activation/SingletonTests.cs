@@ -4,7 +4,7 @@ using Xunit;
 
 // ReSharper disable All
 
-namespace Super.Testing.Runtime.Activation
+namespace Super.Testing.Application.Runtime.Activation
 {
 	public sealed class SingletonTests
 	{

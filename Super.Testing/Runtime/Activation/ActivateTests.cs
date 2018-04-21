@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Super.Application.Testing;
+using Super.Application.Host.xUnit;
 using Super.Model.Selection;
 using Super.Reflection;
 using Super.Runtime.Activation;
@@ -7,7 +7,7 @@ using Xunit;
 
 // ReSharper disable All
 
-namespace Super.Testing.Runtime.Activation
+namespace Super.Testing.Application.Runtime.Activation
 {
 	public sealed class ActivateTests
 	{

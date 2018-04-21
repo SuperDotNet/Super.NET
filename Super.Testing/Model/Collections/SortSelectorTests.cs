@@ -1,6 +1,6 @@
 ﻿using Xunit;
 
-namespace Super.Testing.Model.Collections
+namespace Super.Testing.Application.Model.Collections
 {
 	public class SortSelectorTests
 	{

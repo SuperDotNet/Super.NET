@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Collections.Immutable;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs.Host;
 using Super.Runtime;
-using System.Collections.Immutable;
 
-namespace Super.Application.AzureFunctions
+namespace Super.Application.Host.AzureFunctions
 {
 	public readonly struct AzureFunctionParameter
 	{

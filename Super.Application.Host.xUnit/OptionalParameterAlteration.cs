@@ -1,6 +1,6 @@
 ﻿using AutoFixture.Kernel;
 
-namespace Super.Application.Testing
+namespace Super.Application.Host.xUnit
 {
 	sealed class OptionalParameterAlteration : BuilderSelection<AutoFixture.Kernel.ParameterRequestRelay>
 	{

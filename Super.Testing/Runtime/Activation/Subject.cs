@@ -1,4 +1,4 @@
-﻿namespace Super.Testing.Runtime.Activation
+﻿namespace Super.Testing.Application.Runtime.Activation
 {
 	sealed class Subject
 	{

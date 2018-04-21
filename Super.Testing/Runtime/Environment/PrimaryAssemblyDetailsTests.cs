@@ -1,10 +1,10 @@
-﻿using FluentAssertions;
+﻿using System.Reflection;
+using FluentAssertions;
 using Super.Reflection.Assemblies;
 using Super.Runtime.Environment;
-using System.Reflection;
 using Xunit;
 
-namespace Super.Testing.Runtime.Environment
+namespace Super.Testing.Application.Runtime.Environment
 {
 	public sealed class PrimaryAssemblyDetailsTests
 	{

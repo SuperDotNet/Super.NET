@@ -1,9 +1,9 @@
-﻿using FluentAssertions;
-using System;
+﻿using System;
 using System.Diagnostics;
+using FluentAssertions;
 using Xunit;
 
-namespace Super.Testing.Diagnostics.Logging.Configuration
+namespace Super.Testing.Application.Diagnostics.Logging.Configuration
 {
 	public class EnhancedExceptionStackTraceConfigurationTests
 	{

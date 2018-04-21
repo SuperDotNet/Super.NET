@@ -3,7 +3,7 @@ using FluentAssertions;
 using Super.Runtime.Activation;
 using Xunit;
 
-namespace Super.Testing.Runtime.Activation
+namespace Super.Testing.Application.Runtime.Activation
 {
 	public class ActivationTests
 	{

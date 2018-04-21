@@ -2,7 +2,7 @@
 using Super.Reflection.Collections;
 using Xunit;
 
-namespace Super.Testing.Reflection
+namespace Super.Testing.Application.Reflection
 {
 	public class InnerTypeTests
 	{

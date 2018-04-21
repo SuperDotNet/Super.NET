@@ -10,7 +10,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Xunit;
 
-namespace Super.Testing.Diagnostics
+namespace Super.Testing.Application.Diagnostics
 {
 	public sealed class ApplyProjectionsCommandTests
 	{
@@ -28,7 +28,7 @@ namespace Super.Testing.Diagnostics
 				logger.Information("Testing: {AppDomain:I}", AppDomain.CurrentDomain);
 			}
 
-			sink.Should().Equal("Testing: AppDomain: Super.Testing", "Testing: Super.Testing", $"Testing: {AppDomain.CurrentDomain.Id}");
+			sink.Should().Equal("Testing: AppDomain: Super.Testing.Application", "Testing: Super.Testing.Application", $"Testing: {AppDomain.CurrentDomain.Id}");
 		}
 
 		[Fact]
@@ -47,7 +47,7 @@ namespace Super.Testing.Diagnostics
 				logger.Information("Testing: {AppDomain:I}", AppDomain.CurrentDomain);
 			}
 
-			sink.Should().Equal("Testing: AppDomain: Super.Testing", "Testing: Super.Testing", $"Testing: {AppDomain.CurrentDomain.Id}");
+			sink.Should().Equal("Testing: AppDomain: Super.Testing.Application", "Testing: Super.Testing.Application", $"Testing: {AppDomain.CurrentDomain.Id}");
 		}
 
 		[Fact]
@@ -66,7 +66,7 @@ namespace Super.Testing.Diagnostics
 				logger.Information("Testing: {AppDomain:I}", AppDomain.CurrentDomain);
 			}
 
-			sink.Should().Equal("Testing: AppDomain: Super.Testing", "Testing: Super.Testing", $"Testing: {AppDomain.CurrentDomain.Id}");
+			sink.Should().Equal("Testing: AppDomain: Super.Testing.Application", "Testing: Super.Testing.Application", $"Testing: {AppDomain.CurrentDomain.Id}");
 		}
 
 		[Fact]

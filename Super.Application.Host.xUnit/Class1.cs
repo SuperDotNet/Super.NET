@@ -1,17 +1,17 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
 // ReSharper disable All
 
-namespace Super.Application.Testing
+namespace Super.Application.Host.xUnit
 {
 	[UsedImplicitly]
 	public sealed class TestFramework : XunitTestFramework

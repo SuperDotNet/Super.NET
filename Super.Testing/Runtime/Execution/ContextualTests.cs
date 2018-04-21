@@ -1,11 +1,11 @@
-﻿using FluentAssertions;
-using Super.Application.Testing;
+﻿using System.Threading.Tasks;
+using FluentAssertions;
+using Super.Application.Host.xUnit;
 using Super.Diagnostics.Logging;
 using Super.Runtime.Execution;
-using System.Threading.Tasks;
 using Xunit;
 
-namespace Super.Testing.Runtime.Execution
+namespace Super.Testing.Application.Runtime.Execution
 {
 	public sealed class ContextualTests
 	{

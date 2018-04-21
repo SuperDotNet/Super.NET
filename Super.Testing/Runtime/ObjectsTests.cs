@@ -1,11 +1,11 @@
-﻿using AutoFixture.Xunit2;
+﻿using System;
+using AutoFixture.Xunit2;
 using FluentAssertions;
 using Super.Runtime;
 using Super.Runtime.Activation;
-using System;
 using Xunit;
 
-namespace Super.Testing.Runtime
+namespace Super.Testing.Application.Runtime
 {
 	public class ObjectsTests
 	{

@@ -1,10 +1,10 @@
-﻿using Serilog;
+﻿using System;
+using Serilog;
 using Serilog.Configuration;
 using Super.Diagnostics.Logging;
 using Super.Diagnostics.Logging.Configuration;
-using System;
 
-namespace Super.Application.Console
+namespace Super.Application.Host.Console
 {
 	public sealed class ConsoleConfiguration : ILoggingSinkConfiguration
 	{

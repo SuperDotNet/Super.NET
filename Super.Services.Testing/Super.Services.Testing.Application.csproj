@@ -14,7 +14,7 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Super.Application.Testing\Super.Application.Testing.csproj" />
+    <ProjectReference Include="..\Super.Application.Testing\Super.Application.Host.xUnit.csproj" />
     <ProjectReference Include="..\Super.Services\Super.Services.csproj" />
     <ProjectReference Include="..\Super\Super.csproj" />
   </ItemGroup>

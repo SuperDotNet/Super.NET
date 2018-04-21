@@ -1,7 +1,7 @@
-﻿using Super.Model.Commands;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
+using Super.Model.Commands;
 
-namespace Super.Application.Console
+namespace Super.Application.Host.Console
 {
 	sealed class ConsoleApplicationContext<T> : ApplicationContext<ImmutableArray<string>> where T : class, ICommand<ImmutableArray<string>>
 	{

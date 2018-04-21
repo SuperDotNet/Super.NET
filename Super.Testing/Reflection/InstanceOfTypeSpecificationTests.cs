@@ -1,9 +1,9 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using Super.Reflection.Types;
-using System;
 using Xunit;
 
-namespace Super.Testing.Reflection
+namespace Super.Testing.Application.Reflection
 {
 	public class InstanceOfTypeSpecificationTests
 	{

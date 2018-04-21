@@ -2,7 +2,7 @@
 using Super.Diagnostics.Logging.Configuration;
 using Xunit;
 
-namespace Super.Testing.Diagnostics
+namespace Super.Testing.Application.Diagnostics
 {
 	public class LoggingConfigurationTests
 	{

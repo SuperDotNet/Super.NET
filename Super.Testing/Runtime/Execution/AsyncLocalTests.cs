@@ -1,7 +1,8 @@
 ﻿using Xunit.Abstractions;
+
 // ReSharper disable All
 
-namespace Super.Testing.Runtime.Execution
+namespace Super.Testing.Application.Runtime.Execution
 {
 	public sealed class AsyncLocalTests
 	{

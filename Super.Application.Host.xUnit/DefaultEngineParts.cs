@@ -1,9 +1,9 @@
-﻿using AutoFixture.Kernel;
-using JetBrains.Annotations;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Immutable;
+using AutoFixture.Kernel;
+using JetBrains.Annotations;
 
-namespace Super.Application.Testing
+namespace Super.Application.Host.xUnit
 {
 	public sealed class DefaultEngineParts : AutoFixture.DefaultEngineParts
 	{

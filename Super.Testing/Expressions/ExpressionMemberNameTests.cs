@@ -4,7 +4,7 @@ using System.Reflection;
 using Super.Runtime.Invocation.Expressions;
 using Xunit;
 
-namespace Super.Testing.Expressions
+namespace Super.Testing.Application.Expressions
 {
 	public class ExpressionMemberNameTests
 	{

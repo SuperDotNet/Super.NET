@@ -5,7 +5,7 @@ using Xunit;
 
 // ReSharper disable All
 
-namespace Super.Testing.Model.Sources
+namespace Super.Testing.Application.Model.Sources
 {
 	public sealed class SelectionsTests
 	{

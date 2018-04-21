@@ -1,12 +1,12 @@
-﻿using AutoFixture.Kernel;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using AutoFixture.Kernel;
 using Super.Model.Sources;
 using Super.Runtime;
 using Super.Runtime.Activation;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
 
-namespace Super.Application.Testing
+namespace Super.Application.Host.xUnit
 {
 	sealed class SingletonMethod : FixedSelection<Type, object>, IMethod
 	{

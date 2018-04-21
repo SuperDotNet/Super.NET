@@ -1,14 +1,14 @@
-﻿using AutoFixture;
+﻿using System;
+using System.Collections.Generic;
+using AutoFixture;
 using AutoFixture.Kernel;
 using Super.Model.Collections;
 using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Specifications;
 using Super.Runtime.Activation;
-using System;
-using System.Collections.Generic;
 
-namespace Super.Application.Testing
+namespace Super.Application.Host.xUnit
 {
 	public sealed class SingletonQuery : ISelect<Type, IEnumerable<IMethod>>, IMethodQuery, ISpecification<Type>
 	{

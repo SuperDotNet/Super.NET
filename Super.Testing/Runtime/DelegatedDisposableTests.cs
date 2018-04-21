@@ -2,7 +2,7 @@
 using Super.Runtime;
 using Xunit;
 
-namespace Super.Testing.Runtime
+namespace Super.Testing.Application.Runtime
 {
 	public class DelegatedDisposableTests
 	{

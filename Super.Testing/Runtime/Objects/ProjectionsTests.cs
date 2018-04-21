@@ -1,9 +1,9 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using Super.Runtime.Objects;
-using System;
 using Xunit;
 
-namespace Super.Testing.Runtime.Objects
+namespace Super.Testing.Application.Runtime.Objects
 {
 	public sealed class ProjectionsTests
 	{

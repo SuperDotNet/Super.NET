@@ -1,9 +1,9 @@
-﻿using AutoFixture;
+﻿using System;
+using AutoFixture;
 using AutoFixture.Kernel;
 using Super.Model.Selection;
-using System;
 
-namespace Super.Application.Testing
+namespace Super.Application.Host.xUnit
 {
 	public class BuilderSelection<T> : ISpecimenBuilderTransformation where T : ISpecimenBuilder
 	{

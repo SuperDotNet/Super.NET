@@ -2,7 +2,7 @@
 using Super.Model.Selection.Stores;
 using Xunit;
 
-namespace Super.Testing.Model.Sources.Tables
+namespace Super.Testing.Application.Model.Sources.Tables
 {
 	public class TablesTests
 	{

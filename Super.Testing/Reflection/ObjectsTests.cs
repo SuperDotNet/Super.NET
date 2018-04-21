@@ -2,7 +2,7 @@
 using Super.Reflection;
 using Xunit;
 
-namespace Super.Testing.Reflection
+namespace Super.Testing.Application.Reflection
 {
 	public class ObjectsTests
 	{

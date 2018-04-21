@@ -1,10 +1,10 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using Super.Runtime.Environment;
 using Super.Testing.Objects;
-using System;
 using Xunit;
 
-namespace Super.Testing.Runtime.Environment
+namespace Super.Testing.Application.Runtime.Environment
 {
 	public sealed class DefaultComponentTests
 	{

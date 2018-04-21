@@ -1,10 +1,10 @@
 ﻿using FluentAssertions;
-using Super.Application.Testing;
+using Super.Application.Host.xUnit;
 using Super.Diagnostics.Logging;
 using Super.Runtime.Execution;
 using Xunit;
 
-namespace Super.Testing.Runtime
+namespace Super.Testing.Application.Runtime
 {
 	public sealed class ContextFormatterTests
 	{

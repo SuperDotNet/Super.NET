@@ -1,12 +1,12 @@
-﻿using FluentAssertions;
-using Super.Runtime.Activation;
-using System;
+﻿using System;
+using FluentAssertions;
 using Super.Model.Selection;
+using Super.Runtime.Activation;
 using Xunit;
 
 // ReSharper disable All
 
-namespace Super.Testing.Runtime.Activation
+namespace Super.Testing.Application.Runtime.Activation
 {
 	public class ActivationsTests
 	{

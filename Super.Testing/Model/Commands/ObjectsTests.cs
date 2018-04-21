@@ -1,10 +1,11 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Immutable;
+using FluentAssertions;
 using Super.Model.Commands;
-using System.Collections.Immutable;
 using Xunit;
+
 // ReSharper disable All
 
-namespace Super.Testing.Model.Commands
+namespace Super.Testing.Application.Model.Commands
 {
 	public class ObjectsTests
 	{

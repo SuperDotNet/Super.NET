@@ -1,9 +1,9 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using Super.Runtime.Execution;
-using System;
 using Xunit;
 
-namespace Super.Testing.Runtime
+namespace Super.Testing.Application.Runtime
 {
 	public sealed class ContextsTests
 	{

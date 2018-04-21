@@ -1,11 +1,11 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using Super.Reflection.Types;
 using Super.Runtime;
 using Super.Runtime.Invocation.Expressions;
-using System;
 using Xunit;
 
-namespace Super.Testing.Expressions
+namespace Super.Testing.Application.Expressions
 {
 	public sealed class LambdaTests
 	{

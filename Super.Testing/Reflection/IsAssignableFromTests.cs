@@ -1,10 +1,10 @@
-﻿using FluentAssertions;
+﻿using System.IO;
+using FluentAssertions;
 using Super.Model.Specifications;
 using Super.Reflection.Types;
-using System.IO;
 using Xunit;
 
-namespace Super.Testing.Reflection
+namespace Super.Testing.Application.Reflection
 {
 	public class IsAssignableFromTests
 	{

@@ -1,8 +1,8 @@
-﻿using Super.Model.Commands;
+﻿using System.Collections.Immutable;
+using Super.Model.Commands;
 using Super.Model.Selection;
-using System.Collections.Immutable;
 
-namespace Super.Application.Console
+namespace Super.Application.Host.Console
 {
 	sealed class ApplicationContexts<T> : ApplicationContexts<ImmutableArray<string>, ConsoleApplicationContext<T>>,
 	                                      IApplicationContexts

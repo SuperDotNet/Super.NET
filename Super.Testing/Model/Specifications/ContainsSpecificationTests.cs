@@ -1,9 +1,9 @@
-﻿using FluentAssertions;
+﻿using System.Linq;
+using FluentAssertions;
 using Super.Model.Collections;
-using System.Linq;
 using Xunit;
 
-namespace Super.Testing.Model.Specifications
+namespace Super.Testing.Application.Model.Specifications
 {
 	public class HasTests
 	{

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Super.Application.AzureFunctions
+namespace Super.Application.Host.AzureFunctions
 {
 	public sealed class AzureFunction<T> : IAzureFunction where T : class, IAzureFunction
 	{

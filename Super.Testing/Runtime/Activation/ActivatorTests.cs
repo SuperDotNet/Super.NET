@@ -1,10 +1,10 @@
 ﻿using FluentAssertions;
 using Moq;
-using Super.Application.Testing;
+using Super.Application.Host.xUnit;
 using Super.Runtime.Activation;
 using Xunit;
 
-namespace Super.Testing.Runtime.Activation
+namespace Super.Testing.Application.Runtime.Activation
 {
 	public class ActivatorTests
 	{

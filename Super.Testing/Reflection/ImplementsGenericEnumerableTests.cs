@@ -1,15 +1,15 @@
-﻿using FluentAssertions;
-using Super.Model.Commands;
-using Super.Model.Sources;
-using Super.Reflection.Collections;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
+using FluentAssertions;
+using Super.Model.Commands;
+using Super.Model.Sources;
+using Super.Reflection.Collections;
 using Xunit;
 
-namespace Super.Testing.Reflection
+namespace Super.Testing.Application.Reflection
 {
 	public class ImplementsGenericEnumerableTests
 	{

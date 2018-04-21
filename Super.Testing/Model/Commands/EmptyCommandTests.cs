@@ -1,7 +1,7 @@
 ﻿using Super.Model.Commands;
 using Xunit;
 
-namespace Super.Testing.Model.Commands
+namespace Super.Testing.Application.Model.Commands
 {
 	public class EmptyCommandTests
 	{

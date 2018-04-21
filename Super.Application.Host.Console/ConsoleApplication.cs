@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace Super.Application.Console
+namespace Super.Application.Host.Console
 {
 	public sealed class ConsoleApplication<T> : IConsoleApplication where T : class, IConsoleApplication
 	{

@@ -1,12 +1,12 @@
 ﻿using FluentAssertions;
-using Super.Application.Testing;
+using Super.Application.Host.xUnit;
 using Super.Model.Selection;
 using Super.Reflection;
 using Xunit;
 
 // ReSharper disable All
 
-namespace Super.Testing.Aspects
+namespace Super.Testing.Application.Aspects
 {
 	public sealed class InTests
 	{

@@ -3,7 +3,7 @@ using Moq;
 using Super.Model.Specifications;
 using Xunit;
 
-namespace Super.Testing.Model.Specifications
+namespace Super.Testing.Application.Model.Specifications
 {
 	public class NeverTests
 	{

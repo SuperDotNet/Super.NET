@@ -1,9 +1,9 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using Super.Text.Formatting;
-using System;
 using Xunit;
 
-namespace Super.Testing.Text.Formatting
+namespace Super.Testing.Application.Text.Formatting
 {
 	public sealed class FormattersTests
 	{

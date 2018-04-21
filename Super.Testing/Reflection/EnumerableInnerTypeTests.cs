@@ -1,10 +1,10 @@
-﻿using FluentAssertions;
-using Super.Reflection.Collections;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using FluentAssertions;
+using Super.Reflection.Collections;
 using Xunit;
 
-namespace Super.Testing.Reflection
+namespace Super.Testing.Application.Reflection
 {
 	public class EnumerableInnerTypeTests
 	{

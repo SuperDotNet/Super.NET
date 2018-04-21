@@ -1,8 +1,9 @@
 ﻿using FluentAssertions;
+using Super.Services;
 using System;
 using Xunit;
 
-namespace Super.Services.Testing
+namespace Super.Testing.Application.Services
 {
 	public sealed class ServiceTests
 	{

@@ -2,7 +2,7 @@
 using Super.Model.Sources;
 using Super.Runtime.Activation;
 
-namespace Super.Application.Testing
+namespace Super.Application.Host.xUnit
 {
 	public sealed class Fixtures<TWith> : ISource<IFixture> where TWith : class, ICustomization
 	{

@@ -4,7 +4,7 @@ using FluentAssertions;
 using Super.Runtime;
 using Xunit;
 
-namespace Super.Testing.Reflection
+namespace Super.Testing.Application.Reflection
 {
 	public class ItemsTests
 	{

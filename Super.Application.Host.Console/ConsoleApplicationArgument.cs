@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
 using Super.Runtime.Activation;
 
-namespace Super.Application.Console {
+namespace Super.Application.Host.Console {
 	sealed class ConsoleApplicationArgument : ApplicationArgument<ImmutableArray<string>>,
 	                                          IActivateMarker<ImmutableArray<string>>
 	{
