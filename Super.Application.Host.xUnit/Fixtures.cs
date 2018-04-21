@@ -1,25 +1,30 @@
 ﻿using AutoFixture;
 using Super.Model.Sources;
-using Super.Runtime.Activation;
 
 namespace Super.Application.Host.xUnit
 {
-	public sealed class Fixtures<TWith> : ISource<IFixture> where TWith : class, ICustomization
+	/*public sealed class Fixtures<TWith> : Fixtures where TWith : class, ICustomization
 	{
-		public static Fixtures<TWith> Default { get; } = new Fixtures<TWith>();
+		public Fixtures(DefaultRelays relays) : this(relays, Activator<TWith>.Default) {}
 
-		Fixtures() : this(DefaultEngineParts.Default, Activator<TWith>.Default) {}
+		public Fixtures(DefaultRelays relays, ISource<TWith> activator) : base(relays, activator.Get()) {}
+	}*/
 
-		readonly ISource<TWith> _activator;
+	public class Fixtures : ISource<IFixture>
+	{
+		public static Fixtures Default { get; } = new Fixtures();
+
+		Fixtures() : this(EngineParts.Default, DefaultCustomization.Default) {}
 
 		readonly DefaultRelays _relays;
+		readonly ICustomization _customization;
 
-		public Fixtures(DefaultRelays relays, ISource<TWith> activator)
+		public Fixtures(DefaultRelays relays, ICustomization customization)
 		{
 			_relays    = relays;
-			_activator = activator;
+			_customization = customization;
 		}
 
-		public IFixture Get() => new Fixture(_relays).Customize(_activator.Get());
+		public IFixture Get() => new Fixture(_relays).Customize(_customization);
 	}
 }

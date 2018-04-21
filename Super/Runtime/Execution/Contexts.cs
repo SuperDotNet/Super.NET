@@ -2,6 +2,7 @@
 using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Selection.Stores;
+using Super.Runtime.Activation;
 using System;
 using System.Collections.Generic;
 using System.Reactive;
@@ -15,35 +16,17 @@ namespace Super.Runtime.Execution
 		/*ContextDetails Details { get; }*/
 	}
 
-	sealed class DisposeContext : ICommand<IContext>
+	sealed class DisposeContext : ValidatedCommand<IContext>
 	{
-		readonly ISpecification<IContext, IDisposable> _resources;
-
 		public DisposeContext(ISpecification<IContext, IDisposable> resources)
-		{
-			_resources = resources;
-		}
-
-		public void Execute(IContext parameter)
-		{
-			if (_resources.IsSatisfiedBy(parameter))
-			{
-				_resources.Get(parameter).Dispose();
-			}
-
-		}
+			: base(resources, resources.Out(DisposeCommand.Default.ToConfiguration()).ToCommand()) {}
 	}
-
-	/*sealed class AssignedContext : IMutable<>
-	{
-
-	}*/
 
 	sealed class AssociatedResources : ReferenceValueTable<IContext, Disposables>
 	{
 		public static AssociatedResources Default { get; } = new AssociatedResources();
 
-		AssociatedResources() : base(_ => new Disposables()) {}
+		AssociatedResources() : base(Activator<Disposables>.Default.Allow().ToDelegate()) {}
 	}
 
 	/*sealed class RootContext : Context

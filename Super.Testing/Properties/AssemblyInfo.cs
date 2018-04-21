@@ -32,4 +32,4 @@ using Xunit;
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 [assembly: PrimaryAssembly]
 
-[assembly: TestFramework("Super.Application.Testing.TestFramework", "Super.Application.Testing")]
+[assembly: TestFramework("Super.Application.Host.xUnit.TestFramework", "Super.Application.Host.xUnit")]

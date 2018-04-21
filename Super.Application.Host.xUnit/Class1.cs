@@ -1,11 +1,13 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using Super.Model.Specifications;
+using Super.Runtime.Execution;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -95,6 +97,97 @@ namespace Super.Application.Host.xUnit
 				.RunAsync();
 	}
 
+	sealed class Decorated : IMethodInfo
+	{
+		readonly IMethodInfo _method;
+
+		public Decorated(IMethodInfo method)
+		{
+			_method = method;
+		}
+
+		public IEnumerable<IAttributeInfo> GetCustomAttributes(string assemblyQualifiedAttributeTypeName)
+		{
+			try
+			{
+				return _method.GetCustomAttributes(assemblyQualifiedAttributeTypeName);
+			}
+			catch (Exception e)
+			{
+				throw Unwrap(e).Demystify();
+			}
+		}
+
+		static Exception Unwrap(Exception ex)
+		{
+			while (true)
+			{
+				var tiex = ex as TargetInvocationException;
+				if (tiex == null)
+					return ex;
+
+				ex = tiex.InnerException;
+			}
+		}
+
+		public IEnumerable<ITypeInfo> GetGenericArguments()
+		{
+			return _method.GetGenericArguments();
+		}
+
+		public IEnumerable<IParameterInfo> GetParameters()
+		{
+			return _method.GetParameters();
+		}
+
+		public IMethodInfo MakeGenericMethod(params ITypeInfo[] typeArguments)
+		{
+			return _method.MakeGenericMethod(typeArguments);
+		}
+
+		public bool IsAbstract => _method.IsAbstract;
+
+		public bool IsGenericMethodDefinition => _method.IsGenericMethodDefinition;
+
+		public bool IsPublic => _method.IsPublic;
+
+		public bool IsStatic => _method.IsStatic;
+
+		public string Name => _method.Name;
+
+		public ITypeInfo ReturnType => _method.ReturnType;
+
+		public ITypeInfo Type => _method.Type;
+	}
+
+
+	sealed class TestMethod : ITestMethod
+	{
+		readonly ITestMethod _method;
+		readonly IMethodInfo _info;
+
+		public TestMethod(ITestMethod method) : this(method, new Decorated(method.Method)) {}
+
+		public TestMethod(ITestMethod method, IMethodInfo info)
+		{
+			_method = method;
+			_info = info;
+		}
+
+		public void Deserialize(IXunitSerializationInfo info)
+		{
+			_method.Deserialize(info);
+		}
+
+		public void Serialize(IXunitSerializationInfo info)
+		{
+			_method.Serialize(info);
+		}
+
+		public IMethodInfo Method => _info;
+
+		public ITestClass TestClass => _method.TestClass;
+	}
 	sealed class TestMethodRunner : XunitTestMethodRunner
 	{
 		readonly IMessageSink _diagnosticMessageSink;
@@ -134,6 +227,71 @@ namespace Super.Application.Host.xUnit
 		}
 	}
 
+	sealed class TestCase : IXunitTestCase
+	{
+		readonly IXunitTestCase _case;
+		readonly ITestMethod _method;
+		readonly ISpecification _specification;
+		readonly Action _action;
+
+		public TestCase(IXunitTestCase @case, Action action) : this(@case, new TestMethod(@case.TestMethod), new First(), action) {}
+
+		public TestCase(IXunitTestCase @case, ITestMethod method, ISpecification specification, Action action)
+		{
+			_case = @case;
+			_method = method;
+			_specification = specification;
+			_action = action;
+		}
+
+		public void Deserialize(IXunitSerializationInfo info)
+		{
+			_case.Deserialize(info);
+		}
+
+		public void Serialize(IXunitSerializationInfo info)
+		{
+			_case.Serialize(info);
+		}
+
+		public string DisplayName => _case.DisplayName;
+
+		public string SkipReason => _case.SkipReason;
+
+		public ISourceInformation SourceInformation
+		{
+			get => _case.SourceInformation;
+			set => _case.SourceInformation = value;
+		}
+
+		public ITestMethod TestMethod
+		{
+			get
+			{
+				if (_specification.IsSatisfiedBy())
+				{
+					_action();
+					return _method;
+				}
+				return _case.TestMethod;
+			}
+		}
+
+		public object[] TestMethodArguments => _case.TestMethodArguments;
+
+		public Dictionary<string, List<string>> Traits => _case.Traits;
+
+		public string UniqueID => _case.UniqueID;
+
+		public Task<RunSummary> RunAsync(IMessageSink diagnosticMessageSink, IMessageBus messageBus, object[] constructorArguments,
+		                     ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource)
+		{
+			return _case.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator, cancellationTokenSource);
+		}
+
+		public IMethodInfo Method => _method.Method;
+	}
+
 	sealed class TheoryTestCaseRunner : XunitTheoryTestCaseRunner
 	{
 		public TheoryTestCaseRunner(IXunitTestCase testCase, string displayName, string skipReason,
@@ -141,6 +299,13 @@ namespace Super.Application.Host.xUnit
 		                            ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource) :
 			base(testCase, displayName, skipReason, constructorArguments, diagnosticMessageSink, messageBus, aggregator,
 			     cancellationTokenSource) {}
+
+		protected override async Task AfterTestCaseStartingAsync()
+		{
+			var @case = TestCase;
+			TestCase = new TestCase(@case, (() => TestCase = @case));
+			await base.AfterTestCaseStartingAsync();
+		}
 
 		protected override XunitTestRunner CreateTestRunner(ITest test, IMessageBus messageBus, Type testClass,
 		                                                    object[] constructorArguments,

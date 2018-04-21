@@ -48,7 +48,7 @@ namespace Super
 
 		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, ISelect<TParameter, TResult> next)
-			=> Or(@this, IsModified<TResult>.Default, next);
+			=> Or(@this, IsAssigned<TResult>.Default, next);
 
 		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, ISpecification<TResult> specification,
@@ -57,7 +57,7 @@ namespace Super
 
 		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(
 			this Func<TParameter, TResult> @this,
-			Func<TParameter, TResult> fallback) => @this.Or(IsModified<TResult>.Default.ToDelegate(), fallback);
+			Func<TParameter, TResult> fallback) => @this.Or(IsAssigned<TResult>.Default.ToDelegate(), fallback);
 
 		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(
 			this Func<TParameter, TResult> @this, Func<TResult, bool> specification,
@@ -94,7 +94,7 @@ namespace Super
 			=> new Configuration<TParameter, TResult>(@this, assignable);
 
 		public static ISelect<TParameter, TResult> Assigned<TParameter, TResult>(
-			this ISelect<TParameter, TResult> @this) => If(IsModified<TParameter>.Default, @this);
+			this ISelect<TParameter, TResult> @this) => If(IsAssigned<TParameter>.Default, @this);
 
 		public static T Get<T>(this ISelect<Unit, T> @this) => @this.Get(Unit.Default);
 
@@ -108,7 +108,7 @@ namespace Super
 			=> Delegates<TParameter, TResult>.Default.Get(@this);
 
 		public static ISelect<TParameter, TResult> ToStore<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
-			where TParameter : class => ToDelegate(@this).ToStore();
+			where TParameter : class => @this.ToDelegate().ToStore();
 
 		public static ISelect<TParameter, TResult> ToStore<TParameter, TResult>(this Func<TParameter, TResult> @this)
 			where TParameter : class => ReferenceStores<TParameter, TResult>.Default.Get(@this);

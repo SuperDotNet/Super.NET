@@ -70,7 +70,8 @@ namespace Super
 		public static T ReturnWith<TCommand, T>(this TCommand @this, T parameter) where TCommand : class, ICommand<T>
 			=> @this.Execute(parameter, parameter);
 
-		public static ICommand<Unit> Executed(this ICommand<Unit> @this) => Executed(@this, Unit.Default);
+
+		public static T Executed<T>(this T @this) where T : class, ICommand => @this.Execute(Unit.Default, @this);
 
 		public static void Execute(this ICommand<Unit> @this)
 		{

@@ -1,17 +1,15 @@
-﻿using System;
-using AutoFixture;
+﻿using AutoFixture;
 using AutoFixture.Kernel;
-using JetBrains.Annotations;
 using Super.Model.Selection;
 using Super.Model.Sources;
 using Super.Model.Specifications;
 using Super.Reflection.Types;
+using System;
 
 namespace Super.Application.Host.xUnit
 {
 	sealed class DefaultCustomization : CompositeCustomization
 	{
-		[UsedImplicitly]
 		public static DefaultCustomization Default { get; } = new DefaultCustomization();
 
 		DefaultCustomization() : base(SingletonCustomization.Default, new InsertCustomization(EpochSpecimen.Default),

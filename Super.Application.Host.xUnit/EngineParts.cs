@@ -1,24 +1,32 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using AutoFixture;
 using AutoFixture.Kernel;
 using JetBrains.Annotations;
+using Super.Model.Collections;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Super.Application.Host.xUnit
 {
-	public sealed class DefaultEngineParts : AutoFixture.DefaultEngineParts
+	sealed class DefaultTransformations : Items<ISpecimenBuilderTransformation>
 	{
-		public static DefaultEngineParts Default { get; } = new DefaultEngineParts();
+		public static DefaultTransformations Default { get; } = new DefaultTransformations();
 
-		DefaultEngineParts() : this(OptionalParameterAlteration.Default, GreedyConstructorAlteration.Default) {}
+		DefaultTransformations() : base(OptionalParameterAlteration.Default, GreedyConstructorAlteration.Default) {}
+	}
+
+	public sealed class EngineParts : DefaultEngineParts
+	{
+		public static EngineParts Default { get; } = new EngineParts();
+
+		EngineParts() : this(DefaultTransformations.Default.ToImmutableArray()) {}
 
 		readonly ImmutableArray<ISpecimenBuilderTransformation> _transformers;
 
-		[UsedImplicitly]
-		public DefaultEngineParts(params ISpecimenBuilderTransformation[] transformations)
+		public EngineParts(IEnumerable<ISpecimenBuilderTransformation> transformations)
 			: this(transformations.ToImmutableArray()) {}
 
 		[UsedImplicitly]
-		public DefaultEngineParts(ImmutableArray<ISpecimenBuilderTransformation> transformers)
+		public EngineParts(ImmutableArray<ISpecimenBuilderTransformation> transformers)
 			=> _transformers = transformers;
 
 		public override IEnumerator<ISpecimenBuilder> GetEnumerator()

@@ -19,7 +19,8 @@ namespace Super
 
 		public static ISource<T> Select<T>(this ISource<ISource<T>> @this) => @this.Select(ValueSelector<T>.Default);
 
-		public static ISelect<TParameter, TResult> Select<TParameter, TResult>(this ISource<ISelect<TParameter, TResult>> @this)
+		public static ISelect<TParameter, TResult> Select<TParameter, TResult>(
+			this ISource<ISelect<TParameter, TResult>> @this)
 			=> I<DelegatedInstanceSelector<TParameter, TResult>>.Default.From(@this);
 
 		public static ISource<TTo> Select<TFrom, TTo>(this ISource<TFrom> @this, Func<TFrom, TTo> select)
@@ -45,7 +46,7 @@ namespace Super
 			=> Allow(@this, I<TParameter>.Default).Or(select);
 
 		public static ISource<T> Or<T>(this ISource<T> @this, ISource<T> fallback)
-			=> @this.Or(IsModified<T>.Default, fallback);
+			=> @this.Or(IsAssigned<T>.Default, fallback);
 
 		public static ISource<T> Or<T>(this ISource<T> @this, ISpecification<T> specification, ISource<T> fallback)
 			=> new ValidatedSource<T>(specification, @this, fallback);
@@ -53,7 +54,6 @@ namespace Super
 		public static ISpecification<TParameter, TResult> Allow<TParameter, TResult>(
 			this TResult @this, ISpecification<TParameter> specification)
 			=> @this.ToSelect(I<TParameter>.Default).ToSpecification(specification);
-
 
 		public static ISelect<object, T> Allow<T>(this ISource<T> @this) => Allow(@this, I<object>.Default);
 

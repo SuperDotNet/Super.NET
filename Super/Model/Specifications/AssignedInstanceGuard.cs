@@ -6,7 +6,7 @@ namespace Super.Model.Specifications
 {
 	sealed class AssignedInstanceGuard<T> : GuardedSpecification<T, InvalidOperationException>
 	{
-		public AssignedInstanceGuard(ISelect<T, string> message) : this(IsModified<T>.Default, message) {}
+		public AssignedInstanceGuard(ISelect<T, string> message) : this(IsAssigned<T>.Default, message) {}
 
 		public AssignedInstanceGuard(ISpecification<T> specification, ISelect<T, string> message)
 			: this(specification,

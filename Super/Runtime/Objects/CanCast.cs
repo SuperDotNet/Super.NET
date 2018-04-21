@@ -8,7 +8,7 @@ namespace Super.Runtime.Objects
 		public static CanCast<TFrom, TTo> Default { get; } = new CanCast<TFrom, TTo>();
 
 		CanCast()
-			: base(IsModified<TFrom>.Default
+			: base(IsAssigned<TFrom>.Default
 			                        .And(IsAssignableFrom<TTo>.Default
 			                                                  .Select(TypeMetadataSelector.Default)
 			                                                  .Select(InstanceTypeSelector<TFrom>.Default))) {}

@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace Super.Reflection
 {
-	sealed class IsAssignableStructure : IsModified<Type, Type>
+	sealed class IsAssignableStructure : IsAssigned<Type, Type>
 	{
 		public static IsAssignableStructure Default { get; } = new IsAssignableStructure();
 

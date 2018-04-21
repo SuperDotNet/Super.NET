@@ -2,12 +2,17 @@
 using Super.Model.Specifications;
 using Super.Reflection.Types;
 using System;
+using System.Reactive;
 using System.Reflection;
 
 namespace Super
 {
 	public static partial class ExtensionMethods
 	{
+		public static bool IsSatisfiedBy(this ISpecification @this, object _) => @this.IsSatisfiedBy();
+		public static bool IsSatisfiedBy(this ISpecification @this) => @this.IsSatisfiedBy(Unit.Default);
+
+		public static ISpecification<T> ToSpecification<T>(this ISelect<T, bool> @this) => @this.ToDelegate().ToSpecification();
 		public static ISpecification<T> ToSpecification<T>(this Func<T, bool> @this) => Specifications<T>.Default.Get(@this);
 
 		public static ISpecification<TypeInfo> Select<T>(this ISpecification<TypeInfo> @this) => @this.Select(Type<T>.Metadata);

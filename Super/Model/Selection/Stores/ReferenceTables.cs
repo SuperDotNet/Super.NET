@@ -4,6 +4,12 @@ using System;
 
 namespace Super.Model.Selection.Stores
 {
+	public class ReferenceTable<TParameter, TResult> : DecoratedTable<TParameter, TResult> where TParameter : class
+	{
+		public ReferenceTable(Func<TParameter, TResult> source)
+			: base(ReferenceTables<TParameter, TResult>.Default.Get(source)) {}
+	}
+
 	public sealed class ReferenceTables<TParameter, TResult>
 		: Select<Func<TParameter, TResult>, ITable<TParameter, TResult>>
 		where TParameter : class

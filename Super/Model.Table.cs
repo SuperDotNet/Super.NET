@@ -42,8 +42,11 @@ namespace Super
 			this ConditionalWeakTable<TParameter, Tuple<TResult>> @this) where TParameter : class where TResult : struct
 			=> StructureValueTables<TParameter, TResult>.Default.Get(@this);
 
-		/*public static ITable<TParameter, TResult> ToTable<TParameter, TResult>(this Func<TParameter, TResult> @this)
-			=> Tables<TParameter, TResult>.Default.Get(@this);*/
+		public static ITable<TParameter, TResult> ToTable<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
+			=> @this.ToDelegate().ToTable();
+
+		public static ITable<TParameter, TResult> ToTable<TParameter, TResult>(this Func<TParameter, TResult> @this)
+			=> Tables<TParameter, TResult>.Default.Get(@this);
 
 		public static ITable<TParameter, TResult> ToStandardTable<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this)
