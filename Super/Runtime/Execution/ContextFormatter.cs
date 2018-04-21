@@ -1,7 +1,7 @@
 ﻿using Super.Text;
 
 namespace Super.Runtime.Execution {
-	sealed class ContextFormatter : IFormatter<Context>
+	sealed class ContextFormatter : IFormatter<ContextDetails>
 	{
 		public static ContextFormatter Default { get; } = new ContextFormatter();
 
@@ -20,7 +20,7 @@ namespace Super.Runtime.Execution {
 			_thread  = thread;
 		}
 
-		public string Get(Context parameter)
+		public string Get(ContextDetails parameter)
 			=> $"{_details.Get(parameter.Details)}: {_task.Get(parameter.Task)}, {_thread.Get(parameter.Threading)}";
 	}
 }

@@ -62,6 +62,8 @@ namespace Super
 
 		public static IDisposable ToDisposable(this object @this) => @this as IDisposable ?? EmptyDisposable.Default;
 
+		public static void Dispose(this IDisposable @this, object parameter) => @this.Dispose();
+
 		public static T To<T>(this object @this)
 			=> To<T>(@this, $"'{@this.GetType().FullName}' is not of type {typeof(T).FullName}.");
 

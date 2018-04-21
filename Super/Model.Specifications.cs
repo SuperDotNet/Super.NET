@@ -1,12 +1,16 @@
 ﻿using Super.Model.Selection;
 using Super.Model.Specifications;
+using Super.Reflection.Types;
 using System;
+using System.Reflection;
 
 namespace Super
 {
 	public static partial class ExtensionMethods
 	{
 		public static ISpecification<T> ToSpecification<T>(this Func<T, bool> @this) => Specifications<T>.Default.Get(@this);
+
+		public static ISpecification<TypeInfo> Select<T>(this ISpecification<TypeInfo> @this) => @this.Select(Type<T>.Metadata);
 
 		public static ISpecification<T> Select<T>(this ISpecification<T> @this, T parameter)
 			=> @this.IsSatisfiedBy(parameter) ? Always<T>.Default : Never<T>.Default;

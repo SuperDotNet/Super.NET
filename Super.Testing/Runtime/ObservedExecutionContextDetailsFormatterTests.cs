@@ -1,5 +1,6 @@
-﻿using AutoFixture.Xunit2;
-using FluentAssertions;
+﻿using FluentAssertions;
+using Super.Application.Testing;
+using Super.Diagnostics.Logging;
 using Super.Runtime.Execution;
 using Xunit;
 
@@ -7,13 +8,13 @@ namespace Super.Testing.Runtime
 {
 	public sealed class ContextFormatterTests
 	{
-		[Theory, Super.Application.Testing.AutoData]
-		void Verify(ContextFormatter sut, [Greedy]Context context)
+		[Theory, AutoData]
+		void Verify(ContextFormatter sut, ContextDetails details)
 		{
-			var thread = context.Threading.Thread;
-			sut.Get(context)
+			var thread = details.Threading.Thread;
+			sut.Get(details)
 			   .Should()
-			   .Be($"[11:18:24:000] {context.Details.Name}: Task: {context.Task.TaskId.OrNone()}, Default/Current Scheduler: {context.Task.Default.Id}/{context.Task.Default.Id}, Thread: #{thread.ManagedThreadId} {thread.Priority} {thread.Name ?? thread.CurrentCulture.DisplayName}, SynchronizationContext: {context.Threading.Synchronization.OrNone()}");
+			   .Be($"[{TimestampFormatter.Default.Get(Epoch.Default)}] {details.Details.Name}: Task: {details.Task.TaskId.OrNone()}, Default/Current Scheduler: {details.Task.Default.Id}/{details.Task.Default.Id}, Thread: #{thread.ManagedThreadId} {thread.Priority} {thread.Name ?? thread.CurrentCulture.DisplayName}, SynchronizationContext: {details.Threading.Synchronization.OrNone()}");
 		}
 	}
 }

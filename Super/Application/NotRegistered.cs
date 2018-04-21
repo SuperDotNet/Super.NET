@@ -1,7 +1,7 @@
 ﻿using LightInject;
 using Super.Model.Collections;
-using System;
 using Super.Model.Selection;
+using System;
 
 namespace Super.Application
 {

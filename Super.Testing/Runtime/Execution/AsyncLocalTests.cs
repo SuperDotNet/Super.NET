@@ -1,8 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
-using Xunit.Abstractions;
+﻿using Xunit.Abstractions;
 // ReSharper disable All
 
 namespace Super.Testing.Runtime.Execution
@@ -13,13 +9,13 @@ namespace Super.Testing.Runtime.Execution
 
 		public AsyncLocalTests(ITestOutputHelper output) => _output = output;
 
-		[Fact]
+		/*[Fact]
 		void Expected()
 		{
-			/*/*ExecutionContext.Capture().Dispose();#1#
+			/#1#*ExecutionContext.Capture().Dispose();#2#
 			var temp = SynchronizationContext.Current;
 
-			Thread.Current*/
+			Thread.Current#1#
 
 			new AsyncLocal<object>(args =>
 			                       {
@@ -31,10 +27,12 @@ namespace Super.Testing.Runtime.Execution
 			{
 				Value = new object()
 			};
-		}
 
-		[Fact]
-		Task ExpectedAsync() => Task.Run(action: Expected);
+			Task.Run(() => {}).Wait();
+		}*/
+
+		/*[Fact]
+		Task ExpectedAsync() => Task.Run(action: Expected);*/
 
 		/*sealed class ContextualExecution : IAlteration<Task>
 		{
@@ -50,7 +48,13 @@ namespace Super.Testing.Runtime.Execution
 			}
 		}*/
 
+		/*[Fact]
+		void Synchronous() => throw new InvalidOperationException("Thrown!");
+
 		[Fact]
+		Task Verify() => Task.Run(action: Synchronous);*/
+
+		/*[Fact]
 		Task UnexpectedAsync()
 		{
 			var origin = Thread.CurrentThread.ExecutionContext;
@@ -66,6 +70,6 @@ namespace Super.Testing.Runtime.Execution
 				                await Task.Yield();
 			                };
 			return Task.Run(function);
-		}
+		}*/
 	}
 }

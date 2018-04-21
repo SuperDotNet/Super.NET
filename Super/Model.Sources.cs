@@ -3,6 +3,7 @@ using Super.Model.Selection.Alterations;
 using Super.Model.Sources;
 using Super.Model.Specifications;
 using Super.Reflection;
+using Super.Runtime;
 using Super.Runtime.Activation;
 using System;
 
@@ -44,14 +45,14 @@ namespace Super
 			=> Allow(@this, I<TParameter>.Default).Or(select);
 
 		public static ISource<T> Or<T>(this ISource<T> @this, ISource<T> fallback)
-			=> Or(@this, IsAssigned<T>.Default, fallback);
+			=> @this.Or(IsModified<T>.Default, fallback);
 
 		public static ISource<T> Or<T>(this ISource<T> @this, ISpecification<T> specification, ISource<T> fallback)
 			=> new ValidatedSource<T>(specification, @this, fallback);
 
 		public static ISpecification<TParameter, TResult> Allow<TParameter, TResult>(
 			this TResult @this, ISpecification<TParameter> specification)
-			=> ToSpecification(@this.ToSelect(I<TParameter>.Default), specification);
+			=> @this.ToSelect(I<TParameter>.Default).ToSpecification(specification);
 
 
 		public static ISelect<object, T> Allow<T>(this ISource<T> @this) => Allow(@this, I<object>.Default);

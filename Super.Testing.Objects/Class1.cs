@@ -6,14 +6,14 @@ using System;
 
 namespace Super.Testing.Objects
 {
-	sealed class ApplicationDomainName : Format<AppDomain>
+	sealed class ApplicationDomainName : FormatEntry<AppDomain>
 	{
 		public static ApplicationDomainName Default { get; } = new ApplicationDomainName();
 
 		ApplicationDomainName() : base("F", x => x.FriendlyName) {}
 	}
 
-	sealed class ApplicationDomainIdentifier : Format<AppDomain>
+	sealed class ApplicationDomainIdentifier : FormatEntry<AppDomain>
 	{
 		public static ApplicationDomainIdentifier Default { get; } = new ApplicationDomainIdentifier();
 

@@ -25,7 +25,7 @@ namespace Super.Testing.Runtime.Execution
 				Contextual.Default.Get().Should().NotBeSameAs(instance);
 				var child = Contextual.Default.Get();
 				child.Should().BeSameAs(Contextual.Default.Get());
-				ExecutionContext.Default.Get().To<Context>().Details.Name.Should().Be(name);
+				ExecutionContext.Default.Get().To<ContextDetails>().Details.Name.Should().Be(name);
 			}
 
 			Contextual.Default.Get().Should().BeSameAs(instance);

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Reflection;
-using Super.Model.Specifications;
 
 namespace Super.Runtime.Activation
 {
-	public sealed class HasSingletonProperty : HasResult<Type, PropertyInfo>
+	public sealed class HasSingletonProperty : IsModified<Type, PropertyInfo>
 	{
 		public static HasSingletonProperty Default { get; } = new HasSingletonProperty();
 

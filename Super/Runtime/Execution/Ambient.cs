@@ -8,7 +8,9 @@ namespace Super.Runtime.Execution
 {
 	static class Ambient
 	{
-		public static ISource<T> For<T>() where T : class => Activator<T>.Default.To(AmbientAlteration<T>.Default);
+		/*public static ISource<T> For<T>() where T : class => Activator<T>.Default.To(AmbientAlteration<T>.Default);*/
+
+		public static ISource<T> ToAmbient<T>(this ISource<T> @this) => @this.To(AmbientAlteration<T>.Default);
 	}
 
 	public class Ambient<T> : DecoratedSource<T>, IActivateMarker<ISource<T>>

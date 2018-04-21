@@ -12,7 +12,7 @@ namespace Super.Runtime.Execution
 		readonly IContexts            _assign;
 
 		[UsedImplicitly]
-		public ChildContexts(IContexts assign) : this(I<Context>.Default.From, assign) {}
+		public ChildContexts(IContexts assign) : this(I<ContextDetails>.Default.From, assign) {}
 
 		public ChildContexts(Func<string, object> context, IContexts assign)
 		{

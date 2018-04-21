@@ -18,7 +18,7 @@ namespace Super.Testing.Runtime
 		{
 			var contexts = Implementations.Contexts.Get();
 			contexts.Should().BeSameAs(Implementations.Contexts.Get());
-			var current = Implementations.Contexts.Get().Get().To<Context>();
+			var current = Implementations.Contexts.Get().Get().To<ContextDetails>();
 			ExecutionContext.Default.Get().Should().BeSameAs(current);
 
 			ExecutionContext.Default.Get().Should().BeSameAs(_context);
@@ -26,11 +26,11 @@ namespace Super.Testing.Runtime
 			contexts.Invoking(x => x.Execute()).Should().Throw<InvalidOperationException>();
 		}
 
-		[Fact]
+		/*[Fact]
 		void References()
 		{
 			Ambient.For<Contexts>().Should().BeSameAs(Ambient.For<Contexts>());
 			Ambient.For<ChildContexts>().Should().BeSameAs(Ambient.For<ChildContexts>());
-		}
+		}*/
 	}
 }

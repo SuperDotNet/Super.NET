@@ -20,6 +20,9 @@ namespace Super
 		public static ICommand<TFrom> Select<TFrom, TTo>(this ICommand<TTo> @this, ISelect<TFrom, TTo> select)
 			=> @this.Select(ToDelegate(@select));
 
+		public static ICommand<TFrom> Select<TFrom, TTo>(this ICommand<TTo> @this, ISelect<TFrom> select)
+			=> @this.Select(select.In<TTo>());
+
 		public static ICommand<TFrom> Select<TFrom, TTo>(this ICommand<TTo> @this, Func<TFrom, TTo> select)
 			=> new SelectedParameterCommand<TFrom, TTo>(@this.ToDelegate(), select);
 

@@ -1,13 +1,72 @@
 ﻿using Polly;
+using Super.Model.Commands;
 using Super.Model.Selection;
+using Super.Model.Sources;
 using Super.Runtime.Execution;
 using System;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Super.Runtime.Invocation.Operations
 {
+	class EventSubscriber : EventSubscriber<EventArgs>
+	{
+		public EventSubscriber(ICommand<EventHandler> add, ICommand<EventHandler> remove)
+			: base(add.Select(New<EventHandler<EventArgs>>.Default),
+			       remove.Select(New<EventHandler<EventArgs>>.Default)) {}
+	}
+
+	class EventSubscriber<T> : Subscriber<EventPattern<T>> where T : EventArgs
+	{
+		public EventSubscriber(ICommand<EventHandler<T>> add, ICommand<EventHandler<T>> remove)
+			: this(Observable.FromEventPattern(add.ToDelegate(), remove.ToDelegate())) {}
+
+		public EventSubscriber(IObservable<EventPattern<T>> instance) : base(instance) {}
+	}
+
+	sealed class DomainUnload : EventSubscriber
+	{
+		public static DomainUnload Default { get; } = new DomainUnload();
+
+		DomainUnload() : this(AppDomain.CurrentDomain) {}
+
+		public DomainUnload(AppDomain domain) : this(new RegisterUnload(domain), new UnregisterUnload(domain)) {}
+
+		public DomainUnload(ICommand<EventHandler> add, ICommand<EventHandler> remove) : base(add, remove) {}
+
+		sealed class RegisterUnload : ICommand<EventHandler>
+		{
+			readonly AppDomain _domain;
+
+			public RegisterUnload(AppDomain domain) => _domain = domain;
+
+			public void Execute(EventHandler parameter)
+			{
+				_domain.DomainUnload += parameter;
+			}
+		}
+
+		sealed class UnregisterUnload : ICommand<EventHandler>
+		{
+			readonly AppDomain _domain;
+
+			public UnregisterUnload(AppDomain domain) => _domain = domain;
+
+			public void Execute(EventHandler parameter)
+			{
+				_domain.DomainUnload -= parameter;
+			}
+		}
+	}
+
+
+	class Subscriber<T> : Source<IObservable<T>>
+	{
+		public Subscriber(IObservable<T> instance) : base(instance) {}
+	}
+
 	public interface IObserve<T> : ISelect<IObservable<T>, T> {}
 
 	public class DurableObservableSource<T> : IObserve<T>
@@ -70,41 +129,41 @@ namespace Super.Runtime.Invocation.Operations
 		OperationContext() {}
 	}
 
-	class Operation<T> : ISelect<T, Task>
+	/*class Operation<T> : ISelect<T, Task>
 	{
 		readonly Func<T, Task> _task;
 		readonly Func<string, IDisposable> _context;
-		readonly Func<OperationState> _state;
+		//readonly Func<OperationState> _state;
 
 		public Operation(Func<T, Task> task, Func<string, IDisposable> context)
 		{
 			_task = task;
 			_context = context;
-			
+
 		}
 
 		public Task Get(T parameter)
 		{
 			/*var context = _context(string.Empty);
-			/*var state = new Logical<OperationState>(new OperationState(""));#1#
+			/*var state = new Logical<OperationState>(new OperationState(""));#2#
 			var result = _task(parameter).ContinueWith()
-			return result;*/
+			return result;#1#
 			return null;
 		}
-	}
+	}*/
 
 	sealed class OperationState
 	{
 		public OperationState(string name, CancellationToken token = new CancellationToken())
-			: this(new Execution.Context(name), token) {}
+			: this(new ContextDetails(name), token) {}
 
-		public OperationState(Execution.Context context, CancellationToken token = new CancellationToken())
+		public OperationState(ContextDetails contextDetails, CancellationToken token = new CancellationToken())
 		{
-			Context = context;
+			ContextDetails = contextDetails;
 			Token   = token;
 		}
 
-		public Execution.Context Context { get; }
+		public ContextDetails ContextDetails { get; }
 
 		public CancellationToken Token { get; }
 	}

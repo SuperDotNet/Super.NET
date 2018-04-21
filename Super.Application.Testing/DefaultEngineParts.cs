@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
-using AutoFixture.Kernel;
+﻿using AutoFixture.Kernel;
 using JetBrains.Annotations;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Super.Application.Testing
 {
@@ -9,7 +9,7 @@ namespace Super.Application.Testing
 	{
 		public static DefaultEngineParts Default { get; } = new DefaultEngineParts();
 
-		DefaultEngineParts() : this(OptionalParameterAlteration.Default) {}
+		DefaultEngineParts() : this(OptionalParameterAlteration.Default, GreedyConstructorAlteration.Default) {}
 
 		readonly ImmutableArray<ISpecimenBuilderTransformation> _transformers;
 
@@ -18,8 +18,8 @@ namespace Super.Application.Testing
 			: this(transformations.ToImmutableArray()) {}
 
 		[UsedImplicitly]
-		public DefaultEngineParts(ImmutableArray<ISpecimenBuilderTransformation> transformers) =>
-			_transformers = transformers;
+		public DefaultEngineParts(ImmutableArray<ISpecimenBuilderTransformation> transformers)
+			=> _transformers = transformers;
 
 		public override IEnumerator<ISpecimenBuilder> GetEnumerator()
 		{

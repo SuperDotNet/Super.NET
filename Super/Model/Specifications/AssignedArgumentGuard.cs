@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Super.Runtime;
+using System;
 
 namespace Super.Model.Specifications
 {
@@ -6,7 +7,7 @@ namespace Super.Model.Specifications
 	{
 		public static AssignedArgumentGuard<T> Default { get; } = new AssignedArgumentGuard<T>();
 
-		AssignedArgumentGuard() : this(IsAssigned<T>.Default,
+		AssignedArgumentGuard() : this(IsModified<T>.Default,
 		                               new ArgumentNullException($"Argument of type {typeof(T)} was not assigned.")) {}
 
 		public AssignedArgumentGuard(ISpecification<T> specification, ArgumentNullException exception)

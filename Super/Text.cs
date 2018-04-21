@@ -16,6 +16,8 @@ namespace Super
 			        .ToDelegate()
 			        .OrDefault(IsType<T>.Default);
 
+		/*public static string Format<T>(this ISource<T> @this, IFormatter<T> formatter) => formatter.Get(@this);*/
+
 		public static ISelect<string, TParameter, TResult> AsDefault<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this)
 			=> @this.ToDelegate().Allow(I<string>.Default);

@@ -3,7 +3,7 @@
 namespace Super.Text.Formatting
 {
 	// TODO: Move to Testing Objects.
-	sealed class ApplicationDomainIdentifier : Format<AppDomain>
+	sealed class ApplicationDomainIdentifier : FormatEntry<AppDomain>
 	{
 		public static ApplicationDomainIdentifier Default { get; } = new ApplicationDomainIdentifier();
 

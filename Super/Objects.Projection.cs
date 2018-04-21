@@ -3,10 +3,10 @@ using Super.Reflection.Types;
 using Super.Runtime;
 using Super.Runtime.Objects;
 using Super.Text;
-using Super.Text.Formatting;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Super.Text.Formatting;
 
 namespace Super
 {
@@ -22,7 +22,7 @@ namespace Super
 		                                                params Expression<Func<T, object>>[] expressions)
 			=> new Projection<T>(@this, expressions);
 
-		public static KeyValuePair<string, Func<T, IProjection>> Entry<T>(this IFormat<T> @this,
+		public static KeyValuePair<string, Func<T, IProjection>> Entry<T>(this IFormatEntry<T> @this,
 		                                                                 params Expression<Func<T, object>>[] expressions)
 			=> @this.Get().Entry(expressions);
 

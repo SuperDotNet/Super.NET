@@ -1,4 +1,6 @@
-﻿using Super.Model.Sources;
+﻿using Super.Model.Commands;
+using Super.Model.Sources;
+using Super.Model.Specifications;
 using Super.Reflection;
 using Super.Runtime.Activation;
 using System;
@@ -7,6 +9,10 @@ namespace Super.Model.Selection
 {
 	public static class In<T>
 	{
+		public static ISpecification<T> Is(Func<T, bool> specification) => new DelegatedSpecification<T>(specification);
+
+		public static ICommand<T> Then(Action<T> action) => new DelegatedCommand<T>(action);
+
 		public static ISelect<T, TResult> New<TResult>() => Select(Activator<TResult>.Default);
 
 		public static ISelect<T, TResult> Out<TResult>() where TResult : IActivateMarker<T> => Activations<T, TResult>.Default;
@@ -26,6 +32,9 @@ namespace Super.Model.Selection
 		public static ISelect<TParameter, TResult> New<TParameter, TResult>(I<TResult> _ = null)
 			where TResult : IActivateMarker<TParameter>
 			=> Activations<TParameter, TResult>.Default;
+
+		/*public static TResult To<T, TResult>(this ISource<T> @this, ISelect<T, TResult> select)
+			=> @this.Get().To(select);*/
 
 		public static TResult To<T, TResult>(this T @this, ISelect<T, TResult> select)
 			=> @this.To(@select.ToDelegate());

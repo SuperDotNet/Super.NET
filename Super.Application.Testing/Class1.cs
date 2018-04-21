@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -119,8 +120,8 @@ namespace Super.Application.Testing
 			{
 				case ExecutionErrorTestCase _:
 					break;
-				case XunitTheoryTestCase theory:
-					return new TheoryTestCaseRunner(theory, theory.DisplayName, theory.SkipReason, _constructorArguments,
+				case XunitTheoryTestCase @case:
+					return new TheoryTestCaseRunner(@case, @case.DisplayName, @case.SkipReason, _constructorArguments,
 					                                _diagnosticMessageSink, MessageBus, new ExceptionAggregator(Aggregator),
 					                                CancellationTokenSource);
 				case XunitTestCase @case:
@@ -195,10 +196,18 @@ namespace Super.Application.Testing
 			       aggregator, cancellationTokenSource) {}
 
 		protected override object CallTestMethod(object testClassInstance)
+			=> Result(testClassInstance)?
+				.ContinueWith(task => task.Exception
+				                          .InnerExceptions
+				                          .Select(x => x.Demystify())
+				                          .ForEach(Aggregator.Add),
+				              TaskContinuationOptions.OnlyOnFaulted);
+
+		Task Result(object instance)
 		{
 			try
 			{
-				return base.CallTestMethod(testClassInstance);
+				return GetTaskFromResult(base.CallTestMethod(instance));
 			}
 			catch (Exception e)
 			{
