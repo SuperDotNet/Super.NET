@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27428.2002
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super", "Super\Super.csproj", "{A79A5912-9575-4916-807C-DACF5C227D6D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Testing", "Super.Testing\Super.Testing.csproj", "{B5AEBEE4-F777-48ED-BE39-2534FF8E7056}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Testing.Application", "Super.Testing.Application\Super.Testing.Application.csproj", "{B5AEBEE4-F777-48ED-BE39-2534FF8E7056}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{273E561B-EB06-4B9D-B073-BFD88F87441C}"
 EndProject
@@ -29,17 +29,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Testing.Platform.NetF
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Testing.Objects", "Super.Testing.Objects\Super.Testing.Objects.csproj", "{9FDE4B93-0C3E-424B-B180-39DC58709720}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Application.Testing", "Super.Application.Testing\Super.Application.Testing.csproj", "{41861BF2-367F-4D62-9868-2B9AAD2EC5D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Application.Host.xUnit", "Super.Application.Host.xUnit\Super.Application.Host.xUnit.csproj", "{41861BF2-367F-4D62-9868-2B9AAD2EC5D2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Diagnostics", "Super.Diagnostics\Super.Diagnostics.csproj", "{C32C03EC-628E-4C16-A5FF-9F087DC351E7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Application.Console", "Super.Application.Console\Super.Application.Console.csproj", "{BE168114-7861-45FC-B9FD-2A25F43275CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Application.Host.Console", "Super.Application.Host.Console\Super.Application.Host.Console.csproj", "{BE168114-7861-45FC-B9FD-2A25F43275CD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Application.AzureFunctions", "Super.Application.AzureFunctions\Super.Application.AzureFunctions.csproj", "{A1A8D1B0-5E4D-44BE-82C8-543940A81EEC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Application.Host.AzureFunctions", "Super.Application.Host.AzureFunctions\Super.Application.Host.AzureFunctions.csproj", "{A1A8D1B0-5E4D-44BE-82C8-543940A81EEC}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Applications", "Applications", "{D273BAB9-2B15-4EB3-905F-FE0D291BE1DE}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Services.Testing", "Super.Services.Testing\Super.Services.Testing.csproj", "{B965F17C-58D1-4056-9CCB-CD9994FEA599}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application Hosts", "Application Hosts", "{D273BAB9-2B15-4EB3-905F-FE0D291BE1DE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Services", "Super.Services\Super.Services.csproj", "{9D58C0E1-D21D-4E46-A3A7-B7BBE43FC6C8}"
 EndProject
@@ -101,10 +99,6 @@ Global
 		{A1A8D1B0-5E4D-44BE-82C8-543940A81EEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1A8D1B0-5E4D-44BE-82C8-543940A81EEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1A8D1B0-5E4D-44BE-82C8-543940A81EEC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B965F17C-58D1-4056-9CCB-CD9994FEA599}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B965F17C-58D1-4056-9CCB-CD9994FEA599}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B965F17C-58D1-4056-9CCB-CD9994FEA599}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B965F17C-58D1-4056-9CCB-CD9994FEA599}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9D58C0E1-D21D-4E46-A3A7-B7BBE43FC6C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9D58C0E1-D21D-4E46-A3A7-B7BBE43FC6C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D58C0E1-D21D-4E46-A3A7-B7BBE43FC6C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -123,7 +117,6 @@ Global
 		{41861BF2-367F-4D62-9868-2B9AAD2EC5D2} = {D273BAB9-2B15-4EB3-905F-FE0D291BE1DE}
 		{BE168114-7861-45FC-B9FD-2A25F43275CD} = {D273BAB9-2B15-4EB3-905F-FE0D291BE1DE}
 		{A1A8D1B0-5E4D-44BE-82C8-543940A81EEC} = {D273BAB9-2B15-4EB3-905F-FE0D291BE1DE}
-		{B965F17C-58D1-4056-9CCB-CD9994FEA599} = {273E561B-EB06-4B9D-B073-BFD88F87441C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D7E910BA-B9EE-40A8-9C18-08D091DA997F}
