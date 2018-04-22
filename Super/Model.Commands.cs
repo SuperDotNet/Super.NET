@@ -1,13 +1,18 @@
-﻿using Super.Model.Commands;
+﻿using Super.Model.Collections;
+using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
 using Super.Model.Sources;
+using Super.Model.Specifications;
 using Super.Reflection;
 using Super.Runtime;
 using Super.Runtime.Activation;
 using System;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Reactive;
+using Any = Super.Model.Commands.Any;
+using IAny = Super.Model.Commands.IAny;
 
 // ReSharper disable TooManyArguments
 
@@ -15,10 +20,17 @@ namespace Super
 {
 	public static partial class ExtensionMethods
 	{
-		public static ICommand<Unit> Select<T>(this ICommand<T> @this, T parameter) => @this.Select(parameter.ToSelect());
+		public static ICommand<T> Command<T>(this ICommand<T> @this) => @this;
+
+		public static IAny Select<T>(this ICommand<T> @this, ISource<T> parameter) => @this.Select(parameter.ToDelegate());
+		public static IAny Select<T>(this ICommand<T> @this, Func<T> parameter) => new DelegatedParameterCommand<T>(@this.ToDelegate(), parameter).Any();
+		public static IAny Select<T>(this ICommand<T> @this, T parameter) => new FixedParameterCommand<T>(@this.ToDelegate(), parameter).Any();
+
+		public static ICommand<T> Select<T>(this ICommand<T> @this, ISpecification<T> specification)
+			=> new ValidatedCommand<T>(specification, @this);
 
 		public static ICommand<TFrom> Select<TFrom, TTo>(this ICommand<TTo> @this, ISelect<TFrom, TTo> select)
-			=> @this.Select(ToDelegate(@select));
+			=> @this.Select(@select.ToDelegate());
 
 		public static ICommand<TFrom> Select<TFrom, TTo>(this ICommand<TTo> @this, ISelect<TFrom> select)
 			=> @this.Select(select.In<TTo>());
@@ -26,8 +38,20 @@ namespace Super
 		public static ICommand<TFrom> Select<TFrom, TTo>(this ICommand<TTo> @this, Func<TFrom, TTo> select)
 			=> new SelectedParameterCommand<TFrom, TTo>(@this.ToDelegate(), select);
 
-		public static void Execute<T>(this ICommand<ImmutableArray<T>> @this, params T[] parameters) =>
-			@this.Execute(parameters.ToImmutableArray());
+		public static IAny Any(this ICommand @this) => I<Any>.Default.From(@this);
+
+		public static ICommand<T> And<T>(this ICommand<T> @this, params ICommand<T>[] commands)
+			=> new CompositeCommand<T>(@this.Yield().Concat(commands).ToImmutableArray());
+
+		public static IAny Clear<T>(this ICommand<T> @this) => @this.Select(default(T));
+		/*public static ICommand<object> Allow(this ICommand @this) => @this.Allow<object>();
+		public static ICommand<T> Allow<T>(this ICommand @this) => @this.Select<T, Unit>(_ => Unit.Default);*/
+
+		public static ICommand<T> OncePerParameter<T>(this ICommand<T> @this) => Model.Commands.OnceAlteration<T>.Default.Get(@this);
+		public static ICommand<T> OnlyOnce<T>(this ICommand<T> @this) => Model.Commands.OnlyOnceAlteration<T>.Default.Get(@this);
+
+		public static void Execute<T>(this ICommand<ImmutableArray<T>> @this, params T[] parameters)
+			=> @this.Execute(parameters.ToImmutableArray());
 
 		public static void Execute<T1, T2>(this ICommand<(T1, T2)> @this, T1 first, T2 second) =>
 			@this.Execute(ValueTuple.Create(first, second));
@@ -37,9 +61,16 @@ namespace Super
 
 		public static Action<T> ToDelegate<T>(this ICommand<T> @this) => Model.Commands.Delegates<T>.Default.Get(@this);
 
-		public static ISelect<T, Unit> Out<T>(this ICommand<T> @this) => Out(ToConfiguration(@this), _ => Unit.Default);
+		public static ISelect<T, Unit> Out<T>(this ICommand<T> @this) => @this.ToConfiguration().Out(_ => Unit.Default);
 
-		public static ICommand<T> ToCommand<T>(this ISelect<T, Unit> @this) => ToDelegate(@this).ToCommand();
+		public static ICommand<T> ToCommand<T>(this ISelect<T, Unit> @this) => @this.ToDelegate().ToCommand();
+
+		public static IAssignable<TParameter, TResult> ToAssignment<TParameter, TResult>(
+			this ISelect<TParameter, IMembership<TResult>> @this)
+			=> @this.Out(x => x.Add).ToAssignment();
+
+		public static IAssignable<TParameter, TResult> ToAssignment<TParameter, TResult>(this ISelect<TParameter, ICommand<TResult>> @this)
+			=> new SelectedAssignment<TParameter, TResult>(@this.ToDelegate());
 
 		public static ICommand<T> ToCommand<T>(this Func<T, Unit> @this) => InvokeParameterCommands<T>.Default.Get(@this);
 

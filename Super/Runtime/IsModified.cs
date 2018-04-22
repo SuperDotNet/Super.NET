@@ -7,12 +7,12 @@ using System;
 
 namespace Super.Runtime
 {
-	/*sealed class IsModified<T> : InverseSpecification<T>
+	sealed class IsModified<T> : InverseSpecification<T>
 	{
 		public static IsModified<T> Default { get; } = new IsModified<T>();
 
 		IsModified() : base(IsDefault<T>.Default) {}
-	}*/
+	}
 
 	sealed class IsAssigned : InverseSpecification<object>
 	{
@@ -21,16 +21,33 @@ namespace Super.Runtime
 		IsAssigned() : base(IsNullReference.Default) {}
 	}
 
+	sealed class HasValue<T> : DelegatedSpecification<T?> where T : struct
+	{
+		public static HasValue<T> Default { get; } = new HasValue<T>();
+
+		HasValue() : base(x => x.HasValue) {}
+	}
+
+	sealed class HasAssignment<T> : DecoratedSpecification<T> where T : class
+	{
+		public static HasAssignment<T> Default { get; } = new HasAssignment<T>();
+
+		HasAssignment() : base(IsAssigned.Default) {}
+	}
+
 	sealed class IsAssigned<T> : DelegatedSpecification<T>
 	{
-		readonly static Func<T, bool> Always = Always<T>.Default.IsSatisfiedBy;
+		readonly static Func<T, bool> Value = IsModified<T>.Default.IsSatisfiedBy;
 
 		public static IsAssigned<T> Default { get; } = new IsAssigned<T>();
 
-		IsAssigned() : base(CanBeAssigned.Default.IsSatisfiedBy(Type<T>.Instance)
-			                    ? new Parameter<object, T, bool>(IsAssigned.Default.IsSatisfiedBy, arg => arg)
-				                    .Get
-			                    : Always) {}
+		IsAssigned() : base(IsReference.Default.IsSatisfiedBy(Type<T>.Instance)
+			                    ? new Generic<ISpecification<T>>(typeof(HasAssignment<>))
+			                      .Get(Type<T>.Instance)().IsSatisfiedBy
+			                    : IsAssignableStructure.Default.IsSatisfiedBy(Type<T>.Instance)
+				                    ? new Generic<ISpecification<T>>(typeof(HasValue<>))
+				                      .Get(AccountForUnassignedAlteration.Default.Get(Type<T>.Instance))().IsSatisfiedBy
+				                    : Value) {}
 	}
 
 	sealed class IsNullReference : DelegatedSpecification<object>
@@ -52,14 +69,4 @@ namespace Super.Runtime
 		protected IsAssigned(Func<TParameter, TResult> source)
 			: base(new Result<TParameter, TResult, bool>(source, IsAssigned.Default.IsSatisfiedBy).Get) {}
 	}
-
-	/*public class IsModified<TParameter, TResult> : DelegatedSpecification<TParameter>
-	{
-		readonly static Func<TResult, bool> Assigned = IsModified<TResult>.Default.IsSatisfiedBy;
-
-		protected IsModified(Func<TParameter, TResult> source) : this(source, Assigned) {}
-
-		IsModified(Func<TParameter, TResult> source, Func<TResult, bool> result)
-			: base(new Parameter<TResult, TParameter, bool>(result, source).Get) {}
-	}*/
 }

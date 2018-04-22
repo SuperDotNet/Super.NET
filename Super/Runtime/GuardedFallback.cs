@@ -3,7 +3,7 @@ using Super.Model.Specifications;
 
 namespace Super.Runtime
 {
-	sealed class GuardedFallback<TParameter, TResult> : DelegatedConditional<TParameter, TResult>
+	sealed class GuardedFallback<TParameter, TResult> : Validated<TParameter, TResult>
 	{
 		public static GuardedFallback<TParameter, TResult> Default { get; } = new GuardedFallback<TParameter, TResult>();
 

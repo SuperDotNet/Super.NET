@@ -11,6 +11,8 @@ namespace Super.Runtime.Activation
 		Singletons() : base(HasSingletonProperty.Default
 		                                        .If(SingletonProperty.Default
 		                                                             .Out(SingletonPropertyDelegates.Default)
-		                                                             .Out(Call<object>.Default)).ToReferenceStore()) {}
+		                                                             .Out(Call<object>.Default),
+		                                            Default<Type, object>.Instance)
+		                                        .ToReferenceStore()) {}
 	}
 }

@@ -1,4 +1,6 @@
-﻿using Super.Reflection;
+﻿using Super.Model.Sources;
+using Super.Reflection;
+using System;
 
 namespace Super.Runtime.Activation
 {
@@ -13,8 +15,12 @@ namespace Super.Runtime.Activation
 
 	public static class Activate
 	{
+		public static ISource<T> New<T>() => Activator<T>.Default;
+
+		public static ISource<T> From<T>(Func<T> create) => create.ToSource();
+
 		public static T From<TParameter, T>(this I<T> _, TParameter parameter) where T : IActivateMarker<TParameter>
-			=> Activations<TParameter, T>.Default.Get(parameter);
+			=> MarkedActivations<TParameter, T>.Default.Get(parameter);
 	}
 
 	public static class From

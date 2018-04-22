@@ -23,9 +23,9 @@ namespace Super.Model.Selection
 
 		New() {}
 
-		public Func<TOut, T> Out<TOut>() => Instances<TOut, T>.Default.ToDelegate();
+		public Func<TOut, T> Out<TOut>() => Activations<TOut, T>.Default.ToDelegate();
 
-		public Func<T, TIn> In<TIn>() => Instances<T, TIn>.Default.ToDelegate();
+		public Func<T, TIn> In<TIn>() => Activations<T, TIn>.Default.ToDelegate();
 	}
 
 	sealed class CastOrValue<T> : ISelect<T>

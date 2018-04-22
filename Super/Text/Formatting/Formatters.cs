@@ -9,7 +9,7 @@ namespace Super.Text.Formatting
 	{
 		public static Formatters Default { get; } = new Formatters();
 
-		Formatters() : this(KnownFormatters.Default, Activations<object, DefaultFormatter>.Default) {}
+		Formatters() : this(KnownFormatters.Default, MarkedActivations<object, DefaultFormatter>.Default) {}
 
 		public Formatters(ISelect<object, IFormattable> formatters, ISelect<object, IFormattable> fallback)
 			: base(formatters.Or(Cast<object>.Default.In<IFormattable>().ToSelect()).Or(fallback)) {}

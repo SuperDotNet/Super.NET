@@ -1,68 +1,57 @@
-﻿using JetBrains.Annotations;
+﻿using Super.Model.Collections;
 using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Selection.Stores;
-using Super.Runtime.Activation;
+using Super.Model.Specifications;
 using System;
-using System.Collections.Generic;
 using System.Reactive;
 
 namespace Super.Runtime.Execution
 {
-	interface IContext : /*IMembership<IDisposable>,*/ IDisposable
+	interface IContext : IMembership<IDisposable>, IDisposable
 	{
 		IContext Parent { get; }
 
 		/*ContextDetails Details { get; }*/
 	}
 
-	sealed class DisposeContext : ValidatedCommand<IContext>
+	sealed class DisposeContext : DecoratedCommand<Unit>
 	{
-		public DisposeContext(ISpecification<IContext, IDisposable> resources)
-			: base(resources, DisposeCommand.Default.Select(resources)) {}
+		public static DisposeContext Default { get; } = new DisposeContext();
+
+		DisposeContext() : this(AssignedContext.Default.Any(), AssociatedResources.Default) {}
+
+		public DisposeContext(ISpecification<object> assigned, ISpecification<object, IDisposable> resources)
+			: this(assigned, resources, resources) {}
+
+		public DisposeContext(ISpecification<object> assigned, ISpecification<object> resources,
+		                      ISelect<object, IDisposable> select)
+			: base(DisposeCommand.Default.Select(select)
+			                     .And(AssignedContext.Default.Clear(), ClearResources.Default)
+			                     .Select(resources.And(assigned))
+			                     .Select(ExecutionContext.Default)) {}
 	}
 
-	sealed class AssociatedResources : ReferenceValueTable<IContext, Disposables>
+	sealed class ClearResources : RemoveCommand<object, Disposables>
 	{
-		public static AssociatedResources Default { get; } = new AssociatedResources();
+		public static ClearResources Default { get; } = new ClearResources();
 
-		AssociatedResources() : base(Activator<Disposables>.Default.Allow().ToDelegate()) {}
+		ClearResources() : base(AssociatedResources.Default) {}
 	}
 
-	/*sealed class RootContext : Context
-	{
-		public RootContext() : base(new Disposables(), new ContextDetails("Root Execution Context"), disposable) {}
-	}
-
-	class Context : Disposables, IContext
-	{
-		public Context(IContext parent, ContextDetails details, IDisposable disposable)
-			: this(parent, details, disposable.Dispose) {}
-
-		public Context(IContext parent, ContextDetails details, Action callback) : base(callback)
-		{
-			Parent = parent;
-			Details = details;
-		}
-
-		public IContext Parent { get; }
-		public ContextDetails Details { get; }
-	}*/
-
-
-
-	/*sealed class RootContextValue : Ambient<object>
-	{
-		public RootContextValue(ISource<object> source, IMutable<object> mutable) : base(source, new LogicalResource<IDisposable>()) {}
-	}*/
-
-	/*sealed class ContextResources : DecoratedTable<object, ICommand<IDisposable>>
+	/*sealed class ContextResources : Contextual<IDisposable>
 	{
 		public static ContextResources Default { get; } = new ContextResources();
 
-		ContextResources() : base(ReferenceValueTables<Exception, Exception>.Default.Get(x => )) {}
+		ContextResources() : base(AssociatedResources.Default) {}
 	}*/
 
+	sealed class AssociatedResources : AssociatedResource<object, Disposables>
+	{
+		public static AssociatedResources Default { get; } = new AssociatedResources();
+
+		AssociatedResources() {}
+	}
 
 	/*sealed class RootExecutionContext : ISource<IDisposable>
 	{
@@ -84,35 +73,4 @@ namespace Super.Runtime.Execution
 			return result;
 		}
 	}*/
-
-	sealed class Contexts : IContexts
-	{
-		readonly Stack<object> _context;
-
-		[UsedImplicitly]
-		public Contexts() : this(new ContextDetails("Root Execution Context")) {}
-
-		public Contexts(object root) : this(new Stack<object>(root.Yield())) {}
-
-		public Contexts(Stack<object> context) => _context = context;
-
-		public object Get() => _context.Peek();
-
-		public void Execute(object parameter)
-		{
-			_context.Push(parameter);
-		}
-
-		public void Execute(Unit parameter)
-		{
-			switch (_context.Count)
-			{
-				case 1:
-					throw new
-						InvalidOperationException("An attempt was made to dispose of the root execution context, which is not allowed.");
-			}
-
-			_context.Pop();
-		}
-	}
 }

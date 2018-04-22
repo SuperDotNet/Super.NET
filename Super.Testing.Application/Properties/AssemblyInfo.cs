@@ -1,4 +1,4 @@
-﻿using Super.Runtime.Environment;
+﻿using Super.Application.Hosting.xUnit;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -30,6 +30,6 @@ using Xunit;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
-[assembly: PrimaryAssembly]
+[assembly: XunitTestingApplication]
 
 [assembly: TestFramework("Super.Application.Hosting.xUnit.TestFramework", "Super.Application.Hosting.xUnit")]

@@ -1,14 +1,14 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Super.Model.Selection;
 using Super.Runtime.Activation;
+using System;
 using Xunit;
 
 // ReSharper disable All
 
 namespace Super.Testing.Application.Runtime.Activation
 {
-	public class ActivationsTests
+	public class MarkedActivationsTests
 	{
 		sealed class StartValues : ISelect<string, int>
 		{
@@ -49,7 +49,7 @@ namespace Super.Testing.Application.Runtime.Activation
 		[Fact]
 		public void VerifyReferences()
 		{
-			var source = StartReferences.Default.Out(New<References>.Default);
+			var source = StartReferences.Default.Out(Super.Model.Selection.New<References>.Default);
 			source.Get(123).Should().BeSameAs(source.Get(123));
 		}
 

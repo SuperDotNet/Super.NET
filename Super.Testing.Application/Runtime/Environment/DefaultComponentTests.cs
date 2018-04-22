@@ -1,7 +1,7 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Super.Runtime.Environment;
 using Super.Testing.Objects;
+using System;
 using Xunit;
 
 namespace Super.Testing.Application.Runtime.Environment
@@ -12,23 +12,25 @@ namespace Super.Testing.Application.Runtime.Environment
 		void VerifyEnvironment()
 		{
 			DefaultComponent<IHelloWorld>.Default.Get()
-			                   .GetMessage()
-			                   .Should()
-			                   .Be($"Hello From {PrimaryAssemblyDetails.Default.Get().Configuration}!");
+			                             .GetMessage()
+			                             .Should()
+			                             .Be($"Hello From {PrimaryAssemblyDetails.Default.Get().Configuration}!");
 		}
 
 		[Fact]
 		void VerifyInvalidEnvironment()
 		{
-			DefaultComponent<DefaultComponentTests>.Default.Invoking(x => x.Get()).Should().Throw<InvalidOperationException>();
+			DefaultComponent<IInvalid>.Default.Invoking(x => x.Get()).Should().Throw<InvalidOperationException>();
 		}
 
 		[Fact]
 		void VerifyPlatform()
 		{
 			DefaultComponent<string>.Default.Get()
-			              .Should()
-			              .Be($"Hello World from {AppContext.TargetFrameworkName}!");
+			                        .Should()
+			                        .Be($"Hello World from {AppContext.TargetFrameworkName}!");
 		}
+
+		interface IInvalid {}
 	}
 }

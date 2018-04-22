@@ -26,4 +26,9 @@ namespace Super.Runtime.Activation
 
 		Activator() : base(Singleton<T>.Default.Or(Activation<T>.Default)) {}
 	}
+
+	public class FixedActivator<T> : FixedSelection<Type, T>, IActivator<T>
+	{
+		public FixedActivator(ISelect<Type, T> select) : base(select, Type<T>.Instance) {}
+	}
 }

@@ -22,7 +22,7 @@ namespace Super
 			=> I<Select<TParameter, TIn, TOut>>.Default.From(ToDelegate(Allow(@this.ToSource(), infer)));
 
 		public static ISelect<T, T> Guard<T>(this IMessage<object> @this)
-			=> If(new AssignedInstanceGuard<T>(@this.In(Cast<T>.Default)), Model.Selection.Self<T>.Default);
+			=> new AssignedInstanceGuard<T>(@this.In(Cast<T>.Default)).If(Model.Selection.Self<T>.Default);
 
 		public static ISelect<TParameter, TResult> Guard<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this) => @this.Or(GuardedFallback<TParameter, TResult>.Default);
@@ -94,12 +94,18 @@ namespace Super
 			=> new Configuration<TParameter, TResult>(@this, assignable);
 
 		public static ISelect<TParameter, TResult> Assigned<TParameter, TResult>(
-			this ISelect<TParameter, TResult> @this) => If(IsAssigned<TParameter>.Default, @this);
+			this ISelect<TParameter, TResult> @this) => IsAssigned<TParameter>.Default.If(@this);
 
 		public static T Get<T>(this ISelect<Unit, T> @this) => @this.Get(Unit.Default);
 
 		public static Func<TParameter, TResult> ToSelect<TParameter, TResult>(this ISpecification<TParameter, TResult> @this)
 			=> Delegates<TParameter, TResult>.Default.Get(@this);
+
+		public static ISpecification<TParameter> Specification<TParameter, TResult>(this ISpecification<TParameter, TResult> @this)
+			=> @this;
+
+		public static ISelect<TParameter, TResult> Select<TParameter, TResult>(this ISpecification<TParameter, TResult> @this)
+			=> @this;
 
 		public static Func<TParameter, bool> ToPredicate<TParameter, TResult>(this ISpecification<TParameter, TResult> @this)
 			=> Model.Specifications.Delegates<TParameter>.Default.Get(@this);

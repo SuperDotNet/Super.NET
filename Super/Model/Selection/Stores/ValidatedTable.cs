@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using Super.Model.Specifications;
+﻿using Super.Model.Specifications;
+using System.Collections.Generic;
 
 namespace Super.Model.Selection.Stores
 {
-	public sealed class ValidatedTable<TParameter, TResult> : ITable<TParameter, TResult>
+	public class ValidatedTable<TParameter, TResult> : ITable<TParameter, TResult>
 	{
 		readonly ISpecification<TParameter>  _specification;
 		readonly ITable<TParameter, TResult> _table;

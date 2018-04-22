@@ -1,9 +1,9 @@
+using Super.Model.Selection;
+using Super.Model.Selection.Alterations;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection;
-using Super.Model.Selection;
-using Super.Model.Selection.Alterations;
 
 namespace Super.Runtime.Environment
 {

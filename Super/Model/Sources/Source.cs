@@ -15,7 +15,7 @@ namespace Super.Model.Sources
 
 	public class Source<TParameter, TResult> : DecoratedSource<TResult>
 	{
-		public Source(ISelect<TParameter, TResult> @select, TParameter parameter) :
-			base(@select.Select(parameter).Singleton()) {}
+		public Source(ISelect<TParameter, TResult> @select, TParameter parameter)
+			: base(select.Select(parameter).Singleton()) {}
 	}
 }

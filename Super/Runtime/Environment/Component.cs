@@ -1,12 +1,11 @@
 ﻿using Super.Model.Selection;
 using Super.Model.Sources;
-using Super.Reflection.Types;
 using Super.Runtime.Activation;
-using System;
+using Super.Runtime.Execution;
 
 namespace Super.Runtime.Environment
 {
-	class Component<T> : FixedDeferredSingleton<Type, T>
+	class Component<T> : Ambient<T>, IActivateMarker<T>
 	{
 		public Component() : this(ComponentLocator<T>.Default) {}
 
@@ -17,7 +16,8 @@ namespace Super.Runtime.Environment
 		public Component(ISource<T> fallback) : this(ComponentLocator<T>.Default, fallback) {}
 
 		public Component(IActivator activator, ISource<T> fallback)
-			: base(activator.Out(CastOrValue<T>.Default).Or(fallback).Guard(LocateMessage.Default).Protect(),
-			       Type<T>.Instance) {}
+			: base(new FixedActivator<T>(activator.Out(CastOrValue<T>.Default)
+			                                      .Or(fallback)
+			                                      .Guard(LocateMessage.Default))) {}
 	}
 }

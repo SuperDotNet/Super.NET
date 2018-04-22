@@ -17,7 +17,7 @@ namespace Super.Model.Selection
 
 		public static ISelect<T, TResult> New<TResult>() => Select(Activator<TResult>.Default);
 
-		public static ISelect<T, TResult> Out<TResult>() where TResult : IActivateMarker<T> => Activations<T, TResult>.Default;
+		public static ISelect<T, TResult> Out<TResult>() where TResult : IActivateMarker<T> => MarkedActivations<T, TResult>.Default;
 
 		public static ISelect<T, TResult> Result<TResult>(TResult @this) => @this.ToSelect(I<T>.Default);
 
@@ -32,11 +32,11 @@ namespace Super.Model.Selection
 	public static class Select
 	{
 		public static ISelect<TParameter, TResult> New<TParameter, TResult>(I<TResult> _ = null)
-			where TResult : IActivateMarker<TParameter> => Activations<TParameter, TResult>.Default;
+			where TResult : IActivateMarker<TParameter> => MarkedActivations<TParameter, TResult>.Default;
 
 		public static TResult To<T, TResult>(this T @this, ISelect<T, TResult> select)
-			=> @this.To(@select.ToDelegate());
+			=> @this.To(select.ToDelegate());
 
-		public static TResult To<T, TResult>(this T @this, Func<T, TResult> select) => @select(@this);
+		public static TResult To<T, TResult>(this T @this, Func<T, TResult> select) => select(@this);
 	}
 }

@@ -11,7 +11,7 @@ namespace Super.Model.Commands
 		public void Execute(T parameter) {}
 	}
 
-	public sealed class EmptyCommand : ICommand<Unit>
+	public sealed class EmptyCommand : ICommand
 	{
 		public static EmptyCommand Default { get; } = new EmptyCommand();
 

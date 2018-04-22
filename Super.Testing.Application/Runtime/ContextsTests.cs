@@ -1,5 +1,4 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Super.Runtime.Execution;
 using Xunit;
 
@@ -16,14 +15,14 @@ namespace Super.Testing.Application.Runtime
 		[Fact]
 		void Verify()
 		{
-			var contexts = Implementations.Contexts.Get();
-			contexts.Should().BeSameAs(Implementations.Contexts.Get());
-			var current = Implementations.Contexts.Get().Get().To<ContextDetails>();
+			var contexts = ExecutionContext.Default.Get();
+			contexts.Should().BeSameAs(ExecutionContext.Default.Get());
+			var current = ExecutionContext.Default.Get().To<ContextDetails>();
 			ExecutionContext.Default.Get().Should().BeSameAs(current);
 
 			ExecutionContext.Default.Get().Should().BeSameAs(_context);
 
-			contexts.Invoking(x => x.Execute()).Should().Throw<InvalidOperationException>();
+			/*contexts.Invoking(x => x.Execute()).Should().Throw<InvalidOperationException>();*/
 		}
 
 		/*[Fact]

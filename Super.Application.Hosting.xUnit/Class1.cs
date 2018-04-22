@@ -1,13 +1,14 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using Super.Model.Sources;
+using Super.Model.Specifications;
+using Super.Runtime.Execution;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
-using Super.Model.Specifications;
-using Super.Runtime.Execution;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -15,6 +16,61 @@ using Xunit.Sdk;
 
 namespace Super.Application.Hosting.xUnit
 {
+	public sealed class DefaultExecutionContext : DelegatedSource<object>, IExecutionContext
+	{
+		public static IExecutionContext Default { get; } = new DefaultExecutionContext();
+
+		DefaultExecutionContext() : base(() => new ContextDetails("xUnit Testing Application Default (root) Execution Context")) {}
+	}
+
+	[AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+	public class TestPriorityAttribute : Attribute
+	{
+		public TestPriorityAttribute(int priority)
+		{
+			Priority = priority;
+		}
+
+		public int Priority { get; private set; }
+	}
+
+	public class PriorityOrderer : ITestCaseOrderer
+	{
+		public IEnumerable<TTestCase> OrderTestCases<TTestCase>(IEnumerable<TTestCase> testCases) where TTestCase : ITestCase
+		{
+			var sortedMethods = new SortedDictionary<int, List<TTestCase>>();
+
+			foreach (TTestCase testCase in testCases)
+			{
+				int priority = 0;
+
+				foreach (IAttributeInfo attr in testCase.TestMethod.Method.GetCustomAttributes((typeof(TestPriorityAttribute).AssemblyQualifiedName)))
+					priority = attr.GetNamedArgument<int>("Priority");
+
+				GetOrCreate(sortedMethods, priority).Add(testCase);
+			}
+
+			foreach (var list in sortedMethods.Keys.Select(priority => sortedMethods[priority]))
+			{
+				list.Sort((x, y) => StringComparer.OrdinalIgnoreCase.Compare(x.TestMethod.Method.Name, y.TestMethod.Method.Name));
+				foreach (TTestCase testCase in list)
+					yield return testCase;
+			}
+		}
+
+		static TValue GetOrCreate<TKey, TValue>(IDictionary<TKey, TValue> dictionary, TKey key) where TValue : new()
+		{
+			TValue result;
+
+			if (dictionary.TryGetValue(key, out result)) return result;
+
+			result          = new TValue();
+			dictionary[key] = result;
+
+			return result;
+		}
+	}
+
 	[UsedImplicitly]
 	public sealed class TestFramework : XunitTestFramework
 	{

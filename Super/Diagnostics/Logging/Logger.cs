@@ -1,6 +1,5 @@
 ﻿using Serilog;
 using Super.Diagnostics.Logging.Configuration;
-using Super.Model.Selection;
 using Super.Model.Sources;
 using Super.Runtime.Activation;
 
@@ -13,6 +12,6 @@ namespace Super.Diagnostics.Logging
 		Logger() : base(LoggingConfiguration.Default
 		                                    .Select(Activation<LoggerConfiguration>.Default.Get)
 		                                    .Select(LoggerSelector.Default)
-		                                    .Select(New<PrimaryLogger>.Default)) {}
+		                                    .Select(Model.Selection.New<PrimaryLogger>.Default)) {}
 	}
 }

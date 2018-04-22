@@ -12,7 +12,7 @@ namespace Super.Model.Selection.Stores
 		public static Tables<TParameter, TResult> Default { get; } = new Tables<TParameter, TResult>();
 
 		Tables() : base(IsValueType.Default.IsSatisfiedBy(typeof(TParameter))
-			                ? Activations<Func<TParameter, TResult>, ConcurrentTables<TParameter, TResult>>
+			                ? MarkedActivations<Func<TParameter, TResult>, ConcurrentTables<TParameter, TResult>>
 			                  .Default
 			                  .Out(Activation<ConcurrentDictionary<TParameter, TResult>>.Default.Get)
 			                  .ToDelegate()

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Super.Model.Commands;
+using System.Collections.Generic;
 
 namespace Super.Model.Selection.Stores
 {
@@ -18,5 +19,17 @@ namespace Super.Model.Selection.Stores
 		public bool Remove(TParameter key) => _store.Remove(key);
 
 		public void Execute(KeyValuePair<TParameter, TResult> parameter) => _store[parameter.Key] = parameter.Value;
+	}
+
+	class RemoveCommand<TParameter, TResult> : ICommand<TParameter>
+	{
+		readonly ITable<TParameter, TResult> _table;
+
+		public RemoveCommand(ITable<TParameter, TResult> table) => _table = table;
+
+		public void Execute(TParameter parameter)
+		{
+			_table.Remove(parameter);
+		}
 	}
 }

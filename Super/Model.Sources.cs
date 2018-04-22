@@ -30,13 +30,20 @@ namespace Super
 		                                                           TParameter parameter)
 			=> new FixedSelection<TParameter, TResult>(@this, parameter);
 
+		public static ISource<TResult> Select<TParameter, TResult>(this ISelect<TParameter, TResult> @this,
+		                                                           ISource<TParameter> parameter)
+			=> @this.Select(parameter.ToDelegate());
+
+		public static ISource<TResult> Select<TParameter, TResult>(this ISelect<TParameter, TResult> @this,
+		                                                           Func<TParameter> parameter)
+			=> new DelegatedSelection<TParameter, TResult>(@this.ToDelegate(), parameter);
+
 		public static ISource<TResult> Select<TParameter, TResult>(this ISource<TParameter> @this, I<TResult> _)
 			where TResult : IActivateMarker<TParameter>
-			=> @this.Select(Activations<TParameter, TResult>.Default);
+			=> @this.Select(MarkedActivations<TParameter, TResult>.Default);
 
 		public static TResult Get<TParameter, TResult>(this ISource<TParameter> @this,
-		                                               ISelect<TParameter, TResult> select)
-			=> Get(@this, ToDelegate(select));
+		                                               ISelect<TParameter, TResult> select) => @this.Get(select.ToDelegate());
 
 		public static TTo Get<TFrom, TTo>(this ISource<TFrom> @this, Func<TFrom, TTo> select)
 			=> @this.Select(select).Get();
@@ -51,7 +58,7 @@ namespace Super
 		public static ISource<T> Or<T>(this ISource<T> @this, ISpecification<T> specification, ISource<T> fallback)
 			=> new ValidatedSource<T>(specification, @this, fallback);
 
-		public static ISpecification<TParameter, TResult> Allow<TParameter, TResult>(
+		public static ISpecification<TParameter, TResult> Pair<TParameter, TResult>(
 			this TResult @this, ISpecification<TParameter> specification)
 			=> @this.ToSelect(I<TParameter>.Default).ToSpecification(specification);
 
@@ -63,6 +70,8 @@ namespace Super
 		public static ISource<T> Singleton<T>(this ISource<T> @this) => SingletonSelector<T>.Default.Get(@this);
 
 		public static ISource<T> ToSource<T>(this T @this) => Sources<T>.Default.Get(@this);
+
+		public static ISource<T> Source<T>(this IMutable<T> @this) => @this;
 
 		public static ISource<T> ToSource<T>(this Func<T> @this) => I<DelegatedSource<T>>.Default.From(@this);
 

@@ -5,19 +5,11 @@ using Super.Model.Sources;
 using Super.Model.Specifications;
 using Super.Runtime.Activation;
 using Super.Runtime.Invocation;
-using System;
 using System.Reactive;
 using System.Threading;
 
 namespace Super.Runtime.Execution
 {
-	static class Ambient
-	{
-		/*public static ISource<T> For<T>() where T : class => Activator<T>.Default.To(AmbientAlteration<T>.Default);*/
-
-		public static ISource<T> ToAmbient<T>(this ISource<T> @this) => @this.To(AmbientAlteration<T>.Default);
-	}
-
 	public interface ICounter : ISource<int>, ICommand {}
 
 	public static class Extensions
@@ -61,8 +53,9 @@ namespace Super.Runtime.Execution
 
 	public class Ambient<T> : Deferred<T>, IActivateMarker<ISource<T>>
 	{
-		public Ambient(Func<T> factory) : this(new DelegatedSource<T>(factory)) {}
+		[UsedImplicitly]
+		public Ambient(ISource<T> source) : this(source, new Logical<T>()) {}
 
-		public Ambient(ISource<T> source) : base(source, new Logical<T>()) {}
+		public Ambient(ISource<T> source, IMutable<T> mutable) : base(source, mutable) {}
 	}
 }

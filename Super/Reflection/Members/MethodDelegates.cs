@@ -1,7 +1,8 @@
-﻿using System;
-using System.Reflection;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
 using Super.Reflection.Types;
+using Super.Runtime.Objects;
+using System;
+using System.Reflection;
 
 namespace Super.Reflection.Members
 {
@@ -14,10 +15,10 @@ namespace Super.Reflection.Members
 		public Delegate Get(MethodInfo parameter) => parameter.CreateDelegate(_type);
 	}
 
-	sealed class MethodDelegates<T> : DecoratedSelect<MethodInfo, T>
+	sealed class MethodDelegates<T> : DecoratedSelect<MethodInfo, T> where T : class
 	{
 		public static MethodDelegates<T> Default { get; } = new MethodDelegates<T>();
 
-		MethodDelegates() : base(new MethodDelegates(Type<T>.Instance).Out(Cast<T>.Default)) {}
+		MethodDelegates() : base(new MethodDelegates(Type<T>.Instance).Out(CastSelector<Delegate, T>.Default)) {}
 	}
 }

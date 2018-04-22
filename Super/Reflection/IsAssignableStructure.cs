@@ -19,11 +19,11 @@ namespace Super.Reflection
 		IsReference() : base(IsValueType.Default) {}
 	}
 
-	sealed class CanBeAssigned : AnySpecification<TypeInfo>
+	/*sealed class CanBeAssigned : AnySpecification<TypeInfo>
 	{
 		public static CanBeAssigned Default { get; } = new CanBeAssigned();
 
 		CanBeAssigned() : base(IsAssignableStructure.Default, IsReference.Default) {}
-	}
+	}*/
 
 }

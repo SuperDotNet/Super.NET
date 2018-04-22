@@ -1,7 +1,6 @@
 ﻿using Super.Model.Selection;
 using Super.Model.Sources;
 using System;
-using System.Collections.Immutable;
 using System.Linq;
 
 namespace Super.Runtime.Environment
@@ -12,12 +11,16 @@ namespace Super.Runtime.Environment
 
 		ComponentTypeLocator() : this(ComponentTypeCandidates.Default) {}
 
-		readonly ImmutableArray<Type> _candidates;
+		readonly ITypeCandidates _candidates;
 
-		public ComponentTypeLocator(ImmutableArray<Type> candidates) => _candidates = candidates;
+		public ComponentTypeLocator(ITypeCandidates candidates) => _candidates = candidates;
 
 		public Type Get(Type parameter)
-			=> _candidates.FirstOrDefault(parameter.IsAssignableFrom) ??
-			   _candidates.FirstOrDefault(typeof(ISource<>).MakeGenericType(parameter).IsAssignableFrom);
+		{
+			var candidates = _candidates.Get();
+			var result = candidates.FirstOrDefault(parameter.IsAssignableFrom) ??
+			             candidates.FirstOrDefault(typeof(ISource<>).MakeGenericType(parameter).IsAssignableFrom);
+			return result;
+		}
 	}
 }

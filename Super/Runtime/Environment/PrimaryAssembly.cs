@@ -15,6 +15,8 @@ namespace Super.Runtime.Environment
 	{
 		public static PrimaryAssembly Default { get; } = new PrimaryAssembly();
 
-		PrimaryAssembly() : base(Assemblies.Default.Only(x => x.Has<PrimaryAssemblyAttribute>())) {}
+		PrimaryAssembly() : base(PrimaryAssemblyMessage.Default
+		                                               .Guard<Assembly>()
+		                                               .Get(Assemblies.Default.Only(x => x.Has<HostingAttribute>()))) {}
 	}
 }
