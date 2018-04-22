@@ -29,15 +29,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Testing.Platform.NetF
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Testing.Objects", "Super.Testing.Objects\Super.Testing.Objects.csproj", "{9FDE4B93-0C3E-424B-B180-39DC58709720}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Application.Host.xUnit", "Super.Application.Host.xUnit\Super.Application.Host.xUnit.csproj", "{41861BF2-367F-4D62-9868-2B9AAD2EC5D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Application.Hosting.xUnit", "Super.Application.Hosting.xUnit\Super.Application.Hosting.xUnit.csproj", "{41861BF2-367F-4D62-9868-2B9AAD2EC5D2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Diagnostics", "Super.Diagnostics\Super.Diagnostics.csproj", "{C32C03EC-628E-4C16-A5FF-9F087DC351E7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Application.Host.Console", "Super.Application.Host.Console\Super.Application.Host.Console.csproj", "{BE168114-7861-45FC-B9FD-2A25F43275CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Application.Hosting.Console", "Super.Application.Hosting.Console\Super.Application.Hosting.Console.csproj", "{BE168114-7861-45FC-B9FD-2A25F43275CD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Application.Host.AzureFunctions", "Super.Application.Host.AzureFunctions\Super.Application.Host.AzureFunctions.csproj", "{A1A8D1B0-5E4D-44BE-82C8-543940A81EEC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Application.Hosting.AzureFunctions", "Super.Application.Hosting.AzureFunctions\Super.Application.Hosting.AzureFunctions.csproj", "{A1A8D1B0-5E4D-44BE-82C8-543940A81EEC}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application Hosts", "Application Hosts", "{D273BAB9-2B15-4EB3-905F-FE0D291BE1DE}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application Hosting", "Application Hosting", "{D273BAB9-2B15-4EB3-905F-FE0D291BE1DE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Services", "Super.Services\Super.Services.csproj", "{9D58C0E1-D21D-4E46-A3A7-B7BBE43FC6C8}"
 EndProject

@@ -19,7 +19,7 @@ namespace Super.Runtime.Execution
 	sealed class DisposeContext : ValidatedCommand<IContext>
 	{
 		public DisposeContext(ISpecification<IContext, IDisposable> resources)
-			: base(resources, resources.Out(DisposeCommand.Default.ToConfiguration()).ToCommand()) {}
+			: base(resources, DisposeCommand.Default.Select(resources)) {}
 	}
 
 	sealed class AssociatedResources : ReferenceValueTable<IContext, Disposables>
