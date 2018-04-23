@@ -70,7 +70,7 @@ namespace Super
 			=> @this.Out(x => x.Add).ToAssignment();
 
 		public static IAssignable<TParameter, TResult> ToAssignment<TParameter, TResult>(this ISelect<TParameter, ICommand<TResult>> @this)
-			=> new SelectedAssignment<TParameter, TResult>(@this.ToDelegate());
+			=> new SelectedAssignment<TParameter, TResult>(@this.Get);
 
 		public static ICommand<T> ToCommand<T>(this Func<T, Unit> @this) => InvokeParameterCommands<T>.Default.Get(@this);
 
@@ -82,7 +82,7 @@ namespace Super
 			=> I<DelegatedInstanceCommand<T>>.Default.From(@this);
 
 		public static ICommand<TParameter> ToCommand<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
-			=> ToDelegate(@this).ToCommand();
+			=> @this.ToDelegate().ToCommand();
 
 		public static ICommand<TParameter> ToCommand<TParameter, TResult>(this Func<TParameter, TResult> @this)
 			=> @this.To(I<InvokeParameterCommand<TParameter, TResult>>.Default);

@@ -8,6 +8,6 @@ namespace Super.Model.Selection
 
 		DelegateSelector() {}
 
-		public Func<TParameter, TResult> Get(ISelect<TParameter, TResult> parameter) => parameter.ToDelegate();
+		public Func<TParameter, TResult> Get(ISelect<TParameter, TResult> parameter) => parameter.Get;
 	}
 }

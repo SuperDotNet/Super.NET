@@ -1,8 +1,8 @@
-﻿using System;
-using System.Reflection;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
 using Super.Model.Sources;
 using Super.Model.Specifications;
+using System;
+using System.Reflection;
 
 namespace Super.Reflection
 {
@@ -16,7 +16,7 @@ namespace Super.Reflection
 		ContainedAttribute() : this(Attribute<TAttribute>.Default) {}
 
 		public ContainedAttribute(IAttribute<TAttribute> attribute)
-			: this(attribute, ValueSelector<T>.Default.In(Cast<TAttribute>.Default).ToDelegate()) {}
+			: this(attribute, ValueSelector<T>.Default.In(Cast<TAttribute>.Default).Get) {}
 
 		public ContainedAttribute(IAttribute<TAttribute> attribute, Func<TAttribute, T> select)
 			: this(IsContainedAttribute<TAttribute>.Default, attribute, select) {}

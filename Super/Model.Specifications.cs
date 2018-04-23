@@ -20,7 +20,7 @@ namespace Super
 		public static ISpecification<T> Allow<T>(this ISpecification @this) => @this.Select<T, Unit>(_ => Unit.Default);
 		public static IAny Any(this ISpecification @this) => I<Any>.Default.From(@this);
 
-		public static ISpecification<T> ToSpecification<T>(this ISelect<T, bool> @this) => @this.ToDelegate().ToSpecification();
+		public static ISpecification<T> ToSpecification<T>(this ISelect<T, bool> @this) => @this.ToDelegateReference().ToSpecification();
 		public static ISpecification<T> ToSpecification<T>(this Func<T, bool> @this) => Specifications<T>.Default.Get(@this);
 
 		public static ISpecification<TypeInfo> Select<T>(this ISpecification<TypeInfo> @this) => @this.Select(Type<T>.Metadata);
@@ -38,7 +38,7 @@ namespace Super
 			=> @this.Select(select.ToDelegate());
 
 		public static ISpecification<TFrom> Select<TFrom, TTo>(this ISpecification<TTo> @this, Func<TFrom, TTo> select)
-			=> new SelectedParameterSpecification<TFrom,TTo>(@this.ToDelegate(), select);
+			=> new SelectedParameterSpecification<TFrom,TTo>(@this.IsSatisfiedBy, select);
 
 		public static ISpecification<T> OncePerParameter<T>(this ISpecification<T> @this) => OnceAlteration<T>.Default.Get(@this);
 		public static ISpecification<T> OnlyOnce<T>(this ISpecification<T> @this) => OnlyOnceAlteration<T>.Default.Get(@this);

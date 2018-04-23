@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
 using Super.Runtime;
+using System;
+using System.Collections.Generic;
 
 namespace Super.Text
 {
@@ -12,6 +12,6 @@ namespace Super.Text
 			: this(Pairs.Select(pairs).Or(@default.AsDefault())) {}
 
 		public TextSelect(ISelect<string, Func<TParameter, TResult>> select)
-			: base(select.In(NullOrEmptySelector.Default).ToDelegate()) {}
+			: base(select.In(NullOrEmptySelector.Default).Get) {}
 	}
 }

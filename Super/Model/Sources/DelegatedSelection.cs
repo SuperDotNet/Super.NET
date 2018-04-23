@@ -12,7 +12,7 @@ namespace Super.Model.Sources
 		public DelegatedSelection(ISelect<TParameter, TResult> @select) : this(select, Activation<TParameter>.Default) {}
 
 		public DelegatedSelection(ISelect<TParameter, TResult> @select, ISource<TParameter> parameter)
-			: this(select.ToDelegate(), parameter.ToDelegate()) {}
+			: this(select.Get, parameter.Get) {}
 
 		public DelegatedSelection(Func<TParameter, TResult> source, Func<TParameter> parameter)
 		{

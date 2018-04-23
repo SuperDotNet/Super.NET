@@ -3,7 +3,7 @@ using System;
 
 namespace Super.Model.Selection
 {
-	sealed class Delegates<TParameter, TResult> : ReferenceStore<ISelect<TParameter, TResult>, Func<TParameter, TResult>>
+	sealed class Delegates<TParameter, TResult> : ReferenceValueTable<ISelect<TParameter, TResult>, Func<TParameter, TResult>>
 	{
 		public static Delegates<TParameter, TResult> Default { get; } = new Delegates<TParameter, TResult>();
 

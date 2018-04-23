@@ -15,7 +15,7 @@ namespace Super
 		public static TResult Alter<T, TResult>(this IEnumerable<T> @this, Func<T, TResult> alter)
 			=> @this.Select(alter).Last();
 
-		public static IAlteration<T> ToAlteration<T>(this ISelect<T, T> @this) => ToDelegate(@this).ToAlteration();
+		public static IAlteration<T> ToAlteration<T>(this ISelect<T, T> @this) => @this.ToDelegate().ToAlteration();
 
 		public static IAlteration<T> ToAlteration<T>(this Func<T, T> @this) => Alterations<T>.Default.Get(@this);
 

@@ -17,7 +17,7 @@ namespace Super.Runtime.Environment
 		readonly ImmutableArray<IAlteration<AssemblyName>> _names;
 
 		public ComponentAssemblyNames(params IAlteration<AssemblyName>[] names)
-			: this(ComponentAssemblyCandidates.Default.ToDelegate(), names.ToImmutableArray()) {}
+			: this(ComponentAssemblyCandidates.Default.Get, names.ToImmutableArray()) {}
 
 		public ComponentAssemblyNames(Func<AssemblyName, IEnumerable<AssemblyName>> expand, ImmutableArray<IAlteration<AssemblyName>> names)
 		{

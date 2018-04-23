@@ -1,9 +1,9 @@
-﻿using System;
-using Serilog;
+﻿using Serilog;
 using Serilog.Configuration;
 using Serilog.Core;
 using Super.Diagnostics.Logging.Configuration;
 using Super.Model.Selection.Alterations;
+using System;
 
 namespace Super.Diagnostics.Logging
 {
@@ -13,7 +13,7 @@ namespace Super.Diagnostics.Logging
 		readonly Func<ILogEventSink, ILogEventSink> _sink;
 
 		public LoggerSinkDecoration(IAlteration<ILogEventSink> sink, ILoggingSinkConfiguration configuration)
-			: this(sink.ToDelegate(), configuration) {}
+			: this(sink.Get, configuration) {}
 
 		public LoggerSinkDecoration(Func<ILogEventSink, ILogEventSink> sink, ILoggingSinkConfiguration configuration)
 			: this(sink, configuration.ToCommand().ToDelegate()) {}

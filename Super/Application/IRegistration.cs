@@ -133,11 +133,13 @@ namespace Super.Application
 
 	sealed class RegisterDependencies : IRegistration
 	{
+		readonly static Func<IServiceRegistry, Func<Type, bool>> Where = NotRegistered.Default.Get;
+
 		readonly ImmutableArray<Type>                     _candidates;
 		readonly Func<IServiceRegistry, Func<Type, bool>> _where;
 
 		public RegisterDependencies(Type type)
-			: this(type.To(I<DependencyCandidates>.Default).Get(type), NotRegistered.Default.ToDelegate()) {}
+			: this(type.To(I<DependencyCandidates>.Default).Get(type), Where) {}
 
 		public RegisterDependencies(ImmutableArray<Type> candidates, Func<IServiceRegistry, Func<Type, bool>> where)
 		{

@@ -13,11 +13,11 @@ namespace Super
 
 		public static ISelect<TFrom, TResult> In<TFrom, TTo, TResult>(this ISelect<TTo, TResult> @this,
 		                                                              ISelect<TFrom, TTo> select)
-			=> In(@this, ToDelegate(@select));
+			=> @this.In(select.ToDelegate());
 
 		public static ISelect<TFrom, TResult> In<TFrom, TTo, TResult>(this ISelect<TTo, TResult> @this,
 		                                                              Func<TFrom, TTo> select)
-			=> new Parameter<TTo, TFrom, TResult>(ToDelegate(@this), select);
+			=> new Parameter<TTo, TFrom, TResult>(@this.Get, select);
 
 		public static ISpecification<TFrom, TResult> In<TFrom, TTo, TResult>(
 			this ISpecification<TTo, TResult> @this, ISelect<TFrom, TTo> coercer)
@@ -33,10 +33,10 @@ namespace Super
 
 		public static ISelect<TParameter, TTo> Out<TParameter, TFrom, TTo>(this ISelect<TParameter, TFrom> @this,
 		                                                                   ISelect<TFrom, TTo> select)
-			=> Out(@this, ToDelegate(@select));
+			=> @this.Out(select.Get);
 
 		public static ISelect<TParameter, TTo> Out<TParameter, TFrom, TTo>(this ISelect<TParameter, TFrom> @this,
 		                                                                   Func<TFrom, TTo> select)
-			=> new Result<TParameter, TFrom, TTo>(ToDelegate(@this), select);
+			=> new Result<TParameter, TFrom, TTo>(@this.Get, select);
 	}
 }

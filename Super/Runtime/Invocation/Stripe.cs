@@ -1,11 +1,12 @@
-﻿using System;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
 using Super.Runtime.Activation;
+using System;
 
-namespace Super.Runtime.Invocation {
+namespace Super.Runtime.Invocation
+{
 	sealed class Stripe<TParameter, TResult> : ISelect<TParameter, TResult>, IActivateMarker<Func<TParameter, TResult>>
 	{
-		readonly static Func<TParameter, object> Lock = Locks<TParameter>.Default.ToDelegate();
+		readonly static Func<TParameter, object> Lock = Locks<TParameter>.Default.Get;
 
 		readonly Func<TParameter, object>  _lock;
 		readonly Func<TParameter, TResult> _source;

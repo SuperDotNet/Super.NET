@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Super.Model.Selection;
+using System;
 using System.Reflection;
-using Super.Model.Selection;
 
 namespace Super.Reflection.Assemblies
 {
@@ -8,10 +8,10 @@ namespace Super.Reflection.Assemblies
 	{
 		public static AssemblyDetailsSelector Default { get; } = new AssemblyDetailsSelector();
 
-		AssemblyDetailsSelector() : this(AssemblyTitle.Default.ToDelegate(), AssemblyProduct.Default.ToDelegate(),
-		                                 AssemblyCompany.Default.ToDelegate(), AssemblyDescription.Default.ToDelegate(),
-		                                 AssemblyConfiguration.Default.ToDelegate(), AssemblyCopyright.Default.ToDelegate(),
-		                                 AssemblyVersion.Default.ToDelegate()) {}
+		AssemblyDetailsSelector() : this(AssemblyTitle.Default.Get, AssemblyProduct.Default.Get,
+		                                 AssemblyCompany.Default.Get, AssemblyDescription.Default.Get,
+		                                 AssemblyConfiguration.Default.Get, AssemblyCopyright.Default.Get,
+		                                 AssemblyVersion.Default.Get) {}
 
 		readonly Func<Assembly, string>  _title, _product, _company, _description, _configuration, _copyright;
 		readonly Func<Assembly, Version> _version;

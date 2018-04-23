@@ -23,9 +23,9 @@ namespace Super.Model.Selection
 
 		New() {}
 
-		public Func<TOut, T> Out<TOut>() => Activations<TOut, T>.Default.ToDelegate();
+		public Func<TOut, T> Out<TOut>() => Activations<TOut, T>.Default.ToDelegateReference();
 
-		public Func<T, TIn> In<TIn>() => Activations<T, TIn>.Default.ToDelegate();
+		public Func<T, TIn> In<TIn>() => Activations<T, TIn>.Default.ToDelegateReference();
 	}
 
 	sealed class CastOrValue<T> : ISelect<T>
@@ -40,7 +40,7 @@ namespace Super.Model.Selection
 
 		sealed class Delegate<TFrom, TTo> : DecoratedSelect<TFrom, TTo>
 		{
-			public static Func<TFrom, TTo> Instance { get; } = new Delegate<TFrom, TTo>().ToDelegate();
+			public static Func<TFrom, TTo> Instance { get; } = new Delegate<TFrom, TTo>().Get;
 
 			Delegate()
 				: base(Cast<T>.Delegate<TFrom, TTo>.Instance.ToSelect()
@@ -61,7 +61,7 @@ namespace Super.Model.Selection
 
 		public sealed class Delegate<TFrom, TTo> : DecoratedSelect<TFrom, TTo>
 		{
-			public static Func<TFrom, TTo> Instance { get; } = new Delegate<TFrom, TTo>().ToDelegate();
+			public static Func<TFrom, TTo> Instance { get; } = new Delegate<TFrom, TTo>().Get;
 
 			Delegate() : base(CanCast<TFrom, TTo>.Default.If(CastSelector<TFrom, TTo>.Default, Default<TFrom, TTo>.Instance)) {}
 		}

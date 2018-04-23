@@ -6,8 +6,7 @@
 
 		public static AppServiceAuthSession Default { get; } = new AppServiceAuthSession();
 
-		AppServiceAuthSession() : base(Name,
-		                               new RequestStateValue(Name).Or(AuthenticationSessionToken.Default)
-		                                                          .ToDelegate()) {}
+		AppServiceAuthSession() : base(Name, new RequestStateValue(Name).Or(AuthenticationSessionToken.Default)
+		                                                                .Get) {}
 	}
 }

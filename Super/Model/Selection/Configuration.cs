@@ -9,7 +9,7 @@ namespace Super.Model.Selection
 		readonly Func<TParameter, TResult>   _source;
 
 		public Configuration(ISelect<TParameter, TResult> @select, IAssignable<TParameter, TResult> configuration)
-			: this(select.ToDelegate(), configuration.Assign) {}
+			: this(select.Get, configuration.Assign) {}
 
 		public Configuration(Func<TParameter, TResult> source, Action<TParameter, TResult> configuration)
 		{

@@ -54,7 +54,7 @@ namespace Super
 		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, ISpecification<TResult> specification,
 			ISelect<TParameter, TResult> fallback)
-			=> @this.ToDelegate().Or(specification.ToDelegate(), fallback.ToDelegate());
+			=> @this.ToDelegate().Or(specification.ToDelegate(), fallback.Get);
 
 		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(
 			this Func<TParameter, TResult> @this,
@@ -65,10 +65,6 @@ namespace Super
 			Func<TParameter, TResult> fallback)
 			=> new ValidatedResult<TParameter, TResult>(specification, @this, fallback);
 
-		/*public static KeyValuePair<TParameter, Func<TIn, TOut>> Pair<TParameter, TIn, TOut>(
-			this ISelect<TIn, TOut> @this, TParameter parameter, Func<TIn, TOut> select)
-			=> Pairs.Create(parameter, select);*/
-
 		public static ISelect<TSelect, Func<TParameter, TResult>> Unless<TSelect, TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, ISpecification<TSelect> select, ISelect<TParameter, TResult> then)
 			=> @this.ToDelegate().ToSource().Allow(I<TSelect>.Default).Unless(select, then);
@@ -76,7 +72,7 @@ namespace Super
 		public static ISelect<TSelect, Func<TParameter, TResult>> Unless<TSelect, TParameter, TResult>(
 			this ISelect<TSelect, Func<TParameter, TResult>> @this, ISpecification<TSelect> select,
 			ISelect<TParameter, TResult> then)
-			=> Unless<TSelect, Func<TParameter, TResult>>(@this, select, then.ToDelegate().ToSource().Allow(I<TSelect>.Default));
+			=> @this.Unless<TSelect, Func<TParameter, TResult>>(select, then.ToDelegate().ToSource().Allow(I<TSelect>.Default));
 
 		public static ISelect<TParameter, TResult> Unless<TParameter, TResult, TOther>(
 			this ISelect<TParameter, TResult> @this, ISelect<TOther, TResult> then)
@@ -96,13 +92,13 @@ namespace Super
 		/*public static T Get<T>(this ISelect<Unit, T> @this) => @this.Get(Unit.Default);*/
 
 		public static Func<TParameter, TResult> ToDelegate<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
-			=> /*Delegates<TParameter, TResult>.Default.Get(@this)*/@this.Get;
+			=> @this.Get;
 
 		public static Func<TParameter, TResult> ToDelegateReference<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
 			=> Delegates<TParameter, TResult>.Default.Get(@this);
 
 		public static ISelect<TParameter, TResult> ToStore<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
-			where TParameter : class => @this.ToDelegate().ToStore();
+			where TParameter : class => @this.ToDelegateReference().ToStore();
 
 		public static ISelect<TParameter, TResult> ToStore<TParameter, TResult>(this Func<TParameter, TResult> @this)
 			where TParameter : class => ReferenceTables<TParameter, TResult>.Default.Get(@this);
@@ -111,8 +107,6 @@ namespace Super
 			this ISelect<TParameter, TResult> @this)
 			where TResult : class
 			where TParameter : class => new ReferenceValueTable<TParameter, TResult>(@this.Get);
-
-		/*public static ISelect<Unit, T> ToSelect<T>(this T @this) => @this.ToSelect(I<Unit>.Default);*/
 
 		public static ISelect<TParameter, TResult> ToSelect<TParameter, TResult>(this TResult @this, I<TParameter> _)
 			=> new FixedResult<TParameter, TResult>(@this);

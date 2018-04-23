@@ -17,7 +17,7 @@ namespace Super
 			=> @this.Select(select.Out<TFrom>());
 
 		public static ISource<TTo> Select<TFrom, TTo>(this ISource<TFrom> @this, ISelect<TFrom, TTo> select)
-			=> @this.Select(ToDelegate(select));
+			=> @this.Select(select.Get);
 
 		public static ISource<T> Select<T>(this ISource<ISource<T>> @this) => @this.Select(ValueSelector<T>.Default);
 
@@ -26,7 +26,7 @@ namespace Super
 			=> I<DelegatedInstanceSelector<TParameter, TResult>>.Default.From(@this);
 
 		public static ISource<TTo> Select<TFrom, TTo>(this ISource<TFrom> @this, Func<TFrom, TTo> select)
-			=> new DelegatedSelection<TFrom, TTo>(select, @this.ToDelegate());
+			=> new DelegatedSelection<TFrom, TTo>(select, @this.Get);
 
 		public static ISource<TResult> Select<TParameter, TResult>(this ISelect<TParameter, TResult> @this,
 		                                                           TParameter parameter)
@@ -38,14 +38,14 @@ namespace Super
 
 		public static ISource<TResult> Select<TParameter, TResult>(this ISelect<TParameter, TResult> @this,
 		                                                           Func<TParameter> parameter)
-			=> new DelegatedSelection<TParameter, TResult>(@this.ToDelegate(), parameter);
+			=> new DelegatedSelection<TParameter, TResult>(@this.Get, parameter);
 
 		public static ISource<TResult> Select<TParameter, TResult>(this ISource<TParameter> @this, I<TResult> _)
 			where TResult : IActivateMarker<TParameter>
 			=> @this.Select(MarkedActivations<TParameter, TResult>.Default);
 
 		public static TResult Get<TParameter, TResult>(this ISource<TParameter> @this,
-		                                               ISelect<TParameter, TResult> select) => @this.Get(select.ToDelegate());
+		                                               ISelect<TParameter, TResult> select) => @this.Get(select.Get);
 
 		public static TTo Get<TFrom, TTo>(this ISource<TFrom> @this, Func<TFrom, TTo> select)
 			=> @this.Select(select).Get();

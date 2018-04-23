@@ -34,8 +34,7 @@ namespace Super.Model.Selection
 		public static ISelect<TParameter, TResult> New<TParameter, TResult>(I<TResult> _ = null)
 			where TResult : IActivateMarker<TParameter> => MarkedActivations<TParameter, TResult>.Default;
 
-		public static TResult To<T, TResult>(this T @this, ISelect<T, TResult> select)
-			=> @this.To(select.ToDelegate());
+		public static TResult To<T, TResult>(this T @this, ISelect<T, TResult> select) => @this.To(select.Get);
 
 		public static TResult To<T, TResult>(this T @this, Func<T, TResult> select) => select(@this);
 	}

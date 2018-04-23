@@ -14,6 +14,6 @@ namespace Super.Services.Security
 		                                                        .Or(CurrentRequestUri.Default
 		                                                                             .Out(Authority.Default)
 		                                                                             .Out(Uris.Default))
-		                                                        .ToDelegate()) {}
+		                                                        .Get) {}
 	}
 }

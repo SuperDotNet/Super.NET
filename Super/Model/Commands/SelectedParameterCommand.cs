@@ -1,5 +1,4 @@
-﻿using Super.Model.Selection;
-using Super.Model.Selection.Alterations;
+﻿using Super.Model.Selection.Alterations;
 using Super.Runtime.Activation;
 using Super.Runtime.Execution;
 using System;
@@ -12,8 +11,8 @@ namespace Super.Model.Commands
 		readonly Func<TFrom, TTo> _select;
 		readonly Action<TTo>      _source;
 
-		public SelectedParameterCommand(ICommand<TTo> source, ISelect<TFrom, TTo> select)
-			: this(source.ToDelegate(), select.ToDelegate()) {}
+		/*public SelectedParameterCommand(ICommand<TTo> source, ISelect<TFrom, TTo> select)
+			: this(source.ToDelegate(), select.Get) {}*/
 
 		public SelectedParameterCommand(Action<TTo> source, Func<TFrom, TTo> select)
 		{

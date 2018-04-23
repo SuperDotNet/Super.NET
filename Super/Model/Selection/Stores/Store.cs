@@ -1,12 +1,14 @@
-﻿using System;
-using Super.Runtime.Activation;
+﻿using Super.Runtime.Activation;
+using System;
 
 namespace Super.Model.Selection.Stores
 {
-	class Store<TParameter, TResult> : Select<TParameter, TResult>
+	class Store<TParameter, TResult> : DecoratedSelect<TParameter, TResult>
 	{
-		public Store() : this(Activation<TParameter, TResult>.Default.ToDelegate()) {}
+		readonly static Func<TParameter, TResult> Source = Activation<TParameter, TResult>.Default.ToDelegateReference();
 
-		public Store(Func<TParameter, TResult> source) : base(Stores<TParameter, TResult>.Default.Get(source).Get) {}
+		public Store() : this(Source) {}
+
+		public Store(Func<TParameter, TResult> source) : base(Stores<TParameter, TResult>.Default.Get(source)) {}
 	}
 }

@@ -11,10 +11,10 @@ namespace Super
 	public static partial class ExtensionMethods
 	{
 		public static ISelect<IEnumerable<TFrom>, IEnumerable<TTo>> SelectMany<TFrom, TTo>(this ISelect<TFrom, IEnumerable<TTo>> @this)
-			=> ToDelegate(@this).To(I<SelectManySelector<TFrom, TTo>>.Default);
+			=> @this.ToDelegate().To(I<SelectManySelector<TFrom, TTo>>.Default);
 
 		public static ISelect<IEnumerable<TFrom>, IEnumerable<TTo>> Select<TFrom, TTo>(this ISelect<TFrom, TTo> @this)
-			=> ToDelegate(@this).To(I<SelectSelector<TFrom, TTo>>.Default);
+			=> @this.ToDelegate().To(I<SelectSelector<TFrom, TTo>>.Default);
 
 		public static IEnumerable<T> AsEnumerable<T>(this ImmutableArray<T> @this)
 			=> EnumerableSelector<T>.Default.Get(@this);

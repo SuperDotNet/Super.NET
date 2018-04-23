@@ -8,8 +8,8 @@ namespace Super.Model.Selection.Stores
 	public class AssociatedResource<TParameter, TResult> : DecoratedTable<TParameter, TResult>
 	{
 		readonly static Func<TParameter, TResult> Resource = Activator<TResult>.Default
-		                                                  .Allow(I<TParameter>.Default)
-		                                                  .ToDelegate();
+		                                                                       .Allow(I<TParameter>.Default)
+		                                                                       .Get;
 
 		public AssociatedResource() : this(Resource) {}
 
