@@ -23,7 +23,7 @@ namespace Super.Model.Selection
 		public DelegatedInstanceSelector(ISource<ISelect<TParameter, TResult>> source)
 			: this(source.Select(DelegateSelector<TParameter, TResult>.Default)) {}
 
-		public DelegatedInstanceSelector(ISource<Func<TParameter, TResult>> source) : this(source.ToDelegate()) {}
+		public DelegatedInstanceSelector(ISource<Func<TParameter, TResult>> source) : this(source.Get) {}
 
 		public DelegatedInstanceSelector(Func<Func<TParameter, TResult>> source) => _source = source;
 

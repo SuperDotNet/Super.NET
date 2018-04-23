@@ -22,7 +22,7 @@ namespace Super
 	{
 		public static ICommand<T> AsCommand<T>(this ICommand<T> @this) => @this;
 
-		public static IAny Select<T>(this ICommand<T> @this, ISource<T> parameter) => @this.Select(parameter.ToDelegate());
+		public static IAny Select<T>(this ICommand<T> @this, ISource<T> parameter) => @this.Select(parameter.Get);
 		public static IAny Select<T>(this ICommand<T> @this, Func<T> parameter) => new DelegatedParameterCommand<T>(@this.ToDelegate(), parameter).Any();
 		public static IAny Select<T>(this ICommand<T> @this, T parameter) => new FixedParameterCommand<T>(@this.ToDelegate(), parameter).Any();
 

@@ -9,6 +9,6 @@ namespace Super.Model.Selection.Alterations
 
 		SingletonDelegateSelector() {}
 
-		public Func<T> Get(Func<T> parameter) => new DeferredSingleton<T>(parameter).ToDelegate();
+		public Func<T> Get(Func<T> parameter) => new DeferredSingleton<T>(parameter).Get;
 	}
 }

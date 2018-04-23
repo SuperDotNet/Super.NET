@@ -9,7 +9,7 @@ namespace Super.Model.Commands
 	{
 		readonly Func<ICommand<T>> _instance;
 
-		public DelegatedInstanceCommand(ISource<ICommand<T>> source) : this(source.ToDelegate()) {}
+		public DelegatedInstanceCommand(ISource<ICommand<T>> source) : this(source.Get) {}
 
 		public DelegatedInstanceCommand(Func<ICommand<T>> instance) => _instance = instance;
 

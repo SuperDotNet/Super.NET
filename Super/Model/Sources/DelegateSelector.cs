@@ -9,6 +9,6 @@ namespace Super.Model.Sources
 
 		DelegateSelector() {}
 
-		public Func<T> Get(ISource<T> parameter) => parameter.ToDelegate();
+		public Func<T> Get(ISource<T> parameter) => parameter.Get;
 	}
 }

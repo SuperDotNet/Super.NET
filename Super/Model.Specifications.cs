@@ -26,7 +26,7 @@ namespace Super
 		public static ISpecification<TypeInfo> Select<T>(this ISpecification<TypeInfo> @this) => @this.Select(Type<T>.Metadata);
 
 		public static IAny Select<T>(this ISpecification<T> @this, ISource<T> parameter)
-			=> new DelegatedResultSpecification(parameter.Select(@this.ToDelegate()).ToDelegate()).Any();
+			=> new DelegatedResultSpecification(parameter.Select(@this.IsSatisfiedBy).Get).Any();
 
 		public static ISpecification<T> Select<T>(this ISpecification<T> @this, T parameter)
 			=> @this.IsSatisfiedBy(parameter) ? Always<T>.Default : Never<T>.Default;

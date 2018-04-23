@@ -1,14 +1,14 @@
-﻿using System;
-using Super.Runtime.Activation;
+﻿using Super.Runtime.Activation;
+using System;
 
 namespace Super.Model.Selection
 {
 	sealed class DelegatedReducer<TParameter, TResult> : ISelect<ISelect<TParameter, TResult>, TResult>, IActivateMarker<Func<TParameter>>
 	{
-		public static DelegatedReducer<TParameter, TResult> Default { get; } =
-			new DelegatedReducer<TParameter, TResult>();
+		public static DelegatedReducer<TParameter, TResult> Default { get; }
+			= new DelegatedReducer<TParameter, TResult>();
 
-		DelegatedReducer() : this(Activation<TParameter>.Default.ToDelegate()) {}
+		DelegatedReducer() : this(Activation<TParameter>.Default.Get) {}
 
 		readonly Func<TParameter> _parameter;
 

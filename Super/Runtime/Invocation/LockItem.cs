@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Immutable;
-using System.Runtime.CompilerServices;
-using Super.Model.Collections;
+﻿using Super.Model.Collections;
 using Super.Model.Selection;
 using Super.Runtime.Activation;
+using System;
+using System.Collections.Immutable;
+using System.Runtime.CompilerServices;
 
-namespace Super.Runtime.Invocation {
+namespace Super.Runtime.Invocation
+{
 	/// <summary>
 	/// Attribution: https://github.com/i3arnon/AsyncUtilities
 	/// </summary>
@@ -14,7 +15,7 @@ namespace Super.Runtime.Invocation {
 	{
 		public static LockItem<T> Default { get; } = new LockItem<T>();
 
-		LockItem() : this(Activation<T>.Default.ToDelegate()) {}
+		LockItem() : this(Activation<T>.Default.ToDelegateReference()) {}
 
 		readonly Func<T> _create;
 

@@ -2,6 +2,6 @@
 {
 	public class DecoratedSource<T> : DelegatedSource<T>
 	{
-		public DecoratedSource(ISource<T> source) : base(source.ToDelegate()) {}
+		public DecoratedSource(ISource<T> source) : base(source.Get) {}
 	}
 }

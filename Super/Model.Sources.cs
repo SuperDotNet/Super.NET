@@ -34,7 +34,7 @@ namespace Super
 
 		public static ISource<TResult> Select<TParameter, TResult>(this ISelect<TParameter, TResult> @this,
 		                                                           ISource<TParameter> parameter)
-			=> @this.Select(parameter.ToDelegate());
+			=> @this.Select(parameter.Get);
 
 		public static ISource<TResult> Select<TParameter, TResult>(this ISelect<TParameter, TResult> @this,
 		                                                           Func<TParameter> parameter)
@@ -67,7 +67,7 @@ namespace Super
 		public static ISelect<object, T> Allow<T>(this ISource<T> @this) => Allow(@this, I<object>.Default);
 
 		public static ISelect<TParameter, TResult> Allow<TParameter, TResult>(this ISource<TResult> @this, I<TParameter> _)
-			=> new DelegatedResult<TParameter, TResult>(@this.ToDelegate());
+			=> new DelegatedResult<TParameter, TResult>(@this.Get);
 
 		public static ISource<T> Singleton<T>(this ISource<T> @this) => SingletonSelector<T>.Default.Get(@this);
 
@@ -77,6 +77,8 @@ namespace Super
 
 		public static ISource<T> ToSource<T>(this Func<T> @this) => I<DelegatedSource<T>>.Default.From(@this);
 
-		public static Func<T> ToDelegate<T>(this ISource<T> @this) => Model.Sources.Delegates<T>.Default.Get(@this);
+		public static Func<T> ToDelegate<T>(this ISource<T> @this) => @this.Get;
+
+		public static Func<T> ToDelegateReference<T>(this ISource<T> @this) => Model.Sources.Delegates<T>.Default.Get(@this);
 	}
 }

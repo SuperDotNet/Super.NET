@@ -8,7 +8,7 @@ namespace Super.Model.Sources
 		readonly Func<bool> _specification;
 
 		public Conditional(Func<bool> specification, ISource<T> source, ISource<T> fallback)
-			: this(specification, source.ToDelegate(), fallback.ToDelegate()) {}
+			: this(specification, source.Get, fallback.Get) {}
 
 		public Conditional(Func<bool> specification, Func<T> source, Func<T> fallback)
 		{

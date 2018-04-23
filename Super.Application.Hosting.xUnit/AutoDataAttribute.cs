@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using AutoFixture;
+﻿using AutoFixture;
 using AutoFixture.Kernel;
 using JetBrains.Annotations;
 using Super.Model.Sources;
+using System;
+using System.Collections.Generic;
 
 namespace Super.Application.Hosting.xUnit
 {
@@ -25,7 +25,7 @@ namespace Super.Application.Hosting.xUnit
 		protected AutoDataAttribute(IEnumerable<ISpecimenBuilderTransformation> transformations, ICustomization customization)
 			: this(new Fixtures(new EngineParts(transformations.Fixed()), customization)) {}
 
-		protected AutoDataAttribute(ISource<IFixture> source) : base(source.ToDelegate()) {}
+		protected AutoDataAttribute(ISource<IFixture> source) : base(source.Get) {}
 
 		[UsedImplicitly]
 		protected AutoDataAttribute(Func<IFixture> fixture) : base(fixture) {}

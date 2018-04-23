@@ -53,7 +53,7 @@ namespace Super.Model.Commands
 
 		public ThrowCommand(TException exception) : this(exception.ToSource()) {}
 
-		public ThrowCommand(ISource<TException> source) : this(source.ToDelegate()) {}
+		public ThrowCommand(ISource<TException> source) : this(source.Get) {}
 
 		public ThrowCommand(Func<TException> exception) => _exception = exception;
 
