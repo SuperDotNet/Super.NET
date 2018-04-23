@@ -54,11 +54,11 @@ namespace Super
 		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, ISpecification<TResult> specification,
 			ISelect<TParameter, TResult> fallback)
-			=> @this.ToDelegate().Or(specification.ToDelegate(), fallback.Get);
+			=> @this.ToDelegate().Or(specification.IsSatisfiedBy, fallback.Get);
 
 		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(
 			this Func<TParameter, TResult> @this,
-			Func<TParameter, TResult> fallback) => @this.Or(IsAssigned<TResult>.Default.ToDelegate(), fallback);
+			Func<TParameter, TResult> fallback) => @this.Or(IsAssigned<TResult>.Default.IsSatisfiedBy, fallback);
 
 		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(
 			this Func<TParameter, TResult> @this, Func<TResult, bool> specification,

@@ -1,7 +1,7 @@
-using System;
-using System.Reflection;
 using Super.Model.Selection;
 using Super.Model.Specifications;
+using System;
+using System.Reflection;
 
 namespace Super.Reflection.Types
 {
@@ -9,7 +9,7 @@ namespace Super.Reflection.Types
 	{
 		public ImplementsGenericType(Type definition)
 			: base(Select.New<TypeInfo, HasGenericInterface>()
-			             .Out(new FixedParameterSpecification<TypeInfo>(definition.GetTypeInfo()).ToDelegate())
+			             .Out(new FixedParameterSpecification<TypeInfo>(definition.GetTypeInfo()).IsSatisfiedBy)
 			             .Get) {}
 	}
 }

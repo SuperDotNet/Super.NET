@@ -14,6 +14,9 @@ namespace Super
 	{
 		public static ISpecification<T> AsSpecification<T>(this ISpecification<T> @this) => @this;
 
+		/*public static Func<T, bool> ToDelegate<T>(this ISpecification<T> @this) => @this.IsSatisfiedBy;*/
+		public static Func<T, bool> ToDelegateReference<T>(this ISpecification<T> @this) => Model.Specifications.Delegates<T>.Default.Get(@this);
+
 		public static bool IsSatisfiedBy(this ISpecification @this, object _) => @this.IsSatisfiedBy();
 		public static bool IsSatisfiedBy(this ISpecification @this) => @this.IsSatisfiedBy(Unit.Default);
 
@@ -42,8 +45,6 @@ namespace Super
 
 		public static ISpecification<T> OncePerParameter<T>(this ISpecification<T> @this) => OnceAlteration<T>.Default.Get(@this);
 		public static ISpecification<T> OnlyOnce<T>(this ISpecification<T> @this) => OnlyOnceAlteration<T>.Default.Get(@this);
-
-		public static Func<T, bool> ToDelegate<T>(this ISpecification<T> @this) => Model.Specifications.Delegates<T>.Default.Get(@this);
 
 		public static ISelect<TParameter, TResult> If<TParameter, TResult>(
 			this ISpecification<TParameter> @this, ISelect<TParameter, TResult> @true) => @this.If(@true, @true.Default());

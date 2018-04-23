@@ -1,6 +1,7 @@
 ﻿using LightInject;
 using Super.Model.Collections;
 using Super.Model.Selection;
+using Super.Model.Specifications;
 using System;
 
 namespace Super.Application
@@ -12,6 +13,6 @@ namespace Super.Application
 		NotRegistered() : base(In<IServiceRegistry>.Select(x => x.AvailableServices)
 		                                           .Out(ServiceTypeSelector.Default)
 		                                           .Out(New<NotHave<Type>>.Default)
-		                                           .Out(x => x.ToDelegate())) {}
+		                                           .Out(DelegateSelector<Type>.Default)) {}
 	}
 }

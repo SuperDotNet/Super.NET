@@ -13,7 +13,7 @@ namespace Super.Model.Selection
 
 		public Validated(ISpecification<TParameter> specification, ISelect<TParameter, TResult> @select,
 		                            ISelect<TParameter, TResult> fallback)
-			: this(specification.ToDelegate(), @select.Get, fallback.Get) {}
+			: this(specification.IsSatisfiedBy, @select.Get, fallback.Get) {}
 
 		public Validated(Func<TParameter, bool> specification, Func<TParameter, TResult> source,
 		                            Func<TParameter, TResult> fallback)

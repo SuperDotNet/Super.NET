@@ -9,7 +9,7 @@ namespace Super.Model.Selection
 		readonly Func<TParameter, bool>   _specification;
 
 		public Specification(ISpecification<TParameter> specification, ISelect<TParameter, TResult> @select)
-			: this(specification.ToDelegate(), select.Get) {}
+			: this(specification.IsSatisfiedBy, select.Get) {}
 
 		public Specification(Func<TParameter, bool> specification, Func<TParameter, TResult> source)
 		{
