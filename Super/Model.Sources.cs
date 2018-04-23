@@ -11,6 +11,8 @@ namespace Super
 {
 	public static partial class ExtensionMethods
 	{
+		public static ISource<T> AsSource<T>(this ISource<T> @this) => @this;
+
 		public static ISource<TTo> Select<TFrom, TTo>(this ISource<TFrom> @this, ISelect<TTo> select)
 			=> @this.Select(select.Out<TFrom>());
 
@@ -71,7 +73,7 @@ namespace Super
 
 		public static ISource<T> ToSource<T>(this T @this) => Sources<T>.Default.Get(@this);
 
-		public static ISource<T> Source<T>(this IMutable<T> @this) => @this;
+		/*public static ISource<T> Source<T>(this IMutable<T> @this) => @this;*/
 
 		public static ISource<T> ToSource<T>(this Func<T> @this) => I<DelegatedSource<T>>.Default.From(@this);
 

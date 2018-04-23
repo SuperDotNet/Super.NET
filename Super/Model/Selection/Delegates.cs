@@ -1,16 +1,12 @@
-﻿using System;
-using Super.Model.Selection.Stores;
+﻿using Super.Model.Selection.Stores;
+using System;
 
 namespace Super.Model.Selection
 {
-	sealed class Delegates<TParameter, TResult>
-		: Select<ISelect<TParameter, TResult>, Func<TParameter, TResult>>
+	sealed class Delegates<TParameter, TResult> : ReferenceStore<ISelect<TParameter, TResult>, Func<TParameter, TResult>>
 	{
 		public static Delegates<TParameter, TResult> Default { get; } = new Delegates<TParameter, TResult>();
 
-		Delegates()
-			: base(DefaultReferenceValueTables<ISelect<TParameter, TResult>, Func<TParameter, TResult>>
-			       .Default.Get(x => x.Get)
-			       .Get) {}
+		Delegates() : base(x => x.Get) {}
 	}
 }

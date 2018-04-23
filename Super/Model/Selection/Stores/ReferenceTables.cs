@@ -10,7 +10,7 @@ namespace Super.Model.Selection.Stores
 			: base(ReferenceTables<TParameter, TResult>.Default.Get(source)) {}
 	}
 
-	public sealed class ReferenceTables<TParameter, TResult>
+	public sealed class ReferenceTables<TParameter, TResult>  
 		: Select<Func<TParameter, TResult>, ITable<TParameter, TResult>>
 		where TParameter : class
 	{

@@ -5,17 +5,16 @@ using System.Runtime.CompilerServices;
 
 namespace Super.Model.Selection.Stores
 {
-	public class AssociatedResource<T> : AssociatedResource<object, T>
-	{
-		
-	}
-
 	public class AssociatedResource<TParameter, TResult> : DecoratedTable<TParameter, TResult>
 	{
-		public AssociatedResource()
-			: base(Tables<TParameter, TResult>.Default.Get(Activator<TResult>
-			                                               .Default.Allow(I<TParameter>.Default)
-			                                               .ToDelegate())) {}
+		readonly static Func<TParameter, TResult> Resource = Activator<TResult>.Default
+		                                                  .Allow(I<TParameter>.Default)
+		                                                  .ToDelegate();
+
+		public AssociatedResource() : this(Resource) {}
+
+		public AssociatedResource(Func<TParameter, TResult> resource)
+			: base(Tables<TParameter, TResult>.Default.Get(resource)) {}
 	}
 
 	public class ReferenceValueTable<TParameter, TResult> : DecoratedTable<TParameter, TResult>

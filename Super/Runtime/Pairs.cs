@@ -8,16 +8,14 @@ namespace Super.Runtime
 {
 	public static class Pairs
 	{
-		public static KeyValuePair<TKey, TValue> Create<TKey, TValue>(TKey key, TValue value) =>
-			new KeyValuePair<TKey, TValue>(key, value);
+		public static KeyValuePair<TKey, TValue> Create<TKey, TValue>(TKey key, TValue value)
+			 => new KeyValuePair<TKey, TValue>(key, value);
 
 		public static ISpecification<TParameter, TResult> Select<TParameter, TResult>(
-			params ISource<KeyValuePair<TParameter, TResult>>[] pairs)
-			=> pairs.Select(x => x.Get()).ToStore();
+			params ISource<KeyValuePair<TParameter, TResult>>[] pairs) => pairs.Select(x => x.Get()).ToStore();
 
 		public static ISelect<TParameter, TIn, TOut> Select<TParameter, TIn, TOut>(
-			params KeyValuePair<TParameter, Func<TIn, TOut>>[] pairs)
-			=> @pairs.ToSelect<TParameter, TIn, TOut>();
+			params KeyValuePair<TParameter, Func<TIn, TOut>>[] pairs) => pairs.ToSelect();
 	}
 
 	public interface IPair<TKey, TValue> : ISource<KeyValuePair<TKey, TValue>> {}

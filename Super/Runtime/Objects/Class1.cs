@@ -53,7 +53,7 @@ namespace Super.Runtime.Objects
 	{
 		public static Projectors Default { get; } = new Projectors();
 
-		Projectors() : base(KnownProjectors.Default.ToStore().ToSelect()) {}
+		Projectors() : base(KnownProjectors.Default.ToStore().Get) {}
 	}
 
 	sealed class ApplicationDomainProjection : FormattedProjection<AppDomain>

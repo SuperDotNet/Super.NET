@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Serilog.Core;
+﻿using Serilog.Core;
 using Serilog.Events;
 using Super.Model.Selection.Alterations;
 using Super.Runtime.Objects;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Super.Diagnostics.Logging
 {
@@ -12,7 +12,7 @@ namespace Super.Diagnostics.Logging
 	{
 		public static ProjectionLogEvents Default { get; } = new ProjectionLogEvents();
 
-		ProjectionLogEvents() : this(Implementations.Scalars, PropertyFactories.Default.ToSelect<LogEvent, ILogEventPropertyFactory>()) {}
+		ProjectionLogEvents() : this(Implementations.Scalars, PropertyFactories.Default.AsSelect().ToDelegate()) {}
 
 		readonly Func<LogEvent, ILogEventPropertyFactory> _factories;
 

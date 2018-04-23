@@ -28,7 +28,7 @@ namespace Super.Diagnostics.Logging
 
 			[UsedImplicitly]
 			public Selection(IReadOnlyDictionary<string, string> source)
-				: this(source.ToStore().ToSelect(), source.Keys.ToImmutableArray()) {}
+				: this(source.ToStore().AsSelect().ToDelegate(), source.Keys.ToImmutableArray()) {}
 
 			public Selection(Func<string, string> source, ImmutableArray<string> names) : base(source) => _names = names;
 

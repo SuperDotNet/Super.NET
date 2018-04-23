@@ -12,7 +12,7 @@ namespace Super
 {
 	public static partial class ExtensionMethods
 	{
-		/*public static IAny Specification(this ISpecification @this) => @this;*/
+		public static ISpecification<T> AsSpecification<T>(this ISpecification<T> @this) => @this;
 
 		public static bool IsSatisfiedBy(this ISpecification @this, object _) => @this.IsSatisfiedBy();
 		public static bool IsSatisfiedBy(this ISpecification @this) => @this.IsSatisfiedBy(Unit.Default);

@@ -21,7 +21,7 @@ namespace Super
 
 		public static ISpecification<TFrom, TResult> In<TFrom, TTo, TResult>(
 			this ISpecification<TTo, TResult> @this, ISelect<TFrom, TTo> coercer)
-			=> ToSpecification(ToSelect(@this).ToSelect().In(coercer), @this.Select(coercer));
+			=> @this.AsSelect().In(coercer).ToSpecification(@this.Select(coercer));
 
 		public static ISelect<TParameter, TResult> Into<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, ISelect<Decoration<TParameter, TResult>, TResult> other)

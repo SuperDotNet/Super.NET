@@ -25,7 +25,7 @@ namespace Super.Model.Sources
 	{
 		readonly ISpecification _specification;
 
-		public Assignment(IMutable<T> mutable) : this(IsAssigned<T>.Default.Select(mutable.Source()), mutable) {}
+		public Assignment(IMutable<T> mutable) : this(IsAssigned<T>.Default.Select(mutable), mutable) {}
 
 		public Assignment(ISpecification specification, IMutable<T> mutable) : base(mutable)
 			=> _specification = specification;

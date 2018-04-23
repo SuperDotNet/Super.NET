@@ -16,13 +16,19 @@ namespace Super.Testing.Application.Runtime.Activation
 		}
 
 		[Fact]
-		public void Is() => HasSingletonProperty.Default.IsSatisfiedBy(typeof(Contains))
-		                                        .Should()
-		                                        .BeTrue();
+		public void Is()
+		{
+			HasSingletonProperty.Default.IsSatisfiedBy(typeof(Contains))
+			                    .Should()
+			                    .BeTrue();
+		}
 
 		[Fact]
-		public void IsNot() => HasSingletonProperty.Default.IsSatisfiedBy(GetType())
-		                                           .Should()
-		                                           .BeFalse();
+		public void IsNot()
+		{
+			HasSingletonProperty.Default.IsSatisfiedBy(GetType())
+			                    .Should()
+			                    .BeFalse();
+		}
 	}
 }

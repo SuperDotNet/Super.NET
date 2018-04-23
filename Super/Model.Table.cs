@@ -17,15 +17,19 @@ namespace Super
 
 		public static ISelect<TParameter, TIn, TOut> ToSelect<TParameter, TIn, TOut>(
 			this IEnumerable<KeyValuePair<TParameter, Func<TIn, TOut>>> @this)
-			=> ToSelect(@this.ToOrderedDictionary().AsReadOnly().ToStore()).To(I<Select<TParameter, TIn, TOut>>.Default);
+			=> @this.ToOrderedDictionary()
+			        .AsReadOnly()
+			        .ToStore()
+			        .AsSelect()
+			        .ToDelegate()
+			        .To(I<Select<TParameter, TIn, TOut>>.Default);
 
 		public static ISpecification<TParameter, TResult> ToStore<TParameter, TResult>(
 			this IDictionary<TParameter, TResult> @this)
 			=> @this.To(I<Lookup<TParameter, TResult>>.Default);
 
 		public static ISpecification<TParameter, TResult> ToStore<TParameter, TResult>(
-			this IReadOnlyDictionary<TParameter, TResult> @this)
-			=> @this.To(I<Lookup<TParameter, TResult>>.Default);
+			this IReadOnlyDictionary<TParameter, TResult> @this) => @this.To(I<Lookup<TParameter, TResult>>.Default);
 
 		public static ITable<TParameter, TResult> ToTable<TParameter, TResult>(this IDictionary<TParameter, TResult> @this)
 			=> StandardTables<TParameter, TResult>.Default.Get(@this);

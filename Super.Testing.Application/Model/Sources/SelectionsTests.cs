@@ -47,9 +47,9 @@ namespace Super.Testing.Application.Model.Sources
 		[Fact]
 		public void Verify()
 		{
-			var subject = Subject<string, int>.Default.ToDelegate();
+			var subject = Subject<string, int>.Default.ToDelegateReference();
 			subject.Should()
-			       .BeSameAs(Subject<string, int>.Default.ToDelegate());
+			       .BeSameAs(Subject<string, int>.Default.ToDelegateReference());
 
 			subject.ToSelect().Should().BeSameAs(subject.ToSelect());
 		}

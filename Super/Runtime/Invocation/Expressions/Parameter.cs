@@ -6,13 +6,16 @@ using System.Linq.Expressions;
 
 namespace Super.Runtime.Invocation.Expressions
 {
+	static class Implementations<T>
+	{
+		public static ISelect<string, ParameterExpression> Select { get; } = new Parameter(Type<T>.Instance).ToReferenceStore();
+	}
+
 	sealed class Parameter<T> : Source<ParameterExpression>
 	{
-		readonly static ISelect<string, ParameterExpression> Select = new Parameter(Type<T>.Instance).ToReferenceStore();
-
 		public static Parameter<T> Default { get; } = new Parameter<T>();
 
-		public Parameter(string name = "parameter") : base(Select.Get(name)) {}
+		public Parameter(string name = "parameter") : base(Implementations<T>.Select.Get(name)) {}
 	}
 
 	sealed class Parameter : Invocation1<Type, string, ParameterExpression>
