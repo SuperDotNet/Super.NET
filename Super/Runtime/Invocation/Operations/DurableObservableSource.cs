@@ -14,14 +14,16 @@ namespace Super.Runtime.Invocation.Operations
 	class EventSubscriber : EventSubscriber<EventArgs>
 	{
 		public EventSubscriber(ICommand<EventHandler> add, ICommand<EventHandler> remove)
-			: base(add.Select(New<EventHandler<EventArgs>>.Default),
-			       remove.Select(New<EventHandler<EventArgs>>.Default)) {}
+			: base(add.Select(New<EventHandler<EventArgs>>.Default), remove.Select(New<EventHandler<EventArgs>>.Default)) {}
 	}
 
 	class EventSubscriber<T> : Subscriber<EventPattern<T>> where T : EventArgs
 	{
 		public EventSubscriber(ICommand<EventHandler<T>> add, ICommand<EventHandler<T>> remove)
-			: this(Observable.FromEventPattern(add.ToDelegate(), remove.ToDelegate())) {}
+			: this(add.Execute, remove.Execute) {}
+
+		public EventSubscriber(Action<EventHandler<T>> add, Action<EventHandler<T>> remove)
+			: this(Observable.FromEventPattern(add, remove)) {}
 
 		public EventSubscriber(IObservable<EventPattern<T>> instance) : base(instance) {}
 	}
@@ -60,7 +62,6 @@ namespace Super.Runtime.Invocation.Operations
 			}
 		}
 	}
-
 
 	class Subscriber<T> : Source<IObservable<T>>
 	{
@@ -160,7 +161,7 @@ namespace Super.Runtime.Invocation.Operations
 		public OperationState(ContextDetails contextDetails, CancellationToken token = new CancellationToken())
 		{
 			ContextDetails = contextDetails;
-			Token   = token;
+			Token          = token;
 		}
 
 		public ContextDetails ContextDetails { get; }

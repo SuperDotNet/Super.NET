@@ -2,6 +2,6 @@
 {
 	public class DecoratedCommand<T> : DelegatedCommand<T>
 	{
-		public DecoratedCommand(ICommand<T> command) : base(command.ToDelegate()) {}
+		public DecoratedCommand(ICommand<T> command) : base(command.Execute) {}
 	}
 }

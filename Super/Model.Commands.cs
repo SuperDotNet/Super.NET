@@ -22,9 +22,12 @@ namespace Super
 	{
 		public static ICommand<T> AsCommand<T>(this ICommand<T> @this) => @this;
 
+		public static Action<T> ToDelegate<T>(this ICommand<T> @this) => @this.Execute;
+		public static Action<T> ToDelegateReference<T>(this ICommand<T> @this) => Model.Commands.Delegates<T>.Default.Get(@this);
+
 		public static IAny Select<T>(this ICommand<T> @this, ISource<T> parameter) => @this.Select(parameter.Get);
-		public static IAny Select<T>(this ICommand<T> @this, Func<T> parameter) => new DelegatedParameterCommand<T>(@this.ToDelegate(), parameter).Any();
-		public static IAny Select<T>(this ICommand<T> @this, T parameter) => new FixedParameterCommand<T>(@this.ToDelegate(), parameter).Any();
+		public static IAny Select<T>(this ICommand<T> @this, Func<T> parameter) => new DelegatedParameterCommand<T>(@this.Execute, parameter).Any();
+		public static IAny Select<T>(this ICommand<T> @this, T parameter) => new FixedParameterCommand<T>(@this.Execute, parameter).Any();
 
 		public static ICommand<T> Select<T>(this ICommand<T> @this, ISpecification<T> specification)
 			=> new ValidatedCommand<T>(specification, @this);
@@ -36,7 +39,7 @@ namespace Super
 			=> @this.Select(select.In<TTo>());
 
 		public static ICommand<TFrom> Select<TFrom, TTo>(this ICommand<TTo> @this, Func<TFrom, TTo> select)
-			=> new SelectedParameterCommand<TFrom, TTo>(@this.ToDelegate(), select);
+			=> new SelectedParameterCommand<TFrom, TTo>(@this.Execute, select);
 
 		public static IAny Any(this ICommand @this) => I<Any>.Default.From(@this);
 
@@ -44,8 +47,6 @@ namespace Super
 			=> new CompositeCommand<T>(@this.Yield().Concat(commands).ToImmutableArray());
 
 		public static IAny Clear<T>(this ICommand<T> @this) => @this.Select(default(T));
-		/*public static ICommand<object> Allow(this ICommand @this) => @this.Allow<object>();
-		public static ICommand<T> Allow<T>(this ICommand @this) => @this.Select<T, Unit>(_ => Unit.Default);*/
 
 		public static ICommand<T> OncePerParameter<T>(this ICommand<T> @this) => Model.Commands.OnceAlteration<T>.Default.Get(@this);
 		public static ICommand<T> OnlyOnce<T>(this ICommand<T> @this) => Model.Commands.OnlyOnceAlteration<T>.Default.Get(@this);
@@ -58,8 +59,6 @@ namespace Super
 
 		public static void Execute<T1, T2, T3>(this ICommand<(T1, T2, T3)> @this, T1 first, T2 second, T3 third) =>
 			@this.Execute(ValueTuple.Create(first, second, third));
-
-		public static Action<T> ToDelegate<T>(this ICommand<T> @this) => Model.Commands.Delegates<T>.Default.Get(@this);
 
 		public static ISelect<T, Unit> Out<T>(this ICommand<T> @this) => @this.ToConfiguration().Out(_ => Unit.Default);
 

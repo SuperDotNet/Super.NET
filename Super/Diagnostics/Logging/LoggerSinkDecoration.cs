@@ -16,7 +16,7 @@ namespace Super.Diagnostics.Logging
 			: this(sink.Get, configuration) {}
 
 		public LoggerSinkDecoration(Func<ILogEventSink, ILogEventSink> sink, ILoggingSinkConfiguration configuration)
-			: this(sink, configuration.ToCommand().ToDelegate()) {}
+			: this(sink, configuration.ToCommand().Execute) {}
 
 		public LoggerSinkDecoration(Func<ILogEventSink, ILogEventSink> sink, Action<LoggerSinkConfiguration> configure)
 		{
