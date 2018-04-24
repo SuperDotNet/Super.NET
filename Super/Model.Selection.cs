@@ -25,12 +25,12 @@ namespace Super
 		public static ISelect<T, T> Guard<T>(this IMessage<object> @this)
 			=> new AssignedInstanceGuard<T>(@this.In(Cast<T>.Default)).If(Model.Selection.Self<T>.Default);
 
-		public static ISelect<TParameter, TResult> Guard<TParameter, TResult>(
+		/*public static ISelect<TParameter, TResult> Guard<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this) => @this.Or(GuardedFallback<TParameter, TResult>.Default);
 
 		public static ISelect<TParameter, TResult> Guard<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, Func<TParameter, string> message)
-			=> @this.Guard(new Message<TParameter>(message));
+			=> @this.Guard(new Message<TParameter>(message));*/
 
 		public static ISelect<TParameter, TResult> Guard<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, IMessage<TParameter> message)
@@ -56,9 +56,9 @@ namespace Super
 			ISelect<TParameter, TResult> fallback)
 			=> @this.ToDelegate().Or(specification.IsSatisfiedBy, fallback.Get);
 
-		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(
+		/*public static ISelect<TParameter, TResult> Or<TParameter, TResult>(
 			this Func<TParameter, TResult> @this,
-			Func<TParameter, TResult> fallback) => @this.Or(IsAssigned<TResult>.Default.IsSatisfiedBy, fallback);
+			Func<TParameter, TResult> fallback) => @this.Or(IsAssigned<TResult>.Default.IsSatisfiedBy, fallback);*/
 
 		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(
 			this Func<TParameter, TResult> @this, Func<TResult, bool> specification,
@@ -132,6 +132,6 @@ namespace Super
 
 		public static ISelect<TParameter, TResult> OrDefault<TParameter, TResult>(
 			this TResult @this, ISpecification<TParameter> specification)
-			=> new Conditional<TParameter, TResult>(specification, @this, default);
+			=> new Conditional<TParameter, TResult>(specification, @this);
 	}
 }

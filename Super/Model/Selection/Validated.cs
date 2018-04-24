@@ -9,14 +9,17 @@ namespace Super.Model.Selection
 		readonly Func<TParameter, bool>    _specification;
 
 		public Validated(ISpecification<TParameter> specification, ISelect<TParameter, TResult> @select)
-			: this(specification, @select, Default<TParameter, TResult>.Instance) {}
+			: this(specification, @select, select.Default()) {}
 
 		public Validated(ISpecification<TParameter> specification, ISelect<TParameter, TResult> @select,
-		                            ISelect<TParameter, TResult> fallback)
+		                 ISelect<TParameter, TResult> fallback)
 			: this(specification.IsSatisfiedBy, @select.Get, fallback.Get) {}
 
+		public Validated(Func<TParameter, bool> specification, Func<TParameter, TResult> source)
+			: this(specification, source, source.ToSelect().Default().ToDelegate()) {}
+
 		public Validated(Func<TParameter, bool> specification, Func<TParameter, TResult> source,
-		                            Func<TParameter, TResult> fallback)
+		                 Func<TParameter, TResult> fallback)
 		{
 			_specification = specification;
 			_source        = source;

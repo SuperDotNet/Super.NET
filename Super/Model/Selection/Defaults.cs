@@ -3,8 +3,7 @@ using Super.Reflection.Types;
 
 namespace Super.Model.Selection
 {
-	sealed class Defaults<TParameter, TResult>
-		: Conditional<ISelect<TParameter, TResult>, ISelect<TParameter, TResult>>
+	sealed class Defaults<TParameter, TResult> : Conditional<ISelect<TParameter, TResult>, ISelect<TParameter, TResult>>
 	{
 		public static Defaults<TParameter, TResult> Default { get; } = new Defaults<TParameter, TResult>();
 

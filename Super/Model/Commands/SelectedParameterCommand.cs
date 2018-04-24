@@ -1,6 +1,4 @@
-﻿using Super.Model.Selection.Alterations;
-using Super.Runtime.Activation;
-using Super.Runtime.Execution;
+﻿using Super.Runtime.Activation;
 using System;
 using System.Reactive;
 
@@ -11,9 +9,6 @@ namespace Super.Model.Commands
 		readonly Func<TFrom, TTo> _select;
 		readonly Action<TTo>      _source;
 
-		/*public SelectedParameterCommand(ICommand<TTo> source, ISelect<TFrom, TTo> select)
-			: this(source.ToDelegate(), select.Get) {}*/
-
 		public SelectedParameterCommand(Action<TTo> source, Func<TFrom, TTo> select)
 		{
 			_select = @select;
@@ -23,7 +18,7 @@ namespace Super.Model.Commands
 		public void Execute(TFrom parameter) => _source(_select(parameter));
 	}
 
-	sealed class DelegatedParameterCommand<T> : ICommand
+	public class DelegatedParameterCommand<T> : ICommand
 	{
 		readonly Action<T> _command;
 		readonly Func<T> _parameter;
@@ -40,7 +35,7 @@ namespace Super.Model.Commands
 		}
 	}
 
-	sealed class OnlyOnceAlteration<T> : IAlteration<ICommand<T>>
+	/*sealed class OnlyOnceAlteration<T> : IAlteration<ICommand<T>>
 	{
 		public static OnlyOnceAlteration<T> Default { get; } = new OnlyOnceAlteration<T>();
 
@@ -56,15 +51,15 @@ namespace Super.Model.Commands
 		OnceAlteration() {}
 
 		public ICommand<T> Get(ICommand<T> parameter) => new ValidatedCommand<T>(new First<T>(), parameter);
-	}
+	}*/
 
 	public interface IAny : ICommand, ICommand<object> {}
 
-	sealed class Any : IAny, IActivateMarker<ICommand>
+	sealed class Any : IAny, IActivateMarker<ICommand<Unit>>
 	{
-		readonly ICommand _command;
+		readonly ICommand<Unit> _command;
 
-		public Any(ICommand command) => _command = command;
+		public Any(ICommand<Unit> command) => _command = command;
 
 		public void Execute(object _)
 		{

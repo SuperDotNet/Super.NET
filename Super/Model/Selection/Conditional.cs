@@ -9,7 +9,7 @@ namespace Super.Model.Selection
 		readonly Func<TParameter, bool> _specification;
 		readonly TResult                _true;
 
-		public Conditional(ISpecification<TParameter> specification, TResult @true, TResult @false)
+		public Conditional(ISpecification<TParameter> specification, TResult @true, TResult @false = default)
 			: this(specification.IsSatisfiedBy, @true, @false) {}
 
 		public Conditional(Func<TParameter, bool> specification, TResult @true, TResult @false)

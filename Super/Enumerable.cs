@@ -21,7 +21,7 @@ namespace Super
 		public static T[] Fixed<T>(this IEnumerable<T> @this)
 		{
 			var array  = @this as T[] ?? @this.ToArray();
-			var result = array.Length > 0 ? array : Empty<T>.Array;
+			var result = array.Length > 0 ? array : Runtime.Empty<T>.Array;
 			return result;
 		}
 

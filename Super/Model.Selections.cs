@@ -1,4 +1,5 @@
-﻿using Super.Model.Selection;
+﻿using Super.Model.Extents;
+using Super.Model.Selection;
 using System;
 
 // ReSharper disable TooManyArguments
@@ -17,11 +18,11 @@ namespace Super
 
 		public static ISelect<TFrom, TResult> In<TFrom, TTo, TResult>(this ISelect<TTo, TResult> @this,
 		                                                              Func<TFrom, TTo> select)
-			=> new Parameter<TTo, TFrom, TResult>(@this.Get, select);
+			=> new Parameter<TFrom, TTo, TResult>(@this.Get, select);
 
 		public static ISpecification<TFrom, TResult> In<TFrom, TTo, TResult>(
 			this ISpecification<TTo, TResult> @this, ISelect<TFrom, TTo> coercer)
-			=> @this.AsSelect().In(coercer).ToSpecification(@this.Select(coercer));
+			=> @this.AsSelect().In(coercer).ToSpecification(@this.AsSpecification().In(coercer));
 
 		public static ISelect<TParameter, TResult> Into<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, ISelect<Decoration<TParameter, TResult>, TResult> other)
@@ -33,7 +34,7 @@ namespace Super
 
 		public static ISelect<TParameter, TTo> Out<TParameter, TFrom, TTo>(this ISelect<TParameter, TFrom> @this,
 		                                                                   ISelect<TFrom, TTo> select)
-			=> @this.Out(select.Get);
+			=> @this.Out(select.ToDelegate());
 
 		public static ISelect<TParameter, TTo> Out<TParameter, TFrom, TTo>(this ISelect<TParameter, TFrom> @this,
 		                                                                   Func<TFrom, TTo> select)

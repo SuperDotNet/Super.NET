@@ -6,6 +6,7 @@ using Super.Reflection;
 using Super.Runtime;
 using Super.Runtime.Activation;
 using System;
+using System.Reactive;
 
 namespace Super
 {
@@ -52,7 +53,7 @@ namespace Super
 
 		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(this ISource<TResult> @this,
 		                                                                   ISelect<TParameter, TResult> select)
-			=> Allow(@this, I<TParameter>.Default).Or(select);
+			=> @this.Allow(I<TParameter>.Default).Or(select);
 
 		public static ISource<T> Or<T>(this ISource<T> @this, ISource<T> fallback)
 			=> @this.Or(IsAssigned<T>.Default, fallback);
@@ -60,9 +61,11 @@ namespace Super
 		public static ISource<T> Or<T>(this ISource<T> @this, ISpecification<T> specification, ISource<T> fallback)
 			=> new ValidatedSource<T>(specification, @this, fallback);
 
-		public static ISpecification<TParameter, TResult> Pair<TParameter, TResult>(
+		/*public static ISpecification<TParameter, TResult> Pair<TParameter, TResult>(
 			this TResult @this, ISpecification<TParameter> specification)
-			=> @this.ToSelect(I<TParameter>.Default).ToSpecification(specification);
+			=> @this.ToSelect(I<TParameter>.Default).ToSpecification(specification);*/
+
+		public static ISelect<Unit, T> Empty<T>(this ISource<T> @this) => Allow(@this, I<Unit>.Default);
 
 		public static ISelect<object, T> Allow<T>(this ISource<T> @this) => Allow(@this, I<object>.Default);
 
@@ -72,8 +75,6 @@ namespace Super
 		public static ISource<T> Singleton<T>(this ISource<T> @this) => SingletonSelector<T>.Default.Get(@this);
 
 		public static ISource<T> ToSource<T>(this T @this) => Sources<T>.Default.Get(@this);
-
-		/*public static ISource<T> Source<T>(this IMutable<T> @this) => @this;*/
 
 		public static ISource<T> ToSource<T>(this Func<T> @this) => I<DelegatedSource<T>>.Default.From(@this);
 

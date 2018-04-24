@@ -1,5 +1,6 @@
 ﻿using Super.Model.Collections;
 using Super.Model.Commands;
+using Super.Model.Extents;
 using Super.Model.Selection;
 using Super.Model.Selection.Stores;
 using Super.Model.Specifications;
@@ -26,10 +27,13 @@ namespace Super.Runtime.Execution
 
 		public DisposeContext(ISpecification<object> assigned, ISpecification<object> resources,
 		                      ISelect<object, IDisposable> select)
-			: base(DisposeCommand.Default.Select(select)
+			: base(DisposeCommand.Default
+			                     .In(select)
 			                     .And(AssignedContext.Default.Clear(), ClearResources.Default)
-			                     .Select(resources.And(assigned))
-			                     .Select(ExecutionContext.Default)) {}
+			                     .In()
+			                     .In(resources.And(assigned))
+			                     .In(ExecutionContext.Default)
+			                     .Return()) {}
 	}
 
 	sealed class ClearResources : RemoveCommand<object, Disposables>

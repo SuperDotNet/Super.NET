@@ -2,6 +2,7 @@
 using LightInject;
 using Super.Model.Collections;
 using Super.Model.Commands;
+using Super.Model.Extents;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
 using Super.Model.Sources;
@@ -105,8 +106,12 @@ namespace Super.Application
 	{
 		public GenericTypeDependencySelector(Type type)
 			: base(IsGenericTypeDefinition.Default
-			                              .Select(type)
-			                              .And(IsConstructedGenericType.Default, IsGenericTypeDefinition.Default.Inverse())
+			                              .In()
+			                              .In(type)
+			                              .Allow()
+			                              .And(IsConstructedGenericType.Default.In(),
+			                                   IsGenericTypeDefinition.Default.Inverse().In())
+			                              .Return()
 			                              .If(GenericTypeDefinitionAlteration.Default)) {}
 	}
 
@@ -116,12 +121,12 @@ namespace Super.Application
 			: base(Constructors.Default
 			                   .In(TypeMetadataSelector.Default)
 			                   .Out(Parameters.Default
-			                                        .Out(x => x.AsEnumerable())
-			                                        .SelectMany())
+			                                  .Out(x => x.AsEnumerable())
+			                                  .SelectMany())
 			                   .Out(ParameterType.Default.Select())
 			                   .Out(type.To(I<GenericTypeDependencySelector>.Default).Select())
 			                   .Out(x => x.Where(IsClass.Default.IsSatisfiedBy)
-			                                    .ToImmutableArray())) {}
+			                              .ToImmutableArray())) {}
 	}
 
 	sealed class ServiceTypeSelector : SelectSelector<LightInject.ServiceRegistration, Type>

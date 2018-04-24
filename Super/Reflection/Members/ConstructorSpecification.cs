@@ -1,7 +1,8 @@
-﻿using System;
-using System.Reflection;
-using Super.Model.Collections;
+﻿using Super.Model.Extents;
+using Super.Model.Selection;
 using Super.Model.Specifications;
+using System;
+using System.Reflection;
 
 namespace Super.Reflection.Members
 {
@@ -9,10 +10,11 @@ namespace Super.Reflection.Members
 	{
 		public static ConstructorSpecification Default { get; } = new ConstructorSpecification();
 
-		ConstructorSpecification()
-			: base(HasNone<ParameterInfo>.Default
-			                             .Or(new AllItemsAre<ParameterInfo>(x => x.IsOptional ||
-			                                                                     x.Has<ParamArrayAttribute>()))
-			                             .Select(Parameters.Default)) {}
+		ConstructorSpecification() : base(Parameters.Default
+		                                            .Out()
+		                                            .To(x => x.HasNone()
+		                                                      .Or(x.AllAre(y => y.IsOptional ||
+		                                                                        y.Has<ParamArrayAttribute>())))
+		                                            .Return()) {}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using Super.Model.Commands;
+using Super.Model.Extents;
 using Super.Model.Specifications;
 using Super.Runtime;
 using System.Reactive;
@@ -23,11 +24,11 @@ namespace Super.Model.Sources
 
 	public class Assignment<T> : DecoratedMutable<T>, ISpecification
 	{
-		readonly ISpecification _specification;
+		readonly ISpecification<Unit> _specification;
 
-		public Assignment(IMutable<T> mutable) : this(IsAssigned<T>.Default.Select(mutable), mutable) {}
+		public Assignment(IMutable<T> mutable) : this(IsAssigned<T>.Default.In().In(mutable).Return(), mutable) {}
 
-		public Assignment(ISpecification specification, IMutable<T> mutable) : base(mutable)
+		public Assignment(ISpecification<Unit> specification, IMutable<T> mutable) : base(mutable)
 			=> _specification = specification;
 
 		public bool IsSatisfiedBy(Unit parameter) => _specification.IsSatisfiedBy(parameter);

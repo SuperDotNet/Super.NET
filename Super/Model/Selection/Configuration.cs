@@ -1,5 +1,6 @@
 ﻿using Super.Model.Commands;
 using System;
+using System.Reactive;
 
 namespace Super.Model.Selection
 {
@@ -22,6 +23,19 @@ namespace Super.Model.Selection
 			var result = _source(parameter);
 			_configuration(parameter, result);
 			return result;
+		}
+	}
+
+	sealed class Configuration<T> : ISelect<T, Unit>
+	{
+		readonly Action<T> _action;
+
+		public Configuration(Action<T> action) => _action = action;
+
+		public Unit Get(T parameter)
+		{
+			_action(parameter);
+			return Unit.Default;
 		}
 	}
 }

@@ -1,6 +1,4 @@
-﻿using Super.Model.Selection.Alterations;
-using Super.Runtime.Activation;
-using Super.Runtime.Execution;
+﻿using Super.Runtime.Activation;
 using System.Reactive;
 
 namespace Super.Model.Specifications
@@ -23,23 +21,5 @@ namespace Super.Model.Specifications
 		public bool IsSatisfiedBy(object _) => _specification.IsSatisfiedBy();
 
 		public bool IsSatisfiedBy(Unit _) => _specification.IsSatisfiedBy();
-	}
-
-	sealed class OnlyOnceAlteration<T> : IAlteration<ISpecification<T>>
-	{
-		public static OnlyOnceAlteration<T> Default { get; } = new OnlyOnceAlteration<T>();
-
-		OnlyOnceAlteration() {}
-
-		public ISpecification<T> Get(ISpecification<T> parameter) => new First().Allow<T>().And(parameter);
-	}
-
-	sealed class OnceAlteration<T> : IAlteration<ISpecification<T>>
-	{
-		public static OnceAlteration<T> Default { get; } = new OnceAlteration<T>();
-
-		OnceAlteration() {}
-
-		public ISpecification<T> Get(ISpecification<T> parameter) => new First<T>().And(parameter);
 	}
 }
