@@ -19,5 +19,7 @@ namespace Super.Testing.Application.Model.Extents
 		{
 			new Source<int>(6776).Out(x => x.Type().Metadata()).Get().Should().Be(Type<int>.Metadata);
 		}
+
+		
 	}
 }

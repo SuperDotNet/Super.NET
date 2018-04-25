@@ -2,7 +2,6 @@
 using AutoFixture.Kernel;
 using Super.Model.Collections;
 using Super.Model.Commands;
-using Super.Model.Extents;
 using Super.Model.Selection;
 using Super.Model.Specifications;
 using Super.Runtime.Activation;
@@ -52,7 +51,9 @@ namespace Super.Application.Hosting.xUnit
 		public InsertCustomization(ISpecimenBuilder specimen) : this(specimen, x => 0) {}
 
 		public InsertCustomization(ISpecimenBuilder specimen, Func<IList<ISpecimenBuilder>, int> index)
-			: base(new InsertIntoList<ISpecimenBuilder>(specimen, index).In(SelectCustomizations.Default)) {}
+			: base(SelectCustomizations.Default
+			                           .Out(new InsertIntoList<ISpecimenBuilder>(specimen, index).ToConfiguration())
+			                           .ToCommand()) {}
 
 		public void Customize(IFixture fixture)
 		{

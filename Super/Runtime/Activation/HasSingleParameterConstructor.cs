@@ -7,17 +7,20 @@ using System.Reflection;
 
 namespace Super.Runtime.Activation
 {
-	sealed class HasSingleParameterConstructor<T> : DecoratedSpecification<ConstructorInfo>
+	sealed class HasSingleParameterConstructor<T> : DelegatedSpecification<ConstructorInfo>
 	{
 		public static HasSingleParameterConstructor<T> Default { get; } = new HasSingleParameterConstructor<T>();
 
 		HasSingleParameterConstructor()
-			: base(IsAssignableFrom<T>.Default
-			                          .In(FirstOrDefaultSelector<ParameterInfo>
-			                                  .Default.Out(ParameterType.Default
-			                                                            .Out(TypeMetadataSelector.Default)
-			                                                            .Assigned()))
-			                          .And(RemainingParametersAreOptional.Default)
-			                          .In(Parameters.Default)) {}
+			: base(Parameters.Default
+			                 .Out(FirstOrDefaultSelector<ParameterInfo>.Default
+			                                                           .Out(ParameterType.Default
+			                                                                             .Out(x => x.Metadata())
+			                                                                             .Assigned())
+			                                                           .Out()
+			                                                           .Out(IsAssignableFrom<T>.Default.IsSatisfiedBy)
+			                                                           .And(RemainingParametersAreOptional.Default.In())
+			                                                           .Get())
+			                 .Get) {}
 	}
 }

@@ -9,6 +9,7 @@ using Super.Runtime.Activation;
 using Super.Runtime.Objects;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reactive;
 using System.Reflection;
@@ -59,8 +60,10 @@ namespace Super
 		public static IOut<TIn, TAttribute> Attribute<TIn, TAttribute>(this IOut<TIn, ICustomAttributeProvider> @this, I<TAttribute> _)
 			=> @this.Out(Attribute<TAttribute>.Default.ToDelegate());
 
-		public static IOut<TIn, TTo> Fold<TIn, TFrom, TTo>(this IOut<TIn, ISelect<TFrom, TTo>> @this)
-			=> @this.Out(x => x.Get(Activation<TFrom>.Default.Get()));
+		public static IOut<TIn, TTo> Fold<TIn, TFrom, TTo>(this IOut<TIn, ISelect<TFrom, TTo>> @this) => @this.Fold(Activation<TFrom>.Default);
+
+		public static IOut<TIn, TTo> Fold<TIn, TFrom, TTo>(this IOut<TIn, ISelect<TFrom, TTo>> @this, ISource<TFrom> select)
+			=> @this.Out(select.Out).Value();
 
 		public static IIn<TIn, TOut> Type<TIn, TOut>(this IIn<Type, TOut> @this, I<TIn> _)
 			=> @this.In(InstanceTypeSelector<TIn>.Default);
@@ -85,8 +88,8 @@ namespace Super
 		public static IIn<T, bool> And<T>(this IIn<T, bool> @this, params IIn<T, bool>[] others)
 			=> new AllSpecification<T>(others.Prepend(@this).Select(x => x.Return()).Fixed()).In();
 
-		public static IOut<T, bool> And<T>(this IOut<T, bool> @this, params IOut<T, bool>[] others)
-			=> new Out<T, bool>(new AllSpecification<T>(others.Prepend(@this).Select(x => x.Return()).Fixed()).IsSatisfiedBy);
+		public static IOut<T, bool> And<T>(this IOut<T, bool> @this, params IIo<T, bool>[] others)
+			=> new Out<T, bool>(new AllSpecification<T>(others.Prepend(@this).Select(x => x.Get()).ToImmutableArray()).IsSatisfiedBy);
 
 		public static IIn<T, bool> Or<T>(this IIn<T, bool> @this, params IIn<T, bool>[] others)
 			=> new AnySpecification<T>(others.Prepend(@this).Select(x => x.Return()).Fixed()).In();

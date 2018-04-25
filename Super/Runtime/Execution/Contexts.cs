@@ -27,13 +27,13 @@ namespace Super.Runtime.Execution
 
 		public DisposeContext(ISpecification<object> assigned, ISpecification<object> resources,
 		                      ISelect<object, IDisposable> select)
-			: base(DisposeCommand.Default
-			                     .In(select)
-			                     .And(AssignedContext.Default.Clear(), ClearResources.Default)
-			                     .In()
-			                     .In(resources.And(assigned))
-			                     .In(ExecutionContext.Default)
-			                     .Return()) {}
+			: base(select.Out(DisposeCommand.Default.ToConfiguration())
+			             .ToCommand()
+			             .And(AssignedContext.Default.Clear(), ClearResources.Default)
+			             .In()
+			             .In(resources.And(assigned))
+			             .In(ExecutionContext.Default)
+			             .Return()) {}
 	}
 
 	sealed class ClearResources : RemoveCommand<object, Disposables>

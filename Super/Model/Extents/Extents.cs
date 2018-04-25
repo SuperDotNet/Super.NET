@@ -14,23 +14,23 @@ namespace Super.Model.Extents
 	{
 		public static IIn<T, bool> In<T>(this ISpecification<T> @this) => new In<T, bool>(@this.IsSatisfiedBy);
 
-		public static ISpecification<TTo> In<TFrom, TTo>(this ISpecification<TFrom> @this, ISelect<TTo, TFrom> select)
-			=> @this.In(select.ToDelegate());
+		/*public static ISpecification<TTo> In<TFrom, TTo>(this ISpecification<TFrom> @this, ISelect<TTo, TFrom> select)
+			=> @this.In(select.ToDelegate());*/
 
-		public static ISpecification<TTo> In<TFrom, TTo>(this ISpecification<TFrom> @this, Func<TTo, TFrom> select)
+		/*public static ISpecification<TTo> In<TFrom, TTo>(this ISpecification<TFrom> @this, Func<TTo, TFrom> select)
 			=> @this.In().In(select).Return();
 
 		public static ISpecification<TOut> In<TIn, TOut>(this ISpecification<TIn> @this,
 		                                                 Func<IIn<TIn, bool>, IIn<TOut, bool>> configure)
-			=> configure(@this.In()).Return();
+			=> configure(@this.In()).Return();*/
 
 		public static IIn<T, Unit> In<T>(this ICommand<T> @this) => new Configuration<T>(@this.Execute).In();
 
-		public static ICommand<TTo> In<TFrom, TTo>(this ICommand<TFrom> @this, ISelect<TTo, TFrom> select)
+		/*public static ICommand<TTo> In<TFrom, TTo>(this ICommand<TFrom> @this, ISelect<TTo, TFrom> select)
 			=> @this.In(select.ToDelegate());
 
 		public static ICommand<TTo> In<TFrom, TTo>(this ICommand<TFrom> @this, Func<TTo, TFrom> select)
-			=> @this.In().In(select).Return();
+			=> @this.In().In(select).Return();*/
 
 		public static ICommand<TOut> In<TIn, TOut>(this ICommand<TIn> @this, Func<IIn<TIn, Unit>, IIn<TOut, Unit>> configure)
 			=> configure(@this.In()).Return();
@@ -39,11 +39,11 @@ namespace Super.Model.Extents
 
 		public static IOut<TIn, TOut> Out<TIn, TOut>(this ISelect<TIn, TOut> @this) => new Out<TIn, TOut>(@this.Get);
 
-		public static ISelect<TTo, TOut> In<TFrom, TTo, TOut>(this ISelect<TFrom, TOut> @this, ISelect<TTo, TFrom> select)
+		/*public static ISelect<TTo, TOut> In<TFrom, TTo, TOut>(this ISelect<TFrom, TOut> @this, ISelect<TTo, TFrom> select)
 			=> @this.In(select.ToDelegate());
 
 		public static ISelect<TTo, TOut> In<TFrom, TTo, TOut>(this ISelect<TFrom, TOut> @this, Func<TTo, TFrom> select)
-			=> @this.In().In(select).Return();
+			=> @this.In().In(select).Return();*/
 
 		public static ISelect<TTo, TOut> In<TFrom, TTo, TOut>(this ISelect<TFrom, TOut> @this,
 		                                                      Func<IIn<TFrom, TOut>, IIn<TTo, TOut>> configure)
@@ -55,12 +55,15 @@ namespace Super.Model.Extents
 		public static ISelect<TIn, TTo> Out<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this, Func<TFrom, TTo> select)
 			=> @this.Out().Out(select).Return();
 
+		public static ISpecification<TIn> Out<TIn, TFrom>(this ISelect<TIn, TFrom> @this, Func<TFrom, bool> select)
+			=> @this.Out().Out(select).Return();
+
 		public static ISelect<TIn, TTo> Out<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this,
 		                                                     Func<IOut<TIn, TFrom>, IOut<TIn, TTo>> configure)
 			=> configure(@this.Out()).Return();
 
 		public static ISource<TTo> Out<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this,
-		                                                     Func<IOut<TIn, TFrom>, IOut<Unit, TTo>> configure)
+		                                                Func<IOut<TIn, TFrom>, IOut<Unit, TTo>> configure)
 			=> configure(@this.Out()).Return();
 
 		public static IOut<Unit, T> Out<T>(this ISource<T> @this)
@@ -82,7 +85,8 @@ namespace Super.Model.Extents
 
 		public static ICommand<T> Return<T>(this IIn<T, Unit> @this) => new InvokeParameterCommand<T>(@this.Get());
 
-		public static ISource<T> Return<T>(this IOut<Unit, T> @this) => new FixedSelection<Unit, T>(@this.ToSelect(), Unit.Default);
+		public static ISource<T> Return<T>(this IOut<Unit, T> @this)
+			=> new FixedSelection<Unit, T>(@this.ToSelect(), Unit.Default);
 
 		public static ISelect<TIn, TOut> Return<TIn, TOut>(this IIo<TIn, TOut> @this) => @this.ToSelect();
 
