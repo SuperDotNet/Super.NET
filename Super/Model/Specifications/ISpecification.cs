@@ -12,11 +12,11 @@ namespace Super.Model.Specifications
 
 	public interface IAny : ISpecification, ISpecification<object> {}
 
-	sealed class Any : IAny, IActivateMarker<ISpecification>
+	sealed class Any : IAny, IActivateMarker<ISpecification<Unit>>
 	{
-		readonly ISpecification _specification;
+		readonly ISpecification<Unit> _specification;
 
-		public Any(ISpecification specification) => _specification = specification;
+		public Any(ISpecification<Unit> specification) => _specification = specification;
 
 		public bool IsSatisfiedBy(object _) => _specification.IsSatisfiedBy();
 

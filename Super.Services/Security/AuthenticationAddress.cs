@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Super.Model.Extents;
 using Super.Model.Selection.Stores;
 using Super.Runtime;
 using System;
@@ -10,7 +11,7 @@ namespace Super.Services.Security
 		public static AuthenticationAddress Default { get; } = new AuthenticationAddress();
 
 		AuthenticationAddress() : base(AuthenticationBaseAddress.Default
-		                                                        .Select(Uris.Default.Assigned())
+		                                                        .Out(Uris.Default.Assigned())
 		                                                        .Or(CurrentRequestUri.Default
 		                                                                             .Out(Authority.Default)
 		                                                                             .Out(Uris.Default))

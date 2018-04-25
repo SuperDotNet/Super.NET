@@ -1,7 +1,7 @@
-﻿using Serilog;
-using Super.Diagnostics.Logging.Configuration;
+﻿using Super.Diagnostics.Logging.Configuration;
+using Super.Model.Extents;
 using Super.Model.Sources;
-using Super.Runtime.Activation;
+using Super.Reflection;
 
 namespace Super.Diagnostics.Logging
 {
@@ -9,9 +9,8 @@ namespace Super.Diagnostics.Logging
 	{
 		public static Logger Default { get; } = new Logger();
 
-		Logger() : base(LoggingConfiguration.Default
-		                                    .Select(Activation<LoggerConfiguration>.Default.Get)
-		                                    .Select(LoggerSelector.Default)
-		                                    .Select(Model.Selection.New<PrimaryLogger>.Default)) {}
+		Logger() : base(LoggingConfiguration.Default.Out(x => x.Fold()
+		                                                       .Out(LoggerSelector.Default)
+		                                                       .New(I<PrimaryLogger>.Default))) {}
 	}
 }

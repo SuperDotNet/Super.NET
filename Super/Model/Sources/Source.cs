@@ -1,6 +1,4 @@
-﻿using Super.Model.Selection;
-
-namespace Super.Model.Sources
+﻿namespace Super.Model.Sources
 {
 	public class Source<T> : ISource<T>
 	{
@@ -11,11 +9,5 @@ namespace Super.Model.Sources
 		public Source(T instance) => _instance = instance;
 
 		public T Get() => _instance;
-	}
-
-	public class Source<TParameter, TResult> : DecoratedSource<TResult>
-	{
-		public Source(ISelect<TParameter, TResult> @select, TParameter parameter)
-			: base(select.Select(parameter).Singleton()) {}
 	}
 }

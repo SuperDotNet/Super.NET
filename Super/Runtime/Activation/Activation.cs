@@ -1,9 +1,7 @@
 ﻿using Super.Model.Selection;
-using Super.Model.Sources;
 using Super.Reflection.Members;
 using Super.Reflection.Types;
 using Super.Runtime.Invocation;
-using System;
 using Instances = Super.Runtime.Invocation.Expressions.Instances;
 
 namespace Super.Runtime.Activation
@@ -19,13 +17,13 @@ namespace Super.Runtime.Activation
 		                    .Get(Type<TResult>.Metadata)) {}
 	}
 
-	public sealed class Activation<T> : FixedSelection<Type, T>, IActivator<T>
+	public sealed class Activation<T> : FixedActivator<T>
 	{
 		public static Activation<T> Default { get; } = new Activation<T>();
 
 		Activation() : base(Constructors<T>.Default
 		                                   .In(ConstructorLocator.Default)
 		                                   .In(TypeMetadataSelector.Default)
-		                                   .Out(Call<T>.Default), Type<T>.Instance) {}
+		                                   .Out(Call<T>.Default)) {}
 	}
 }

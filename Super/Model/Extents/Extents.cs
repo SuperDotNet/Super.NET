@@ -13,7 +13,7 @@ namespace Super.Model.Extents
 	public static class Extensions
 	{
 		public static IIn<T, bool> In<T>(this ISpecification<T> @this) => new In<T, bool>(@this.IsSatisfiedBy);
-		
+
 		public static ISpecification<TTo> In<TFrom, TTo>(this ISpecification<TFrom> @this, ISelect<TTo, TFrom> select)
 			=> @this.In(select.ToDelegate());
 
@@ -59,6 +59,10 @@ namespace Super.Model.Extents
 		                                                     Func<IOut<TIn, TFrom>, IOut<TIn, TTo>> configure)
 			=> configure(@this.Out()).Return();
 
+		public static ISource<TTo> Out<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this,
+		                                                     Func<IOut<TIn, TFrom>, IOut<Unit, TTo>> configure)
+			=> configure(@this.Out()).Return();
+
 		public static IOut<Unit, T> Out<T>(this ISource<T> @this)
 			=> new Out<Unit, T>(new DelegatedResult<Unit, T>(@this.Get).Get);
 
@@ -78,7 +82,7 @@ namespace Super.Model.Extents
 
 		public static ICommand<T> Return<T>(this IIn<T, Unit> @this) => new InvokeParameterCommand<T>(@this.Get());
 
-		public static ISource<T> Return<T>(this IOut<Unit, T> @this) => new Source<Unit, T>(@this.ToSelect(), Unit.Default);
+		public static ISource<T> Return<T>(this IOut<Unit, T> @this) => new FixedSelection<Unit, T>(@this.ToSelect(), Unit.Default);
 
 		public static ISelect<TIn, TOut> Return<TIn, TOut>(this IIo<TIn, TOut> @this) => @this.ToSelect();
 

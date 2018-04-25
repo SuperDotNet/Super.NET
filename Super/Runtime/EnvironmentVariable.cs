@@ -2,7 +2,7 @@
 
 namespace Super.Runtime
 {
-	public class EnvironmentVariable : Source<string, string>
+	public class EnvironmentVariable : FixedDeferredSingleton<string, string>
 	{
 		public EnvironmentVariable(string name) : base(EnvironmentSetting.Default, name) {}
 	}

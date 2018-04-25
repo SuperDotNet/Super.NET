@@ -1,4 +1,5 @@
 ﻿using Super.Model.Collections;
+using Super.Model.Extents;
 using Super.Reflection.Assemblies;
 using System.Linq;
 using System.Reflection;
@@ -10,11 +11,13 @@ namespace Super.Runtime.Environment
 		public static ComponentAssemblies Default { get; } = new ComponentAssemblies();
 
 		ComponentAssemblies() : base(PrimaryAssembly.Default
-		                                            .Select(AssemblyNameSelector.Default)
-		                                            .Select(ComponentAssemblyNames.Default)
-		                                            .Select(Load.Default.Select())
-		                                            .Select(x => x.Append(HostingAssembly.Default, PrimaryAssembly.Default))
-		                                            .Select(x => x.Assigned().Distinct())
+		                                            .Out()
+		                                            .Out(AssemblyNameSelector.Default)
+		                                            .Out(ComponentAssemblyNames.Default)
+		                                            .Out(Load.Default.Select())
+		                                            .Out(x => x.Append(HostingAssembly.Default, PrimaryAssembly.Default))
+		                                            .Out(x => x.Assigned().Distinct())
+		                                            .Return()
 		                                            .Get()) {}
 	}
 }

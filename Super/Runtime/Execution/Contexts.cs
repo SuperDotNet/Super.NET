@@ -20,7 +20,7 @@ namespace Super.Runtime.Execution
 	{
 		public static DisposeContext Default { get; } = new DisposeContext();
 
-		DisposeContext() : this(AssignedContext.Default.Any(), AssociatedResources.Default) {}
+		DisposeContext() : this(AssignedContext.Default.AsSpecification().Any(), AssociatedResources.Default) {}
 
 		public DisposeContext(ISpecification<object> assigned, ISpecification<object, IDisposable> resources)
 			: this(assigned, resources, resources) {}

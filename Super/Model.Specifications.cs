@@ -14,9 +14,9 @@ namespace Super
 		public static Func<T, bool> ToDelegate<T>(this ISpecification<T> @this) => @this.IsSatisfiedBy;
 		public static Func<T, bool> ToDelegateReference<T>(this ISpecification<T> @this) => Delegates<T>.Default.Get(@this);
 
-		public static bool IsSatisfiedBy(this ISpecification @this) => @this.IsSatisfiedBy(Unit.Default);
+		public static bool IsSatisfiedBy(this ISpecification<Unit> @this) => @this.IsSatisfiedBy(Unit.Default);
 
-		public static IAny Any(this ISpecification @this) => I<Any>.Default.From(@this);
+		public static IAny Any(this ISpecification<Unit> @this) => I<Any>.Default.From(@this);
 
 		public static ISpecification<T> ToSpecification<T>(this ISelect<T, bool> @this) => @this.ToDelegateReference().ToSpecification();
 		public static ISpecification<T> ToSpecification<T>(this Func<T, bool> @this) => Specifications<T>.Default.Get(@this);

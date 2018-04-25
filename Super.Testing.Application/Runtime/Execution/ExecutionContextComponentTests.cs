@@ -31,6 +31,13 @@ namespace Super.Testing.Application.Runtime.Execution
 			                         .Be("Local Context");
 		}
 
+		[Fact]
+		void VerifyTest()
+		{
+			ExecutionContextComponent.Default.Get();
+			ExecutionContextComponent.Default.Get();
+		}
+
 		sealed class DefaultExecutionContext : DelegatedSource<object>, IExecutionContext
 		{
 			[UsedImplicitly]

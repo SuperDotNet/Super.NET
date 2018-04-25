@@ -2,7 +2,6 @@
 using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Sources;
-using Super.Reflection;
 using Super.Runtime.Activation;
 using System;
 
@@ -62,7 +61,7 @@ namespace Super.Application
 			            .Out(YieldSelector<IRegistration>.Default)
 			            .Out(new AppendValueSelector<IRegistration>(registration))
 			            .Out(New<CompositeRegistration>.Default)
-			            .Out(ServiceOptions.Default.Select(I<Services>.Default).Get)
+			            .Out(x => x.Get(new Services(ServiceOptions.Default.Get())))
 			            .Out(Cast<IServices>.Default)
 			            .Out(ServiceConfiguration.Default.ToCommand().ToConfiguration())) {}
 	}

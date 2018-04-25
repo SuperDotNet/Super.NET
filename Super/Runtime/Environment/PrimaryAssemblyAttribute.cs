@@ -1,4 +1,5 @@
-﻿using Super.Model.Sources;
+﻿using Super.Model.Extents;
+using Super.Model.Sources;
 using Super.Reflection;
 using System;
 using System.Reflection;
@@ -21,6 +22,9 @@ namespace Super.Runtime.Environment
 	{
 		public static HostingAssembly Default { get; } = new HostingAssembly();
 
-		HostingAssembly() : base(Attribute<HostingAttribute>.Default.Select(PrimaryAssembly.Default).Select().Get()) {}
+		HostingAssembly() : base(PrimaryAssembly.Default
+		                                        .Out(x => x.Attribute(I<HostingAttribute>.Default)
+		                                                   .Value())
+		                                        .Get()) {}
 	}
 }

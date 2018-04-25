@@ -9,9 +9,9 @@ namespace Super.Runtime.Invocation
 	public class DurableRetry<T> : DurableObservableSource<T>
 	{
 		public DurableRetry(ILogger logger, PolicyBuilder policy)
-			: base(new RetryPolicies(new LogRetryException(logger).Execute).Select(policy).Get()) {}
+			: base(new RetryPolicies(new LogRetryException(logger).Execute).Get(policy)) {}
 
 		public DurableRetry(ILogger logger, PolicyBuilder<T> policy)
-			: base(new RetryPolicies<T>(new LogRetryException(logger).Execute).Select(policy).Get()) {}
+			: base(new RetryPolicies<T>(new LogRetryException(logger).Execute).Get(policy)) {}
 	}
 }

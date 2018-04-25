@@ -5,6 +5,6 @@ namespace Super.Model.Sources
 	public class FixedDeferredSingleton<TParameter, TResult> : DeferredSingleton<TResult>
 	{
 		public FixedDeferredSingleton(ISelect<TParameter, TResult> @select, TParameter parameter)
-			: base(@select.Select(parameter)) {}
+			: base(new FixedSelection<TParameter,TResult>(@select, parameter)) {}
 	}
 }

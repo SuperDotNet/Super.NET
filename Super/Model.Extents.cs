@@ -44,7 +44,7 @@ namespace Super
 		public static IIn<TTo, TOut> Cast<TIn, TOut, TTo>(this IIn<TIn, TOut> @this, I<TTo> _)
 			=> @this.In(Cast<TTo, TIn>.Default);
 
-		public static IOut<TIn, TTo> Cast<TIn, TOut, TTo>(this IOut<TIn, TOut> @this, I<TTo> _)
+		public static IOut<TIn, TTo> Cast<TIn, TOut, TTo>(this IIo<TIn, TOut> @this, I<TTo> _)
 			=> @this.Out(Cast<TOut, TTo>.Default);
 
 		public static IIn<TNew, TOut> New<TIn, TOut, TNew>(this IIn<TIn, TOut> @this, I<TNew> _)
@@ -52,6 +52,15 @@ namespace Super
 
 		public static IOut<TIn, TNew> New<TIn, TOut, TNew>(this IOut<TIn, TOut> @this, I<TNew> _)
 			=> @this.Out(Activations<TOut, TNew>.Default.ToDelegate());
+
+		public static IOut<TIn, TNew> Activate<TIn, TOut, TNew>(this IOut<TIn, TOut> @this, I<TNew> _) where TNew : IActivateMarker<TOut>
+			=> @this.Out(MarkedActivations<TOut, TNew>.Default.ToDelegate());
+
+		public static IOut<TIn, TAttribute> Attribute<TIn, TAttribute>(this IOut<TIn, ICustomAttributeProvider> @this, I<TAttribute> _)
+			=> @this.Out(Attribute<TAttribute>.Default.ToDelegate());
+
+		public static IOut<TIn, TTo> Fold<TIn, TFrom, TTo>(this IOut<TIn, ISelect<TFrom, TTo>> @this)
+			=> @this.Out(x => x.Get(Activation<TFrom>.Default.Get()));
 
 		public static IIn<TIn, TOut> Type<TIn, TOut>(this IIn<Type, TOut> @this, I<TIn> _)
 			=> @this.In(InstanceTypeSelector<TIn>.Default);
@@ -99,5 +108,7 @@ namespace Super
 
 		public static IOut<TIn, bool> AllAre<TIn, TOut>(this IOut<TIn, ICollection<TOut>> @this, Func<TOut, bool> condition)
 			=> @this.Out(new AllItemsAre<TOut>(condition).IsSatisfiedBy);
+
+		public static IOut<TIn, TOut> Value<TIn, TOut>(this IOut<TIn, ISource<TOut>> @this) => @this.Out(ValueSelector<TOut>.Default);
 	}
 }

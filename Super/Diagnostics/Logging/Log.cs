@@ -1,6 +1,7 @@
 ﻿using Serilog;
 using Serilog.Core;
 using Serilog.Events;
+using Super.Model.Extents;
 using Super.Runtime.Execution;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace Super.Diagnostics.Logging
 	{
 		public static Log<T> Default { get; } = new Log<T>();
 
-		Log() : base(Logger.Default.Select(ContextSelector<T>.Default)) {}
+		Log() : base(Logger.Default.Out(ContextSelector<T>.Default)) {}
 
 		ILogger ILogger.ForContext(ILogEventEnricher enricher) => Get().ForContext(enricher);
 
