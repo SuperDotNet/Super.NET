@@ -12,6 +12,6 @@ namespace Super.Text
 			: this(Pairs.Select(pairs).Or(@default.AsDefault())) {}
 
 		public TextSelect(ISelect<string, Func<TParameter, TResult>> select)
-			: base(select.In(NullOrEmptySelector.Default).Get) {}
+			: base(NullOrEmptySelector.Default.Out(select).Get) {}
 	}
 }

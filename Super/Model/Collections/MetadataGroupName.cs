@@ -8,7 +8,7 @@ namespace Super.Model.Collections
 			: this(DeclaredGroupNames<T>.Default, names) {}
 
 		public MetadataGroupName(ISpecification<T, string> name, ISpecification<string, GroupName> names)
-			: this(name, names.In(name)) {}
+			: this(name, name.Out(names)) {}
 
 		public MetadataGroupName(ISpecification<T, string> name, ISpecification<T, GroupName> names) :
 			base(name.And(names), names) {}

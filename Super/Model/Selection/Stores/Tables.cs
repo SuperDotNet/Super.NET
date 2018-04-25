@@ -1,5 +1,4 @@
-﻿using Super.Model.Extents;
-using Super.Model.Specifications;
+﻿using Super.Model.Specifications;
 using Super.Reflection.Types;
 using Super.Runtime.Activation;
 using System;
@@ -12,9 +11,7 @@ namespace Super.Model.Selection.Stores
 
 		Tables()
 			: this(IsValueType.Default.IsSatisfiedBy(typeof(TParameter))
-				       ? MarkedActivations<Func<TParameter, TResult>, ConcurrentTables<TParameter, TResult>>
-				         .Default
-				         .Out(x => x.Fold())
+				       ? MarkedActivations<Func<TParameter, TResult>, ConcurrentTables<TParameter, TResult>>.Default.Fold()
 				       : new Generic<ISelect<Func<TParameter, TResult>, ITable<TParameter, TResult>>>(typeof(ReferenceTables<,>))
 					       .Get(typeof(TParameter), typeof(TResult))()) {}
 

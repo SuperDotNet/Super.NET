@@ -30,8 +30,6 @@ namespace Super
 		public static ISelect<TParameter, TResult> Allow<TParameter, TResult>(this ISource<TResult> @this, I<TParameter> _)
 			=> new DelegatedResult<TParameter, TResult>(@this.Get);
 
-		/*public static ISource<T> Singleton<T>(this ISource<T> @this) => SingletonSelector<T>.Default.Get(@this);*/
-
 		public static ISource<T> ToSource<T>(this T @this) => Sources<T>.Default.Get(@this);
 
 		public static ISource<T> ToSource<T>(this Func<T> @this) => I<DelegatedSource<T>>.Default.From(@this);

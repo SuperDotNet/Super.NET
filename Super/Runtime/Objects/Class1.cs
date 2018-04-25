@@ -20,9 +20,10 @@ namespace Super.Runtime.Objects
 	{
 		Type InstanceType { get; }
 	}
+
 	public sealed class Projection : ReadOnlyDictionary<string, object>, IProjection
 	{
-		readonly string                      _text;
+		readonly string _text;
 
 		public Projection(string text, Type instanceType, IEnumerable<KeyValuePair<string, object>> properties)
 			: this(text, instanceType, properties.ToOrderedDictionary()) {}
@@ -64,14 +65,15 @@ namespace Super.Runtime.Objects
 			: base(DefaultApplicationDomainFormatter.Default.Project(x => x.FriendlyName, x => x.Id),
 			       ApplicationDomainName.Default.Entry(x => x.FriendlyName, x => x.Id, x => x.IsFullyTrusted),
 			       ApplicationDomainIdentifier.Default.Entry(x => x.FriendlyName, x => x.Id, x => x.BaseDirectory,
-			                                                   x => x.RelativeSearchPath)) {}
+			                                                 x => x.RelativeSearchPath)) {}
 	}
 
 	public interface IFormattedProjection<in T> : ISelect<string, T, IProjection> {}
 
 	class FormattedProjection<T> : TextSelect<T, IProjection>, IFormattedProjection<T>
 	{
-		public FormattedProjection(ISelect<T, IProjection> @default, params KeyValuePair<string, Func<T, IProjection>>[] pairs)
+		public FormattedProjection(ISelect<T, IProjection> @default,
+		                           params KeyValuePair<string, Func<T, IProjection>>[] pairs)
 			: base(@default, pairs) {}
 	}
 
@@ -124,8 +126,12 @@ namespace Super.Runtime.Objects
 	{
 		[UsedImplicitly]
 		public Property(Expression<Func<T, object>> expression)
-			: base(new Invocation1<string, object, KeyValuePair<string, object>>(Pairs.Create,
-			                                                                     expression.GetMemberInfo().Name)
-				       .In(expression.Compile())) {}
+			: this(expression,
+			       new Invocation1<string, object, KeyValuePair<string, object>>(Pairs.Create,
+			                                                                     expression.GetMemberInfo().Name)) {}
+
+		[UsedImplicitly]
+		public Property(Expression<Func<T, object>> expression, ISelect<object, KeyValuePair<string, object>> pairs)
+			: base(expression.Compile().Return().Out(pairs)) {}
 	}
 }

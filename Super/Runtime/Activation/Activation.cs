@@ -1,7 +1,7 @@
 ﻿using Super.Model.Selection;
 using Super.Reflection.Members;
 using Super.Reflection.Types;
-using Super.Runtime.Invocation;
+using System;
 using Instances = Super.Runtime.Invocation.Expressions.Instances;
 
 namespace Super.Runtime.Activation
@@ -12,8 +12,7 @@ namespace Super.Runtime.Activation
 
 		Activation() : base(new ConstructorLocator(HasSingleParameterConstructor<TParameter>.Default)
 		                    .Out(ParameterConstructors<TParameter, TResult>.Default.Assigned())
-		                    .Or(new ParameterConstructors<TParameter, TResult>(Instances.Default)
-			                        .In(ConstructorLocator.Default))
+		                    .Or(ConstructorLocator.Default.Out(new ParameterConstructors<TParameter, TResult>(Instances.Default)))
 		                    .Get(Type<TResult>.Metadata)) {}
 	}
 
@@ -21,9 +20,9 @@ namespace Super.Runtime.Activation
 	{
 		public static Activation<T> Default { get; } = new Activation<T>();
 
-		Activation() : base(Constructors<T>.Default
-		                                   .In(ConstructorLocator.Default)
-		                                   .In(TypeMetadataSelector.Default)
-		                                   .Out(Call<T>.Default)) {}
+		Activation() : base(In<Type>.Start(x => x.Metadata())
+		                            .Out(ConstructorLocator.Default)
+		                            .Out(Constructors<T>.Default)
+		                            .Invoke()) {}
 	}
 }

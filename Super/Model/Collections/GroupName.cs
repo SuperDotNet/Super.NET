@@ -18,6 +18,6 @@ namespace Super.Model.Collections
 	sealed class GroupName<T> : DecoratedSelect<T, GroupName>, IGroupName<T>
 	{
 		public GroupName(GroupName defaultName, ISpecification<string, GroupName> names)
-			: base(new MetadataGroupName<T>(names).Or(In<T>.Result(defaultName))) {}
+			: base(new MetadataGroupName<T>(names).Or(In<T>.Start(defaultName))) {}
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using AutoFixture.Kernel;
 using Super.Model.Selection;
+using Super.Reflection;
 using System;
 
 namespace Super.Application.Hosting.xUnit
@@ -10,7 +11,7 @@ namespace Super.Application.Hosting.xUnit
 		readonly Func<T, ISpecimenBuilderNode> _delegate;
 
 		protected BuilderSelection(Func<T, ISpecimenBuilder> @delegate)
-			: this(@delegate.ToSelect().Out(New<CustomizationNode>.Default)) {}
+			: this(@delegate.Return().New(I<CustomizationNode>.Default)) {}
 
 		protected BuilderSelection(ISelect<T, ISpecimenBuilderNode> select) : this(select.Get) {}
 

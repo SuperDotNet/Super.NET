@@ -1,4 +1,3 @@
-using Super.Model.Extents;
 using Super.Model.Specifications;
 using System.Reflection;
 
@@ -9,6 +8,6 @@ namespace Super.Reflection.Types
 		public static HasGenericArguments Default { get; } = new HasGenericArguments();
 
 		HasGenericArguments() : base(IsGenericType.Default,
-		                             GenericArgumentsSelector.Default.Out().HasAny().Return()) {}
+		                             GenericArgumentsSelector.Default.HasAny().Return()) {}
 	}
 }

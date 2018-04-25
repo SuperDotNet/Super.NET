@@ -24,13 +24,13 @@ namespace Super
 			=> @this.Execute(new ExceptionParameter<TimeSpan>(result.Exception, span));
 
 		public static IAlteration<LoggerConfiguration> ToConfiguration(this ILoggingSinkConfiguration @this)
-			=> @this.In(LoggerSinkSelector.Default).ToAlteration();
+			=> LoggerSinkSelector.Default.Out(@this).ToAlteration();
 
 		public static IAlteration<LoggerConfiguration> ToConfiguration(this ILoggingEnrichmentConfiguration @this)
-			=> @this.In(LoggerEnrichmentSelector.Default).ToAlteration();
+			=> LoggerEnrichmentSelector.Default.Out(@this).ToAlteration();
 
 		public static IAlteration<LoggerConfiguration> ToConfiguration(this ILoggingDestructureConfiguration @this)
-			=> @this.In(LoggerDestructureSelector.Default).ToAlteration();
+			=> LoggerDestructureSelector.Default.Out(@this).ToAlteration();
 
 		public static ILoggingConfiguration WithProjections(this ILoggingSinkConfiguration @this)
 			=> @this.To(I<ProjectionAwareSinkDecoration>.Default);

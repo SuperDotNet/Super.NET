@@ -1,5 +1,4 @@
-﻿using Super.Model.Collections;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
 using Super.Model.Specifications;
 using System;
 using System.Collections.Immutable;
@@ -17,7 +16,7 @@ namespace Super.Reflection
 
 		public Attributes(ISpecification<ICustomAttributeProvider> specification,
 		                  IDeclared<TAttribute> attribute, Func<TAttribute, T> select)
-			: base(specification, specification.If(attribute.Out(select.ToSelect().Select()).Out(Set<T>.Enumerate).ToStore())) {}
+			: base(specification, specification.If(attribute.Out(select.Return().Select()).Enumerate().ToStore())) {}
 	}
 
 	sealed class Attributes<T> : DecoratedSelect<ICustomAttributeProvider, ImmutableArray<T>>, IAttributes<T>
@@ -28,6 +27,6 @@ namespace Super.Reflection
 
 		Attributes() : this(Declared<T>.Default) {}
 
-		public Attributes(IDeclared<T> declared) : base(declared.Out(Set<T>.Enumerate)) {}
+		public Attributes(IDeclared<T> declared) : base(declared.Enumerate()) {}
 	}
 }

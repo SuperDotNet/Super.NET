@@ -1,9 +1,7 @@
 ﻿using Polly;
 using Super.Model.Commands;
-using Super.Model.Extents;
 using Super.Model.Selection;
 using Super.Model.Sources;
-using Super.Reflection;
 using Super.Runtime.Execution;
 using System;
 using System.Reactive;
@@ -16,7 +14,11 @@ namespace Super.Runtime.Invocation.Operations
 	class EventSubscriber : EventSubscriber<EventArgs>
 	{
 		public EventSubscriber(ICommand<EventHandler> add, ICommand<EventHandler> remove)
-			: base(add.In(x => x.New(I<EventHandler<EventArgs>>.Default)), remove.In(x => x.New(I<EventHandler<EventArgs>>.Default))) {}
+			: this(In<EventHandler<EventArgs>>.New<EventHandler>(), add, remove) {}
+
+		public EventSubscriber(ISelect<EventHandler<EventArgs>, EventHandler> select, ICommand<EventHandler> add,
+		                       ICommand<EventHandler> remove)
+			: base(select.Enter(add), select.Enter(remove)) {}
 	}
 
 	class EventSubscriber<T> : Subscriber<EventPattern<T>> where T : EventArgs

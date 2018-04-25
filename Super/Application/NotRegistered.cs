@@ -2,6 +2,7 @@
 using Super.Model.Collections;
 using Super.Model.Selection;
 using Super.Model.Specifications;
+using Super.Reflection;
 using System;
 
 namespace Super.Application
@@ -12,7 +13,7 @@ namespace Super.Application
 
 		NotRegistered() : base(In<IServiceRegistry>.Select(x => x.AvailableServices)
 		                                           .Out(ServiceTypeSelector.Default)
-		                                           .Out(New<NotHave<Type>>.Default)
+		                                           .Activate(I<NotHave<Type>>.Default)
 		                                           .Out(DelegateSelector<Type>.Default)) {}
 	}
 }

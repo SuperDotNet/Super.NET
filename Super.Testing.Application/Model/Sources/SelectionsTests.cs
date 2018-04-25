@@ -51,7 +51,7 @@ namespace Super.Testing.Application.Model.Sources
 			subject.Should()
 			       .BeSameAs(Subject<string, int>.Default.ToDelegateReference());
 
-			subject.ToSelect().Should().BeSameAs(subject.ToSelect());
+			subject.Return().Should().BeSameAs(subject.Return());
 		}
 	}
 }

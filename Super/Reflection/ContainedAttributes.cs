@@ -1,5 +1,4 @@
 ﻿using Super.Model.Selection;
-using Super.Model.Sources;
 using Super.Model.Specifications;
 using System;
 using System.Reflection;
@@ -8,6 +7,8 @@ namespace Super.Reflection
 {
 	sealed class ContainedAttributes<TAttribute, T> : Attributes<TAttribute, T> where TAttribute : Attribute
 	{
+		readonly static Func<TAttribute, T> Select = In<TAttribute>.CastForValue<T>().Get;
+
 		public static ContainedAttributes<TAttribute, T> Default { get; } = new ContainedAttributes<TAttribute, T>();
 
 		public static ContainedAttributes<TAttribute, T> Inherited { get; }
@@ -15,8 +16,7 @@ namespace Super.Reflection
 
 		ContainedAttributes() : this(Declared<TAttribute>.Default) {}
 
-		public ContainedAttributes(IDeclared<TAttribute> attribute)
-			: this(attribute, ValueSelector<T>.Default.In(Cast<TAttribute>.Default).Get) {}
+		public ContainedAttributes(IDeclared<TAttribute> attribute) : this(attribute, Select) {}
 
 		public ContainedAttributes(IDeclared<TAttribute> attribute, Func<TAttribute, T> select)
 			: this(IsContainedAttribute<TAttribute>.Default, attribute, select) {}

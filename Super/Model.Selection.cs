@@ -22,19 +22,22 @@ namespace Super
 			this Func<TIn, TOut> @this, I<TParameter> infer)
 			=> I<Select<TParameter, TIn, TOut>>.Default.From(@this.ToSource().Allow(infer).ToDelegate());
 
-		public static ISelect<T, T> Guard<T>(this IMessage<object> @this)
-			=> new AssignedInstanceGuard<T>(@this.In(Cast<T>.Default)).If(Model.Selection.Self<T>.Default);
+		public static ISelect<TParameter, TResult> Guard<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
+			=> @this.Guard(DefaultMessage<TParameter, TResult>.Default);
 
-		/*public static ISelect<TParameter, TResult> Guard<TParameter, TResult>(
+		public static ISelect<TParameter, TResult> Guard<TParameter, TResult>(this ISelect<TParameter, TResult> @this, IMessage<TParameter> message)
+			=> new AssignedInstanceGuard<TParameter>(message).If(@this);
+
+		/*public static ISelect<TParameter, TResult> Guard<TParameter, TResult>(this ISelect<TParameter, TResult> @this,
+		                                                                      Func<TParameter, string> message)
+			=> @this.Guard(new Message<TParameter>(message));
+
+		public static ISelect<TParameter, TResult> Guard<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this) => @this.Or(GuardedFallback<TParameter, TResult>.Default);
 
 		public static ISelect<TParameter, TResult> Guard<TParameter, TResult>(
-			this ISelect<TParameter, TResult> @this, Func<TParameter, string> message)
-			=> @this.Guard(new Message<TParameter>(message));*/
-
-		public static ISelect<TParameter, TResult> Guard<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, IMessage<TParameter> message)
-			=> @this.Or(new GuardedFallback<TParameter, TResult>(message));
+			=> @this.Or(new GuardedFallback<TParameter, TResult>(message));*/
 
 		public static ISelect<TParameter, TResult> Try<TException, TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, I<TException> infer) where TException : Exception
@@ -42,6 +45,14 @@ namespace Super
 
 		public static ISelect<TParameter, TResult> Default<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
 			=> Defaults<TParameter, TResult>.Default.Get(@this);
+
+		public static ISelect<TParameter, TResult> OrGuard<TParameter, TResult>(
+			this ISelect<TParameter, TResult> @this)
+			=> @this.Or(GuardedFallback<TParameter, TResult>.Default);
+
+		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(
+			this ISelect<TParameter, TResult> @this, IMessage<TParameter> message)
+			=> @this.Or(new GuardedFallback<TParameter, TResult>(message));
 
 		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, ISource<TResult> source)
@@ -55,10 +66,6 @@ namespace Super
 			this ISelect<TParameter, TResult> @this, ISpecification<TResult> specification,
 			ISelect<TParameter, TResult> fallback)
 			=> @this.ToDelegate().Or(specification.IsSatisfiedBy, fallback.Get);
-
-		/*public static ISelect<TParameter, TResult> Or<TParameter, TResult>(
-			this Func<TParameter, TResult> @this,
-			Func<TParameter, TResult> fallback) => @this.Or(IsAssigned<TResult>.Default.IsSatisfiedBy, fallback);*/
 
 		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(
 			this Func<TParameter, TResult> @this, Func<TResult, bool> specification,
@@ -76,7 +83,7 @@ namespace Super
 
 		public static ISelect<TParameter, TResult> Unless<TParameter, TResult, TOther>(
 			this ISelect<TParameter, TResult> @this, ISelect<TOther, TResult> then)
-			=> @this.Unless<TParameter, TResult>(IsType<TParameter, TOther>.Default, then.In(Cast<TParameter>.Default));
+			=> @this.Unless<TParameter, TResult>(IsType<TParameter, TOther>.Default, In<TParameter>.Cast(then));
 
 		public static ISelect<TParameter, TResult> Unless<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, ISpecification<TParameter> specification, ISelect<TParameter, TResult> then)
@@ -89,13 +96,11 @@ namespace Super
 		public static ISelect<TParameter, TResult> Assigned<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this) => IsAssigned<TParameter>.Default.If(@this);
 
-		/*public static T Get<T>(this ISelect<Unit, T> @this) => @this.Get(Unit.Default);*/
-
 		public static Func<TParameter, TResult> ToDelegate<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
 			=> @this.Get;
 
-		public static Func<TParameter, TResult> ToDelegateReference<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
-			=> Delegates<TParameter, TResult>.Default.Get(@this);
+		public static Func<TParameter, TResult> ToDelegateReference<TParameter, TResult>(
+			this ISelect<TParameter, TResult> @this) => Delegates<TParameter, TResult>.Default.Get(@this);
 
 		public static ISelect<TParameter, TResult> ToStore<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
 			where TParameter : class => @this.ToDelegateReference().ToStore();
@@ -107,12 +112,6 @@ namespace Super
 			this ISelect<TParameter, TResult> @this)
 			where TResult : class
 			where TParameter : class => new ReferenceValueTable<TParameter, TResult>(@this.Get);
-
-		public static ISelect<TParameter, TResult> ToSelect<TParameter, TResult>(this TResult @this, I<TParameter> _)
-			=> new FixedResult<TParameter, TResult>(@this);
-
-		public static ISelect<TParameter, TResult> ToSelect<TParameter, TResult>(this Func<TParameter, TResult> @this)
-			=> Selections<TParameter, TResult>.Default.Get(@this);
 
 		/*public static ISelect<TParameter, TResult> ToSelect<TParameter, TResult, TAttribute>(
 			this TResult @this, I<TAttribute> _) where TAttribute : Attribute

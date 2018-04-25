@@ -1,5 +1,4 @@
 ﻿using Super.Model.Commands;
-using Super.Model.Extents;
 using Super.Model.Specifications;
 using Super.Runtime;
 using System.Reactive;
@@ -26,7 +25,7 @@ namespace Super.Model.Sources
 	{
 		readonly ISpecification<Unit> _specification;
 
-		public Assignment(IMutable<T> mutable) : this(IsAssigned<T>.Default.In().In(mutable).Return(), mutable) {}
+		public Assignment(IMutable<T> mutable) : this(mutable.Enter(IsAssigned<T>.Default), mutable) {}
 
 		public Assignment(ISpecification<Unit> specification, IMutable<T> mutable) : base(mutable)
 			=> _specification = specification;

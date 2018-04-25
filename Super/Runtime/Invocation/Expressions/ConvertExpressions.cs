@@ -1,9 +1,7 @@
-﻿using Super.Model.Extents;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
 using Super.Model.Selection.Stores;
 using Super.Model.Specifications;
-using Super.Reflection;
 using System;
 using System.Linq.Expressions;
 
@@ -21,7 +19,7 @@ namespace Super.Runtime.Invocation.Expressions
 		public static ConvertExpression Default { get; } = new ConvertExpression();
 
 		ConvertExpression() :
-			this(ShouldConvertExpressions.Default.Out(x => x.In().Type(I<Expression>.Default).Return()).Get,
+			this(ShouldConvertExpressions.Default.Out(In<Expression>.Start(y => y.Type()).Enter).Get,
 			     ConvertAlterations.Default.Get) {}
 
 		readonly Func<Type, ISpecification<Expression>> _specification;

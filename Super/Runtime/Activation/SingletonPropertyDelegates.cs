@@ -10,8 +10,8 @@ namespace Super.Runtime.Activation
 	{
 		public static SingletonPropertyDelegates Default { get; } = new SingletonPropertyDelegates();
 
-		SingletonPropertyDelegates() : base(MethodDelegates<Func<object>>.Default
-		                                                                 .In(PropertyAccessMethodSelector.Default)
-		                                                                 .Out(SingletonDelegateSelector<object>.Default)) {}
+		SingletonPropertyDelegates() : base(PropertyAccessMethodSelector.Default
+		                                                                .Out(MethodDelegates<Func<object>>.Default)
+		                                                                .Out(SingletonDelegateSelector<object>.Default)) {}
 	}
 }

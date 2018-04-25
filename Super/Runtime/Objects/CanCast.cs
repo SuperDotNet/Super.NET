@@ -1,6 +1,5 @@
-﻿using Super.Model.Extents;
+﻿using Super.Model.Selection;
 using Super.Model.Specifications;
-using Super.Reflection;
 using Super.Reflection.Types;
 
 namespace Super.Runtime.Objects
@@ -10,10 +9,7 @@ namespace Super.Runtime.Objects
 		public static CanCast<TFrom, TTo> Default { get; } = new CanCast<TFrom, TTo>();
 
 		CanCast() : base(IsAssigned<TFrom>.Default,
-		                 IsAssignableFrom<TTo>.Default
-		                                      .In()
-		                                      .Metadata()
-		                                      .Type(I<TFrom>.Default)
-		                                      .Return()) {}
+		                 In<TFrom>.Start(x => x.Type().Metadata())
+		                          .Enter(IsAssignableFrom<TTo>.Default)) {}
 	}
 }

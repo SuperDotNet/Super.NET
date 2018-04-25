@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Super.Model.Selection;
+using Super.Model.Selection.Alterations;
+using System;
 using System.Linq.Expressions;
-using Super.Model.Selection;
 
 namespace Super.Runtime.Invocation.Expressions
 {
@@ -12,10 +13,11 @@ namespace Super.Runtime.Invocation.Expressions
 			: this(@select, ReturnType<TResult>.Default.Get(), expressions) {}
 
 		public Delegates(ISelect<TParameter, Expression> @select, Type resultType, params ParameterExpression[] parameters)
-			: base(ConvertExpressions.Default
-			                        .Get(resultType)
-			                        .Out(new Lambda<TResult>(parameters))
-			                        .Out(Compiler<TResult>.Default)
-			                        .In(@select)) {}
+			: this(select, ConvertExpressions.Default.Get(resultType), parameters) {}
+
+		public Delegates(ISelect<TParameter, Expression> @select, IAlteration<Expression> alteration, params ParameterExpression[] parameters)
+			: base(@select.Out(alteration)
+			              .Out(new Lambda<TResult>(parameters))
+			              .Out(Compiler<TResult>.Default)) {}
 	}
 }

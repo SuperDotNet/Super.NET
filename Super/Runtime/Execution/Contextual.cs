@@ -1,6 +1,7 @@
 ﻿using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Sources;
+using Super.Reflection;
 using System;
 
 namespace Super.Runtime.Execution
@@ -34,8 +35,8 @@ namespace Super.Runtime.Execution
 
 		public ContextualResource(ISource<T> source) : this(source.Any().ToStore()) {}
 
-		public ContextualResource(ISelect<object, T> source) : base(source.Out(Cast<IDisposable>.Default)
+		public ContextualResource(ISelect<object, T> source) : base(source.Cast(I<IDisposable>.Default)
 		                                                                  .Configure(Implementations.Assign)
-		                                                                  .Out(Cast<T>.Default)) {}
+		                                                                  .Cast(I<T>.Default)) {}
 	}
 }

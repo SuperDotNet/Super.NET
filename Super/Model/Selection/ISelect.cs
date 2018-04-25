@@ -1,23 +1,18 @@
-﻿using Super.Model.Sources;
-using Super.Runtime.Activation;
-using Super.Runtime.Objects;
-using System;
-
-namespace Super.Model.Selection
+﻿namespace Super.Model.Selection
 {
 	public interface ISelect<in TParameter, out TResult>
 	{
 		TResult Get(TParameter parameter);
 	}
 
-	public interface ISelect<T>
+	/*public interface ISelect<T>
 	{
 		Func<TOut, T> Out<TOut>();
 
 		Func<T, TIn> In<TIn>();
-	}
+	}*/
 
-	public sealed class New<T> : ISelect<T>
+	/*public sealed class New<T> : ISelect<T>
 	{
 		public static New<T> Default { get; } = new New<T>();
 
@@ -26,9 +21,9 @@ namespace Super.Model.Selection
 		public Func<TOut, T> Out<TOut>() => Activations<TOut, T>.Default.ToDelegateReference();
 
 		public Func<T, TIn> In<TIn>() => Activations<T, TIn>.Default.ToDelegateReference();
-	}
+	}*/
 
-	sealed class CastOrValue<T> : ISelect<T>
+	/*sealed class CastOrValue<T> : ISelect<T>
 	{
 		public static CastOrValue<T> Default { get; } = new CastOrValue<T>();
 
@@ -65,5 +60,5 @@ namespace Super.Model.Selection
 
 			Delegate() : base(CanCast<TFrom, TTo>.Default.If(CastSelector<TFrom, TTo>.Default, Default<TFrom, TTo>.Instance)) {}
 		}
-	}
+	}*/
 }

@@ -1,5 +1,4 @@
-﻿using Super.Model.Extents;
-using Super.Model.Sources;
+﻿using Super.Model.Sources;
 using Super.Model.Specifications;
 using Super.Reflection.Types;
 using System;
@@ -12,10 +11,6 @@ namespace Super.Reflection
 		public static IsContainedAttribute<T> Default { get; } = new IsContainedAttribute<T>();
 
 		IsContainedAttribute()
-			: base(IsDefined<T>.Default
-			                   .In()
-			                   .And(IsAssignableFrom<ISource<T>>.Default.In().In(Type<T>.Metadata).Allow())
-			                   .Cast(I<object>.Default)
-			                   .Return()) {}
+			: base(IsDefined<T>.Default.And(IsAssignableFrom<ISource<T>>.Default.Start().Fix(Type<T>.Metadata))) {}
 	}
 }

@@ -22,5 +22,14 @@ namespace Super
 		public static ISelect<TParameter, TResult> Composite<TParameter, TResult>(
 			this IEnumerable<ISelect<TParameter, TResult>> @this)
 			=> @this.Fixed().To(x => x.Skip(1).Aggregate(x.First(), (current, alteration) => alteration.Or(current)));
+
+		public static ISelect<TIn, TOut> FirstAssigned<TIn, TOut>(this ISelect<TIn, IEnumerable<TOut>> @this)
+			=> @this.Out(FirstOrDefaultSelector<TOut>.Default);
+
+		public static ISelect<TIn, ImmutableArray<TOut>> Enumerate<TIn, TOut>(this ISelect<TIn, IEnumerable<TOut>> @this)
+			=> @this.Out(ImmutableArraySelector<TOut>.Default);
+
+		public static ISelect<TIn, IEnumerable<TOut>> Hide<TIn, TOut>(this ISelect<TIn, ImmutableArray<TOut>> @this)
+			=> @this.Out(EnumerableSelector<TOut>.Default);
 	}
 }

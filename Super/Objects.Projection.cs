@@ -14,7 +14,7 @@ namespace Super
 		public static KeyValuePair<Type, Func<string, Func<object, IProjection>>> Entry<T>(
 			this IFormattedProjection<T> @this)
 			=> Pairs.Create(Reflection.Types.Type<T>.Instance,
-			                @this.Out(x => x.ToSelect().In(Cast<object>.Default).ToDelegate()).ToDelegate());
+			                @this.Out(x => In<object>.Cast(x).ToDelegate()).ToDelegate());
 
 		public static IProjection Get<T>(this IFormattedProjection<T> @this, T parameter) => @this.Get(null)(parameter);
 

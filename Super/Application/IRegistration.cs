@@ -2,7 +2,6 @@
 using LightInject;
 using Super.Model.Collections;
 using Super.Model.Commands;
-using Super.Model.Extents;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
 using Super.Model.Sources;
@@ -105,28 +104,26 @@ namespace Super.Application
 	sealed class GenericTypeDependencySelector : DecoratedAlteration<Type>, IActivateMarker<Type>
 	{
 		public GenericTypeDependencySelector(Type type)
-			: base(IsGenericTypeDefinition.Default
-			                              .In()
-			                              .In(type)
-			                              .Allow()
-			                              .And(IsConstructedGenericType.Default.In(),
-			                                   IsGenericTypeDefinition.Default.Inverse().In())
-			                              .Return()
+			: base(IsGenericTypeDefinition.Default.Start()
+			                              .Fix(type)
+			                              .And(IsConstructedGenericType.Default,
+			                                   IsGenericTypeDefinition.Default.Inverse())
 			                              .If(GenericTypeDefinitionAlteration.Default)) {}
 	}
 
 	sealed class DependencyCandidates : DecoratedSelect<Type, ImmutableArray<Type>>, IActivateMarker<Type>
 	{
 		public DependencyCandidates(Type type)
-			: base(Constructors.Default
-			                   .In(TypeMetadataSelector.Default)
-			                   .Out(Parameters.Default
-			                                  .Out(x => x.AsEnumerable())
-			                                  .SelectMany())
-			                   .Out(ParameterType.Default.Select())
-			                   .Out(type.To(I<GenericTypeDependencySelector>.Default).Select())
-			                   .Out(x => x.Where(IsClass.Default.IsSatisfiedBy)
-			                              .ToImmutableArray())) {}
+			: base(TypeMetadataSelector.Default
+			                           .Out(Constructors.Default)
+			                           .Out(Parameters.Default
+			                                          .Out(x => x.AsEnumerable())
+			                                          .SelectMany())
+			                           .Out(ParameterType.Default.Select())
+			                           .Out(type.To(I<GenericTypeDependencySelector>.Default)
+			                                    .Select())
+			                           .Out(x => x.Where(IsClass.Default.IsSatisfiedBy)
+			                                      .ToImmutableArray())) {}
 	}
 
 	sealed class ServiceTypeSelector : SelectSelector<LightInject.ServiceRegistration, Type>

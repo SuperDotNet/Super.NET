@@ -1,5 +1,4 @@
 using Super.Model.Commands;
-using Super.Model.Extents;
 using Super.Model.Selection;
 using Super.Model.Specifications;
 using System;
@@ -24,8 +23,8 @@ namespace Super.Model.Collections
 		}
 
 		public ICommand<T> Get(Decoration<IList<T>, ICommand<T>> parameter)
-			=> _specification.If(new InsertItemCommand<T>(parameter.Parameter, _index).In().ToSelect(),
-			                     parameter.Result.In().ToSelect())
+			=> _specification.If(new InsertItemCommand<T>(parameter.Parameter, _index).Start(),
+			                     parameter.Result.Start())
 			                 .ToCommand();
 	}
 }

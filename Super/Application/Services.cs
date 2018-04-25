@@ -2,6 +2,7 @@
 using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Sources;
+using Super.Reflection;
 using Super.Runtime.Activation;
 using System;
 
@@ -60,9 +61,9 @@ namespace Super.Application
 			: base(In<T>.Out<InstanceRegistration<T>>()
 			            .Out(YieldSelector<IRegistration>.Default)
 			            .Out(new AppendValueSelector<IRegistration>(registration))
-			            .Out(New<CompositeRegistration>.Default)
+			            .Activate(I<CompositeRegistration>.Default)
 			            .Out(x => x.Get(new Services(ServiceOptions.Default.Get())))
-			            .Out(Cast<IServices>.Default)
+			            .Cast(I<IServices>.Default)
 			            .Out(ServiceConfiguration.Default.ToCommand().ToConfiguration())) {}
 	}
 
@@ -78,7 +79,7 @@ namespace Super.Application
 	{
 		protected ApplicationContexts(ISelect<TParameter, IServices> services)
 			: base(services.Out(ServiceSelector<TContext>.Default)
-			               .Out(Cast<IApplicationContext<TParameter>>.Default)) {}
+			               .Cast(I<IApplicationContext<TParameter>>.Default)) {}
 	}
 
 	public class ApplicationContexts<TContext, TParameter, TResult>
@@ -87,6 +88,6 @@ namespace Super.Application
 	{
 		protected ApplicationContexts(ISelect<TParameter, IServices> services)
 			: base(services.Out(ServiceSelector<TContext>.Default)
-			               .Out(Cast<IApplicationContext<TParameter, TResult>>.Default)) {}
+			               .Cast(I<IApplicationContext<TParameter, TResult>>.Default)) {}
 	}
 }
