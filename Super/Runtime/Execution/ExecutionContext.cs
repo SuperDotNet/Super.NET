@@ -21,7 +21,8 @@ namespace Super.Runtime.Execution
 		ExecutionContextComponent() : this(DefaultExecutionContext.Default) {}
 
 		public ExecutionContextComponent(IExecutionContext @default)
-			: base(I<Component<IExecutionContext>>.Default.From(@default).Out(x => x.Value())) {}
+			: base(@default.To(I<Component<IExecutionContext>>.Default)
+			               .Out(x => x.Value())) {}
 	}
 
 	sealed class DefaultExecutionContext : DelegatedSource<object>, IExecutionContext

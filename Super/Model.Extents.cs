@@ -20,6 +20,9 @@ namespace Super
 		public static ISelect<TIn, TTo> Cast<TIn, TOut, TTo>(this ISelect<TIn, TOut> @this, I<TTo> _)
 			=> @this.Out(Cast<TOut, TTo>.Default);
 
+		public static ISelect<TIn, TOut> As<TIn, TOut, TTo>(this ISelect<TIn, TOut> @this, I<TTo> _, Func<ISelect<TIn, TTo>, ISelect<TIn, TTo>> select)
+			=> select(@this.Cast(I<TTo>.Default)).Assigned().Cast(I<TOut>.Default);
+
 		public static ISelect<TIn, TTo> CastForValue<TIn, TOut, TTo>(this ISelect<TIn, TOut> @this, I<TTo> _)
 			=> @this.Out(ValueAwareCast<TOut, TTo>.Default);
 

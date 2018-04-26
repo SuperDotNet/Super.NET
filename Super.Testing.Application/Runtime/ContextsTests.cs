@@ -1,35 +1,78 @@
 ﻿using FluentAssertions;
+using Super.Application.Hosting.xUnit;
 using Super.Runtime.Execution;
+using Super.Testing.Objects;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Super.Testing.Application.Runtime
 {
 	public sealed class ContextsTests
 	{
-		readonly object _context;
-
-		public ContextsTests() : this(ExecutionContext.Default.Get()) {}
-
-		ContextsTests(object context) => _context = context;
-
-		[Fact]
-		void Verify()
+		[Theory, AutoData]
+		void VerifyChildContext(string name)
 		{
-			var contexts = ExecutionContext.Default.Get();
-			contexts.Should().BeSameAs(ExecutionContext.Default.Get());
-			var current = ExecutionContext.Default.Get().To<ContextDetails>();
-			ExecutionContext.Default.Get().Should().BeSameAs(current);
+			AssignedContext.Default.IsSatisfiedBy().Should().BeFalse();
+			var resource = Resource.Default.Get();
+			AssignedContext.Default.IsSatisfiedBy().Should().BeTrue();
+			Resource.Default.Get().Should().BeSameAs(resource);
 
-			ExecutionContext.Default.Get().Should().BeSameAs(_context);
+			var instance = Contextual.Default.Get();
+			Contextual.Default.Get().Should().BeSameAs(instance);
 
-			/*contexts.Invoking(x => x.Execute()).Should().Throw<InvalidOperationException>();*/
+			var child = Child(resource, instance, name);
+
+			var reverted = Resource.Default.Get();
+			reverted.Should().NotBeSameAs(child).And.Subject.Should().BeSameAs(resource);
+			Contextual.Default.Get().Should().BeSameAs(instance);
+			resource.Get().Should().Be(0);
+			child.Get().Should().Be(1);
+			AssignedContext.Default.IsSatisfiedBy().Should().BeTrue();
+			DisposeContext.Default.Execute();
+			resource.Get().Should().Be(1);
+			AssignedContext.Default.IsSatisfiedBy().Should().BeFalse();
 		}
 
-		/*[Fact]
-		void References()
+		static CountingDisposable Child(object resource, object instance, string name)
 		{
-			Ambient.For<Contexts>().Should().BeSameAs(Ambient.For<Contexts>());
-			Ambient.For<ChildContexts>().Should().BeSameAs(Ambient.For<ChildContexts>());
-		}*/
+			using (Contexts.Default.Get(name))
+			{
+				Contextual.Default.Get().Should().NotBeSameAs(instance);
+
+				var result = Resource.Default.Get();
+
+				result.Should().NotBeSameAs(resource).And.Subject.Should().BeSameAs(Resource.Default.Get());
+				ExecutionContext.Default.Get().To<ContextDetails>().Details.Name.Should().Be(name);
+				result.Get().Should().Be(0);
+				return result;
+			}
+		}
+
+		sealed class Resource : Contextual<CountingDisposable>
+		{
+			public static Resource Default { get; } = new Resource();
+
+			Resource() : base(() => new CountingDisposable()) {}
+		}
+
+		sealed class Contextual : Contextual<CountingDisposable>
+		{
+			public static Contextual Default { get; } = new Contextual();
+
+			Contextual() : base(() => new CountingDisposable()) {}
+		}
+
+
+		[Fact]
+		void VerifyInnerToExternal()
+		{
+			Task.Run(() => Resource.Default.Get()).Result.Should().NotBeSameAs(Resource.Default.Get());
+		}
+
+		[Fact]
+		void VerifyExternalToInner()
+		{
+			Resource.Default.Get().Should().BeSameAs(Task.Run(() => Resource.Default.Get()).Result);
+		}
 	}
 }

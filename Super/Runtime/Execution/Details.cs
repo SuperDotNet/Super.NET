@@ -4,7 +4,7 @@ namespace Super.Runtime.Execution
 {
 	public struct Details
 	{
-		public Details(string name) : this(name, Time.Default.Get()) {}
+		public Details(string name) : this(name, Time.Default) {}
 
 		public Details(string name, DateTimeOffset observed)
 		{

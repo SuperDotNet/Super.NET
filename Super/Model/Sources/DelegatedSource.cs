@@ -5,6 +5,8 @@ namespace Super.Model.Sources
 {
 	public class DelegatedSource<T> : ISource<T>, IActivateMarker<Func<T>>
 	{
+		public static implicit operator T(DelegatedSource<T> source) => source.Get();
+
 		readonly Func<T> _source;
 
 		public DelegatedSource(Func<T> source) => _source = source;

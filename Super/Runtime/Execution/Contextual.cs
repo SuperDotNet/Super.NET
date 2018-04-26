@@ -10,33 +10,17 @@ namespace Super.Runtime.Execution
 	{
 		public Contextual(Func<T> source) : this(source.ToSource()) {}
 
-		public Contextual(ISource<T> source) : this(source.Any().ToStore()) {}
+		public Contextual(ISource<T> source) : this(source.Any()
+		                                                  .As(I<IDisposable>.Default,
+		                                                      x => x.Configure(Implementations.Assign))
+		                                                  .ToStore()) {}
 
-		public Contextual(ISelect<object, T> source) : base(source, ExecutionContext.Default) {}
+		public Contextual(ISelect<object, T> source)
+			: base(source, ExecutionContext.Default) {}
 	}
 
 	static class Implementations
 	{
 		public static IAssignable<object, IDisposable> Assign { get; } = AssociatedResources.Default.ToAssignment();
-	}
-
-	public class ContextualResource : ContextualResource<IDisposable>
-	{
-		public ContextualResource(Func<IDisposable> source) : base(source) {}
-
-		public ContextualResource(ISource<IDisposable> source) : base(source) {}
-
-		public ContextualResource(ISelect<object, IDisposable> source) : base(source) {}
-	}
-
-	public class ContextualResource<T> : Contextual<T>
-	{
-		public ContextualResource(Func<T> source) : this(source.ToSource()) {}
-
-		public ContextualResource(ISource<T> source) : this(source.Any().ToStore()) {}
-
-		public ContextualResource(ISelect<object, T> source) : base(source.Cast(I<IDisposable>.Default)
-		                                                                  .Configure(Implementations.Assign)
-		                                                                  .Cast(I<T>.Default)) {}
 	}
 }

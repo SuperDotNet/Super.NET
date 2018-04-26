@@ -1,5 +1,6 @@
 ﻿using Super.Model.Collections;
 using Super.Model.Commands;
+using Super.Runtime.Activation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -36,7 +37,7 @@ namespace Super.Runtime
 		DisposeCommand() : base(x => x.Dispose()) {}
 	}
 
-	public class DelegatedDisposable : IDisposable
+	public class DelegatedDisposable : IDisposable, IActivateMarker<Action>
 	{
 		readonly Action _callback;
 

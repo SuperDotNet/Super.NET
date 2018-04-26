@@ -17,7 +17,7 @@ namespace Super.Runtime.Execution
 		public static int Count(this ICounter @this) => @this.Executed().Get();
 	}
 
-	sealed class Counter : ICounter
+	public sealed class Counter : ICounter
 	{
 		int _count;
 

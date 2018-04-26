@@ -21,6 +21,7 @@ namespace Super
 		public static ICommand<T> AsCommand<T>(this ICommand<T> @this) => @this;
 
 		public static Action<T> ToDelegate<T>(this ICommand<T> @this) => @this.Execute;
+		public static Action ToDelegate(this ICommand<Unit> @this) => @this.Execute;
 		public static Action<T> ToDelegateReference<T>(this ICommand<T> @this) => Model.Commands.Delegates<T>.Default.Get(@this);
 
 		public static IAny Any(this ICommand<Unit> @this) => I<Any>.Default.From(@this);
@@ -40,8 +41,7 @@ namespace Super
 			=> @this.Execute(ValueTuple.Create(first, second, third));
 
 		public static IAssignable<TParameter, TResult> ToAssignment<TParameter, TResult>(
-			this ISelect<TParameter, IMembership<TResult>> @this)
-			=> @this.Out(x => x.Add).ToAssignment();
+			this ISelect<TParameter, IMembership<TResult>> @this) => @this.Out(x => x.Add).ToAssignment();
 
 		public static IAssignable<TParameter, TResult> ToAssignment<TParameter, TResult>(this ISelect<TParameter, ICommand<TResult>> @this)
 			=> new SelectedAssignment<TParameter, TResult>(@this.Get);

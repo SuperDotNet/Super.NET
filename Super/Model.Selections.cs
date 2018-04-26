@@ -20,7 +20,16 @@ namespace Super
 		public static ISelect<Unit, T> Select<T>(this ISource<T> @this) => new DelegatedResult<Unit, T>(@this.Get);
 
 		public static IAny Enter<T>(this ISource<T> @this, ISpecification<T> specification)
-			=> new DelegatedResultSpecification(new DelegatedSelection<T, bool>(specification.IsSatisfiedBy, @this.ToDelegate()).Get).Any();
+			=> @this.Enter(specification.IsSatisfiedBy);
+
+		public static IAny Enter<T>(this ISource<T> @this, ISelect<T, bool> specification)
+			=> @this.Enter(specification.Get);
+
+		public static IAny Enter<T>(this ISource<T> @this, Func<T, bool> specification)
+			=> new DelegatedResultSpecification(new DelegatedSelection<T, bool>(specification, @this.ToDelegate()).Get).Any();
+
+		public static Model.Commands.IAny Enter<T>(this ISource<T> @this, ISelect<T, Unit> select)
+			=> @this.Enter(select.ToCommand());
 
 		public static Model.Commands.IAny Enter<T>(this ISource<T> @this, ICommand<T> select)
 			=> new DelegatedParameterCommand<T>(select.Execute, @this.Get).Any();
