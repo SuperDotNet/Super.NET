@@ -8,7 +8,7 @@ namespace Super.Model.Selection
 		public static DelegatedReducer<TParameter, TResult> Default { get; }
 			= new DelegatedReducer<TParameter, TResult>();
 
-		DelegatedReducer() : this(Activation<TParameter>.Default.Get) {}
+		DelegatedReducer() : this(New<TParameter>.Default.Get) {}
 
 		readonly Func<TParameter> _parameter;
 

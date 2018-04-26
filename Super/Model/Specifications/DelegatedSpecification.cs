@@ -1,6 +1,4 @@
-﻿using Super.Runtime.Activation;
-using System;
-using System.Reactive;
+﻿using System;
 
 namespace Super.Model.Specifications
 {
@@ -11,14 +9,5 @@ namespace Super.Model.Specifications
 		public DelegatedSpecification(Func<T, bool> @delegate) => _delegate = @delegate;
 
 		public bool IsSatisfiedBy(T parameter) => _delegate(parameter);
-	}
-
-	public class DelegatedResultSpecification : ISpecification, IActivateMarker<Func<bool>>
-	{
-		readonly Func<bool> _delegate;
-
-		public DelegatedResultSpecification(Func<bool> @delegate) => _delegate = @delegate;
-
-		public bool IsSatisfiedBy(Unit parameter) => _delegate();
 	}
 }

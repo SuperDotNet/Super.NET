@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Super.Model.Collections;
+using Super.Runtime.Activation;
+using System;
 using System.Reflection;
-using Super.Model.Collections;
 
 namespace Super.Reflection.Selection
 {
@@ -11,7 +12,7 @@ namespace Super.Reflection.Selection
 		PublicAssemblyTypes() : base(new PublicAssemblyTypes(typeof(T))) {}
 	}
 
-	public sealed class PublicAssemblyTypes : Items<Type>
+	public sealed class PublicAssemblyTypes : Items<Type>, IActivateMarker<Assembly>, IActivateMarker<Type>
 	{
 		public PublicAssemblyTypes(Type referenceType) : this(referenceType.Assembly) {}
 

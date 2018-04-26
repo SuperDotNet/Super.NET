@@ -12,7 +12,7 @@ namespace Super.Testing.Application.Model.Extents
 		[Fact]
 		void VerifySourceDirect()
 		{
-			new Source<string>("Hello World!").Start().Type().Metadata().Return().Get().Should().Be(Type<string>.Metadata);
+			new Source<string>("Hello World!").Select().Type().Metadata().Return().Get().Should().Be(Type<string>.Metadata);
 		}
 
 		[Fact]

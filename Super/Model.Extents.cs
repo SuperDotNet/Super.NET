@@ -35,7 +35,7 @@ namespace Super
 			=> @this.Out(Attribute<TAttribute>.Default.ToDelegate());
 
 		public static ISelect<TIn, TTo> Fold<TIn, TFrom, TTo>(this ISelect<TIn, ISelect<TFrom, TTo>> @this)
-			=> @this.Fold(Activation<TFrom>.Default);
+			=> @this.Fold(New<TFrom>.Default);
 
 		public static ISelect<TIn, TTo> Fold<TIn, TFrom, TTo>(this ISelect<TIn, ISelect<TFrom, TTo>> @this,
 		                                                      ISource<TFrom> select)
@@ -63,13 +63,13 @@ namespace Super
 			=> @this.And(others.Select(x => x.ToDelegate()).Fixed());
 
 		public static ISelect<T, bool> And<T>(this ISelect<T, bool> @this, params Func<T, bool>[] others)
-			=> new AllSpecification<T>(others.Prepend(@this.Get).Fixed()).Start();
+			=> new AllSpecification<T>(others.Prepend(@this.Get).Fixed()).Select();
 
 		public static ISelect<T, bool> Or<T>(this ISelect<T, bool> @this, params ISelect<T, bool>[] others)
 			=> @this.Or(others.Select(x => x.ToDelegate()).Fixed());
 
 		public static ISelect<T, bool> Or<T>(this ISelect<T, bool> @this, params Func<T, bool>[] others)
-			=> new AnySpecification<T>(others.Prepend(@this.Get).Fixed()).Start();
+			=> new AnySpecification<T>(others.Prepend(@this.Get).Fixed()).Select();
 
 		public static ISelect<T, TOut> Allow<T, TOut>(this ISelect<Unit, TOut> @this, I<T> _)
 			=> In<T>.Select(__ => Unit.Default).Out(@this);

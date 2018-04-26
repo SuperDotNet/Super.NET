@@ -1,7 +1,6 @@
 ﻿using Super.Model.Selection;
 using Super.Model.Specifications;
 using Super.Reflection;
-using Super.Runtime.Activation;
 using System;
 using System.Reactive;
 
@@ -20,23 +19,6 @@ namespace Super
 
 		public static ISpecification<T> ToSpecification<T>(this ISelect<T, bool> @this) => @this.ToDelegateReference().ToSpecification();
 		public static ISpecification<T> ToSpecification<T>(this Func<T, bool> @this) => Specifications<T>.Default.Get(@this);
-
-		/*public static ISpecification<TypeInfo> Select<T>(this ISpecification<TypeInfo> @this) => @this.Select(Reflection.Types.Type<T>.Metadata);*/
-
-		/*public static IAny Select<T>(this ISpecification<T> @this, ISource<T> parameter)
-			=> new DelegatedResultSpecification(parameter.Select(@this.IsSatisfiedBy).Get).Any();*/
-
-		/*public static ISpecification<T> Select<T>(this ISpecification<T> @this, T parameter)
-			=> @this.IsSatisfiedBy(parameter) ? Always<T>.Default : Never<T>.Default;*/
-
-		/*public static ISpecification<TFrom> Select<TFrom, TTo>(this ISpecification<TTo> @this, ISelect<TFrom> select)
-			=> @this.Select(select.In<TTo>());
-
-		public static ISpecification<TFrom> Select<TFrom, TTo>(this ISpecification<TTo> @this, ISelect<TFrom, TTo> select)
-			=> @this.Select(select.ToDelegate());
-
-		public static ISpecification<TFrom> Select<TFrom, TTo>(this ISpecification<TTo> @this, Func<TFrom, TTo> select)
-			=> new SelectedParameterSpecification<TFrom,TTo>(@this.IsSatisfiedBy, select);*/
 
 		public static ISelect<TParameter, TResult> If<TParameter, TResult>(
 			this ISpecification<TParameter> @this, ISelect<TParameter, TResult> @true) => @this.If(@true, @true.Default());

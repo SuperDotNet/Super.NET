@@ -24,7 +24,7 @@ namespace Super.Runtime.Activation
 	{
 		public static Activator<T> Default { get; } = new Activator<T>();
 
-		Activator() : base(Singleton<T>.Default.Or(Activation<T>.Default)) {}
+		Activator() : base(Singleton<T>.Default.Or(New<T>.Default)) {}
 	}
 
 	public class FixedActivator<T> : FixedSelection<Type, T>, IActivator<T>

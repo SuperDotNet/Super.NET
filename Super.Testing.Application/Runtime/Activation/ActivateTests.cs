@@ -21,10 +21,9 @@ namespace Super.Testing.Application.Runtime.Activation
 		}
 
 		[Theory, AutoData]
-		void VerifyObject(I<Object> sut)
+		void VerifyObject(I<Object> sut, object parameter)
 		{
-			var first  = new object();
-			first.New(sut).Should().NotBeSameAs(first.New(sut));
+			sut.New(parameter).Should().NotBeSameAs(sut.New(parameter));
 		}
 
 		[Theory, AutoFixture.Xunit2.AutoData]
@@ -68,13 +67,13 @@ namespace Super.Testing.Application.Runtime.Activation
 		[Fact]
 		void VerifyGet()
 		{
-			Activate<Singleton>.Get().Should().BeSameAs(Singleton.Default);
+			Activator<Singleton>.Default.Get().Should().BeSameAs(Singleton.Default);
 		}
 
 		[Fact]
 		void VerifyNew()
 		{
-			Activate<Activated>.New().Should().NotBeSameAs(Activate<Activated>.New());
+			New<Activated>.Default.Get().Should().NotBeSameAs(New<Activated>.Default.Get());
 		}
 	}
 }

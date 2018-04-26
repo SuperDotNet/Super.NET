@@ -9,7 +9,7 @@ namespace Super.Model.Sources
 		readonly Func<TParameter>          _parameter;
 		readonly Func<TParameter, TResult> _source;
 
-		public DelegatedSelection(ISelect<TParameter, TResult> @select) : this(select, Activation<TParameter>.Default) {}
+		public DelegatedSelection(ISelect<TParameter, TResult> @select) : this(select, New<TParameter>.Default) {}
 
 		public DelegatedSelection(ISelect<TParameter, TResult> @select, ISource<TParameter> parameter)
 			: this(select.Get, parameter.Get) {}

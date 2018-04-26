@@ -1,6 +1,5 @@
-﻿using System.Collections.Immutable;
-using Super.Model.Commands;
-using Super.Model.Selection;
+﻿using Super.Model.Commands;
+using System.Collections.Immutable;
 
 namespace Super.Application.Hosting.Console
 {
@@ -10,7 +9,7 @@ namespace Super.Application.Hosting.Console
 	{
 		public static ApplicationContexts<T> Default { get; } = new ApplicationContexts<T>();
 
-		ApplicationContexts() : base(Select.New<ImmutableArray<string>, ConsoleApplicationArgument>()
-		                                   .Out(Services<ConsoleApplicationArgument>.Default)) {}
+		ApplicationContexts() : base(In<ImmutableArray<string>>.Out<ConsoleApplicationArgument>()
+		                                                       .Out(Services<ConsoleApplicationArgument>.Default)) {}
 	}
 }

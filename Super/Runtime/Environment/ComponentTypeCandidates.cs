@@ -1,5 +1,6 @@
 using Super.Model.Sources;
 using Super.Model.Specifications;
+using Super.Reflection;
 using Super.Reflection.Selection;
 using Super.Runtime.Activation;
 using Super.Runtime.Execution;
@@ -25,7 +26,7 @@ namespace Super.Runtime.Environment
 		public static DefaultComponentTypeCandidates Default { get; } = new DefaultComponentTypeCandidates();
 
 		DefaultComponentTypeCandidates() : base(ComponentAssemblies.Default
-		                                                           .SelectMany(Activate<PublicAssemblyTypes>.New)
+		                                                           .SelectMany(I<PublicAssemblyTypes>.Default.From)
 		                                                           .Where(CanActivate.Default.IsSatisfiedBy)
 		                                                           .ToImmutableArray()) {}
 	}

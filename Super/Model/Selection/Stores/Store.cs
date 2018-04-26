@@ -5,7 +5,7 @@ namespace Super.Model.Selection.Stores
 {
 	class Store<TParameter, TResult> : DecoratedSelect<TParameter, TResult>
 	{
-		readonly static Func<TParameter, TResult> Source = Activation<TParameter, TResult>.Default.ToDelegateReference();
+		readonly static Func<TParameter, TResult> Source = New<TParameter, TResult>.Default.ToDelegateReference();
 
 		public Store() : this(Source) {}
 

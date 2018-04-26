@@ -5,7 +5,6 @@ using Super.Model.Selection.Alterations;
 using Super.Model.Sources;
 using Super.Reflection;
 using Super.Runtime;
-using Super.Runtime.Activation;
 using System;
 using System.Collections.Immutable;
 using System.Linq;
@@ -29,7 +28,7 @@ namespace Super
 		public static ICommand<T> And<T>(this ICommand<T> @this, params ICommand<T>[] commands)
 			=> new CompositeCommand<T>(@this.Yield().Concat(commands).ToImmutableArray());
 
-		public static IAny Clear<T>(this ICommand<T> @this) => @this.Start().Fix(default);
+		public static IAny Clear<T>(this ICommand<T> @this) => @this.Select().Fix(default);
 
 		public static void Execute<T>(this ICommand<ImmutableArray<T>> @this, params T[] parameters)
 			=> @this.Execute(parameters.ToImmutableArray());

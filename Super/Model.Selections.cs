@@ -13,17 +13,20 @@ namespace Super
 {
 	public static partial class ExtensionMethods
 	{
-		public static ISelect<TParameter, TResult> Start<TParameter, TResult>(this TResult @this, I<TParameter> _)
+		public static ISelect<TParameter, TResult> Select<TParameter, TResult>(this TResult @this, I<TParameter> _)
 			=> new FixedResult<TParameter, TResult>(@this);
-		public static ISelect<T, bool> Start<T>(this ISpecification<T> @this) => new Select<T, bool>(@this.IsSatisfiedBy);
-		public static ISelect<T, Unit> Start<T>(this ICommand<T> @this) => new Configuration<T>(@this.Execute);
-		public static ISelect<Unit, T> Start<T>(this ISource<T> @this) => new DelegatedResult<Unit, T>(@this.Get);
+		public static ISelect<T, bool> Select<T>(this ISpecification<T> @this) => new Select<T, bool>(@this.IsSatisfiedBy);
+		public static ISelect<T, Unit> Select<T>(this ICommand<T> @this) => new Configuration<T>(@this.Execute);
+		public static ISelect<Unit, T> Select<T>(this ISource<T> @this) => new DelegatedResult<Unit, T>(@this.Get);
 
-		public static ISpecification<Unit> Enter<TIn>(this ISource<TIn> @this, ISpecification<TIn> select)
-			=> new DelegatedResultSpecification(@this.Out(select.Start()).Get);
+		public static IAny Enter<T>(this ISource<T> @this, ISpecification<T> specification)
+			=> new DelegatedResultSpecification(new DelegatedSelection<T, bool>(specification.IsSatisfiedBy, @this.ToDelegate()).Get).Any();
+
+		public static Model.Commands.IAny Enter<T>(this ISource<T> @this, ICommand<T> select)
+			=> new DelegatedParameterCommand<T>(select.Execute, @this.Get).Any();
 
 		public static ISelect<Unit, TOut> Enter<TIn, TOut>(this ISource<TIn> @this, ISelect<TIn, TOut> select)
-			=> new DelegatedSelection<TIn, TOut>(select.Get, @this.Get).Start();
+			=> new DelegatedSelection<TIn, TOut>(select.Get, @this.Get).Select();
 
 		public static ISpecification<TIn> Enter<TIn, TOut>(this ISelect<TIn, TOut> @this, ISpecification<TOut> specification)
 			=> new SelectedParameterSpecification<TIn,TOut>(specification, @this);
@@ -46,7 +49,7 @@ namespace Super
 			=> @this.Fix<TIn, Unit>(parameter).ToCommand().Any();
 
 		public static ISelect<Unit, TOut> Fix<TIn, TOut>(this ISelect<TIn, TOut> @this, TIn parameter)
-			=> new FixedSelection<TIn, TOut>(@this, parameter).Start();
+			=> new FixedSelection<TIn, TOut>(@this, parameter).Select();
 
 		public static ISelect<TIn, TOut> If<TIn, TOut>(this ISelect<TIn, TOut> @this, ISpecification<TIn> specification)
 			=> new Validated<TIn, TOut>(specification.IsSatisfiedBy, @this.Get);
@@ -71,11 +74,11 @@ namespace Super
 			=> @this.Out(select.ToDelegate());
 
 		public static ISource<TTo> Out<TFrom, TTo>(this ISource<TFrom> @this, Func<TFrom, TTo> select)
-			=> @this.Start().Out(select).Return();
+			=> @this.Select().Out(select).Return();
 
 		public static ISource<TTo> Out<TFrom, TTo>(this ISource<TFrom> @this,
 		                                           Func<ISelect<Unit, TFrom>, ISelect<Unit, TTo>> configure)
-			=> configure(@this.Start()).Return();
+			=> configure(@this.Select()).Return();
 
 		public static ISpecification<TFrom, TResult> Out<TFrom, TTo, TResult>(this ISelect<TFrom, TTo> @this,
 		                                                                      ISpecification<TTo, TResult> specification)

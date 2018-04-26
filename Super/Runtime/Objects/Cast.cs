@@ -36,7 +36,7 @@ namespace Super.Runtime.Objects
 
 		OnlyOnceAlteration() {}
 
-		public ISelect<TIn, TOut> Get(ISelect<TIn, TOut> parameter) => parameter.If(new First().Start().Allow(I<TIn>.Default).Return());
+		public ISelect<TIn, TOut> Get(ISelect<TIn, TOut> parameter) => parameter.If(new First().Select().Allow(I<TIn>.Default).Return());
 	}
 
 	/*sealed class OncePerParameter<T> : IAlteration<ISelect<T, bool>>

@@ -17,21 +17,21 @@ namespace Super.Testing.Application.Runtime.Activation
 
 		[Theory]
 		[AutoData]
-		void VerifyNew(Activator<Activation> sut)
+		void VerifyNew(Activator<New> sut)
 		{
 			sut.Get().Should().NotBeSameAs(sut.Get());
 		}
 
 		[Theory]
 		[AutoData]
-		void VerifyMoq(Mock<IActivator<Activation>> sut)
+		void VerifyMoq(Mock<IActivator<New>> sut)
 		{
 			sut.Object.Get().Should().NotBeNull();
 		}
 
 		[Theory]
 		[AutoFixture.Xunit2.AutoData]
-		void VerifyNativeMoq(Mock<IActivator<Activation>> sut)
+		void VerifyNativeMoq(Mock<IActivator<New>> sut)
 		{
 			sut.Object.Get().Should().BeNull();
 		}

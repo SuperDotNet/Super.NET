@@ -27,12 +27,11 @@ namespace Super.Runtime.Execution
 		public DisposeContext(ISpecification<object> assigned, ISpecification<object> resources,
 		                      ISelect<object, IDisposable> select)
 			: base(ExecutionContext.Default
-			                       .Enter(select.Out(DisposeCommand.Default.ToConfiguration())
-			                                    .ToCommand()
+			                       .Enter(select.Enter(DisposeCommand.Default)
 			                                    .And(AssignedContext.Default.Clear(), ClearResources.Default)
-			                                    .Start()
-			                                    .If(resources.And(assigned)))
-			                       .ToCommand()) {}
+			                                    .Select()
+			                                    .If(resources.And(assigned))
+			                                    .ToCommand())) {}
 	}
 
 	sealed class ClearResources : RemoveCommand<object, Disposables>
@@ -42,38 +41,10 @@ namespace Super.Runtime.Execution
 		ClearResources() : base(AssociatedResources.Default) {}
 	}
 
-	/*sealed class ContextResources : Contextual<IDisposable>
-	{
-		public static ContextResources Default { get; } = new ContextResources();
-
-		ContextResources() : base(AssociatedResources.Default) {}
-	}*/
-
 	sealed class AssociatedResources : AssociatedResource<object, Disposables>
 	{
 		public static AssociatedResources Default { get; } = new AssociatedResources();
 
 		AssociatedResources() {}
 	}
-
-	/*sealed class RootExecutionContext : ISource<IDisposable>
-	{
-		public static RootExecutionContext Default { get; } = new RootExecutionContext();
-
-		RootExecutionContext() {}
-
-		/*RootExecutionContext() : this(DomainUnload.Default.Get()) {}
-
-		readonly IObservable<EventPattern<EventArgs>> _handler;
-
-		public RootExecutionContext(IObservable<EventPattern<EventArgs>> handler) => _handler = handler;#1#
-
-		public IDisposable Get()
-		{
-			var disposables = new Disposables();
-			var result = new RootContext(disposables);
-			/*_handler.Subscribe(result.Dispose);#1#
-			return result;
-		}
-	}*/
 }

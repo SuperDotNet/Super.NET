@@ -1,6 +1,5 @@
 ﻿using Super.Model.Sources;
 using Super.Reflection;
-using Super.Runtime.Activation;
 using Super.Runtime.Environment;
 using Super.Runtime.Invocation;
 
@@ -22,7 +21,7 @@ namespace Super.Runtime.Execution
 		ExecutionContextComponent() : this(DefaultExecutionContext.Default) {}
 
 		public ExecutionContextComponent(IExecutionContext @default)
-			: base(@default.To(I<Component<IExecutionContext>>.Default).Out(x => x.Value())) {}
+			: base(I<Component<IExecutionContext>>.Default.From(@default).Out(x => x.Value())) {}
 	}
 
 	sealed class DefaultExecutionContext : DelegatedSource<object>, IExecutionContext

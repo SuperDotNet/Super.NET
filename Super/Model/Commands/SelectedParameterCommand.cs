@@ -35,24 +35,6 @@ namespace Super.Model.Commands
 		}
 	}
 
-	/*sealed class OnlyOnceAlteration<T> : IAlteration<ICommand<T>>
-	{
-		public static OnlyOnceAlteration<T> Default { get; } = new OnlyOnceAlteration<T>();
-
-		OnlyOnceAlteration() {}
-
-		public ICommand<T> Get(ICommand<T> parameter) => new ValidatedCommand<T>(new First().Allow<T>(), parameter);
-	}
-
-	sealed class OnceAlteration<T> : IAlteration<ICommand<T>>
-	{
-		public static OnceAlteration<T> Default { get; } = new OnceAlteration<T>();
-
-		OnceAlteration() {}
-
-		public ICommand<T> Get(ICommand<T> parameter) => new ValidatedCommand<T>(new First<T>(), parameter);
-	}*/
-
 	public interface IAny : ICommand, ICommand<object> {}
 
 	sealed class Any : IAny, IActivateMarker<ICommand<Unit>>

@@ -3,7 +3,6 @@ using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 using Super.Diagnostics.Logging.Configuration;
-using Super.Model.Selection;
 using Super.Text.Formatting;
 using System;
 using System.Collections.ObjectModel;

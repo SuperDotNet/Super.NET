@@ -1,15 +1,13 @@
-using Super.Model.Selection;
 using Super.Model.Specifications;
 using System;
 using System.Reflection;
 
 namespace Super.Reflection.Types
 {
-	public class ImplementsGenericType : DelegatedSpecification<TypeInfo>
+	public class ImplementsGenericType : DecoratedSpecification<TypeInfo>
 	{
 		public ImplementsGenericType(Type definition)
-			: base(Select.New<TypeInfo, HasGenericInterface>()
-			             .Out(new FixedParameterSpecification<TypeInfo>(definition.GetTypeInfo()).IsSatisfiedBy)
-			             .Get) {}
+			: base(In<TypeInfo>.Out<HasGenericInterface>()
+			                   .Enter(new FixedParameterSpecification<TypeInfo>(definition.GetTypeInfo()))) {}
 	}
 }

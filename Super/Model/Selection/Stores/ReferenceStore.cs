@@ -6,7 +6,7 @@ namespace Super.Model.Selection.Stores
 	public class ReferenceStore<TParameter, TResult> : DecoratedSelect<TParameter, TResult>
 		where TParameter : class
 	{
-		readonly static Func<TParameter, TResult> Source = Activation<TParameter, TResult>.Default.Get;
+		readonly static Func<TParameter, TResult> Source = New<TParameter, TResult>.Default.Get;
 
 		protected ReferenceStore() : this(Source) {}
 

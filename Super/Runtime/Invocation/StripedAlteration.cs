@@ -1,9 +1,9 @@
 ﻿using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
 using Super.Reflection;
-using Super.Runtime.Activation;
 
-namespace Super.Runtime.Invocation {
+namespace Super.Runtime.Invocation
+{
 	sealed class StripedAlteration<TParameter, TResult> : DelegatedAlteration<ISelect<TParameter, TResult>>
 	{
 		public static StripedAlteration<TParameter, TResult> Default { get; } = new StripedAlteration<TParameter, TResult>();

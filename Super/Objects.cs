@@ -1,4 +1,5 @@
 ﻿using Super.Model.Collections;
+using Super.Model.Selection;
 using Super.Runtime;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,10 @@ namespace Super
 			action(@this);
 			return @this;
 		}
+
+		public static TResult To<T, TResult>(this T @this, ISelect<T, TResult> select) => @this.To(select.Get);
+
+		public static TResult To<T, TResult>(this T @this, Func<T, TResult> select) => select(@this);
 
 		public static T If<T>(this bool @this, T @true, T @false) => @this ? @true : @false;
 

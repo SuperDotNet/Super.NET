@@ -15,7 +15,7 @@ namespace Super.Runtime.Invocation
 	{
 		public static LockItem<T> Default { get; } = new LockItem<T>();
 
-		LockItem() : this(Activation<T>.Default.ToDelegateReference()) {}
+		LockItem() : this(New<T>.Default.ToDelegateReference()) {}
 
 		readonly Func<T> _create;
 

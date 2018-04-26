@@ -10,7 +10,7 @@ namespace Super.Runtime.Environment
 		public static ComponentAssemblies Default { get; } = new ComponentAssemblies();
 
 		ComponentAssemblies() : base(PrimaryAssembly.Default
-		                                            .Start()
+		                                            .Select()
 		                                            .Out(AssemblyNameSelector.Default)
 		                                            .Out(ComponentAssemblyNames.Default)
 		                                            .Out(Load.Default.Select())

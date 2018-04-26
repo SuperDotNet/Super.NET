@@ -1,35 +1,36 @@
 ﻿using AutoFixture.Xunit2;
 using FluentAssertions;
+using Super.Reflection;
 using Super.Runtime.Activation;
 using Xunit;
 
 namespace Super.Testing.Application.Runtime.Activation
 {
-	public class ActivationTests
+	public class NewTests
 	{
 		[Theory]
 		[AutoData]
 		public void Verify(int number)
 		{
-			var subject = Activate<Subject>.New(number);
+			var subject = I<Subject>.Default.New(number);
 			subject.Number.Should()
 			       .Be(number)
 			       .And.Subject.Should()
-			       .NotBeSameAs(Activation<int, Subject>.Default.Get(number));
+			       .NotBeSameAs(New<int, Subject>.Default.Get(number));
 		}
 
 		[Theory]
 		[AutoData]
 		public void Default(int number)
 		{
-			Activate<Subject>.New(number).Number.Should().Be(number);
+			I<Subject>.Default.New(number).Number.Should().Be(number);
 		}
 
 		[Theory]
 		[AutoData]
 		public void MultipleParameters(int number)
 		{
-			var subject = Activate<SubjectWithMultipleParameters>.New(number);
+			var subject = I<SubjectWithMultipleParameters>.Default.New(number);
 			subject.Another.Should().Be(4);
 			subject.Number.Should().Be(number);
 		}
@@ -59,14 +60,14 @@ namespace Super.Testing.Application.Runtime.Activation
 		[Fact]
 		public void NoParameters()
 		{
-			Activate<SubjectWithoutConstructor>.New(6776).Should().NotBeNull();
+			I<SubjectWithoutConstructor>.Default.New(6776).Should().NotBeNull();
 		}
 
 		[Fact]
 		public void References()
 		{
-			var first  = Activate<SubjectWithoutConstructor>.New(6776);
-			var second = Activate<SubjectWithoutConstructor>.New(6776);
+			var first  = I<SubjectWithoutConstructor>.Default.New(6776);
+			var second = I<SubjectWithoutConstructor>.Default.New(6776);
 			first.Should().NotBeSameAs(second);
 		}
 	}
