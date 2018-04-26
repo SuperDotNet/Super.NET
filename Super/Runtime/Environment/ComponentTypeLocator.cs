@@ -9,11 +9,11 @@ namespace Super.Runtime.Environment
 	{
 		public static ComponentTypeLocator Default { get; } = new ComponentTypeLocator();
 
-		ComponentTypeLocator() : this(ComponentTypeCandidates.Default) {}
+		ComponentTypeLocator() : this(SystemTypes.Default) {}
 
-		readonly ITypeCandidates _candidates;
+		readonly ISystemTypes _candidates;
 
-		public ComponentTypeLocator(ITypeCandidates candidates) => _candidates = candidates;
+		public ComponentTypeLocator(ISystemTypes candidates) => _candidates = candidates;
 
 		public Type Get(Type parameter)
 		{

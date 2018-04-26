@@ -13,7 +13,7 @@ namespace Super.Runtime.Execution
 	{
 		public static Contexts Default { get; } = new Contexts();
 
-		Contexts() : this(DisposeContext.Default, AssignedContext.Default, I<ContextDetails>.Default.From) {}
+		Contexts() : this(DisposeContext.Default, ExecutionContextStore.Default, I<ContextDetails>.Default.From) {}
 
 		readonly ICommand             _dispose;
 		readonly IMutable<object>     _store;
@@ -43,17 +43,21 @@ namespace Super.Runtime.Execution
 	{
 		public static DisposeContext Default { get; } = new DisposeContext();
 
-		DisposeContext() : this(AssignedContext.Default.AsSpecification().Any(), AssociatedResources.Default) {}
+		DisposeContext() : this(ExecutionContextStore.Default.AsSpecification().Any(), AssociatedResources.Default) {}
 
-		public DisposeContext(ISpecification<object> assigned, ISpecification<object, IDisposable> resources)
-			: this(assigned.And(resources), resources.AsSelect()) {}
+		public DisposeContext(ISpecification<Unit> assigned, ISpecification<object, IDisposable> resources)
+			: this(assigned, resources, resources) {}
 
-		public DisposeContext(ISpecification<object> specification, ISelect<object, IDisposable> select)
-			: base(AssignedContext.Default
-			                      .Exit(select.Exit(DisposeCommand.Default)
-			                                   .And(AssignedContext.Default.Clear(), ClearResources.Default)
-			                                   .Enter()
-			                                   .If(specification))) {}
+		public DisposeContext(ISpecification<Unit> assigned, ISpecification<object> contains,
+		                      ISelect<object, IDisposable> select)
+			: base(ExecutionContextStore.Default
+			                            .Exit(select.Exit(DisposeCommand.Default)
+			                                        .And(ExecutionContextStore.Default.Clear(), ClearResources.Default)
+			                                        .Enter()
+			                                        .If(contains))
+			                            .Enter<Unit>()
+			                            .If(assigned)
+			                            .ToCommand()) {}
 	}
 
 	sealed class ClearResources : RemoveCommand<object, Disposables>

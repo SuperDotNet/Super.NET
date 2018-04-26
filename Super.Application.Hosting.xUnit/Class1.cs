@@ -1,6 +1,7 @@
 ﻿using JetBrains.Annotations;
 using Super.Model.Sources;
 using Super.Model.Specifications;
+using Super.Runtime.Environment;
 using Super.Runtime.Execution;
 using System;
 using System.Collections.Generic;
@@ -93,6 +94,7 @@ namespace Super.Application.Hosting.xUnit
 			using (var assemblyRunner = new AssemblyRunner(TestAssembly, testCases, DiagnosticMessageSink, executionMessageSink,
 			                                               executionOptions))
 			{
+				StoreType.Default.Execute(typeof(Logical<>));
 				await assemblyRunner.RunAsync();
 			}
 		}

@@ -29,18 +29,22 @@ namespace Super
 
 		public static ISelect<TParameter, TResult> Guard<TParameter, TResult>(this ISelect<TParameter, TResult> @this,
 		                                                                      IMessage<TParameter> message)
-			=> new AssignedInstanceGuard<TParameter>(message).If(@this);
+			=> new Guard<TParameter>(message).If(@this);
 
 		public static ISelect<TParameter, TResult> Try<TException, TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, I<TException> infer) where TException : Exception
 			=> infer.Try(@this.ToDelegate(), @this.Default().ToDelegate());
 
 		public static ISelect<TParameter, TResult> OrGuard<TParameter, TResult>(
-			this ISelect<TParameter, TResult> @this) => @this.Or(GuardedFallback<TParameter, TResult>.Default);
+			this ISelect<TParameter, TResult> @this) => @this.Or(DefaultMessage<TResult>.Default);
 
 		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(
-			this ISelect<TParameter, TResult> @this, IMessage<TParameter> message)
-			=> @this.Or(new GuardedFallback<TParameter, TResult>(message));
+			this ISelect<TParameter, TResult> @this, ISelect<TResult, string> message)
+			=> @this.When(message.To(I<Guard<TResult>>.Default));
+
+		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(this ISelect<TParameter, TResult> @this,
+		                                                                   Func<TResult> source)
+			=> @this.Or(source.ToSource());
 
 		public static ISelect<TParameter, TResult> Or<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, ISource<TResult> source)

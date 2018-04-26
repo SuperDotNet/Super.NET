@@ -7,6 +7,22 @@ namespace Super.Model.Sources
 {
 	public interface IMutable<T> : ISource<T>, ICommand<T> {}
 
+	public class Variable<T> : IMutable<T>
+	{
+		T _instance;
+
+		public Variable() : this(default) {}
+
+		public Variable(T instance) => _instance = instance;
+
+		public T Get() => _instance;
+
+		public void Execute(T parameter)
+		{
+			_instance = parameter;
+		}
+	}
+
 	public class DecoratedMutable<T> : IMutable<T>
 	{
 		readonly IMutable<T> _mutable;
@@ -21,7 +37,9 @@ namespace Super.Model.Sources
 		}
 	}
 
-	public class Assignment<T> : DecoratedMutable<T>, ISpecification
+	public interface IAssignment<T> : IMutable<T>, ISpecification {}
+
+	public class Assignment<T> : DecoratedMutable<T>, IAssignment<T>
 	{
 		readonly ISpecification<Unit> _specification;
 

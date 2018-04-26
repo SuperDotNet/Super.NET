@@ -1,5 +1,6 @@
-﻿using System;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
+using Super.Reflection.Types;
+using System;
 
 namespace Super.Runtime.Objects
 {
@@ -7,6 +8,6 @@ namespace Super.Runtime.Objects
 	{
 		public static InstanceTypeSelector<T> Default { get; } = new InstanceTypeSelector<T>();
 
-		InstanceTypeSelector() : base(x => x.GetType()) {}
+		InstanceTypeSelector() : base(x => x?.GetType() ?? Type<T>.Instance) {}
 	}
 }

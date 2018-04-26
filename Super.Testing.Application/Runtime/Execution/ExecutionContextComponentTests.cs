@@ -14,28 +14,27 @@ namespace Super.Testing.Application.Runtime.Execution
 		[Fact, TestPriority(1)]
 		void Verify()
 		{
-			ExecutionContextComponent.Default.Get()
-			                         .To<ContextDetails>()
-			                         .Details.Name.Should()
-			                         .Be("xUnit Testing Application Default (root) Execution Context");
+			ExecutionContext.Default.Get()
+			                .To<ContextDetails>()
+			                .Details.Name.Should()
+			                .Be("xUnit Testing Application Default (root) Execution Context");
 		}
 
 		[Fact, TestPriority(0)]
 		void Override()
 		{
-			ComponentTypeCandidatesStore.Default.Execute(typeof(DefaultExecutionContext));
+			SystemTypes.Default.Execute(typeof(DefaultExecutionContext));
 
-			ExecutionContextComponent.Default.Get()
-			                         .To<ContextDetails>()
-			                         .Details.Name.Should()
-			                         .Be("Local Context");
+			ExecutionContext.Default.Get()
+			                .To<ContextDetails>()
+			                .Details.Name.Should()
+			                .Be("Local Context");
 		}
 
 		[Fact]
 		void VerifyTest()
 		{
-			ExecutionContextComponent.Default.Get();
-			ExecutionContextComponent.Default.Get();
+			ExecutionContext.Default.Get().Should().BeSameAs(ExecutionContext.Default.Get());
 		}
 
 		sealed class DefaultExecutionContext : DelegatedSource<object>, IExecutionContext

@@ -1,10 +1,7 @@
-﻿using Super.Model.Collections;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
 using Super.Model.Sources;
 using Super.Reflection.Types;
-using Super.Runtime.Invocation;
 using System;
-using System.Reflection;
 
 namespace Super.Runtime.Activation
 {
@@ -13,11 +10,8 @@ namespace Super.Runtime.Activation
 		public static Activator Default { get; } = new Activator();
 
 		Activator() : base(TypeMetadataSelector.Default
-		                                       .Out(YieldSelector<TypeInfo>.Default)
-		                                       .Out(ImmutableArraySelector<Type>.Default)
-		                                       .Out(new Generic<ISource<object>>(typeof(ActivatorSource<>)))
-		                                       .Out(Call<ISource<object>>.Default)
-		                                       .Out(ValueSelector<object>.Default)) {}
+		                                       .Exit(new Generic<ISource<object>>(typeof(ActivatorSource<>)))
+		                                       .Value()) {}
 	}
 
 	public sealed class Activator<T> : DecoratedSource<T>, IActivator<T>

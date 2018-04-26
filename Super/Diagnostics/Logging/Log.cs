@@ -13,7 +13,7 @@ namespace Super.Diagnostics.Logging
 	{
 		public static Log<T> Default { get; } = new Log<T>();
 
-		Log() : base(Logger.Default.Out(ContextSelector<T>.Default)) {}
+		Log() : base(Logger.Default.Exit(ContextSelector<T>.Default)) {}
 
 		ILogger ILogger.ForContext(ILogEventEnricher enricher) => Get().ForContext(enricher);
 

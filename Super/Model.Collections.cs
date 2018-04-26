@@ -30,5 +30,8 @@ namespace Super
 
 		public static ISelect<TIn, IEnumerable<TOut>> Hide<TIn, TOut>(this ISelect<TIn, ImmutableArray<TOut>> @this)
 			=> @this.Out(EnumerableSelector<TOut>.Default);
+
+		public static ISelect<TIn, IEnumerable<TOut>> Sequence<TIn, TOut>(this ISelect<TIn, TOut> @this)
+			=> @this.Out(YieldSelector<TOut>.Default);
 	}
 }

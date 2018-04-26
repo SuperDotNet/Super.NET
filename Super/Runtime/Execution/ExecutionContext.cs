@@ -1,41 +1,23 @@
 ﻿using Super.Model.Sources;
-using Super.Reflection;
 using Super.Runtime.Environment;
-using Super.Runtime.Invocation;
 
 namespace Super.Runtime.Execution
 {
-	public sealed class ExecutionContext : Deferred<object>, IExecutionContext
+	public sealed class ExecutionContext : DecoratedSource<object>, IExecutionContext
 	{
 		public static ExecutionContext Default { get; } = new ExecutionContext();
 
-		ExecutionContext() : this(ExecutionContextComponent.Default, AssignedContext.Default) {}
-
-		public ExecutionContext(IExecutionContext source, IMutable<object> mutable) : base(source, mutable) {}
+		ExecutionContext() : base(ExecutionContextStore.Default) {}
 	}
 
-	public sealed class ExecutionContextComponent : DecoratedSource<object>, IExecutionContext
+	sealed class ExecutionContextStore : SystemAssignment<object>
 	{
-		public static ExecutionContextComponent Default { get; } = new ExecutionContextComponent();
+		public static ExecutionContextStore Default { get; } = new ExecutionContextStore();
 
-		ExecutionContextComponent() : this(DefaultExecutionContext.Default) {}
+		public ExecutionContextStore() : this(ComponentLocator<IExecutionContext>.Default) {}
 
-		public ExecutionContextComponent(IExecutionContext @default)
-			: base(@default.To(I<Component<IExecutionContext>>.Default)
-			               .Out(x => x.Value())) {}
-	}
-
-	sealed class DefaultExecutionContext : DelegatedSource<object>, IExecutionContext
-	{
-		public static IExecutionContext Default { get; } = new DefaultExecutionContext();
-
-		DefaultExecutionContext() : base(() => new ContextDetails("Default Execution Context")) {}
-	}
-
-	sealed class AssignedContext : Assignment<object>
-	{
-		public static AssignedContext Default { get; } = new AssignedContext();
-
-		AssignedContext() : base(new Logical<object>()) {}
+		public ExecutionContextStore(ISource<ISource<object>> source)
+			: base(source.Select(x => x.Value()
+			                           .Or(() => new ContextDetails("Default Execution Context")))) {}
 	}
 }

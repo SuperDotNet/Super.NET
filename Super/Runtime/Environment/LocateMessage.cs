@@ -8,6 +8,6 @@ namespace Super.Runtime.Environment
 		public static LocateMessage Default { get; } = new LocateMessage();
 
 		LocateMessage() :
-			base(x => $"Could not locate an external/environmental type for {x}.  Please ensure there is a primary assembly registered with the PrimaryAssemblyAttribute, and that there is a corresponding assembly either named <PrimaryAssemblyName>.Environment for environmental-specific components or <PrimaryAssemblyName>.Platform for platform-specific components. Please also ensure that the component libraries contains one public type that implements the requested type.") {}
+			base(x => $"Could not locate an external/environmental component type for {x}.  Please ensure there is a primary assembly registered with the PrimaryAssemblyAttribute, and that there is a corresponding assembly either named <PrimaryAssemblyName>.Environment for environmental-specific components or <PrimaryAssemblyName>.Platform for platform-specific components. Please also ensure that the component libraries contains one public type that implements the requested type.") {}
 	}
 }

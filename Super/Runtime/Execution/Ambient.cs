@@ -3,8 +3,6 @@ using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Sources;
 using Super.Model.Specifications;
-using Super.Runtime.Activation;
-using Super.Runtime.Invocation;
 using System.Reactive;
 using System.Threading;
 
@@ -49,13 +47,5 @@ namespace Super.Runtime.Execution
 		public First(ICounter counter) => _counter = counter;
 
 		public bool IsSatisfiedBy(Unit parameter) => _counter.Get() == 0 && _counter.Count() == 1;
-	}
-
-	public class Ambient<T> : Deferred<T>, IActivateMarker<ISource<T>>
-	{
-		[UsedImplicitly]
-		public Ambient(ISource<T> source) : this(source, new Logical<T>()) {}
-
-		public Ambient(ISource<T> source, IMutable<T> mutable) : base(source, mutable) {}
 	}
 }

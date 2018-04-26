@@ -12,9 +12,9 @@ namespace Super.Testing.Application.Runtime
 		[Theory, AutoData]
 		void VerifyChildContext(string name)
 		{
-			AssignedContext.Default.IsSatisfiedBy().Should().BeFalse();
+			ExecutionContextStore.Default.IsSatisfiedBy().Should().BeFalse();
 			var resource = Resource.Default.Get();
-			AssignedContext.Default.IsSatisfiedBy().Should().BeTrue();
+			ExecutionContextStore.Default.IsSatisfiedBy().Should().BeTrue();
 			Resource.Default.Get().Should().BeSameAs(resource);
 
 			var instance = Contextual.Default.Get();
@@ -27,10 +27,10 @@ namespace Super.Testing.Application.Runtime
 			Contextual.Default.Get().Should().BeSameAs(instance);
 			resource.Get().Should().Be(0);
 			child.Get().Should().Be(1);
-			AssignedContext.Default.IsSatisfiedBy().Should().BeTrue();
+			ExecutionContextStore.Default.IsSatisfiedBy().Should().BeTrue();
 			DisposeContext.Default.Execute();
 			resource.Get().Should().Be(1);
-			AssignedContext.Default.IsSatisfiedBy().Should().BeFalse();
+			ExecutionContextStore.Default.IsSatisfiedBy().Should().BeFalse();
 		}
 
 

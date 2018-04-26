@@ -127,12 +127,12 @@ namespace Super.Runtime.Invocation.Operations
 		}
 	}*/
 
-	sealed class OperationContext : Logical<OperationState>
+	/*sealed class OperationContext : Logical<OperationState>
 	{
 		public static OperationContext Default { get; } = new OperationContext();
 
 		OperationContext() {}
-	}
+	}*/
 
 	/*class Operation<T> : ISelect<T, Task>
 	{

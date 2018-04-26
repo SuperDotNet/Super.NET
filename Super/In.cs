@@ -8,6 +8,11 @@ using System;
 
 namespace Super
 {
+	public static class Start
+	{
+		public static ISource<T> New<T>(Func<T> select) => new DelegatedSource<T>(select);
+	}
+
 	public static class In<T>
 	{
 		public static ISpecification<T> Is(Func<T, bool> specification) => new DelegatedSpecification<T>(specification);
@@ -39,5 +44,9 @@ namespace Super
 
 		public static ISelect<T, TResult> Select<TResult>(Func<T, TResult> @this)
 			=> Selections<T, TResult>.Default.Get(@this);
+
+		public static ISelect<T, TResult> Type<TResult>(ISelect<Type, TResult> select) => Start(x => x.Type()).Out(select);
+
+		
 	}
 }

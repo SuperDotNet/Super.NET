@@ -42,13 +42,15 @@ namespace Super
 
 		public static ISelect<TIn, TTo> Fold<TIn, TFrom, TTo>(this ISelect<TIn, ISelect<TFrom, TTo>> @this,
 		                                                      ISource<TFrom> select)
-			=> @this.Out(select.Out).Value();
+			=> @this.Out(select.Exit).Value();
 
 		public static ISelect<TIn, Type> Type<TIn, TOut>(this ISelect<TIn, TOut> @this)
 			=> @this.Out(InstanceTypeSelector<TOut>.Default);
 
 		public static ISelect<T, TypeInfo> Metadata<T>(this ISelect<T, Type> @this)
 			=> @this.Out(TypeMetadataSelector.Default);
+
+		public static ISelect<T, Type> Type<T>(this ISelect<T, TypeInfo> @this) => @this.Out(TypeSelector.Default);
 
 		public static ISelect<TIn, TOut> OnceStriped<TIn, TOut>(this ISelect<TIn, TOut> @this)
 			=> OncePerParameter<TIn, TOut>.Default.Get(@this);

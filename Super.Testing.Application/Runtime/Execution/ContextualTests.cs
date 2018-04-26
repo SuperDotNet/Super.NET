@@ -10,23 +10,22 @@ namespace Super.Testing.Application.Runtime.Execution
 		[Fact]
 		void VerifyResource()
 		{
-			AssignedContext.Default.IsSatisfiedBy().Should().BeFalse();
-			AssignedContext.Default.Get().Should().BeNull();
+			ExecutionContextStore.Default.IsSatisfiedBy().Should().BeFalse();
 			var instance = Resource.Default.Get();
-			var context = AssignedContext.Default.Get();
+			var context = ExecutionContextStore.Default.Get();
 			context.Should().NotBeNull();
 			AssociatedResources.Default.IsSatisfiedBy(context).Should().BeTrue();
 			instance.Get().Should().Be(0);
-			AssignedContext.Default.IsSatisfiedBy().Should().BeTrue();
+			ExecutionContextStore.Default.IsSatisfiedBy().Should().BeTrue();
 			DisposeContext.Default.Execute();
 
 			instance.Get().Should().Be(1);
-			AssignedContext.Default.Get().Should().BeNull();
+			ExecutionContextStore.Default.IsSatisfiedBy().Should().BeFalse();
 			AssociatedResources.Default.IsSatisfiedBy(context).Should().BeFalse();
 
 			DisposeContext.Default.Execute();
 			instance.Get().Should().Be(1);
-			AssignedContext.Default.Get().Should().BeNull();
+			ExecutionContextStore.Default.IsSatisfiedBy().Should().BeFalse();
 			AssociatedResources.Default.IsSatisfiedBy(context).Should().BeFalse();
 		}
 

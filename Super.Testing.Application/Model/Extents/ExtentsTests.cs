@@ -18,7 +18,7 @@ namespace Super.Testing.Application.Model.Extents
 		[Fact]
 		void VerifySourceDelegated()
 		{
-			new Source<int>(6776).Out(x => x.Type().Metadata()).Get().Should().Be(Type<int>.Metadata);
+			new Source<int>(6776).Select(x => x.Type().Metadata()).Get().Should().Be(Type<int>.Metadata);
 		}
 
 		[Fact]
