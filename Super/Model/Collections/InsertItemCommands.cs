@@ -23,8 +23,8 @@ namespace Super.Model.Collections
 		}
 
 		public ICommand<T> Get(Decoration<IList<T>, ICommand<T>> parameter)
-			=> _specification.If(new InsertItemCommand<T>(parameter.Parameter, _index).Select(),
-			                     parameter.Result.Select())
+			=> _specification.If(new InsertItemCommand<T>(parameter.Parameter, _index).Enter(),
+			                     parameter.Result.Enter())
 			                 .ToCommand();
 	}
 }

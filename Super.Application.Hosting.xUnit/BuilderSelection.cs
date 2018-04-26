@@ -11,7 +11,7 @@ namespace Super.Application.Hosting.xUnit
 		readonly Func<T, ISpecimenBuilderNode> _delegate;
 
 		protected BuilderSelection(Func<T, ISpecimenBuilder> @delegate)
-			: this(@delegate.Return().New(I<CustomizationNode>.Default)) {}
+			: this(@delegate.Exit().New(I<CustomizationNode>.Default)) {}
 
 		protected BuilderSelection(ISelect<T, ISpecimenBuilderNode> select) : this(select.Get) {}
 

@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 
 namespace Super.Runtime.Invocation.Expressions
 {
-	sealed class ConvertExpressions : ReferenceStore<Type, IAlteration<Expression>>
+	sealed class ConvertExpressions : ReferenceValueTable<Type, IAlteration<Expression>>
 	{
 		public static ConvertExpressions Default { get; } = new ConvertExpressions();
 
@@ -19,7 +19,7 @@ namespace Super.Runtime.Invocation.Expressions
 		public static ConvertExpression Default { get; } = new ConvertExpression();
 
 		ConvertExpression() :
-			this(ShouldConvertExpressions.Default.Out(In<Expression>.Start(y => y.Type()).Enter).Get,
+			this(ShouldConvertExpressions.Default.Out(In<Expression>.Start().Type().Exit).Get,
 			     ConvertAlterations.Default.Get) {}
 
 		readonly Func<Type, ISpecification<Expression>> _specification;
@@ -41,7 +41,7 @@ namespace Super.Runtime.Invocation.Expressions
 		}
 	}
 
-	sealed class ConvertAlterations : ReferenceStore<Type, IAlteration<Expression>>
+	sealed class ConvertAlterations : ReferenceValueTable<Type, IAlteration<Expression>>
 	{
 		public static ConvertAlterations Default { get; } = new ConvertAlterations();
 

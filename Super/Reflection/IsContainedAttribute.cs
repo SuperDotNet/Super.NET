@@ -11,6 +11,6 @@ namespace Super.Reflection
 		public static IsContainedAttribute<T> Default { get; } = new IsContainedAttribute<T>();
 
 		IsContainedAttribute()
-			: base(IsDefined<T>.Default.And(IsAssignableFrom<ISource<T>>.Default.Select().Fix(Type<T>.Metadata))) {}
+			: base(IsDefined<T>.Default.And(IsAssignableFrom<ISource<T>>.Default.Enter().Fix(Type<T>.Metadata))) {}
 	}
 }

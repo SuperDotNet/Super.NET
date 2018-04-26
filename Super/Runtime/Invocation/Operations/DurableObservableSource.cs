@@ -18,7 +18,7 @@ namespace Super.Runtime.Invocation.Operations
 
 		public EventSubscriber(ISelect<EventHandler<EventArgs>, EventHandler> select, ICommand<EventHandler> add,
 		                       ICommand<EventHandler> remove)
-			: base(select.Enter(add), select.Enter(remove)) {}
+			: base(select.Exit(add), select.Exit(remove)) {}
 	}
 
 	class EventSubscriber<T> : Subscriber<EventPattern<T>> where T : EventArgs

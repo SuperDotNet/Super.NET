@@ -8,6 +8,6 @@ namespace Super.Reflection.Types
 		public static HasGenericArguments Default { get; } = new HasGenericArguments();
 
 		HasGenericArguments() : base(IsGenericType.Default,
-		                             GenericArgumentsSelector.Default.HasAny().Return()) {}
+		                             GenericArgumentsSelector.Default.HasAny().Exit()) {}
 	}
 }

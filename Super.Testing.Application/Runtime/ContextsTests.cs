@@ -33,6 +33,7 @@ namespace Super.Testing.Application.Runtime
 			AssignedContext.Default.IsSatisfiedBy().Should().BeFalse();
 		}
 
+
 		static CountingDisposable Child(object resource, object instance, string name)
 		{
 			using (Contexts.Default.Get(name))

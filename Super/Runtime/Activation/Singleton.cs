@@ -11,6 +11,6 @@ namespace Super.Runtime.Activation
 		Singleton() : base(Singletons.Default
 		                             .Fix(Type<T>.Instance)
 		                             .Cast(I<T>.Default)
-		                             .Return()) {}
+		                             .Exit()) {}
 	}
 }

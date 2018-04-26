@@ -20,6 +20,6 @@ namespace Super.Runtime.Activation
 			                                   .Out(IsAssignableFrom<T>.Default)
 			                                   .Assigned())
 			                 .And(parameters.Out(RemainingParametersAreOptional.Default))
-			                 .Return()) {}
+			                 .Exit()) {}
 	}
 }

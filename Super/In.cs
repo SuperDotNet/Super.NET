@@ -28,7 +28,7 @@ namespace Super
 
 		public static ISelect<T, TResult> Out<TResult>() where TResult : IActivateMarker<T> => MarkedActivations<T, TResult>.Default;
 
-		public static ISelect<T, TResult> Start<TResult>(TResult @this) => @this.Select(I<T>.Default);
+		public static ISelect<T, TResult> Start<TResult>(TResult @this) => @this.Enter(I<T>.Default);
 
 		public static ISelect<T, T> Start() => Self<T>.Default;
 

@@ -12,6 +12,6 @@ namespace Super.Reflection.Members
 		                                            .To(x => x.HasNone()
 		                                                      .Or(x.AllAre(y => y.IsOptional ||
 		                                                                        y.Has<ParamArrayAttribute>())))
-		                                            .Return()) {}
+		                                            .Exit()) {}
 	}
 }

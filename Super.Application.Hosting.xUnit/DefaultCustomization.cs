@@ -40,7 +40,7 @@ namespace Super.Application.Hosting.xUnit
 	{
 		readonly static ISpecification<object> Specification = In<object>.Cast<Type>()
 		                                                                 .Out(Type<T>.Instance.Equal())
-		                                                                 .Return();
+		                                                                 .Exit();
 
 		readonly ISpecification<object> _specification;
 		readonly Func<T> _specimen;

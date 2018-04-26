@@ -8,6 +8,6 @@ namespace Super.Reflection.Types
 	{
 		public ImplementsGenericType(Type definition)
 			: base(In<TypeInfo>.Out<HasGenericInterface>()
-			                   .Enter(new FixedParameterSpecification<TypeInfo>(definition.GetTypeInfo()))) {}
+			                   .Exit(new FixedParameterSpecification<TypeInfo>(definition.GetTypeInfo()))) {}
 	}
 }

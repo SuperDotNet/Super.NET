@@ -29,7 +29,7 @@ namespace Super
 		public static ICommand<T> And<T>(this ICommand<T> @this, params ICommand<T>[] commands)
 			=> new CompositeCommand<T>(@this.Yield().Concat(commands).ToImmutableArray());
 
-		public static IAny Clear<T>(this ICommand<T> @this) => @this.Select().Fix(default);
+		public static IAny Clear<T>(this ICommand<T> @this) => @this.Enter().Fix(default);
 
 		public static void Execute<T>(this ICommand<ImmutableArray<T>> @this, params T[] parameters)
 			=> @this.Execute(parameters.ToImmutableArray());
@@ -56,7 +56,7 @@ namespace Super
 			=> @this.To(I<InvokeParameterCommand<TParameter, TResult>>.Default);
 
 		public static void Assign<TKey, TValue>(this IAssignable<TKey, TValue> @this, TKey key, TValue value)
-			=> Executed(@this, Pairs.Create(key, value)).Return(@this);
+			=> @this.Execute(Pairs.Create(key, value));
 
 		public static ICommand<T> Executed<T>(this ICommand<T> @this, T parameter) => @this.Execute(parameter, @this);
 

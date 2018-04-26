@@ -8,8 +8,8 @@ namespace Super.Model.Collections
 		public DefaultAddGroupElementCommand(GroupName defaultName, ISpecification<string, GroupName> names,
 		                                     IGroupCollection<T> collection)
 			: base(new AddGroupElementCommand<T>(collection, new GroupName<T>(defaultName, names))
-			       .Select()
-			       .Unless(new GroupingAwareCommand<T>(collection).Select())
+			       .Enter()
+			       .Unless(new GroupingAwareCommand<T>(collection).Enter())
 			       .ToCommand()) {}
 	}
 }

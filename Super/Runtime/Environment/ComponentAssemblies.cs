@@ -10,13 +10,13 @@ namespace Super.Runtime.Environment
 		public static ComponentAssemblies Default { get; } = new ComponentAssemblies();
 
 		ComponentAssemblies() : base(PrimaryAssembly.Default
-		                                            .Select()
+		                                            .Enter()
 		                                            .Out(AssemblyNameSelector.Default)
 		                                            .Out(ComponentAssemblyNames.Default)
 		                                            .Out(Load.Default.Select())
 		                                            .Out(x => x.Append(HostingAssembly.Default, PrimaryAssembly.Default))
 		                                            .Out(x => x.Assigned().Distinct())
-		                                            .Return()
+		                                            .Exit()
 		                                            .Get()) {}
 	}
 }

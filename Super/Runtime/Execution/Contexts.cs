@@ -30,7 +30,7 @@ namespace Super.Runtime.Execution
 		{
 			var current = _store.Get();
 			var result = _dispose.And(_store.AsCommand()
-			                                .Select()
+			                                .Enter()
 			                                .Fix(current))
 			                     .ToDelegate()
 			                     .To(I<DelegatedDisposable>.Default);
@@ -50,9 +50,9 @@ namespace Super.Runtime.Execution
 
 		public DisposeContext(ISpecification<object> specification, ISelect<object, IDisposable> select)
 			: base(AssignedContext.Default
-			                      .Enter(select.Enter(DisposeCommand.Default)
+			                      .Exit(select.Exit(DisposeCommand.Default)
 			                                   .And(AssignedContext.Default.Clear(), ClearResources.Default)
-			                                   .Select()
+			                                   .Enter()
 			                                   .If(specification))) {}
 	}
 

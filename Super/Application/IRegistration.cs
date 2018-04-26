@@ -104,7 +104,7 @@ namespace Super.Application
 	sealed class GenericTypeDependencySelector : DecoratedAlteration<Type>, IActivateMarker<Type>
 	{
 		public GenericTypeDependencySelector(Type type)
-			: base(IsGenericTypeDefinition.Default.Select()
+			: base(IsGenericTypeDefinition.Default.Enter()
 			                              .Fix(type)
 			                              .And(IsConstructedGenericType.Default,
 			                                   IsGenericTypeDefinition.Default.Inverse())
