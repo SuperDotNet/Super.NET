@@ -18,7 +18,7 @@ namespace Super.Reflection
 		public ContainedAttribute(IAttribute<TAttribute> attribute) : this(attribute, Select) {}
 
 		public ContainedAttribute(IAttribute<TAttribute> attribute, Func<TAttribute, T> select)
-			: this(IsContainedAttribute<TAttribute>.Default, attribute, select) {}
+			: this(IsContainedAttribute<TAttribute, T>.Default, attribute, select) {}
 
 		public ContainedAttribute(ISpecification<ICustomAttributeProvider> specification,
 		                          IAttribute<TAttribute> attribute, Func<TAttribute, T> select) : base(specification,

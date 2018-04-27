@@ -18,7 +18,7 @@ namespace Super.Reflection
 		public ContainedAttributes(IDeclared<TAttribute> attribute) : this(attribute, Select) {}
 
 		public ContainedAttributes(IDeclared<TAttribute> attribute, Func<TAttribute, T> select)
-			: this(IsContainedAttribute<TAttribute>.Default, attribute, select) {}
+			: this(IsContainedAttribute<TAttribute, T>.Default, attribute, select) {}
 
 		public ContainedAttributes(ISpecification<ICustomAttributeProvider> specification,
 		                           IDeclared<TAttribute> attribute, Func<TAttribute, T> select)

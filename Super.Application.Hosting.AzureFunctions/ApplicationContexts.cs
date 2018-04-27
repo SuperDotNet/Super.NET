@@ -10,6 +10,6 @@ namespace Super.Application.Hosting.AzureFunctions
 		public static ApplicationContexts<T> Default { get; } = new ApplicationContexts<T>();
 
 		ApplicationContexts() : base(In<AzureFunctionParameter>.Out<AzureFunctionArgument>()
-		                                                       .Out(Services<AzureFunctionArgument>.Default)) {}
+		                                                       .Select(Services<AzureFunctionArgument>.Default)) {}
 	}
 }

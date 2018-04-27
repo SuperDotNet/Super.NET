@@ -10,7 +10,7 @@ namespace Super.Diagnostics.Logging
 
 		Logger() : base(LoggingConfiguration.Default
 		                                    .Select(x => x.Fold()
-		                                                  .Out(LoggerSelector.Default)
+		                                                  .Select(LoggerSelector.Default)
 		                                                  .Activate(I<PrimaryLogger>.Default))) {}
 	}
 }

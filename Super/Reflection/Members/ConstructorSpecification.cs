@@ -11,7 +11,6 @@ namespace Super.Reflection.Members
 		ConstructorSpecification() : base(Parameters.Default
 		                                            .To(x => x.HasNone()
 		                                                      .Or(x.AllAre(y => y.IsOptional ||
-		                                                                        y.Has<ParamArrayAttribute>())))
-		                                            .Exit()) {}
+		                                                                        y.Has<ParamArrayAttribute>())))) {}
 	}
 }

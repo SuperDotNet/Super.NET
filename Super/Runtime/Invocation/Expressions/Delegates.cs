@@ -16,8 +16,8 @@ namespace Super.Runtime.Invocation.Expressions
 			: this(select, ConvertExpressions.Default.Get(resultType), parameters) {}
 
 		public Delegates(ISelect<TParameter, Expression> @select, IAlteration<Expression> alteration, params ParameterExpression[] parameters)
-			: base(@select.Out(alteration)
-			              .Out(new Lambda<TResult>(parameters))
-			              .Out(Compiler<TResult>.Default)) {}
+			: base(@select.Select(alteration)
+			              .Select(new Lambda<TResult>(parameters))
+			              .Select(Compiler<TResult>.Default)) {}
 	}
 }

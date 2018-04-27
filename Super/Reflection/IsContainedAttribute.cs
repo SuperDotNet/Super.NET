@@ -6,11 +6,11 @@ using System.Reflection;
 
 namespace Super.Reflection
 {
-	sealed class IsContainedAttribute<T> : DecoratedSpecification<ICustomAttributeProvider> where T : Attribute
+	sealed class IsContainedAttribute<TAttribute, T> : DecoratedSpecification<ICustomAttributeProvider> where TAttribute : Attribute
 	{
-		public static IsContainedAttribute<T> Default { get; } = new IsContainedAttribute<T>();
+		public static IsContainedAttribute<TAttribute, T> Default { get; } = new IsContainedAttribute<TAttribute, T>();
 
 		IsContainedAttribute()
-			: base(IsDefined<T>.Default.And(IsAssignableFrom<ISource<T>>.Default.Enter().Exit(Type<T>.Metadata))) {}
+			: base(IsDefined<TAttribute>.Default.And(IsAssignableFrom<ISource<T>>.Default.Out().Out(Type<TAttribute>.Metadata))) {}
 	}
 }

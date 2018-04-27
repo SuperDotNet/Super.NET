@@ -10,6 +10,6 @@ namespace Super.Application.Hosting.Console
 		public static ApplicationContexts<T> Default { get; } = new ApplicationContexts<T>();
 
 		ApplicationContexts() : base(In<ImmutableArray<string>>.Out<ConsoleApplicationArgument>()
-		                                                       .Out(Services<ConsoleApplicationArgument>.Default)) {}
+		                                                       .Select(Services<ConsoleApplicationArgument>.Default)) {}
 	}
 }

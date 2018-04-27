@@ -59,12 +59,12 @@ namespace Super.Application
 
 		public Services(ISource<IRegistration> registration)
 			: base(In<T>.Out<InstanceRegistration<T>>()
-			            .Out(YieldSelector<IRegistration>.Default)
-			            .Out(new AppendValueSelector<IRegistration>(registration))
+			            .Select(YieldSelector<IRegistration>.Default)
+			            .Select(new AppendValueSelector<IRegistration>(registration))
 			            .Activate(I<CompositeRegistration>.Default)
-			            .Out(x => x.Get(new Services(ServiceOptions.Default.Get())))
+			            .Select(x => x.Get(new Services(ServiceOptions.Default.Get())))
 			            .Cast(I<IServices>.Default)
-			            .Out(ServiceConfiguration.Default.ToCommand().ToConfiguration())) {}
+			            .Select(ServiceConfiguration.Default.ToCommand().ToConfiguration())) {}
 	}
 
 	sealed class ServiceSelector<T> : Select<IServiceProvider, T>
@@ -78,7 +78,7 @@ namespace Super.Application
 		where TContext : IApplicationContext<TParameter>
 	{
 		protected ApplicationContexts(ISelect<TParameter, IServices> services)
-			: base(services.Out(ServiceSelector<TContext>.Default)
+			: base(services.Select(ServiceSelector<TContext>.Default)
 			               .Cast(I<IApplicationContext<TParameter>>.Default)) {}
 	}
 
@@ -87,7 +87,7 @@ namespace Super.Application
 		where TContext : IApplicationContext<TParameter, TResult>
 	{
 		protected ApplicationContexts(ISelect<TParameter, IServices> services)
-			: base(services.Out(ServiceSelector<TContext>.Default)
+			: base(services.Select(ServiceSelector<TContext>.Default)
 			               .Cast(I<IApplicationContext<TParameter, TResult>>.Default)) {}
 	}
 }

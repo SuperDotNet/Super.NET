@@ -5,7 +5,7 @@
 		public static AuthenticationStateAssignment Default { get; } = new AuthenticationStateAssignment();
 
 		AuthenticationStateAssignment() : base(RequestStateSelector.Default
-		                                                           .Out(AppServiceAuthSession.Default)
+		                                                           .Select(AppServiceAuthSession.Default)
 		                                                           .Get) {}
 	}
 }

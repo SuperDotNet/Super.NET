@@ -9,7 +9,7 @@ namespace Super.Model.Collections
 		readonly ISelect<T, ICommand<T>> _commands;
 
 		public AddGroupElementCommand(IGroupCollection<T> collection, ISelect<T, GroupName> name)
-			: this(name.Out(collection).Out(ItemCommands<T>.Default)) {}
+			: this(name.Select(collection).Select(ItemCommands<T>.Default)) {}
 
 		public AddGroupElementCommand(ISelect<T, ICommand<T>> commands) => _commands = commands;
 

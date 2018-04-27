@@ -21,7 +21,7 @@ namespace Super.Model.Selection
 		readonly Func<Func<TParameter, TResult>> _source;
 
 		public DelegatedInstanceSelector(ISource<ISelect<TParameter, TResult>> source)
-			: this(source.Exit(DelegateSelector<TParameter, TResult>.Default)) {}
+			: this(source.Select(DelegateSelector<TParameter, TResult>.Default)) {}
 
 		public DelegatedInstanceSelector(ISource<Func<TParameter, TResult>> source) : this(source.Get) {}
 

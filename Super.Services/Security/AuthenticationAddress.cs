@@ -10,10 +10,10 @@ namespace Super.Services.Security
 		public static AuthenticationAddress Default { get; } = new AuthenticationAddress();
 
 		AuthenticationAddress() : base(AuthenticationBaseAddress.Default
-		                                                        .Exit(Uris.Default.Assigned())
-		                                                        .Or(CurrentRequestUri.Default
-		                                                                             .Out(Authority.Default)
-		                                                                             .Out(Uris.Default))
+		                                                        .Select(Uris.Default.Assigned())
+		                                                        .Exit(CurrentRequestUri.Default
+		                                                                               .Select(Authority.Default)
+		                                                                               .Select(Uris.Default))
 		                                                        .Get) {}
 	}
 }

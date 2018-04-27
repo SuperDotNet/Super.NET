@@ -11,13 +11,12 @@ namespace Super
 	{
 		public static ISelect<object, Func<object, IFormattable>> Register<T>(this ISelectFormatter<T> @this)
 			=> IsType<T>.Default.If(In<object>.Cast<T>()
-			                                  .Out(@this.To(I<Formatters<T>>.Default))
+			                                  .Select(@this.To(I<Formatters<T>>.Default))
 			                                  .ToDelegate()
 			                                  .Allow(I<object>.Default));
 
 		public static ISelect<string, TParameter, TResult> AsDefault<TParameter, TResult>(
-			this ISelect<TParameter, TResult> @this)
-			=> @this.ToDelegate().Allow(I<string>.Default);
+			this ISelect<TParameter, TResult> @this) => @this.ToDelegate().Allow(I<string>.Default);
 
 		public static string OrNone<T>(this T @this) => @this?.ToString() ?? None.Default;
 

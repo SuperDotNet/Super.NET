@@ -3,7 +3,6 @@ using Super.Model.Selection;
 using Super.Reflection;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 
 namespace Super
 {
@@ -18,20 +17,20 @@ namespace Super
 		public static IEnumerable<T> AsEnumerable<T>(this ImmutableArray<T> @this)
 			=> EnumerableSelector<T>.Default.Get(@this);
 
-		public static ISelect<TParameter, TResult> Composite<TParameter, TResult>(
+		/*public static ISelect<TParameter, TResult> Composite<TParameter, TResult>(
 			this IEnumerable<ISelect<TParameter, TResult>> @this)
-			=> @this.Fixed().To(x => x.Skip(1).Aggregate(x.First(), (current, alteration) => alteration.Or(current)));
+			=> @this.Fixed().To(x => x.Skip(1).Aggregate(x.First(), (current, alteration) => alteration.Or(current)));*/
 
 		public static ISelect<TIn, TOut> FirstAssigned<TIn, TOut>(this ISelect<TIn, IEnumerable<TOut>> @this)
-			=> @this.Out(FirstOrDefaultSelector<TOut>.Default);
+			=> @this.Select(FirstOrDefaultSelector<TOut>.Default);
 
 		public static ISelect<TIn, ImmutableArray<TOut>> Enumerate<TIn, TOut>(this ISelect<TIn, IEnumerable<TOut>> @this)
-			=> @this.Out(ImmutableArraySelector<TOut>.Default);
+			=> @this.Select(ImmutableArraySelector<TOut>.Default);
 
 		public static ISelect<TIn, IEnumerable<TOut>> Hide<TIn, TOut>(this ISelect<TIn, ImmutableArray<TOut>> @this)
-			=> @this.Out(EnumerableSelector<TOut>.Default);
+			=> @this.Select(EnumerableSelector<TOut>.Default);
 
 		public static ISelect<TIn, IEnumerable<TOut>> Sequence<TIn, TOut>(this ISelect<TIn, TOut> @this)
-			=> @this.Out(YieldSelector<TOut>.Default);
+			=> @this.Select(YieldSelector<TOut>.Default);
 	}
 }

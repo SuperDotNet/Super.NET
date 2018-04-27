@@ -7,6 +7,6 @@ namespace Super.Services
 	{
 		public static Service<T> Default { get; } = new Service<T>();
 
-		Service() : base(ClientStore.Default.Out(Api<T>.Default)) {}
+		Service() : base(ClientStore.Default.Select(Api<T>.Default)) {}
 	}
 }

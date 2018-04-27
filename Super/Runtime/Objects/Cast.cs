@@ -18,7 +18,7 @@ namespace Super.Runtime.Objects
 	{
 		public static ValueAwareCast<TFrom, TTo> Default { get; } = new ValueAwareCast<TFrom, TTo>();
 
-		ValueAwareCast() : base(Cast<TFrom, TTo>.Default.Or(Cast<TFrom, ISource<TTo>>.Default.Out(x => x.Value().Assigned()))) {}
+		ValueAwareCast() : base(Cast<TFrom, TTo>.Default.Assigned(CanCast<TFrom, ISource<TTo>>.Default.If(Cast<TFrom, ISource<TTo>>.Default.Value()))) {}
 	}
 
 	/*sealed class OnlyOnceAlteration<T> : IAlteration<ISelect<T, bool>>
@@ -36,7 +36,7 @@ namespace Super.Runtime.Objects
 
 		OnlyOnceAlteration() {}
 
-		public ISelect<TIn, TOut> Get(ISelect<TIn, TOut> parameter) => parameter.If(new First().Enter().Allow(I<TIn>.Default).Exit());
+		public ISelect<TIn, TOut> Get(ISelect<TIn, TOut> parameter) => parameter.If(new First().Out().Allow(I<TIn>.Default).Out());
 	}
 
 	/*sealed class OncePerParameter<T> : IAlteration<ISelect<T, bool>>

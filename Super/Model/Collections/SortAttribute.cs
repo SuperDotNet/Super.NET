@@ -1,10 +1,10 @@
-using System;
 using Super.Model.Sources;
+using System;
 
 namespace Super.Model.Collections
 {
 	[AttributeUsage(AttributeTargets.Class)]
-	sealed class SortAttribute : Attribute, ISource<int>
+	public sealed class SortAttribute : Attribute, ISource<int>
 	{
 		readonly int _sort;
 

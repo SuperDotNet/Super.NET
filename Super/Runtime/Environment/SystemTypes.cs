@@ -37,16 +37,16 @@ namespace Super.Runtime.Environment
 	{
 		public static SystemStore<T> Default { get; } = new SystemStore<T>();
 
-		public SystemStore() : this(SystemStorageDefinition.Default.Exit(I<GenericTypeAlteration>.Default)) {}
+		public SystemStore() : this(SystemStorageDefinition.Default.Select(I<GenericTypeAlteration>.Default)) {}
 
 		public SystemStore(ISource<ISelect<ImmutableArray<Type>, Type>> source)
 			: base(Self<Type>.Default
 			                 .Sequence()
 			                 .Enumerate()
-			                 .Out(source)
-			                 .Out(Activator.Default)
+			                 .Select(source)
+			                 .Select(Activator.Default)
 			                 .Cast(I<IMutable<T>>.Default)
-			                 .Exit(Type<T>.Instance)) {}
+			                 .Out(Type<T>.Instance)) {}
 	}
 
 	class Component<T> : SystemAssignment<T>

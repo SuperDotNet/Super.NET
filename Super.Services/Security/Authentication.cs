@@ -8,10 +8,10 @@ namespace Super.Services.Security
 		public static Authentication Default { get; } = new Authentication();
 
 		Authentication() : base(AuthenticationAddress.Default
-		                                             .Out(ClientStore.Default)
+		                                             .Select(ClientStore.Default)
 		                                             .Configure(AuthenticationStateAssignment.Default)
-		                                             .Out(Api<IAuthentication>.Default)
+		                                             .Select(Api<IAuthentication>.Default)
 		                                             .Request(x => x.Current())
-		                                             .Out(x => x.Only())) {}
+		                                             .Select(x => x.Only())) {}
 	}
 }

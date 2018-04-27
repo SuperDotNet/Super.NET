@@ -20,13 +20,6 @@ namespace Super
 		public static ISpecification<T> ToSpecification<T>(this ISelect<T, bool> @this) => @this.ToDelegateReference().ToSpecification();
 		public static ISpecification<T> ToSpecification<T>(this Func<T, bool> @this) => Specifications<T>.Default.Get(@this);
 
-		public static ISelect<TParameter, TResult> If<TParameter, TResult>(
-			this ISpecification<TParameter> @this, ISelect<TParameter, TResult> @true) => @this.If(@true, @true.Default());
-
-		public static ISelect<TParameter, TResult> If<TParameter, TResult>(
-			this ISpecification<TParameter> @this, ISelect<TParameter, TResult> @true, ISelect<TParameter, TResult> @false)
-			=> new Validated<TParameter, TResult>(@this, @true, @false);
-
 		public static ISpecification<T> Or<T>(this ISpecification<T> @this, params ISpecification<T>[] others)
 			=> new AnySpecification<T>(others.Prepend(@this).Fixed());
 

@@ -9,9 +9,9 @@ namespace Super.Reflection
 	{
 		public static IsDefined<T> Default { get; } = new IsDefined<T>();
 
-		public static IsDefined<T> Inherited { get; } = new IsDefined<T>(false);
+		public static IsDefined<T> Inherited { get; } = new IsDefined<T>(true);
 
-		IsDefined() : this(true) {}
+		IsDefined() : this(false) {}
 
 		readonly bool _inherit;
 

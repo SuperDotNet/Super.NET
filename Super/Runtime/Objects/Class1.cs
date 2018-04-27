@@ -132,6 +132,6 @@ namespace Super.Runtime.Objects
 
 		[UsedImplicitly]
 		public Property(Expression<Func<T, object>> expression, ISelect<object, KeyValuePair<string, object>> pairs)
-			: base(expression.Compile().Exit().Out(pairs)) {}
+			: base(expression.Compile().Out().Select(pairs)) {}
 	}
 }

@@ -11,8 +11,8 @@ namespace Super.Runtime.Activation
 		public static ISelect<TParameter, TResult> Default { get; } = new New<TParameter, TResult>();
 
 		New() : base(new ConstructorLocator(HasSingleParameterConstructor<TParameter>.Default)
-		             .Out(ParameterConstructors<TParameter, TResult>.Default.Assigned())
-		             .Or(ConstructorLocator.Default.Out(new ParameterConstructors<TParameter, TResult>(Instances.Default)))
+		             .Select(ParameterConstructors<TParameter, TResult>.Default.Assigned())
+		             .Assigned(ConstructorLocator.Default.Select(new ParameterConstructors<TParameter, TResult>(Instances.Default)))
 		             .Get(Type<TResult>.Metadata)) {}
 	}
 
@@ -20,9 +20,9 @@ namespace Super.Runtime.Activation
 	{
 		public static New<T> Default { get; } = new New<T>();
 
-		New() : base(In<Type>.Start(x => x.Metadata())
-		                     .Out(ConstructorLocator.Default)
-		                     .Out(Constructors<T>.Default)
-		                     .Invoke()) {}
+		New() : base(Self<Type>.Default.Metadata()
+		                       .Select(ConstructorLocator.Default)
+		                       .Select(Constructors<T>.Default)
+		                       .Invoke()) {}
 	}
 }

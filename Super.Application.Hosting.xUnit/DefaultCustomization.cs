@@ -39,8 +39,7 @@ namespace Super.Application.Hosting.xUnit
 	public class Specimen<T> : ISpecimenBuilder
 	{
 		readonly static ISpecification<object> Specification = In<object>.Cast<Type>()
-		                                                                 .Out(Type<T>.Instance.Equal())
-		                                                                 .Exit();
+		                                                                 .Out(Type<T>.Instance.Equal());
 
 		readonly ISpecification<object> _specification;
 		readonly Func<T> _specimen;

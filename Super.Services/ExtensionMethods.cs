@@ -9,7 +9,7 @@ namespace Super.Services
 
 		public static ISelect<TParameter, TResult> Request<TParameter, T, TResult>(
 			this ISelect<TParameter, T> @this, Func<T, IObservable<TResult>> parameter)
-			=> @this.Out(new Request<T, TResult>(parameter))
-			        .Out(Request<TResult>.Default);
+			=> @this.Select(new Request<T, TResult>(parameter))
+			        .Select(Request<TResult>.Default);
 	}
 }

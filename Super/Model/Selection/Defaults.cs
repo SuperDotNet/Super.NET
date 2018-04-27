@@ -1,6 +1,6 @@
 ﻿using Super.Model.Selection.Alterations;
-using Super.Reflection;
 using Super.Reflection.Types;
+using Super.Runtime.Objects;
 
 namespace Super.Model.Selection
 {
@@ -9,7 +9,7 @@ namespace Super.Model.Selection
 		public static Defaults<TParameter, TResult> Default { get; } = new Defaults<TParameter, TResult>();
 
 		Defaults() : base(IsType<ISelect<TParameter, TResult>, IAlteration<TParameter>>.Default,
-		                  Self<TParameter>.Default.Cast(I<TResult>.Default),
+		                  Cast<TParameter, TResult>.Default,
 		                  Default<TParameter, TResult>.Instance) {}
 	}
 }

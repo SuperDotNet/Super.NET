@@ -10,7 +10,7 @@ namespace Super.Runtime.Activation
 		public static Activator Default { get; } = new Activator();
 
 		Activator() : base(Self<Type>.Default
-		                             .Exit(new Generic<ISource<object>>(typeof(ReferenceActivator<>)))
+		                             .Out(new Generic<ISource<object>>(typeof(ReferenceActivator<>)))
 		                             .Value()) {}
 	}
 

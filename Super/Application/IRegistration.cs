@@ -105,8 +105,8 @@ namespace Super.Application
 	{
 		public GenericTypeDependencySelector(Type type)
 			: base(IsGenericTypeDefinition.Default
-			                              .Enter()
-			                              .Exit(type)
+			                              .Out()
+			                              .Out(type)
 			                              .And(IsConstructedGenericType.Default,
 			                                   IsGenericTypeDefinition.Default.Inverse())
 			                              .If(GenericTypeDefinitionAlteration.Default)) {}
@@ -116,14 +116,14 @@ namespace Super.Application
 	{
 		public DependencyCandidates(Type type)
 			: base(TypeMetadataSelector.Default
-			                           .Out(Constructors.Default)
-			                           .Out(Parameters.Default
-			                                          .Out(x => x.AsEnumerable())
+			                           .Select(Constructors.Default)
+			                           .Select(Parameters.Default
+			                                          .Select(x => x.AsEnumerable())
 			                                          .SelectMany())
-			                           .Out(ParameterType.Default.Select())
-			                           .Out(type.To(I<GenericTypeDependencySelector>.Default)
+			                           .Select(ParameterType.Default.Select())
+			                           .Select(type.To(I<GenericTypeDependencySelector>.Default)
 			                                    .Select())
-			                           .Out(x => x.Where(IsClass.Default.IsSatisfiedBy)
+			                           .Select(x => x.Where(IsClass.Default.IsSatisfiedBy)
 			                                      .ToImmutableArray())) {}
 	}
 

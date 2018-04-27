@@ -16,7 +16,7 @@ namespace Super.Model.Selection
 			: this(specification.IsSatisfiedBy, @select.Get, fallback.Get) {}
 
 		public Validated(Func<TParameter, bool> specification, Func<TParameter, TResult> source)
-			: this(specification, source, source.Exit().Default().ToDelegate()) {}
+			: this(specification, source, source.Out().Default().ToDelegate()) {}
 
 		public Validated(Func<TParameter, bool> specification, Func<TParameter, TResult> source,
 		                 Func<TParameter, TResult> fallback)

@@ -19,6 +19,6 @@ namespace Super.Reflection.Members
 	{
 		public static MethodDelegates<T> Default { get; } = new MethodDelegates<T>();
 
-		MethodDelegates() : base(new MethodDelegates(Type<T>.Instance).Out(CastSelector<Delegate, T>.Default)) {}
+		MethodDelegates() : base(new MethodDelegates(Type<T>.Instance).Select(CastSelector<Delegate, T>.Default)) {}
 	}
 }

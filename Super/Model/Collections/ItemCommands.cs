@@ -8,6 +8,6 @@ namespace Super.Model.Collections
 	{
 		public static ItemCommands<T> Default { get; } = new ItemCommands<T>();
 
-		ItemCommands() : base(AddItemCommands<T>.Default.Into(InsertItemCommands<T>.Default).Get) {}
+		ItemCommands() : base(AddItemCommands<T>.Default.Select(InsertItemCommands<T>.Default).Get) {}
 	}
 }

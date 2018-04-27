@@ -8,8 +8,8 @@ namespace Super.Runtime.Invocation
 	                                            IActivateMarker<ISelect<TParameter, TResult>>
 	{
 		public Striped(ISelect<TParameter, TResult> @select)
-			: base(select.Or(select.To(I<Deferred<TParameter, TResult>>.Default)
-			                       .ToDelegate()
-			                       .To(I<Stripe<TParameter, TResult>>.Default))) {}
+			: base(select.Assigned(select.To(I<Deferred<TParameter, TResult>>.Default)
+			                             .ToDelegate()
+			                             .To(I<Stripe<TParameter, TResult>>.Default))) {}
 	}
 }

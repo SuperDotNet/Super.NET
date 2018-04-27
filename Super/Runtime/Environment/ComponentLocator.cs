@@ -9,7 +9,7 @@ namespace Super.Runtime.Environment
 		public static ComponentLocator<T> Default { get; } = new ComponentLocator<T>();
 
 		ComponentLocator() : base(ComponentTypeLocator.Default
-		                                              .Out(Activator.Default.Assigned())
+		                                              .Select(Activator.Default.Assigned())
 		                                              .CastForValue(I<T>.Default)) {}
 	}
 }

@@ -15,7 +15,7 @@ namespace Super.Reflection
 
 		public Attribute(ISpecification<ICustomAttributeProvider> specification,
 		                 IAttribute<TAttribute> attribute, Func<TAttribute, T> select)
-			: base(specification, specification.If(attribute.Out(select).ToStore())) {}
+			: base(specification, specification.If(attribute.Select(select).ToStore())) {}
 	}
 
 	sealed class Attribute<T> : DecoratedSelect<ICustomAttributeProvider, T>, IAttribute<T>
@@ -26,6 +26,6 @@ namespace Super.Reflection
 
 		Attribute() : this(Declared<T>.Default) {}
 
-		public Attribute(IDeclared<T> declared) : base(declared.Out(SingleSelector<T>.Default)) {}
+		public Attribute(IDeclared<T> declared) : base(declared.Select(SingleSelector<T>.Default)) {}
 	}
 }

@@ -52,7 +52,7 @@ namespace Super.Application.Hosting.xUnit
 
 		public InsertCustomization(ISpecimenBuilder specimen, Func<IList<ISpecimenBuilder>, int> index)
 			: base(SelectCustomizations.Default
-			                           .Out(new InsertIntoList<ISpecimenBuilder>(specimen, index).ToConfiguration())
+			                           .Select(new InsertIntoList<ISpecimenBuilder>(specimen, index).ToConfiguration())
 			                           .ToCommand()) {}
 
 		public void Customize(IFixture fixture)

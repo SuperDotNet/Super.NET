@@ -16,10 +16,9 @@ namespace Super.Runtime.Activation
 		public HasSingleParameterConstructor(ISelect<ConstructorInfo, ICollection<ParameterInfo>> parameters)
 			: base(parameters.FirstAssigned()
 			                 .Out(ParameterType.Default
-			                                   .Metadata()
-			                                   .Out(IsAssignableFrom<T>.Default)
-			                                   .Assigned())
-			                 .And(parameters.Out(RemainingParametersAreOptional.Default))
-			                 .Exit()) {}
+			                                    .Select(TypeMetadataSelector.Default)
+			                                    .Select(IsAssignableFrom<T>.Default)
+			                                    .Assigned())
+			                 .And(parameters.Out(RemainingParametersAreOptional.Default))) {}
 	}
 }

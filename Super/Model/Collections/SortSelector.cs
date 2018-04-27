@@ -1,4 +1,5 @@
 using Super.Model.Selection;
+using Super.Reflection.Types;
 
 namespace Super.Model.Collections
 {
@@ -6,9 +7,9 @@ namespace Super.Model.Collections
 	{
 		public static SortSelector<T> Default { get; } = new SortSelector<T>();
 
-		SortSelector() : base(In<T>.CastForValue<ISortAware>()
-		                           .Out(x => x.Value().Assigned())
-		                           .Or(SortMetadata<T>.Default)
-		                           .Or(In<T>.Start(-1))) {}
+		SortSelector() : base(In<T>.Start(-1)
+		                           .Unless(SortMetadata<T>.Default)
+		                           .Unless(IsType<T, ISortAware>.Default,
+		                                   In<T>.CastForValue<ISortAware>().Value())) {}
 	}
 }

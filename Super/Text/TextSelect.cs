@@ -9,9 +9,9 @@ namespace Super.Text
 	{
 		public TextSelect(ISelect<TParameter, TResult> @default,
 		                  params KeyValuePair<string, Func<TParameter, TResult>>[] pairs)
-			: this(Pairs.Select(pairs).Or(@default.AsDefault())) {}
+			: this(Pairs.Select(pairs).Assigned(@default.AsDefault())) {}
 
 		public TextSelect(ISelect<string, Func<TParameter, TResult>> select)
-			: base(NullOrEmptySelector.Default.Out(select).Get) {}
+			: base(NullOrEmptySelector.Default.Select(select).Get) {}
 	}
 }

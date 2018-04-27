@@ -23,9 +23,9 @@ namespace Super
 		                                                                       Func<T, ISelect<TParameter, TResult>> __)
 			where T : ISelect<TParameter, TResult> => I<T, TParameter, TResult>.Default;
 
-		public static ISelect<TParameter, TResult> Try<TException, TParameter, TResult>(
+		/*public static ISelect<TParameter, TResult> Try<TException, TParameter, TResult>(
 			this I<TException> _, Func<TParameter, TResult> source, Func<TParameter, TResult> fallback)
 			where TException : Exception
-			=> new Try<TException, TParameter, TResult>(source, fallback);
+			=> ;*/
 	}
 }
