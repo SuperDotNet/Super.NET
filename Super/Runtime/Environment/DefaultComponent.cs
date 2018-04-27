@@ -12,7 +12,7 @@
 		public static RequiredComponent<T> Default { get; } = new RequiredComponent<T>();
 
 		RequiredComponent() : base(ComponentLocator<T>.Default
-		                                              .Select(x => x.Or(In<T>.Type(LocateMessage.Default)))
+		                                              .Or(In<T>.Type(LocateMessage.Default))
 		                                              .ToDelegate()) {}
 	}
 }

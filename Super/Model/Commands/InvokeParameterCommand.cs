@@ -10,8 +10,8 @@ namespace Super.Model.Commands
 		public InvokeParameterCommand(Func<T, Unit> @delegate) : base(new InvokeParameterCommand<T, Unit>(@delegate)) {}
 	}
 
-	sealed class InvokeParameterCommand<TParameter, TResult>
-		: ICommand<TParameter>, IActivateMarker<Func<TParameter, TResult>>
+	sealed class InvokeParameterCommand<TParameter, TResult> : ICommand<TParameter>,
+	                                                           IActivateMarker<Func<TParameter, TResult>>
 	{
 		readonly Func<TParameter, TResult> _delegate;
 
@@ -44,7 +44,8 @@ namespace Super.Model.Commands
 		public ThrowCommand(Func<T> exception) : base(exception) {}
 	}
 
-	class ThrowCommand<T, TException> : ICommand<T>, IActivateMarker<TException>,
+	class ThrowCommand<T, TException> : ICommand<T>,
+	                                    IActivateMarker<TException>,
 	                                    IActivateMarker<ISource<TException>>,
 	                                    IActivateMarker<Func<TException>>
 		where TException : Exception

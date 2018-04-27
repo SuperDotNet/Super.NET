@@ -10,6 +10,6 @@ namespace Super.Model.Collections
 			: base(new AddGroupElementCommand<T>(collection, new GroupName<T>(defaultName, names))
 			       .Out()
 			       .Unless(new GroupingAwareCommand<T>(collection).Out())
-			       .ToCommand()) {}
+			       .Out()) {}
 	}
 }

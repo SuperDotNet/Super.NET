@@ -21,32 +21,14 @@ namespace Super.Runtime.Objects
 		ValueAwareCast() : base(Cast<TFrom, TTo>.Default.Assigned(CanCast<TFrom, ISource<TTo>>.Default.If(Cast<TFrom, ISource<TTo>>.Default.Value()))) {}
 	}
 
-	/*sealed class OnlyOnceAlteration<T> : IAlteration<ISelect<T, bool>>
-	{
-		public static OnlyOnceAlteration<T> Default { get; } = new OnlyOnceAlteration<T>();
-
-		OnlyOnceAlteration() {}
-
-		public ISelect<T, bool> Get(ISelect<T, bool> parameter) => OnlyOnceAlteration<T, bool>.Default.Get(parameter).And(parameter);
-	}*/
-
 	sealed class OnlyOnceAlteration<TIn, TOut> : IAlteration<ISelect<TIn, TOut>>
 	{
 		public static OnlyOnceAlteration<TIn, TOut> Default { get; } = new OnlyOnceAlteration<TIn, TOut>();
 
 		OnlyOnceAlteration() {}
 
-		public ISelect<TIn, TOut> Get(ISelect<TIn, TOut> parameter) => parameter.If(new First().Out().Allow(I<TIn>.Default).Out());
+		public ISelect<TIn, TOut> Get(ISelect<TIn, TOut> parameter) => new First().Out().Select(I<TIn>.Default).Out().If(parameter);
 	}
-
-	/*sealed class OncePerParameter<T> : IAlteration<ISelect<T, bool>>
-	{
-		public static OncePerParameter<T> Default { get; } = new OncePerParameter<T>();
-
-		OncePerParameter() {}
-
-		public ISelect<T, bool> Get(ISelect<T, bool> parameter) => OncePerParameter<T, bool>.Default.Get(parameter).And(parameter);
-	}*/
 
 	sealed class OncePerParameter<TIn, TOut> : IAlteration<ISelect<TIn, TOut>>
 	{
@@ -54,6 +36,6 @@ namespace Super.Runtime.Objects
 
 		OncePerParameter() {}
 
-		public ISelect<TIn, TOut> Get(ISelect<TIn, TOut> parameter) => parameter.If(new First<TIn>());
+		public ISelect<TIn, TOut> Get(ISelect<TIn, TOut> parameter) => new First<TIn>().If(parameter);
 	}
 }

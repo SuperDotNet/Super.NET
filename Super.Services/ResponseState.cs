@@ -1,7 +1,7 @@
-﻿using System;
-using System.Net;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Super.Model.Selection;
+using System;
+using System.Net;
 
 namespace Super.Services
 {
@@ -9,8 +9,6 @@ namespace Super.Services
 	{
 		readonly string                                 _name;
 		readonly Func<IRequestCookieCollection, string> _state;
-
-		// public ResponseState(string name) : this(name, new RequestStateValue(name).Get) {}
 
 		public ResponseState(string name, Func<IRequestCookieCollection, string> state)
 		{

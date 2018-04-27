@@ -3,6 +3,7 @@ using Super.Model.Selection;
 using Super.Model.Sources;
 using Super.Reflection.Types;
 using System;
+using System.Reflection;
 using Xunit;
 
 namespace Super.Testing.Application.Model.Extents
@@ -12,13 +13,13 @@ namespace Super.Testing.Application.Model.Extents
 		[Fact]
 		void VerifySourceDirect()
 		{
-			new Source<string>("Hello World!").Out().Type().Metadata().Out().Get().Should().Be(Type<string>.Metadata);
+			new Source<string>("Hello World!").Out().AsSelect().Type().Metadata().Out().Get().Should().Be(Type<string>.Metadata);
 		}
 
 		[Fact]
 		void VerifySourceDelegated()
 		{
-			new Source<int>(6776).Select(x => x.Type().Metadata()).Get().Should().Be(Type<int>.Metadata);
+			new Source<int>(6776).Select(x => x.GetType().GetTypeInfo()).Get().Should().Be(Type<int>.Metadata);
 		}
 
 		[Fact]

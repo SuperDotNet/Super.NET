@@ -2,7 +2,6 @@
 using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
-using Super.Model.Sources;
 using Super.Reflection;
 using Super.Runtime;
 using System;
@@ -46,11 +45,11 @@ namespace Super
 		public static IAssignable<TParameter, TResult> ToAssignment<TParameter, TResult>(this ISelect<TParameter, ICommand<TResult>> @this)
 			=> new SelectedAssignment<TParameter, TResult>(@this.Get);
 
-		public static ICommand<T> ToCommand<T>(this ISource<ICommand<T>> @this)
-			=> I<DelegatedInstanceCommand<T>>.Default.From(@this);
+		/*public static ICommand<T> ToCommand<T>(this ISource<ICommand<T>> @this)
+			=> I<DelegatedInstanceCommand<T>>.Default.From(@this);*/
 
-		public static ICommand<TParameter> ToCommand<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
-			=> @this.ToDelegate().ToCommand();
+		/*public static ICommand<TParameter> ToCommand<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
+			=> @this.ToDelegate().ToCommand();*/
 
 		public static ICommand<TParameter> ToCommand<TParameter, TResult>(this Func<TParameter, TResult> @this)
 			=> @this.To(I<InvokeParameterCommand<TParameter, TResult>>.Default);

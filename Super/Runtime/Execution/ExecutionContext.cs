@@ -17,7 +17,6 @@ namespace Super.Runtime.Execution
 		public ExecutionContextStore() : this(ComponentLocator<IExecutionContext>.Default) {}
 
 		public ExecutionContextStore(ISource<ISource<object>> source)
-			: base(source.Select(x => x.Value()
-			                           .Or(() => new ContextDetails("Default Execution Context")))) {}
+			: base(source.Select(x => x.Get() ?? new ContextDetails("Default Execution Context"))) {}
 	}
 }

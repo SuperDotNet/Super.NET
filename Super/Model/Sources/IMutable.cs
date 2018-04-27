@@ -43,7 +43,7 @@ namespace Super.Model.Sources
 	{
 		readonly ISpecification<Unit> _specification;
 
-		public Assignment(IMutable<T> mutable) : this(mutable.Exit(IsAssigned<T>.Default), mutable) {}
+		public Assignment(IMutable<T> mutable) : this(mutable.Out(IsAssigned<T>.Default), mutable) {}
 
 		public Assignment(ISpecification<Unit> specification, IMutable<T> mutable) : base(mutable)
 			=> _specification = specification;

@@ -41,7 +41,7 @@ namespace Super
 		/*public static ISelect<T, TResult> Start<TResult>(Func<ISelect<T, T>, ISelect<T, TResult>> select)
 			=> Self<T>.Default.Out(select);*/
 
-		public static ISelect<T, TResult> Select<TResult>(ISource<TResult> @this) => @this.Allow(I<T>.Default);
+		public static ISelect<T, TResult> Select<TResult>(ISource<TResult> @this) => @this.Out(I<T>.Default);
 
 		public static ISelect<T, TResult> Select<TResult>(Func<T, TResult> @this)
 			=> Selections<T, TResult>.Default.Get(@this);

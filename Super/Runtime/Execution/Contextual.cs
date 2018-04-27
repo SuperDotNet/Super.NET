@@ -2,6 +2,7 @@
 using Super.Model.Selection;
 using Super.Model.Sources;
 using Super.Reflection;
+using Super.Reflection.Types;
 using System;
 
 namespace Super.Runtime.Execution
@@ -10,13 +11,14 @@ namespace Super.Runtime.Execution
 	{
 		public Contextual(Func<T> source) : this(source.ToSource()) {}
 
-		public Contextual(ISource<T> source) : this(source.Any()
-		                                                  .As(I<IDisposable>.Default,
-		                                                      x => x.Configure(Implementations.Assign))
+		public Contextual(ISource<T> source) : this(source.Out(I<object>.Default)
+		                                                  .To(x => x.Cast(I<IDisposable>.Default)
+		                                                            .Configure(Implementations.Assign)
+		                                                            .Cast(I<T>.Default)
+		                                                            .When(IsType<T, IDisposable>.Default, x.Get))
 		                                                  .ToStore()) {}
 
-		public Contextual(ISelect<object, T> source)
-			: base(source, ExecutionContext.Default) {}
+		public Contextual(ISelect<object, T> source) : base(source, ExecutionContext.Default) {}
 	}
 
 	static class Implementations

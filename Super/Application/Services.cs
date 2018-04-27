@@ -59,12 +59,12 @@ namespace Super.Application
 
 		public Services(ISource<IRegistration> registration)
 			: base(In<T>.Out<InstanceRegistration<T>>()
-			            .Select(YieldSelector<IRegistration>.Default)
+			            .Sequence()
 			            .Select(new AppendValueSelector<IRegistration>(registration))
 			            .Activate(I<CompositeRegistration>.Default)
 			            .Select(x => x.Get(new Services(ServiceOptions.Default.Get())))
 			            .Cast(I<IServices>.Default)
-			            .Select(ServiceConfiguration.Default.ToCommand().ToConfiguration())) {}
+			            .Select(ServiceConfiguration.Default.Select(x => x.ToConfiguration()))) {}
 	}
 
 	sealed class ServiceSelector<T> : Select<IServiceProvider, T>

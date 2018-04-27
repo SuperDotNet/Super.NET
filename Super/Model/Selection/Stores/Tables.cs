@@ -11,7 +11,7 @@ namespace Super.Model.Selection.Stores
 
 		Tables()
 			: this(IsValueType.Default.IsSatisfiedBy(typeof(TParameter))
-				       ? MarkedActivations<Func<TParameter, TResult>, ConcurrentTables<TParameter, TResult>>.Default.Fold()
+				       ? MarkedActivations<Func<TParameter, TResult>, ConcurrentTables<TParameter, TResult>>.Default.Select(x => x.Reduce().Get())
 				       : new Generic<ISelect<Func<TParameter, TResult>, ITable<TParameter, TResult>>>(typeof(ReferenceTables<,>))
 					       .Get(typeof(TParameter), typeof(TResult))()) {}
 

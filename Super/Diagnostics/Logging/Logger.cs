@@ -9,8 +9,8 @@ namespace Super.Diagnostics.Logging
 		public static Logger Default { get; } = new Logger();
 
 		Logger() : base(LoggingConfiguration.Default
-		                                    .Select(x => x.Fold()
-		                                                  .Select(LoggerSelector.Default)
-		                                                  .Activate(I<PrimaryLogger>.Default))) {}
+		                                    .Select(x => x.Reduce().Get())
+		                                    .Select(LoggerSelector.Default)
+		                                    .Select(I<PrimaryLogger>.Default)) {}
 	}
 }

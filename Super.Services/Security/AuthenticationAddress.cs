@@ -11,7 +11,7 @@ namespace Super.Services.Security
 
 		AuthenticationAddress() : base(AuthenticationBaseAddress.Default
 		                                                        .Select(Uris.Default.Assigned())
-		                                                        .Exit(CurrentRequestUri.Default
+		                                                        .Out(CurrentRequestUri.Default
 		                                                                               .Select(Authority.Default)
 		                                                                               .Select(Uris.Default))
 		                                                        .Get) {}
