@@ -31,7 +31,7 @@ namespace Super.Runtime.Execution
 			var current = _store.Get();
 			var result = _dispose.And(_store.AsCommand()
 			                                .Enter()
-			                                .Fix(current))
+			                                .Exit(current))
 			                     .ToDelegate()
 			                     .To(I<DelegatedDisposable>.Default);
 			_store.Execute(_context(parameter));

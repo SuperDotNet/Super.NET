@@ -1,4 +1,4 @@
-using Super.Model.Commands;
+using Super.Model.Selection;
 using Super.Model.Sources;
 using Super.Model.Specifications;
 using Super.Reflection;
@@ -10,6 +10,7 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reactive;
+using Activator = Super.Runtime.Activation.Activator;
 
 namespace Super.Runtime.Environment
 {
@@ -25,42 +26,27 @@ namespace Super.Runtime.Environment
 		                                        .ToImmutableArray) {}
 	}
 
-	sealed class Stores<TType, T> : Variable<Func<IMutable<T>>>
+	public sealed class SystemStorageDefinition : Variable<Type>
 	{
-		public static Stores<TType, T> Default { get; } = new Stores<TType, T>();
+		public static SystemStorageDefinition Default { get; } = new SystemStorageDefinition();
 
-		Stores() : base(Activator<TType>.Default.Select(x => x.Cast(I<IMutable<T>>.Default)).Get) {}
+		SystemStorageDefinition() : base(typeof(Variable<>)) {}
 	}
 
-	public sealed class StoreType : Variable<Type>
+	sealed class SystemStore<T> : DecoratedSource<IMutable<T>>
 	{
-		public static StoreType Default { get; } = new StoreType();
+		public static SystemStore<T> Default { get; } = new SystemStore<T>();
 
-		StoreType() : base(typeof(Variable<>)) {}
-	}
+		public SystemStore() : this(SystemStorageDefinition.Default.Exit(I<GenericTypeAlteration>.Default)) {}
 
-	public sealed class SystemStores<T> : DecoratedSource<IMutable<T>>, ICommand<Func<IMutable<T>>>
-	{
-		readonly static Generic<IMutable<Func<IMutable<T>>>> Generic
-			= new Generic<IMutable<Func<IMutable<T>>>>(typeof(Stores<,>));
-
-		public static SystemStores<T> Default { get; } = new SystemStores<T>();
-
-		SystemStores() : this(new GenericTypeAlteration(StoreType.Default.Get()).Get(Type<T>.Instance), Type<T>.Instance) {}
-
-		public SystemStores(params Type[] types) : this(types.ToImmutableArray()) {}
-
-		public SystemStores(ImmutableArray<Type> types) : this(Generic.Invoke().Get(types)) {}
-
-		readonly IMutable<Func<IMutable<T>>> _store;
-
-		public SystemStores(IMutable<Func<IMutable<T>>> store) : base(store.Select(x => x.Invoke()))
-			=> _store = store;
-
-		public void Execute(Func<IMutable<T>> parameter)
-		{
-			_store.Execute(parameter);
-		}
+		public SystemStore(ISource<ISelect<ImmutableArray<Type>, Type>> source)
+			: base(Self<Type>.Default
+			                 .Sequence()
+			                 .Enumerate()
+			                 .Out(source)
+			                 .Out(Activator.Default)
+			                 .Cast(I<IMutable<T>>.Default)
+			                 .Exit(Type<T>.Instance)) {}
 	}
 
 	class Component<T> : SystemAssignment<T>
@@ -78,7 +64,7 @@ namespace Super.Runtime.Environment
 
 		protected SystemAssignment(Func<T> source) : this(source.ToSource()) {}
 
-		protected SystemAssignment(ISource<T> source) : this(source, new Assignment<T>(SystemStores<T>.Default.Get())) {}
+		protected SystemAssignment(ISource<T> source) : this(source, new Assignment<T>(SystemStore<T>.Default.Get())) {}
 
 		protected SystemAssignment(ISource<T> source, IAssignment<T> store) : base(source, store) => _store = store;
 

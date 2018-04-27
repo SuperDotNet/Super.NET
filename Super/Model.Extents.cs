@@ -94,5 +94,8 @@ namespace Super
 
 		public static ISelect<TIn, TOut> Invoke<TIn, TOut>(this ISelect<TIn, Func<TOut>> @this)
 			=> @this.Out(Call<TOut>.Default);
+
+		public static ISelect<TIn, Func<TParameter, TResult>> Delegate<TIn, TParameter, TResult>(this ISelect<TIn, ISelect<TParameter, TResult>> @this)
+			=> @this.Out(DelegateSelector<TParameter, TResult>.Default);
 	}
 }

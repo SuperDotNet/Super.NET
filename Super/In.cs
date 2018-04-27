@@ -45,8 +45,8 @@ namespace Super
 		public static ISelect<T, TResult> Select<TResult>(Func<T, TResult> @this)
 			=> Selections<T, TResult>.Default.Get(@this);
 
-		public static ISelect<T, TResult> Type<TResult>(ISelect<Type, TResult> select) => Start(x => x.Type()).Out(select);
+		public static ISelect<T, TResult> Type<TResult>(ISelect<Type, TResult> select) => Type().Out(select);
 
-		
+		public static ISelect<T, Type> Type() => Start(x => x.Type());
 	}
 }

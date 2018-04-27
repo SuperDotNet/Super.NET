@@ -18,9 +18,8 @@ namespace Super.Runtime.Invocation.Expressions
 	{
 		public static ConvertExpression Default { get; } = new ConvertExpression();
 
-		ConvertExpression() :
-			this(ShouldConvertExpressions.Default.Out(In<Expression>.Start().Type().Exit).Get,
-			     ConvertAlterations.Default.Get) {}
+		ConvertExpression() : this(ShouldConvertExpressions.Default.Out(In<Expression>.Type().Exit).Get,
+		                           ConvertAlterations.Default.Get) {}
 
 		readonly Func<Type, ISpecification<Expression>> _specification;
 		readonly Func<Type, IAlteration<Expression>>    _alteration;

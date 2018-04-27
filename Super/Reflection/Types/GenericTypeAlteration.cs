@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Super.Model.Selection;
+using Super.Runtime.Activation;
+using System;
 using System.Collections.Immutable;
 using System.Linq;
-using Super.Model.Selection;
 
 namespace Super.Reflection.Types
 {
-	sealed class GenericTypeAlteration : ISelect<ImmutableArray<Type>, Type>
+	sealed class GenericTypeAlteration : ISelect<ImmutableArray<Type>, Type>, IActivateMarker<Type>
 	{
 		readonly Type _definition;
 
