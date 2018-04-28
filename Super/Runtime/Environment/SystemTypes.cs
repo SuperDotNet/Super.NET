@@ -55,7 +55,7 @@ namespace Super.Runtime.Environment
 
 		public Component(Func<T> fallback) : this(fallback.ToSource()) {}
 
-		public Component(ISource<T> fallback) : base(ComponentLocator<T>.Default.Or(fallback).ToDelegate()) {}
+		public Component(ISource<T> fallback) : base(fallback.Unless(ComponentLocator<T>.Default).ToDelegate()) {}
 	}
 
 	public class SystemAssignment<T> : Deferred<T>, IAssignment<T>

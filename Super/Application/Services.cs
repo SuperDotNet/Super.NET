@@ -58,11 +58,11 @@ namespace Super.Application
 		Services() : this(ServiceRegistration.Default) {}
 
 		public Services(ISource<IRegistration> registration)
-			: base(In<T>.Out<InstanceRegistration<T>>()
+			: base(In<T>.Activate<InstanceRegistration<T>>()
 			            .Sequence()
 			            .Select(new AppendValueSelector<IRegistration>(registration))
 			            .Activate(I<CompositeRegistration>.Default)
-			            .Select(x => x.Get(new Services(ServiceOptions.Default.Get())))
+			            .Select(ServiceOptions.Default.Select(I<Services>.Default).Select)
 			            .Cast(I<IServices>.Default)
 			            .Select(ServiceConfiguration.Default.Select(x => x.ToConfiguration()))) {}
 	}

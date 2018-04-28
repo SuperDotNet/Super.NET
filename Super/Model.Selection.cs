@@ -33,11 +33,11 @@ namespace Super
 			=> select.If(@this);
 
 		public static ISelect<TParameter, TResult> Guard<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
-			=> @this.Guard(DefaultMessage<TParameter, TResult>.Default);
+			=> DefaultGuard<TParameter>.Default.Then(@this);
 
 		public static ISelect<TParameter, TResult> Guard<TParameter, TResult>(this ISelect<TParameter, TResult> @this,
-		                                                                      IMessage<TParameter> message)
-			=> new Guard<TParameter>(message).Then(@this);
+		                                                                      IMessage<Type> message)
+			=> new AssignedGuard<TParameter>(message).Then(@this);
 
 		public static ISelect<TParameter, TResult> Assigned<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
 			=> IsAssigned<TParameter>.Default.Then(@this);

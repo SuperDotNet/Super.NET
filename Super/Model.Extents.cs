@@ -16,7 +16,10 @@ namespace Super
 	public static partial class ExtensionMethods
 	{
 		public static ISelect<TIn, TTo> Cast<TIn, TOut, TTo>(this ISelect<TIn, TOut> @this, I<TTo> _)
-			=> @this.Select(Cast<TOut, TTo>.Default);
+			=> @this.Select(Runtime.Objects.Cast<TOut, TTo>.Default);
+
+		public static ISource<TTo> Cast<TOut, TTo>(this ISource<TOut> @this, I<TTo> _)
+			=> @this.Select(Runtime.Objects.Cast<TOut, TTo>.Default);
 
 		public static ISelect<TIn, TTo> CastForValue<TIn, TOut, TTo>(this ISelect<TIn, TOut> @this, I<TTo> _)
 			=> @this.Select(ValueAwareCast<TOut, TTo>.Default);

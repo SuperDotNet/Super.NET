@@ -7,7 +7,7 @@ namespace Super.Reflection.Types
 	public class ImplementsGenericType : DecoratedSpecification<TypeInfo>
 	{
 		public ImplementsGenericType(Type definition)
-			: base(In<TypeInfo>.Out<HasGenericInterface>()
+			: base(In<TypeInfo>.Activate<HasGenericInterface>()
 			                   .Out(new FixedParameterSpecification<TypeInfo>(definition.GetTypeInfo()))) {}
 	}
 }

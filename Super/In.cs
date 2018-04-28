@@ -20,33 +20,28 @@ namespace Super
 
 		public static ICommand<T> Then(Action<T> action) => new DelegatedCommand<T>(action);
 
-		public static ISelect<T, TResult> Default<TResult>() => Select(Model.Sources.Default<TResult>.Instance);
-
 		public static ISelect<T, TResult> Cast<TResult>() => Runtime.Objects.Cast<T, TResult>.Default;
-
-		public static ISelect<T, TResult> CastForValue<TResult>() => ValueAwareCast<T, TResult>.Default;
 
 		public static ISelect<T, TResult> Cast<TFrom, TResult>(ISelect<TFrom, TResult> @this) => Cast(@this.ToDelegate());
 
 		public static ISelect<T, TResult> Cast<TFrom, TResult>(Func<TFrom, TResult> @this) => Runtime.Objects.Cast<T, TFrom>.Default.Select(@this);
 
+		public static ISelect<T, TResult> CastForValue<TResult>() => ValueAwareCast<T, TResult>.Default;
+
 		public static ISelect<T, TResult> New<TResult>() => Select(Activator<TResult>.Default);
 
-		public static ISelect<T, TResult> Out<TResult>() where TResult : IActivateMarker<T> => MarkedActivations<T, TResult>.Default;
+		public static ISelect<T, TResult> Activate<TResult>() where TResult : IActivateMarker<T> => MarkedActivations<T, TResult>.Default;
+
+		public static ISelect<T, TResult> Default<TResult>() => Select(Model.Sources.Default<TResult>.Instance);
 
 		public static ISelect<T, TResult> Start<TResult>(TResult @this) => new FixedResult<T, TResult>(@this);
 
 		public static ISelect<T, T> Start() => Self<T>.Default;
 
-		/*public static ISelect<T, TResult> Start<TResult>(Func<ISelect<T, T>, ISelect<T, TResult>> select)
-			=> Self<T>.Default.Out(select);*/
-
 		public static ISelect<T, TResult> Select<TResult>(ISource<TResult> @this) => @this.Out(I<T>.Default);
 
 		public static ISelect<T, TResult> Select<TResult>(Func<T, TResult> @this)
 			=> Selections<T, TResult>.Default.Get(@this);
-
-		public static ISelect<T, TResult> Type<TResult>(ISelect<Type, TResult> select) => Type().Select(select);
 
 		public static ISelect<T, Type> Type() => InstanceTypeSelector<T>.Default;
 	}

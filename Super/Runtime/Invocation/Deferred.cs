@@ -19,6 +19,6 @@ namespace Super.Runtime.Invocation
 		public Deferred(ISource<T> source, IMutable<T> mutable) : this(source, mutable, mutable) {}
 
 		public Deferred(ISource<T> source, ISource<T> store, ICommand<T> assign)
-			: base(store.Or(source.Select(assign.ToConfiguration()))) {}
+			: base(source.Select(assign.ToConfiguration()).Unless(store)) {}
 	}
 }

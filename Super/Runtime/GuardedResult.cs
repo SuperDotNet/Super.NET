@@ -1,7 +1,9 @@
 ﻿using Super.Model.Selection;
 using Super.Model.Specifications;
 using Super.Reflection;
+using Super.Reflection.Types;
 using Super.Runtime.Activation;
+using Super.Text;
 using System;
 
 namespace Super.Runtime
@@ -28,18 +30,24 @@ namespace Super.Runtime
 			       Default<TParameter, TResult>.Instance) {}
 	}*/
 
-	sealed class Guard<T> : GuardedSpecification<T, InvalidOperationException>, IActivateMarker<ISelect<T, string>>
+	sealed class DefaultGuard<T> : AssignedGuard<T>
 	{
-		public static Guard<T> Default { get; } = new Guard<T>();
+		public static DefaultGuard<T> Default { get; } = new DefaultGuard<T>();
 
-		Guard() : this(DefaultMessage<T>.Default) {}
+		DefaultGuard() : base(DefaultMessage.Default) {}
+	}
 
-		public Guard(ISelect<T, string> message) : this(IsAssigned<T>.Default, message) {}
+	class AssignedGuard<T> : GuardedSpecification<T, InvalidOperationException>, IActivateMarker<ISelect<T, string>>
+	{
+		public AssignedGuard(Func<Type, string> message) : this(new Message<Type>(message)) {}
 
-		public Guard(ISpecification<T> specification, ISelect<T, string> message)
-			: this(specification, message.New(I<InvalidOperationException>.Default).Get) {}
+		public AssignedGuard(ISelect<Type, string> message) : this(IsAssigned<T>.Default, message) {}
 
-		public Guard(ISpecification<T> specification, Func<T, InvalidOperationException> exception)
-			: base(specification, exception) {}
+		public AssignedGuard(ISpecification<T> specification, ISelect<Type, string> message)
+			: base(specification,
+			       message.New(I<InvalidOperationException>.Default)
+			              .Out(Type<T>.Instance)
+			              .Out(I<T>.Default)
+			              .ToDelegate()) {}
 	}
 }

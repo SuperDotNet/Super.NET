@@ -1,20 +1,21 @@
 ﻿using Super.Text;
+using System;
 
 namespace Super.Runtime
 {
-	sealed class DefaultMessage<TActual, TExpected> : Message<TActual>
-	{
-		public static DefaultMessage<TActual, TExpected> Default { get; } = new DefaultMessage<TActual, TExpected>();
-
-		DefaultMessage()
-			: base(x => $"Expected instance of type {typeof(TExpected)} to be assigned, but an operation using an instance of {x?.GetType() ?? typeof(TActual)} did not produce this.") {}
-	}
-
-	sealed class DefaultMessage<T> : Message<T>
+	sealed class DefaultMessage<T> : Message<Type>
 	{
 		public static DefaultMessage<T> Default { get; } = new DefaultMessage<T>();
 
 		DefaultMessage()
-			: base(x => $"Expected instance of type {typeof(T)} to be assigned, but an operation using an instance of this type did not produce this.") {}
+			: base(x => $"Expected instance of type {typeof(T)} to be assigned, but an operation using an instance of {x} did not produce this.") {}
+	}
+
+	sealed class DefaultMessage : Message<Type>
+	{
+		public static DefaultMessage Default { get; } = new DefaultMessage();
+
+		DefaultMessage()
+			: base(x => $"Expected instance of type {x} to be assigned, but the provided instance was not.") {}
 	}
 }
