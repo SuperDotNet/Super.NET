@@ -46,7 +46,7 @@ namespace Super
 			this ISelect<TParameter, TResult> @this, ISpecification<TParameter, TResult> then)
 			=> @this.Unless(then, then);
 
-		public static ISelect<TParameter, TResult> UnlessAs<TParameter, TResult, TOther>(
+		public static ISelect<TParameter, TResult> UnlessCast<TParameter, TResult, TOther>(
 			this ISelect<TParameter, TResult> @this, ISelect<TOther, TResult> then)
 			=> @this.Unless(IsType<TParameter, TOther>.Default, In<TParameter>.Cast(then));
 
