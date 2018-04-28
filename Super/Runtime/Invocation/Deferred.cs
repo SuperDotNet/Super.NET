@@ -11,7 +11,7 @@ namespace Super.Runtime.Invocation
 		public Deferred(ISelect<TParameter, TResult> select) : this(select, In<TParameter>.Default<TResult>().ToTable()) {}
 
 		public Deferred(ISelect<TParameter, TResult> select, IMutable<TParameter, TResult> mutable)
-			: base(mutable.Assigned(new Configuration<TParameter, TResult>(select, mutable))) {}
+			: base(new Configuration<TParameter, TResult>(select, mutable).Unless(mutable)) {}
 	}
 
 	public class Deferred<T> : DecoratedSource<T>

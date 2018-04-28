@@ -24,46 +24,47 @@ namespace Super
 		public static ISelect<TParameter, TResult> Default<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
 			=> Defaults<TParameter, TResult>.Default.Get(@this);
 
+		public static ISelect<TParameter, TResult> If<TParameter, TResult>(this ISelect<TParameter, TResult> @this,
+		                                                                   ISpecification<TParameter> @true)
+			=> @this.Default().Unless(@true, @this);
+
+		public static ISelect<TParameter, TResult> Then<TParameter, TResult>(this ISpecification<TParameter> @this,
+		                                                                     ISelect<TParameter, TResult> select)
+			=> select.If(@this);
+
 		public static ISelect<TParameter, TResult> Guard<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
 			=> @this.Guard(DefaultMessage<TParameter, TResult>.Default);
 
 		public static ISelect<TParameter, TResult> Guard<TParameter, TResult>(this ISelect<TParameter, TResult> @this,
 		                                                                      IMessage<TParameter> message)
-			=> new Guard<TParameter>(message).If(@this);
-
-		public static ISelect<TParameter, TResult> If<TParameter, TResult>(
-			this ISpecification<TParameter> @this, ISelect<TParameter, TResult> @true) => @this.If(@true, @true.Default());
-
-		public static ISelect<TParameter, TResult> If<TParameter, TResult>(
-			this ISpecification<TParameter> @this, ISelect<TParameter, TResult> @true, ISelect<TParameter, TResult> @false)
-			=> new Validated<TParameter, TResult>(@this, @true, @false);
-
-		public static ISelect<TParameter, TResult> Assigned<TParameter, TResult>(
-			this ISelect<TParameter, TResult> @this, ISelect<TParameter, TResult> next)
-			=> @this.When(IsAssigned<TResult>.Default, next.Get);
+			=> new Guard<TParameter>(message).Then(@this);
 
 		public static ISelect<TParameter, TResult> Assigned<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
-			=> IsAssigned<TParameter>.Default.If(@this);
+			=> IsAssigned<TParameter>.Default.Then(@this);
 
-		public static ISelect<TParameter, TResult> When<TParameter, TResult>(
-			this ISelect<TParameter, TResult> @this, ISpecification<TResult> specification)
-			=> @this.When(specification, @this.Default().Get);
+		public static ISelect<TParameter, TResult> Unless<TParameter, TResult>(
+			this ISelect<TParameter, TResult> @this, ISpecification<TParameter, TResult> then)
+			=> @this.Unless(then, then);
 
-		public static ISelect<TParameter, TResult> When<TParameter, TResult>(
-			this ISelect<TParameter, TResult> @this, ISpecification<TResult> specification, Func<TParameter, TResult> select)
-			=> new ValidatedResult<TParameter, TResult>(specification.IsSatisfiedBy, @this.Get, select);
+		public static ISelect<TParameter, TResult> UnlessAs<TParameter, TResult, TOther>(
+			this ISelect<TParameter, TResult> @this, ISelect<TOther, TResult> then)
+			=> @this.Unless(IsType<TParameter, TOther>.Default, In<TParameter>.Cast(then));
+
+		public static ISelect<TParameter, TResult> Unless<TParameter, TResult>(
+			this ISelect<TParameter, TResult> @this, ISpecification<TParameter> specification, ISelect<TParameter, TResult> then)
+			=> new Validated<TParameter, TResult>(specification, then, @this);
+
+		public static ISelect<TParameter, TResult> Unless<TParameter, TResult>(
+			this ISelect<TParameter, TResult> @this, ISelect<TParameter, TResult> then)
+			=> @this.Unless(IsAssigned<TResult>.Default, then);
+
+		public static ISelect<TParameter, TResult> Unless<TParameter, TResult>(
+			this ISelect<TParameter, TResult> @this, ISpecification<TResult> specification, ISelect<TParameter, TResult> then)
+			=> new ValidatedResult<TParameter, TResult>(specification, then, @this);
 
 		public static ISelect<TParameter, TResult> Try<TException, TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, I<TException> _) where TException : Exception
 			=> new Try<TException, TParameter, TResult>(@this.ToDelegate(), @this.Default().ToDelegate());
-
-		public static ISelect<TParameter, TResult> Unless<TParameter, TResult>(this ISelect<TParameter, TResult> @this,
-		                                                                       ISpecification<TParameter, TResult> then)
-			=> then.AsSpecification().If(then, @this);
-
-		public static ISelect<TParameter, TResult> Unless<TParameter, TResult, TOther>(
-			this ISelect<TParameter, TResult> @this, ISelect<TOther, TResult> then)
-			=> IsType<TParameter, TOther>.Default.If(In<TParameter>.Cast(then), @this);
 
 		public static ISelect<TParameter, TResult> Configure<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, IAssignable<TParameter, TResult> assignable)

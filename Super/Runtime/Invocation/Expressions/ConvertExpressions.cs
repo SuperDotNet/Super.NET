@@ -35,7 +35,7 @@ namespace Super.Runtime.Invocation.Expressions
 		{
 			var alteration    = _alteration(parameter);
 			var specification = _specification(parameter);
-			var result        = alteration.When(specification).ToAlteration();
+			var result        = alteration.If(specification).ToAlteration();
 			return result;
 		}
 	}

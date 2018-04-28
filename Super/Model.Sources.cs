@@ -17,17 +17,6 @@ namespace Super
 
 		public static ISource<T> Default<T>(this ISource<T> _) => Model.Sources.Default<T>.Instance;
 
-		public static ISource<T> Or<T>(this ISource<T> @this, ISource<T> fallback)
-			=> @this.Or(IsAssigned<T>.Default, fallback);
-
-		public static ISource<T> Or<T>(this ISource<T> @this, ISelect<T, string> message) => @this.Or(message.To(I<Guard<T>>.Default));
-
-		public static ISource<T> Or<T>(this ISource<T> @this, ISpecification<T> specification)
-			=> @this.Or(specification, @this.Default());
-
-		public static ISource<T> Or<T>(this ISource<T> @this, ISpecification<T> specification, ISource<T> fallback)
-			=> new ValidatedSource<T>(specification, @this, fallback);
-
 		public static ISelect<TParameter, TResult> Out<TParameter, TResult>(this ISource<TResult> @this, I<TParameter> _)
 			=> new DelegatedResult<TParameter, TResult>(@this.Get);
 
@@ -44,6 +33,19 @@ namespace Super
 		public static Model.Commands.IAny Out<T>(this ISource<T> @this, ICommand<T> select)
 			=> new DelegatedParameterCommand<T>(select.Execute, @this.Get).Any();
 
+		//
+
+		public static ISource<T> Or<T>(this ISource<T> @this, ISource<T> fallback)
+			=> @this.Or(IsAssigned<T>.Default, fallback);
+
+		public static ISource<T> Or<T>(this ISource<T> @this, ISelect<T, string> message) => @this.Or(message.To(I<Guard<T>>.Default));
+
+		public static ISource<T> Or<T>(this ISource<T> @this, ISpecification<T> specification)
+			=> @this.Or(specification, @this.Default());
+
+		public static ISource<T> Or<T>(this ISource<T> @this, ISpecification<T> specification, ISource<T> fallback)
+			=> new ValidatedSource<T>(specification, @this, fallback);
+
 		public static ISelect<TFrom, TTo> Out<TFrom, TTo>(this ISource<TTo> @this, ISelect<TFrom, TTo> select)
 			=> @this.Out(select.ToDelegate());
 
@@ -53,6 +55,8 @@ namespace Super
 		public static ISelect<TFrom, TTo> Out<TFrom, TTo>(this ISource<TTo> @this, ISpecification<TTo> specification,
 		                                                  Func<TFrom, TTo> select)
 			=> new ValidatedResult<TFrom, TTo>(specification.IsSatisfiedBy, @this.Out(I<TFrom>.Default).Get, select);
+
+		//
 
 		public static ISource<TTo> Select<TFrom, TTo>(this ISource<TFrom> @this, I<TTo> _)
 			=> @this.Select(Activations<TFrom, TTo>.Default);

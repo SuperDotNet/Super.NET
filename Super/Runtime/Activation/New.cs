@@ -10,10 +10,11 @@ namespace Super.Runtime.Activation
 	{
 		public static ISelect<TParameter, TResult> Default { get; } = new New<TParameter, TResult>();
 
-		New() : base(new ConstructorLocator(HasSingleParameterConstructor<TParameter>.Default)
-		             .Select(ParameterConstructors<TParameter, TResult>.Default.Assigned())
-		             .Assigned(ConstructorLocator.Default.Select(new ParameterConstructors<TParameter, TResult>(Instances.Default)))
-		             .Get(Type<TResult>.Metadata)) {}
+		New() : base(ConstructorLocator.Default
+		                               .Select(new ParameterConstructors<TParameter, TResult>(Instances.Default))
+		                               .Unless(new ConstructorLocator(HasSingleParameterConstructor<TParameter>.Default)
+			                                       .Select(ParameterConstructors<TParameter, TResult>.Default.Assigned()))
+		                               .Get(Type<TResult>.Metadata)) {}
 	}
 
 	public sealed class New<T> : FixedActivator<T>

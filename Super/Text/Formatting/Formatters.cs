@@ -12,7 +12,7 @@ namespace Super.Text.Formatting
 		Formatters() : this(KnownFormatters.Default, MarkedActivations<object, DefaultFormatter>.Default) {}
 
 		public Formatters(ISelect<object, IFormattable> formatters, ISelect<object, IFormattable> fallback)
-			: base(formatters.Assigned(In<object>.Cast<IFormattable>()).Assigned(fallback)) {}
+			: base(fallback.Unless(formatters)) {}
 	}
 
 	sealed class Formatters<T> : ISelect<T, IFormattable>,

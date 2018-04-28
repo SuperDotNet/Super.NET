@@ -12,10 +12,10 @@ namespace Super.Runtime.Execution
 		public Contextual(Func<T> source) : this(source.ToSource()) {}
 
 		public Contextual(ISource<T> source) : this(source.Out(I<object>.Default)
-		                                                  .To(x => x.Cast(I<IDisposable>.Default)
-		                                                            .Configure(Implementations.Assign)
-		                                                            .Cast(I<T>.Default)
-		                                                            .When(IsType<T, IDisposable>.Default, x.Get))
+		                                                  .To(x => x.Unless(IsType<T, IDisposable>.Default,
+		                                                                    x.Cast(I<IDisposable>.Default)
+		                                                                     .Configure(Implementations.Assign)
+		                                                                     .Cast(I<T>.Default)))
 		                                                  .ToStore()) {}
 
 		public Contextual(ISelect<object, T> source) : base(source, ExecutionContext.Default) {}

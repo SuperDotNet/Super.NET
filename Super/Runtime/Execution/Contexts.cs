@@ -50,14 +50,15 @@ namespace Super.Runtime.Execution
 
 		public DisposeContext(ISpecification<Unit> assigned, ISpecification<object> contains,
 		                      ISelect<object, IDisposable> select)
-			: base(assigned.If(ExecutionContextStore.Default
-			                                        .Out(contains.If(select.Out(DisposeCommand.Default)
-			                                                               .And(ExecutionContextStore.Default.Clear(),
-			                                                                    ClearResources.Default)
-			                                                               .Out()))
-			                                        .Out<Unit>())
-			                                        .ToDelegate()
-			                                        .ToCommand()) {}
+			: base(ExecutionContextStore.Default
+			                            .Out(select.Out(DisposeCommand.Default)
+			                                       .And(ExecutionContextStore.Default.Clear(), ClearResources.Default)
+			                                       .Out()
+			                                       .If(contains))
+			                            .Out<Unit>()
+			                            .If(assigned)
+			                            .ToDelegate()
+			                            .ToCommand()) {}
 	}
 
 	sealed class ClearResources : RemoveCommand<object, Disposables>

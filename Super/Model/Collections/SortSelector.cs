@@ -8,6 +8,6 @@ namespace Super.Model.Collections
 
 		SortSelector() : base(In<T>.Start(-1)
 		                           .Unless(SortMetadata<T>.Default)
-		                           .Unless(In<ISortAware>.Select(x => x.Get()))) {}
+		                           .UnlessAs(Self<ISortAware>.Default.Value())) {}
 	}
 }

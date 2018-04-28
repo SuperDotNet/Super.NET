@@ -9,7 +9,7 @@ namespace Super.Text
 	{
 		public TextSelect(ISelect<TParameter, TResult> @default,
 		                  params KeyValuePair<string, Func<TParameter, TResult>>[] pairs)
-			: this(Pairs.Select(pairs).Assigned(@default.AsDefault())) {}
+			: this(@default.AsDefault().Unless(Pairs.Select(pairs))) {}
 
 		public TextSelect(ISelect<string, Func<TParameter, TResult>> select)
 			: base(NullOrEmptySelector.Default.Select(select).Get) {}

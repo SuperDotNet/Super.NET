@@ -108,8 +108,9 @@ namespace Super.Application
 			                              .Out()
 			                              .Out(type)
 			                              .And(IsConstructedGenericType.Default,
-			                                   IsGenericTypeDefinition.Default.Inverse())
-			                              .If(GenericTypeDefinitionAlteration.Default)) {}
+			                                   IsGenericTypeDefinition
+				                                   .Default.Inverse())
+			                              .Then(GenericTypeDefinitionAlteration.Default)) {}
 	}
 
 	sealed class DependencyCandidates : DecoratedSelect<Type, ImmutableArray<Type>>, IActivateMarker<Type>
@@ -118,13 +119,13 @@ namespace Super.Application
 			: base(TypeMetadataSelector.Default
 			                           .Select(Constructors.Default)
 			                           .Select(Parameters.Default
-			                                          .Select(x => x.AsEnumerable())
-			                                          .SelectMany())
+			                                             .Select(x => x.AsEnumerable())
+			                                             .SelectMany())
 			                           .Select(ParameterType.Default.Select())
 			                           .Select(type.To(I<GenericTypeDependencySelector>.Default)
-			                                    .Select())
+			                                       .Select())
 			                           .Select(x => x.Where(IsClass.Default.IsSatisfiedBy)
-			                                      .ToImmutableArray())) {}
+			                                         .ToImmutableArray())) {}
 	}
 
 	sealed class ServiceTypeSelector : SelectSelector<LightInject.ServiceRegistration, Type>

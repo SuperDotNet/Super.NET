@@ -1,6 +1,5 @@
 ﻿using Super.Model.Selection;
 using Super.Model.Selection.Stores;
-using Super.Runtime.Invocation;
 using System;
 
 namespace Super.Runtime.Activation
@@ -9,11 +8,11 @@ namespace Super.Runtime.Activation
 	{
 		public static Singletons Default { get; } = new Singletons();
 
-		Singletons() : base(HasSingletonProperty.Default
-		                                        .If(Implementations.SingletonProperties
-		                                                           .Select(SingletonPropertyDelegates.Default)
-		                                                           .Select(Call<object>.Default),
-		                                            Default<Type, object>.Instance)
-		                                        .Get) {}
+		Singletons() : base(Default<Type, object>.Instance
+		                                         .Unless(HasSingletonProperty.Default,
+		                                                 Implementations.SingletonProperties
+		                                                                .Select(SingletonPropertyDelegates.Default)
+		                                                                .Invoke())
+		                                         .Get) {}
 	}
 }

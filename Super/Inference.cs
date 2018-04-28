@@ -19,17 +19,8 @@ namespace Super
 		public static T From<TParameter, T>(this I<T> _, TParameter parameter) where T : IActivateMarker<TParameter>
 			=> MarkedActivations<TParameter, T>.Default.Get(parameter);
 
-		/*public static T Attribute<TAttribute, T>(this I<TAttribute> _, ICustomAttributeProvider parameter)
-			where TAttribute : Attribute, ISource<T>
-			=> ContainedAttribute<TAttribute, T>.Default.Get(parameter);*/
-
 		public static I<T, TParameter, TResult> Source<T, TParameter, TResult>(this I<T> _,
 		                                                                       Func<T, ISelect<TParameter, TResult>> __)
 			where T : ISelect<TParameter, TResult> => I<T, TParameter, TResult>.Default;
-
-		/*public static ISelect<TParameter, TResult> Try<TException, TParameter, TResult>(
-			this I<TException> _, Func<TParameter, TResult> source, Func<TParameter, TResult> fallback)
-			where TException : Exception
-			=> ;*/
 	}
 }

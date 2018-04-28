@@ -10,10 +10,11 @@ namespace Super
 	public static partial class ExtensionMethods
 	{
 		public static ISelect<object, Func<object, IFormattable>> Register<T>(this ISelectFormatter<T> @this)
-			=> IsType<T>.Default.If(In<object>.Cast<T>()
-			                                  .Select(@this.To(I<Formatters<T>>.Default))
-			                                  .ToDelegate()
-			                                  .Allow(I<object>.Default));
+			=> In<object>.Cast<T>()
+			             .Select(@this.To(I<Formatters<T>>.Default))
+			             .ToDelegate()
+			             .Allow(I<object>.Default)
+			             .If(IsType<T>.Default);
 
 		public static ISelect<string, TParameter, TResult> AsDefault<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this) => @this.ToDelegate().Allow(I<string>.Default);
