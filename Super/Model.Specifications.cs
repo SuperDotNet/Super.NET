@@ -1,5 +1,4 @@
-﻿using Super.Model.Selection;
-using Super.Model.Specifications;
+﻿using Super.Model.Specifications;
 using Super.Reflection;
 using System;
 using System.Reactive;
@@ -17,8 +16,8 @@ namespace Super
 
 		public static IAny Any(this ISpecification<Unit> @this) => I<Any>.Default.From(@this);
 
-		public static ISpecification<T> ToSpecification<T>(this ISelect<T, bool> @this) => @this.ToDelegateReference().ToSpecification();
-		public static ISpecification<T> ToSpecification<T>(this Func<T, bool> @this) => Specifications<T>.Default.Get(@this);
+		/*public static ISpecification<T> ToSpecification<T>(this ISelect<T, bool> @this) => @this.ToDelegateReference().ToSpecification();
+		public static ISpecification<T> ToSpecification<T>(this Func<T, bool> @this) => Specifications<T>.Default.Get(@this);*/
 
 		public static ISpecification<T> Or<T>(this ISpecification<T> @this, params ISpecification<T>[] others)
 			=> new AnySpecification<T>(others.Prepend(@this).Fixed());

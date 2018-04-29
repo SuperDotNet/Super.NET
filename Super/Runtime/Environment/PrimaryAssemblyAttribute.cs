@@ -21,7 +21,10 @@ namespace Super.Runtime.Environment
 		public static HostingAssembly Default { get; } = new HostingAssembly();
 
 		HostingAssembly() : base(PrimaryAssembly.Default
-		                                        .Select(x => x.Attribute<HostingAttribute>().Get())
+		                                        .Select(x => x.Attribute<HostingAttribute>()
+		                                                      .Get())
+/*.AsSelect(x => x.Attribute(I<HostingAttribute>.Default)
+		                                                        .Value())*/
 		                                        .Get()) {}
 	}
 }

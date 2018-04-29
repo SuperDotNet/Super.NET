@@ -1,9 +1,9 @@
 ﻿namespace Super.Runtime.Environment
 {
-	sealed class RequiredComponent<T> : SystemAssignment<T>
+	sealed class DefaultComponent<T> : SystemStore<T>
 	{
-		public static RequiredComponent<T> Default { get; } = new RequiredComponent<T>();
+		public static DefaultComponent<T> Default { get; } = new DefaultComponent<T>();
 
-		RequiredComponent() : base(ComponentLocator<T>.Default.Unless(LocateGuard<T>.Default)) {}
+		DefaultComponent() : base(ComponentLocator<T>.Default.Unless(LocateGuard<T>.Default)) {}
 	}
 }

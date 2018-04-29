@@ -24,7 +24,9 @@ namespace Super.Model.Collections
 		}
 	}
 
-	public sealed class WhereSelector<T> : IAlteration<IEnumerable<T>>
+	public interface ISequenceAlteration<T> : IAlteration<IEnumerable<T>> {}
+
+	public class WhereSelector<T> : ISequenceAlteration<T>
 	{
 		readonly Func<T, bool> _where;
 

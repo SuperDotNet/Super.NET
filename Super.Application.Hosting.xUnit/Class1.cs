@@ -94,7 +94,7 @@ namespace Super.Application.Hosting.xUnit
 			using (var assemblyRunner = new AssemblyRunner(TestAssembly, testCases, DiagnosticMessageSink, executionMessageSink,
 			                                               executionOptions))
 			{
-				SystemStorageDefinition.Default.Execute(typeof(Logical<>));
+				StorageTypeDefinition.Default.Execute(typeof(Logical<>));
 				await assemblyRunner.RunAsync();
 			}
 		}

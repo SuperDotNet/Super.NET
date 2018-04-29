@@ -3,12 +3,9 @@ using Super.Model.Selection;
 using Super.Model.Sources;
 using Super.Model.Specifications;
 using Super.Reflection;
-using Super.Reflection.Types;
 using System;
 using System.Reactive;
 using IAny = Super.Model.Specifications.IAny;
-
-// ReSharper disable TooManyArguments
 
 namespace Super
 {
@@ -32,12 +29,6 @@ namespace Super
 		public static ICommand<TIn> Out<TIn, TOut>(this ISelect<TIn, TOut> @this, ICommand<TOut> command)
 			=> new SelectedParameterCommand<TIn, TOut>(command.Execute, @this.Get);
 
-		public static ISelect<TIn, TResult> Out<TIn, TResult>(this ISelect<TIn, Type> @this, IGeneric<TResult> generic)
-			=> @this.Sequence().Enumerate().Select(generic).Invoke();
-
-		public static ISelect<T, TOut> Select<T, TOut>(this ISelect<Unit, TOut> @this, I<T> _)
-			=> In<T>.Start(Unit.Default).Select(@this);
-
 		public static ISpecification<T> Out<T>(this ISelect<T, bool> @this) => new DelegatedSpecification<T>(@this.Get);
 
 		public static ICommand<T> Out<T>(this ISelect<T, Unit> @this) => new InvokeParameterCommand<T>(@this.Get);
@@ -56,9 +47,15 @@ namespace Super
 		public static ISource<TOut> Out<TIn, TOut>(this ISelect<TIn, TOut> @this, TIn parameter)
 			=> new FixedSelection<TIn, TOut>(@this, parameter);
 
+		public static ISource<TOut> Out<TIn, TOut>(this ISelect<TIn, TOut> @this, ISource<TIn> parameter)
+			=> new DelegatedSelection<TIn, TOut>(@this, parameter);
+
 		public static ISpecification<TFrom, TResult> Out<TFrom, TTo, TResult>(this ISelect<TFrom, TTo> @this,
 		                                                                      ISpecification<TTo, TResult> specification)
 			=> new Specification<TFrom, TResult>(@this.Out(specification.IsSatisfiedBy), @this.Select(specification.Get));
+
+		public static ISelect<T, TOut> Select<T, TOut>(this ISelect<Unit, TOut> @this, I<T> _)
+			=> In<T>.Start(Unit.Default).Select(@this);
 
 		public static ISelect<TParameter, TResult> Select<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, ISelect<Decoration<TParameter, TResult>, TResult> other)

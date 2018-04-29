@@ -10,8 +10,7 @@ namespace Super
 {
 	public static partial class ExtensionMethods
 	{
-		public static TAttribute Attribute<TAttribute>(this ICustomAttributeProvider @this)
-			=> Reflection.Attribute<TAttribute>.Default.Get(@this);
+		public static T Attribute<T>(this ICustomAttributeProvider @this) => Reflection.Attribute<T>.Default.Get(@this);
 
 		public static IEnumerable<TypeInfo> YieldMetadata(this IEnumerable<Type> @this,
 		                                                  Func<TypeInfo, bool> specification = null)

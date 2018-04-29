@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Super.Reflection.Types
 {
-	sealed class GenericTypeAlteration : ISelect<ImmutableArray<Type>, Type>, IActivateMarker<Type>
+	public class GenericTypeAlteration : ISelect<ImmutableArray<Type>, Type>, IActivateMarker<Type>
 	{
 		readonly Type _definition;
 

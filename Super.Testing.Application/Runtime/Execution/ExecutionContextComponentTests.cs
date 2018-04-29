@@ -4,6 +4,8 @@ using Super.Application.Hosting.xUnit;
 using Super.Model.Sources;
 using Super.Runtime.Environment;
 using Super.Runtime.Execution;
+using System;
+using System.Collections.Immutable;
 using Xunit;
 
 namespace Super.Testing.Application.Runtime.Execution
@@ -23,12 +25,24 @@ namespace Super.Testing.Application.Runtime.Execution
 		[Fact, TestPriority(0)]
 		void Override()
 		{
-			SystemTypes.Default.Execute(typeof(DefaultExecutionContext));
+			Types.Default.Execute(typeof(DefaultExecutionContext));
 
 			ExecutionContext.Default.Get()
 			                .To<ContextDetails>()
 			                .Details.Name.Should()
 			                .Be("Local Context");
+		}
+
+
+		[Fact, TestPriority(2)]
+		void Empty()
+		{
+			Types.Default.Execute(ImmutableArray<Type>.Empty);
+
+			ExecutionContext.Default.Get()
+			                .To<ContextDetails>()
+			                .Details.Name.Should()
+			                .Be("Default Execution Context");
 		}
 
 		[Fact]

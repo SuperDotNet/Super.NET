@@ -12,6 +12,7 @@ namespace Super
 	public static class Start
 	{
 		public static ISource<T> New<T>(Func<T> select) => new DelegatedSource<T>(select);
+		public static ISource<T> New<T>(ISpecification<T> specification) => new Source<T>(default).Unless(specification);
 	}
 
 	public static class In<T>

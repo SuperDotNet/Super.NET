@@ -34,7 +34,7 @@ namespace Super.Runtime.Execution
 
 	sealed class First<T> : DecoratedSpecification<T>
 	{
-		public First() : base(In<T>.New<First>().ToTable().Select(ConditionSelector.Default).ToSpecification()) {}
+		public First() : base(In<T>.New<First>().ToTable().Select(ConditionSelector.Default).Out()) {}
 	}
 
 	public sealed class First : ISpecification

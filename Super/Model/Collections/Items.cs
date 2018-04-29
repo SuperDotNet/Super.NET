@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Super.Runtime.Activation;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 
 namespace Super.Model.Collections
 {
-	public class Items<T> : ItemsBase<T>
+	public class Items<T> : ItemsBase<T>, IActivateMarker<IEnumerable<T>>
 	{
 		readonly ImmutableArray<T> _items;
 		readonly int               _length;

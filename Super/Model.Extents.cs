@@ -10,16 +10,20 @@ using Super.Runtime.Objects;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Activator = Super.Runtime.Activation.Activator;
 
 namespace Super
 {
 	public static partial class ExtensionMethods
 	{
-		public static ISelect<TIn, TTo> Cast<TIn, TOut, TTo>(this ISelect<TIn, TOut> @this, I<TTo> _)
-			=> @this.Select(Runtime.Objects.Cast<TOut, TTo>.Default);
+		public static ISelect<TParameter, TAttribute> Attribute<TParameter, TAttribute>(this ISelect<TParameter, ICustomAttributeProvider> @this, I<TAttribute> _)
+			=> @this.Select(Reflection.Attribute<TAttribute>.Default);
 
-		public static ISource<TTo> Cast<TOut, TTo>(this ISource<TOut> @this, I<TTo> _)
-			=> @this.Select(Runtime.Objects.Cast<TOut, TTo>.Default);
+		public static ISelect<TIn, TTo> Cast<TIn, TOut, TTo>(this ISelect<TIn, TOut> @this, I<TTo> _)
+			=> @this.Select(Cast<TOut, TTo>.Default);
+
+		public static ISelect<TIn, TResult> Out<TIn, TResult>(this ISelect<TIn, Type> @this, IGeneric<TResult> generic)
+			=> @this.Sequence().Enumerate().Select(generic).Invoke();
 
 		public static ISelect<TIn, TTo> CastForValue<TIn, TOut, TTo>(this ISelect<TIn, TOut> @this, I<TTo> _)
 			=> @this.Select(ValueAwareCast<TOut, TTo>.Default);
@@ -30,6 +34,12 @@ namespace Super
 		public static ISelect<TIn, TNew> Activate<TIn, TOut, TNew>(this ISelect<TIn, TOut> @this, I<TNew> _)
 			where TNew : IActivateMarker<TOut>
 			=> @this.Select(MarkedActivations<TOut, TNew>.Default.ToDelegate());
+
+		public static ISelect<TIn, TNew> Activate<TIn, TNew>(this ISelect<TIn, Type> @this, I<TNew> infer)
+			=> @this.Select(Activator.Default).Cast(infer);
+
+		public static ISelect<TIn, IEnumerable<TOut>> Sort<TIn, TOut>(this ISelect<TIn, IEnumerable<TOut>> @this)
+			=> @this.Select(SortAlteration<TOut>.Default);
 
 		public static ISource<TTo> Reduce<TFrom, TTo>(this ISelect<TFrom, TTo> @this) => New<TFrom>.Default.Select(@this);
 

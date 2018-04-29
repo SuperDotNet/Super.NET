@@ -5,6 +5,7 @@ using Super.Model.Selection.Alterations;
 using Super.Reflection;
 using Super.Runtime;
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reactive;
@@ -30,8 +31,14 @@ namespace Super
 
 		public static IAny Clear<T>(this ICommand<T> @this) => @this.Out().Out(default(T));
 
+		public static void Execute<T>(this ICommand<ImmutableArray<T>> @this, IEnumerable<T> parameters)
+			=> @this.Execute(parameters.ToImmutableArray());
+
 		public static void Execute<T>(this ICommand<ImmutableArray<T>> @this, params T[] parameters)
 			=> @this.Execute(parameters.ToImmutableArray());
+
+		public static void Execute<T>(this ICommand<IEnumerable<T>> @this, params T[] parameters)
+			=> @this.Execute(parameters);
 
 		public static void Execute<T1, T2>(this ICommand<(T1, T2)> @this, T1 first, T2 second)
 			=> @this.Execute(ValueTuple.Create(first, second));
@@ -65,8 +72,14 @@ namespace Super
 			return @return;
 		}
 
-		public static T ReturnWith<TCommand, T>(this TCommand @this, T parameter) where TCommand : class, ICommand<T>
+		public static T ExecuteAndReturn<T>(this ICommand<Unit> @this, T parameter)
+			=> @this.Execute(Unit.Default, parameter);
+
+		public static T ExecuteAndReturn<T>(this ICommand<T> @this, T parameter)
 			=> @this.Execute(parameter, parameter);
+
+		/*public static T ReturnWith<TCommand, T>(this TCommand @this, T parameter) where TCommand : class, ICommand<T>
+			=> @this.Execute(parameter, parameter);*/
 
 
 		public static T Executed<T>(this T @this) where T : class, ICommand => @this.Execute(Unit.Default, @this);

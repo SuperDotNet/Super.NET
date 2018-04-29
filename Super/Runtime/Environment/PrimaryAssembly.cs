@@ -1,5 +1,4 @@
-﻿using Super.Model.Selection;
-using Super.Model.Sources;
+﻿using Super.Model.Sources;
 using Super.Reflection.Assemblies;
 using System.Reflection;
 
@@ -12,18 +11,15 @@ namespace Super.Runtime.Environment
 		PrimaryAssemblyDetails() : base(AssemblyDetailsSelector.Default, PrimaryAssembly.Default) {}
 	}
 
-	sealed class PrimaryAssembly : Source<Assembly>
+	sealed class PrimaryAssembly : DecoratedSource<Assembly>
 	{
 		public static PrimaryAssembly Default { get; } = new PrimaryAssembly();
 
-		PrimaryAssembly() : base(AssemblyGuard.Default.Get(Assemblies.Default.Only(x => x.Has<HostingAttribute>()))) {}
-	}
-
-	sealed class AssemblyGuard : DecoratedSelect<Assembly, Assembly>
-	{
-		public static AssemblyGuard Default { get; } = new AssemblyGuard();
-
-		AssemblyGuard() : base(In<Assembly>.Start()
-		                                   .Guard(PrimaryAssemblyMessage.Default)) {}
+		PrimaryAssembly() : base(Reflection.Assemblies
+		                                   .Assemblies
+		                                   .Default
+		                                   .Only(x => x.Has<HostingAttribute>())
+		                                   .ToSource()
+		                                   .Select(PrimaryAssemblyMessage.Default)) {}
 	}
 }

@@ -11,7 +11,7 @@ namespace Super.Testing.Application.Runtime.Environment
 		[Fact]
 		void VerifyEnvironment()
 		{
-			RequiredComponent<IHelloWorld>.Default.Get()
+			DefaultComponent<IHelloWorld>.Default.Get()
 			                              .GetMessage()
 			                              .Should()
 			                              .Be($"Hello From {PrimaryAssemblyDetails.Default.Get().Configuration}!");
@@ -20,13 +20,13 @@ namespace Super.Testing.Application.Runtime.Environment
 		[Fact]
 		void VerifyInvalidEnvironment()
 		{
-			RequiredComponent<IInvalid>.Default.Invoking(x => x.Get()).Should().Throw<InvalidOperationException>();
+			DefaultComponent<IInvalid>.Default.Invoking(x => x.Get()).Should().Throw<InvalidOperationException>();
 		}
 
 		[Fact]
 		void VerifyPlatform()
 		{
-			RequiredComponent<string>.Default.Get()
+			DefaultComponent<string>.Default.Get()
 			                         .Should()
 			                         .Be($"Hello World from {AppContext.TargetFrameworkName}!");
 		}

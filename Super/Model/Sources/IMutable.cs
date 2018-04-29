@@ -1,6 +1,7 @@
 ﻿using Super.Model.Commands;
 using Super.Model.Specifications;
 using Super.Runtime;
+using Super.Runtime.Activation;
 using System.Reactive;
 
 namespace Super.Model.Sources
@@ -37,15 +38,15 @@ namespace Super.Model.Sources
 		}
 	}
 
-	public interface IAssignment<T> : IMutable<T>, ISpecification {}
+	public interface IStore<T> : IMutable<T>, ISpecification {}
 
-	public class Assignment<T> : DecoratedMutable<T>, IAssignment<T>
+	public class Store<T> : DecoratedMutable<T>, IStore<T>, IActivateMarker<IMutable<T>>
 	{
 		readonly ISpecification<Unit> _specification;
 
-		public Assignment(IMutable<T> mutable) : this(mutable.Out(IsAssigned<T>.Default), mutable) {}
+		public Store(IMutable<T> mutable) : this(mutable.Out(IsAssigned<T>.Default), mutable) {}
 
-		public Assignment(ISpecification<Unit> specification, IMutable<T> mutable) : base(mutable)
+		public Store(ISpecification<Unit> specification, IMutable<T> mutable) : base(mutable)
 			=> _specification = specification;
 
 		public bool IsSatisfiedBy(Unit parameter) => _specification.IsSatisfiedBy(parameter);

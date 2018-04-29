@@ -36,7 +36,7 @@ namespace Super
 			=> DefaultGuard<TParameter>.Default.Then(@this);
 
 		public static ISelect<TParameter, TResult> Guard<TParameter, TResult>(this ISelect<TParameter, TResult> @this,
-		                                                                      IMessage<Type> message)
+		                                                                      IMessage<TParameter> message)
 			=> new AssignedGuard<TParameter>(message).Then(@this);
 
 		public static ISelect<TParameter, TResult> Assigned<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
@@ -90,5 +90,9 @@ namespace Super
 		public static TResult Get<TItem, TResult>(this ISelect<ImmutableArray<TItem>, TResult> @this,
 		                                          params TItem[] parameters)
 			=> @this.Get(parameters.ToImmutableArray());
+
+		public static TResult Get<TItem, TResult>(this ISelect<ImmutableArray<TItem>, TResult> @this,
+		                                          TItem parameter)
+			=> @this.Get(ImmutableArray.Create(parameter));
 	}
 }

@@ -4,6 +4,20 @@ using System.Linq;
 
 namespace Super.Model.Collections
 {
+	public sealed class Assigned<T> : WhereSelector<T> where T : class
+	{
+		public static Assigned<T> Default { get; } = new Assigned<T>();
+
+		Assigned() : base(x => x != null) {}
+	}
+
+	public sealed class AssignedValue<T> : WhereSelector<T?> where T : struct
+	{
+		public static AssignedValue<T> Default { get; } = new AssignedValue<T>();
+
+		AssignedValue() : base(x => x != null) {}
+	}
+
 	public sealed class FirstOrDefaultSelector<T> : Select<IEnumerable<T>, T>
 	{
 		public static FirstOrDefaultSelector<T> Default { get; } = new FirstOrDefaultSelector<T>();

@@ -1,4 +1,6 @@
-﻿using Super.Model.Sources;
+﻿using Super.Model.Commands;
+using Super.Model.Sources;
+using Super.Reflection;
 using Super.Runtime.Environment;
 
 namespace Super.Runtime.Execution
@@ -10,13 +12,31 @@ namespace Super.Runtime.Execution
 		ExecutionContext() : base(ExecutionContextStore.Default) {}
 	}
 
-	sealed class ExecutionContextStore : SystemAssignment<object>
+	public interface IConfiguration : ICommand<object>
+	{
+
+	}
+
+	sealed class ExecutionContextLocator : DecoratedSource<IExecutionContext>
+	{
+		public static ExecutionContextLocator Default { get; } = new ExecutionContextLocator();
+
+		ExecutionContextLocator() : base(ComponentTypesDefinition.Default
+		                                                         .Select(x => x.FirstAssigned())
+		                                                         .Emit()
+		                                                         .To(I<ComponentLocator<IExecutionContext>>.Default)) {}
+	}
+
+	sealed class ExecutionContextStore : SystemStore<object>
 	{
 		public static ExecutionContextStore Default { get; } = new ExecutionContextStore();
 
-		public ExecutionContextStore() : this(ComponentLocator<IExecutionContext>.Default) {}
+		ExecutionContextStore() : this(ExecutionContextLocator.Default) {}
 
 		public ExecutionContextStore(ISource<ISource<object>> source)
-			: base(source.Select(x => x.Get() ?? new ContextDetails("Default Execution Context"))) {}
+			: base(Start.New(() => new ContextDetails("Default Execution Context"))
+			            .ToSource()
+			            .Unless(source)
+			            .AsSelect(x => x.Value())) {}
 	}
 }

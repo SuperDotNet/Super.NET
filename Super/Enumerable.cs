@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 // ReSharper disable TooManyArguments
+// ReSharper disable once PossibleInvalidOperationException
 
 namespace Super
 {
@@ -13,10 +14,10 @@ namespace Super
 	{
 		public static T FirstOf<T>(this IEnumerable @this) => @this.OfType<T>().FirstOrDefault();
 
-		public static IEnumerable<T> Assigned<T>(this IEnumerable<T> @this) where T : class => @this.Where(x => x != null);
+		public static IEnumerable<T> Assigned<T>(this IEnumerable<T> @this) where T : class => Model.Collections.Assigned<T>.Default.Get(@this);
 
 		public static IEnumerable<T> Assigned<T>(this IEnumerable<T?> @this) where T : struct
-			=> @this.Where(x => x != null).Select(x => x.Value);
+			=> AssignedValue<T>.Default.Get(@this).Select(x => x.Value);
 
 		public static T[] Fixed<T>(this IEnumerable<T> @this)
 		{
