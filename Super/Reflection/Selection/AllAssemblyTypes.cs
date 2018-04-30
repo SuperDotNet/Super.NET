@@ -1,5 +1,5 @@
-﻿using System;
-using Super.Model.Collections;
+﻿using Super.Model.Collections;
+using System;
 
 namespace Super.Reflection.Selection
 {
@@ -12,6 +12,6 @@ namespace Super.Reflection.Selection
 	{
 		public static AllAssemblyTypes<T> Default { get; } = new AllAssemblyTypes<T>();
 
-		AllAssemblyTypes() : base(new AllAssemblyTypes(typeof(T))) {}
+		AllAssemblyTypes() : base(new AllAssemblyTypes(typeof(T)).Get()) {}
 	}
 }

@@ -2,6 +2,7 @@
 using Super.Application.Hosting.xUnit;
 using Super.Model.Selection;
 using Super.Reflection;
+using System;
 using Xunit;
 
 // ReSharper disable All
@@ -13,7 +14,13 @@ namespace Super.Testing.Application.Aspects
 		[Theory, AutoData]
 		void Verify(I<Subject> sut)
 		{
-			sut.Source<Subject, int, int>(x => x).Should().BeSameAs(I<Subject, int, int>.Default);
+			sut.Source(x => x).Should().BeSameAs(I<Subject, int, int>.Default);
+		}
+
+		[Fact]
+		void VerifyCast()
+		{
+			In<object>.Cast<Type>().Get(typeof(Subject)).Should().Be(typeof(Subject));
 		}
 
 		sealed class Subject : ISelect<int, int>

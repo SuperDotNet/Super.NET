@@ -16,25 +16,22 @@ using System.Reflection;
 
 namespace Super.Runtime.Environment
 {
-	public sealed class Types : SystemStore<IEnumerable<Type>>
+	public sealed class Types : SystemStore<IEnumerable<Type>>, IItems<Type>
 	{
 		public static Types Default { get; } = new Types();
 
-		Types() : base(DefaultTypes.Default) {}
-	}
+		Types() : this(Types<PublicAssemblyTypes>.Default) {}
 
-	sealed class DefaultTypes : Types<PublicAssemblyTypes>
-	{
-		public static DefaultTypes Default { get; } = new DefaultTypes();
-
-		DefaultTypes() {}
+		public Types(IItems<Type> instance) : base(instance) {}
 	}
 
 	public class Types<T> : Items<Type> where T : class, IActivateMarker<Assembly>, IEnumerable<Type>
 	{
-		public Types() : this(Assemblies.Default) {}
+		public static Types<T> Default { get; } = new Types<T>();
 
-		public Types(IEnumerable<Assembly> assemblies) : base(assemblies.SelectMany(I<T>.Default.From)) {}
+		Types() : this(Assemblies.Default) {}
+
+		public Types(IItems<Assembly> assemblies) : base(assemblies.Select(y => y.SelectMany(I<T>.Default.From)).Get()) {}
 	}
 
 	public sealed class StorageTypeDefinition : Variable<Type>

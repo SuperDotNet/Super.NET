@@ -10,7 +10,7 @@ namespace Super.Runtime.Activation
 
 		Singletons() : base(Default<Type, object>.Instance
 		                                         .Unless(HasSingletonProperty.Default,
-		                                                 Implementations.SingletonProperties
+		                                                 Implementations.SingletonProperty
 		                                                                .Select(SingletonPropertyDelegates.Default)
 		                                                                .Invoke())
 		                                         .Get) {}

@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Super.Model.Collections;
 
 namespace Super.Runtime.Activation
 {
-	public interface ISingletonCandidates : IEnumerable<string> {}
+	public interface ISingletonCandidates : IItems<string> {}
 }

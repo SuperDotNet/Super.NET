@@ -1,4 +1,5 @@
-﻿using Super.Model.Collections;
+﻿using JetBrains.Annotations;
+using Super.Model.Collections;
 using Super.Model.Selection;
 using Super.Model.Sources;
 using Super.Model.Specifications;
@@ -23,10 +24,14 @@ namespace Super.Runtime.Environment
 	{
 		public static ComponentTypesDefinition Default { get; } = new ComponentTypesDefinition();
 
-		ComponentTypesDefinition() : base(Types.Default
-		                                       .Select(ComponentTypesPredicate.Default)
-		                                       .Select(I<ComponentTypesSelector>.Default.From)
-		                                       .Select(x => x.Sort().Enumerate())) {}
+		ComponentTypesDefinition() : this(Types.Default, ComponentTypesPredicate.Default, x => x.Sort().Enumerate()) {}
+
+		public ComponentTypesDefinition(IItems<Type> types, ISequenceAlteration<Type> where,
+		                                Func<ISelect<Type, IEnumerable<Type>>, ISelect<Type, ImmutableArray<Type>>> select)
+			: base(types.Select(x => x.AsEnumerable())
+			            .Select(where)
+			            .Select(I<ComponentTypesSelector>.Default.From)
+			            .Select(select)) {}
 	}
 
 	sealed class ComponentTypes : DelegatedInstanceSelector<Type, ImmutableArray<Type>>
@@ -40,7 +45,9 @@ namespace Super.Runtime.Environment
 	{
 		public static ComponentTypesPredicate Default { get; } = new ComponentTypesPredicate();
 
-		ComponentTypesPredicate() : base(CanActivate.Default.IsSatisfiedBy) {}
+		ComponentTypesPredicate() : this(CanActivate.Default.IsSatisfiedBy) {}
+
+		public ComponentTypesPredicate(Func<Type, bool> @where) : base(@where) {}
 	}
 
 	sealed class SourceDefinition : GenericTypeAlteration
@@ -80,6 +87,7 @@ namespace Super.Runtime.Environment
 		readonly Func<Func<Type, bool>, IEnumerable<Type>> _predicate;
 		readonly Func<Type, IEnumerable<Func<Type, bool>>> _predicates;
 
+		[UsedImplicitly]
 		public ComponentTypesSelector(IEnumerable<Type> types) : this(types.Where, Predicates) {}
 
 		public ComponentTypesSelector(Func<Func<Type, bool>, IEnumerable<Type>> predicate,

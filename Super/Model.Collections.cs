@@ -26,6 +26,8 @@ namespace Super
 			this IEnumerable<ISelect<TParameter, TResult>> @this)
 			=> @this.Fixed().To(x => x.Skip(1).Aggregate(x.First(), (current, alteration) => alteration.Or(current)));*/
 
+		/*public static IEnumerable<T> AsEnumerable<T>(this IItems<T> @this) => @this.Select(EnumerableSelector<T>.Default).Get();*/
+
 		public static ISelect<TIn, TOut> FirstAssigned<TIn, TOut>(this ISelect<TIn, ImmutableArray<TOut>> @this) where TOut : class
 			=> @this.Hide().FirstAssigned();
 

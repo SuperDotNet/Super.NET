@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
-using AutoFixture;
+﻿using AutoFixture;
 using AutoFixture.Kernel;
 using JetBrains.Annotations;
 using Super.Model.Collections;
+using System.Collections.Generic;
 
 namespace Super.Application.Hosting.xUnit
 {
@@ -18,15 +17,12 @@ namespace Super.Application.Hosting.xUnit
 	{
 		public static EngineParts Default { get; } = new EngineParts();
 
-		EngineParts() : this(DefaultTransformations.Default.ToImmutableArray()) {}
+		EngineParts() : this(DefaultTransformations.Default) {}
 
-		readonly ImmutableArray<ISpecimenBuilderTransformation> _transformers;
-
-		public EngineParts(IEnumerable<ISpecimenBuilderTransformation> transformations)
-			: this(transformations.ToImmutableArray()) {}
+		readonly IEnumerable<ISpecimenBuilderTransformation> _transformers;
 
 		[UsedImplicitly]
-		public EngineParts(ImmutableArray<ISpecimenBuilderTransformation> transformers)
+		public EngineParts(IEnumerable<ISpecimenBuilderTransformation> transformers)
 			=> _transformers = transformers;
 
 		public override IEnumerator<ISpecimenBuilder> GetEnumerator()

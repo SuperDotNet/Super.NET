@@ -1,27 +1,38 @@
-﻿using Super.Model.Selection;
+﻿using Super.Model.Collections;
+using Super.Model.Selection;
+using Super.Model.Sources;
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Super.Runtime.Activation
 {
 	static class Implementations
 	{
-		public static ISelect<Type, PropertyInfo> SingletonProperties { get; } = SingletonProperty.Default.ToReferenceStore();
+		public static ISelect<Type, PropertyInfo> SingletonProperty { get; } =
+			Activation.SingletonProperty.Default.ToReferenceStore();
 	}
 
-	sealed class SingletonProperty : ISelect<Type, PropertyInfo>
+	sealed class SingletonProperty : DecoratedSelect<Type, PropertyInfo>
 	{
 		public static SingletonProperty Default { get; } = new SingletonProperty();
 
 		SingletonProperty() : this(SingletonCandidates.Default) {}
 
-		readonly ISingletonCandidates _candidates;
+		public SingletonProperty(ISource<IEnumerable<string>> candidates)
+			: base(In<Type>.Select(x => new SelectSelector<string, PropertyInfo>(x.GetProperty))
+			               .Select(candidates.Select)
+			               .Select(x => x.Select(SingletonPropertyPredicate.Default))
+			               .Value()
+			               .FirstAssigned()) {}
+	}
 
-		public SingletonProperty(ISingletonCandidates candidates) => _candidates = candidates;
+	sealed class SingletonPropertyPredicate : WhereSelector<PropertyInfo>
+	{
+		public static SingletonPropertyPredicate Default { get; } = new SingletonPropertyPredicate();
 
-		public PropertyInfo Get(Type parameter) => _candidates.Select(parameter.GetProperty)
-		                                                      .Assigned()
-		                                                      .FirstOrDefault(x => x.CanRead && x.GetMethod.IsStatic);
+		SingletonPropertyPredicate() : base(IsAssigned.Default
+		                                              .And(In<PropertyInfo>.Is(y => y.CanRead && y.GetMethod.IsStatic))
+		                                              .IsSatisfiedBy) {}
 	}
 }

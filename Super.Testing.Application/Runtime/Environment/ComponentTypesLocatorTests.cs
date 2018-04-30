@@ -1,8 +1,10 @@
 ﻿using FluentAssertions;
+using Super.Model.Collections;
 using Super.Reflection.Selection;
 using Super.Runtime.Environment;
 using Super.Runtime.Execution;
 using System;
+using System.Linq;
 using Xunit;
 // ReSharper disable All
 
@@ -13,9 +15,15 @@ namespace Super.Testing.Application.Runtime.Environment
 		[Fact]
 		void Verify()
 		{
-			Types.Default.Execute(new NestedTypes<ComponentTypesTests>());
+			SortSelector<Type>.Default.Get(typeof(First)).Should().Be(-10);
 
-			ComponentTypes.Default.Get(typeof(IComponent)).Should().BeEquivalentTo(typeof(Subject), typeof(AnotherSubject));
+			Types.Default.Execute(new NestedTypes<ComponentTypesTests>().Get());
+
+			var types = ComponentTypes.Default.Get(typeof(IComponent));
+			types.Should().HaveCount(4);
+			types.Should().BeEquivalentTo(typeof(First), typeof(Subject), typeof(AnotherSubject), typeof(Last));
+			types.First().Should().Be(typeof(First));
+			types.Last().Should().Be(typeof(Last));
 		}
 
 		[Fact]
@@ -84,5 +92,15 @@ namespace Super.Testing.Application.Runtime.Environment
 		sealed class AnotherSubject : IComponent {}
 
 		sealed class NotSubject {}
+
+		[Sort(-10)]
+		sealed class First : IComponent{}
+
+		sealed class Last : IComponent, ISortAware {
+			public int Get()
+			{
+				return 100;
+			}
+		}
 	}
 }

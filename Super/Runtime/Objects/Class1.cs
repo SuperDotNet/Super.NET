@@ -48,13 +48,19 @@ namespace Super.Runtime.Objects
 		public KnownProjectors(params KeyValuePair<Type, Func<string, Func<object, IProjection>>>[] items) : base(items) {}
 	}
 
+	static class Implementations
+	{
+		public static Func<Type, Func<string, Func<object, IProjection>>> KnownProjectors { get; }
+			= Objects.KnownProjectors.Default.Select(x => x.AsEnumerable().ToStore().AsSelect()).Emit().Get;
+	}
+
 	public interface IProjectors : ISelect<Type, string, Func<object, IProjection>> {}
 
 	sealed class Projectors : Select<Type, string, Func<object, IProjection>>, IProjectors
 	{
 		public static Projectors Default { get; } = new Projectors();
 
-		Projectors() : base(KnownProjectors.Default.ToStore().Get) {}
+		Projectors() : base(Implementations.KnownProjectors) {}
 	}
 
 	sealed class ApplicationDomainProjection : FormattedProjection<AppDomain>

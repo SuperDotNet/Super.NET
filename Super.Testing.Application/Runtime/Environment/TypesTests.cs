@@ -37,7 +37,7 @@ namespace Super.Testing.Application.Runtime.Environment
 			Super.Runtime.Environment.Types.Default.Get().Should().BeEquivalentTo(source);
 
 			Super.Runtime.Environment.Types.Default.Get().Should().Equal(Super.Runtime.Environment.Types.Default.Get());
-			types.ToArray().Should().BeEquivalentTo(types.ToArray());
+			types.Get().Should().BeEquivalentTo(types.Get());
 			counter.Get().Should().Be(1);
 		}
 

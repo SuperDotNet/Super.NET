@@ -10,7 +10,9 @@ namespace Super.Reflection
 		public InstanceMetadata() : this(ContainedAttribute<TAttribute, TResult>.Default) {}
 
 		public InstanceMetadata(ISpecification<ICustomAttributeProvider, TResult> metadata)
-			: this(InstanceMetadataSelector<TParameter>.Default.Out(metadata)) {}
+			: this(InstanceMetadataSelector<TParameter>.Default
+			                                           .Unless(In<TParameter>.Cast<ICustomAttributeProvider>())
+			                                           .Out(metadata)) {}
 
 		public InstanceMetadata(ISpecification<TParameter, TResult> source) : base(source, source) {}
 	}

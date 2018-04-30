@@ -31,8 +31,8 @@ namespace Super
 
 		public static IAny Clear<T>(this ICommand<T> @this) => @this.Out().Out(default(T));
 
-		public static void Execute<T>(this ICommand<ImmutableArray<T>> @this, IEnumerable<T> parameters)
-			=> @this.Execute(parameters.ToImmutableArray());
+		/*public static void Execute<T>(this ICommand<ImmutableArray<T>> @this, IEnumerable<T> parameters)
+			=> @this.Execute(parameters.ToImmutableArray());*/
 
 		public static void Execute<T>(this ICommand<ImmutableArray<T>> @this, params T[] parameters)
 			=> @this.Execute(parameters.ToImmutableArray());
