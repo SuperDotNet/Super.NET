@@ -20,7 +20,7 @@ namespace Super
 	{
 		public static ICommand<T> AsCommand<T>(this ICommand<T> @this) => @this;
 
-		public static Action<T> ToDelegate<T>(this ICommand<T> @this) => @this.Execute;
+		public static Action<T> ToDelegate<T>(this ICommand<T> @this) => @this is IDelegateAware<T> aware ? aware.Get() : @this.Execute;
 		public static Action ToDelegate(this ICommand<Unit> @this) => @this.Execute;
 		public static Action<T> ToDelegateReference<T>(this ICommand<T> @this) => Model.Commands.Delegates<T>.Default.Get(@this);
 

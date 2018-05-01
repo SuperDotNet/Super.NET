@@ -14,7 +14,7 @@ namespace Super.Testing.Application.Runtime
 			var thread = details.Threading.Thread;
 			sut.Get(details)
 			   .Should()
-			   .Be($"[{TimestampFormatter.Default.Get(Epoch.Default)}] {details.Details.Name}: Task: {details.Task.TaskId.OrNone()}, Default/Current Scheduler: {details.Task.Default.Id}/{details.Task.Default.Id}, Thread: #{thread.ManagedThreadId} {thread.Priority} {thread.Name ?? thread.CurrentCulture.DisplayName}, SynchronizationContext: {details.Threading.Synchronization.OrNone()}");
+			   .Be($"[{TimestampFormatter.Default.Get(Epoch.Default)}] {details.Details.Name}: Task: {details.Task.TaskId.OrNone()}, Default/Current Scheduler: {details.Task.Default.Id}/{details.Task.Default.Id}, Thread: #{thread.ManagedThreadId} {thread.Priority} {thread.Name.OrNone()}, SynchronizationContext: {details.Threading.Synchronization.OrNone()}");
 		}
 	}
 }

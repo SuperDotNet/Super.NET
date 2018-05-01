@@ -4,6 +4,8 @@ using Super.Model.Sources;
 using Super.Model.Specifications;
 using Super.Reflection.Types;
 using System;
+using System.Linq;
+using System.Threading;
 
 namespace Super.Application.Hosting.xUnit
 {
@@ -11,8 +13,19 @@ namespace Super.Application.Hosting.xUnit
 	{
 		public static DefaultCustomization Default { get; } = new DefaultCustomization();
 
-		DefaultCustomization() : base(SingletonCustomization.Default, new InsertCustomization(EpochSpecimen.Default),
+		DefaultCustomization() : base(ManualPropertyTypesCustomization.Default,
+		                              SingletonCustomization.Default,
+		                              new InsertCustomization(EpochSpecimen.Default),
 		                              new AutoFixture.AutoMoq.AutoMoqCustomization {ConfigureMembers = true}) {}
+	}
+
+	sealed class ManualPropertyTypesCustomization : CompositeCustomization
+	{
+		public static ManualPropertyTypesCustomization Default { get; } = new ManualPropertyTypesCustomization();
+
+		ManualPropertyTypesCustomization() : this(typeof(Thread)) {}
+
+		public ManualPropertyTypesCustomization(params Type[] types) : base(types.Select(x => new NoAutoPropertiesCustomization(x))) {}
 	}
 
 	sealed class NoSpecimenResult : Source<NoSpecimen>

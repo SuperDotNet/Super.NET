@@ -27,7 +27,7 @@ namespace Super.Testing.Application.Diagnostics
 				logger.Information("Testing: {AppDomain:I}", AppDomain.CurrentDomain);
 			}
 
-			sink.Should().Equal("Testing: AppDomain: Super.Testing.Application", "Testing: Super.Testing.Application", $"Testing: {AppDomain.CurrentDomain.Id}");
+			sink.Should().Equal("Testing: AppDomain: testhost", "Testing: testhost", $"Testing: {AppDomain.CurrentDomain.Id}");
 		}
 
 		[Fact]
@@ -46,7 +46,7 @@ namespace Super.Testing.Application.Diagnostics
 				logger.Information("Testing: {AppDomain:I}", AppDomain.CurrentDomain);
 			}
 
-			sink.Should().Equal("Testing: AppDomain: Super.Testing.Application", "Testing: Super.Testing.Application", $"Testing: {AppDomain.CurrentDomain.Id}");
+			sink.Should().Equal("Testing: AppDomain: testhost", "Testing: testhost", $"Testing: {AppDomain.CurrentDomain.Id}");
 		}
 
 		[Fact]
@@ -65,7 +65,7 @@ namespace Super.Testing.Application.Diagnostics
 				logger.Information("Testing: {AppDomain:I}", AppDomain.CurrentDomain);
 			}
 
-			sink.Should().Equal("Testing: AppDomain: Super.Testing.Application", "Testing: Super.Testing.Application", $"Testing: {AppDomain.CurrentDomain.Id}");
+			sink.Should().Equal("Testing: AppDomain: testhost", "Testing: testhost", $"Testing: {AppDomain.CurrentDomain.Id}");
 		}
 
 		[Fact]

@@ -1,4 +1,6 @@
-﻿using System.Reactive;
+﻿using Super.Model.Sources;
+using System;
+using System.Reactive;
 
 namespace Super.Model.Commands
 {
@@ -8,4 +10,6 @@ namespace Super.Model.Commands
 	{
 		void Execute(T parameter);
 	}
+
+	public interface IDelegateAware<in T> : ISource<Action<T>> {}
 }

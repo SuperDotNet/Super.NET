@@ -4,7 +4,18 @@ using System.Collections.Generic;
 
 namespace Super.Model.Collections
 {
-	public interface IItems<T> : ISource<IEnumerable<T>> {}
+	/*public interface IArray<T> : ISource<Array<T>> {}
+
+	public struct Array<T>
+	{
+		readonly T[] _source;
+
+		public Array(T[] source) => _source = source;
+
+
+	}*/
+
+	public interface IItems<out T> : ISource<IEnumerable<T>> {}
 
 	sealed class Sequence<T> : IReadOnlyCollection<T>
 	{
@@ -25,7 +36,7 @@ namespace Super.Model.Collections
 			}
 		}
 
-		IEnumerator IEnumerable.GetEnumerator() => _array.GetEnumerator();
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 		public int Count => _array.Length;
 	}

@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net471</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <GenerateProgramFile>false</GenerateProgramFile>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.10.14" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
   </ItemGroup>
@@ -21,9 +24,12 @@
     <ProjectReference Include="..\Super\Super.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+    <Reference Include="BenchmarkDotNet">
+      <HintPath>C:\Users\Michael\.nuget\packages\benchmarkdotnet\0.10.14\lib\net46\BenchmarkDotNet.dll</HintPath>
+    </Reference>
+    <Reference Include="BenchmarkDotNet.Core">
+      <HintPath>C:\Users\Michael\.nuget\packages\benchmarkdotnet.core\0.10.14\lib\net46\BenchmarkDotNet.Core.dll</HintPath>
+    </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Reflection\Assemblies\" />
-  </ItemGroup>
+
 </Project>

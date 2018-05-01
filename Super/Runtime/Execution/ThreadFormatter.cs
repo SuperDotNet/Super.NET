@@ -1,7 +1,8 @@
-﻿using System.Threading;
-using Super.Text;
+﻿using Super.Text;
+using System.Threading;
 
-namespace Super.Runtime.Execution {
+namespace Super.Runtime.Execution
+{
 	sealed class ThreadFormatter : IFormatter<Thread>
 	{
 		public static ThreadFormatter Default { get; } = new ThreadFormatter();
@@ -9,6 +10,6 @@ namespace Super.Runtime.Execution {
 		ThreadFormatter() {}
 
 		public string Get(Thread parameter)
-			=> $"#{parameter.ManagedThreadId.ToString()} {parameter.Priority.ToString()} {parameter.Name ?? parameter.CurrentCulture.DisplayName}";
+			=> $"#{parameter.ManagedThreadId.ToString()} {parameter.Priority.ToString()} {parameter.Name.OrNone()}";
 	}
 }
