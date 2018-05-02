@@ -1,4 +1,7 @@
-﻿using Super.Model.Selection;
+﻿using AutoFixture;
+using FluentAssertions;
+using Super.Model.Collections;
+using Super.Model.Selection;
 using System;
 using System.Collections.Immutable;
 using System.Linq;
@@ -11,8 +14,12 @@ namespace Super.Testing.Application.Model.Collections
 		[Fact]
 		void Verify()
 		{
-			
+			var data = new Fixture().CreateMany<string>(100).ToArray();
+			var selected = new ArraySelectInline<string, int>(x => x.Length).Get(new Array<string>(data));
+			data.Select(x => x.Length).Should().Equal(selected._source);
 		}
+
+
 
 		public sealed class OnlySelector<T> : ISelect<ImmutableArray<T>, T>
 		{

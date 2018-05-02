@@ -6,9 +6,11 @@ using Super.Reflection;
 using Super.Reflection.Types;
 using Super.Runtime.Activation;
 using Super.Runtime.Invocation;
+using Super.Runtime.Invocation.Expressions;
 using Super.Runtime.Objects;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Reflection;
 using Activator = Super.Runtime.Activation.Activator;
 
@@ -21,6 +23,9 @@ namespace Super
 
 		public static ISelect<TIn, TTo> Cast<TIn, TOut, TTo>(this ISelect<TIn, TOut> @this, I<TTo> _)
 			=> @this.Select(Cast<TOut, TTo>.Default);
+
+		public static ISelect<TIn, T> Compile<TIn, T>(this ISelect<TIn, Expression<T>> @this)
+			=> @this.Select(Compiler<T>.Default);
 
 		public static ISelect<TIn, TResult> Out<TIn, TResult>(this ISelect<TIn, Type> @this, IGeneric<TResult> generic)
 			=> @this.Sequence().Enumerate().Select(generic).Invoke();

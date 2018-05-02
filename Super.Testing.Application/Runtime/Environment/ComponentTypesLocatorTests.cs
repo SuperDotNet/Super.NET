@@ -17,7 +17,7 @@ namespace Super.Testing.Application.Runtime.Environment
 		{
 			SortSelector<Type>.Default.Get(typeof(First)).Should().Be(-10);
 
-			Types.Default.Execute(new NestedTypes<ComponentTypesTests>().Get());
+			Types.Default.Execute(new NestedTypes<ComponentTypesTests>());
 
 			var types = ComponentTypes.Default.Get(typeof(IComponent));
 			types.Should().HaveCount(4);

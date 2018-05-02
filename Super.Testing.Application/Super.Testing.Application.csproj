@@ -6,6 +6,7 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <IsPackable>false</IsPackable>
+
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.10.14" />
@@ -23,13 +24,4 @@
     <ProjectReference Include="..\Super.Testing.Platform.NetFramework\Super.Testing.Platform.NetFramework.csproj" Condition="'$(TargetFramework)' == 'net471'" />
     <ProjectReference Include="..\Super\Super.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="BenchmarkDotNet">
-      <HintPath>C:\Users\Michael\.nuget\packages\benchmarkdotnet\0.10.14\lib\net46\BenchmarkDotNet.dll</HintPath>
-    </Reference>
-    <Reference Include="BenchmarkDotNet.Core">
-      <HintPath>C:\Users\Michael\.nuget\packages\benchmarkdotnet.core\0.10.14\lib\net46\BenchmarkDotNet.Core.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

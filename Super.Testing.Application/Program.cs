@@ -1,11 +1,73 @@
-﻿namespace Super.Testing.Application
+﻿using AutoFixture;
+using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Running;
+using Super.Model.Collections;
+using System;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Linq.Expressions;
+
+namespace Super.Testing.Application
 {
 	sealed class Program
 	{
 		static void Main()
 		{
-			/*BenchmarkRunner.Run<Decorations>();*/
+			BenchmarkRunner.Run<Arrays>();
 		}
+	}
+
+	[MemoryDiagnoser]
+	public class Arrays
+	{
+		readonly Func<string, int> _select;
+		readonly Array<string> _array;
+		readonly string[] _data;
+		readonly ImmutableArray<string> _immutable;
+
+		readonly IArray<string, int> _selector;
+		readonly IArray<string, int> _where;
+		readonly IArray<string, int> _inline;
+
+
+		public Arrays() : this(x => x.Length, new Fixture().CreateMany<string>(10_000).ToArray()) {}
+
+		public Arrays(Expression<Func<string, int>> expression, string[] data)
+			: this(expression, new Array<string>(data), data, data.ToImmutableArray()) {}
+
+		public Arrays(Expression<Func<string, int>> expression, Array<string> array, string[] data, ImmutableArray<string> immutable)
+			: this(expression, expression.Compile(), array, data, immutable) {}
+
+		public Arrays(Expression<Func<string, int>> expression, Func<string, int> select, Array<string> array, string[] data, ImmutableArray<string> immutable)
+		{
+			_select = select;
+			_array = array;
+			_data = data;
+			_immutable = immutable ;
+			_selector = new ArraySelect<string, int>(In<string>.Select(_select));
+			_where = new ArrayWhere<string, int>(_select, x => x > 10);
+			_inline = new ArraySelectInline<string, int>(expression);
+		}
+
+		[Benchmark]
+		public int[] Native() => _data.Select(_select)./*Where(x => x > 10).*/ToArray();
+
+		/*[Benchmark]
+		public Array<int> Select() => _selector.Get(_array);*/
+
+		/*[Benchmark]
+		public Array<int> Range() => _range.Get(_array);*/
+
+		[Benchmark]
+		public Array<int> Inline() => _inline.Get(_array);
+
+		/*
+
+		[Benchmark]
+		public Array<int> CustomConverter() => _converter.Get(_array);
+
+		[Benchmark]
+		public Array<int> CustomWhere() => _where.Get(_array);*/
 	}
 
 	/*public class Decorations
