@@ -13,5 +13,7 @@ namespace Super.Model.Sources
 		public DeferredSingleton(Lazy<T> source) => _source = source;
 
 		public T Get() => _source.Value;
+
+		public static implicit operator T(DeferredSingleton<T> source) => source.Get();
 	}
 }

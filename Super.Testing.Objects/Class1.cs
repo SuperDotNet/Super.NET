@@ -1,11 +1,39 @@
-﻿using Serilog;
+﻿using AutoFixture;
+using Serilog;
 using Super.Diagnostics.Logging;
+using Super.Model.Collections;
+using Super.Model.Sources;
 using Super.Text;
 using Super.Text.Formatting;
 using System;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace Super.Testing.Objects
 {
+	sealed class View : Source<Array<string>>
+	{
+		public static View Default { get; } = new View();
+
+		View() : base(new Array<string>(Data.Default)) {}
+	}
+
+	sealed class Data : Source<string[]>
+	{
+		public static Data Default { get; } = new Data();
+
+		Data() : base(new Fixture().CreateMany<string>(10_000).ToArray()) {}
+	}
+
+	sealed class Select : Source<Func<string, int>>
+	{
+		public static Select Default { get; } = new Select();
+
+		Select() : this(x => default) {}
+
+		public Select(Expression<Func<string, int>> instance) : base(instance.Compile()) {}
+	}
+
 	sealed class ApplicationDomainName : FormatEntry<AppDomain>
 	{
 		public static ApplicationDomainName Default { get; } = new ApplicationDomainName();

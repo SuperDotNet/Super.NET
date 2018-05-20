@@ -18,5 +18,7 @@ namespace Super.Model.Sources
 		}
 
 		public T Get() => _specification() ? _source() : _fallback();
+
+		public static implicit operator T(Conditional<T> source) => source.Get();
 	}
 }

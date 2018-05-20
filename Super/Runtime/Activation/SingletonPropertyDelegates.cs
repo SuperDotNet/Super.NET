@@ -1,8 +1,7 @@
-﻿using Super.Model.Selection;
-using Super.Model.Selection.Alterations;
-using Super.Reflection.Members;
-using System;
+﻿using System;
 using System.Reflection;
+using Super.Model.Selection;
+using Super.Reflection.Members;
 
 namespace Super.Runtime.Activation
 {
@@ -12,6 +11,6 @@ namespace Super.Runtime.Activation
 
 		SingletonPropertyDelegates() : base(PropertyAccessMethodSelector.Default
 		                                                                .Select(MethodDelegates<Func<object>>.Default)
-		                                                                .Select(SingletonDelegateSelector<object>.Default)) {}
+		                                                                .Singleton()) {}
 	}
 }

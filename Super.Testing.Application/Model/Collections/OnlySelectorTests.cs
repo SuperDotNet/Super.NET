@@ -1,11 +1,9 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using Super.Model.Collections;
-using Super.Model.Selection;
-using System;
-using System.Collections.Immutable;
 using System.Linq;
 using Xunit;
+// ReSharper disable ComplexConditionExpression
 
 namespace Super.Testing.Application.Model.Collections
 {
@@ -19,9 +17,26 @@ namespace Super.Testing.Application.Model.Collections
 			data.Select(x => x.Length).Should().Equal(selected._source);
 		}
 
+		[Fact]
+		void VerifyInline()
+		{
+			var sut = new ArraySelectInline<string, string>(x => x + "Hello!");
+			var data = new[] {"One", "Two", "Three"};
+			var selected = sut.Get(new Array<string>(data));
+			selected._source.Should().Equal("OneHello!", "TwoHello!", "ThreeHello!");
+		}
+
+		[Fact]
+		void VerifyMultipleInline()
+		{
+			var sut      = new ArraySelectInline<string, string>(x => x + "Hello!" + x.Length);
+			var data     = new[] {"One", "Two", "Three"};
+			var selected = sut.Get(new Array<string>(data));
+			selected._source.Should().Equal("OneHello!3", "TwoHello!3", "ThreeHello!5");
+		}
 
 
-		public sealed class OnlySelector<T> : ISelect<ImmutableArray<T>, T>
+		/*public sealed class OnlySelector<T> : ISelect<ImmutableArray<T>, T>
 		{
 			public static OnlySelector<T> Default { get; } = new OnlySelector<T>();
 
@@ -37,6 +52,6 @@ namespace Super.Testing.Application.Model.Collections
 				var result     = enumerable.Length == 1 ? enumerable[0] : default;
 				return result;
 			}
-		}
+		}*/
 	}
 }

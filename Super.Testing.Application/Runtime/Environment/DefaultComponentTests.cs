@@ -12,9 +12,9 @@ namespace Super.Testing.Application.Runtime.Environment
 		void VerifyEnvironment()
 		{
 			DefaultComponent<IHelloWorld>.Default.Get()
-			                              .GetMessage()
-			                              .Should()
-			                              .Be($"Hello From {PrimaryAssemblyDetails.Default.Get().Configuration}!");
+			                             .GetMessage()
+			                             .Should()
+			                             .Be($"Hello From {PrimaryAssemblyDetails.Default.Get().Configuration}!");
 		}
 
 		[Fact]
@@ -27,8 +27,8 @@ namespace Super.Testing.Application.Runtime.Environment
 		void VerifyPlatform()
 		{
 			DefaultComponent<string>.Default.Get()
-			                         .Should()
-			                         .Be($"Hello World from {AppContext.TargetFrameworkName}!");
+			                        .Should()
+			                        .Be($"Hello World from {AppContext.TargetFrameworkName}!");
 		}
 
 		interface IInvalid {}

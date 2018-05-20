@@ -1,5 +1,10 @@
-﻿using Super.Model.Collections;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Reflection;
+using Super.Model.Collections;
 using Super.Model.Selection;
+using Super.Model.Selection.Alterations;
 using Super.Model.Sources;
 using Super.Model.Specifications;
 using Super.Reflection;
@@ -8,17 +13,14 @@ using Super.Runtime.Activation;
 using Super.Runtime.Invocation;
 using Super.Runtime.Invocation.Expressions;
 using Super.Runtime.Objects;
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Reflection;
 using Activator = Super.Runtime.Activation.Activator;
 
 namespace Super
 {
 	public static partial class ExtensionMethods
 	{
-		public static ISelect<TParameter, TAttribute> Attribute<TParameter, TAttribute>(this ISelect<TParameter, ICustomAttributeProvider> @this, I<TAttribute> _)
+		public static ISelect<TParameter, TAttribute> Attribute<TParameter, TAttribute>(
+			this ISelect<TParameter, ICustomAttributeProvider> @this, I<TAttribute> _)
 			=> @this.Select(Reflection.Attribute<TAttribute>.Default);
 
 		public static ISelect<TIn, TTo> Cast<TIn, TOut, TTo>(this ISelect<TIn, TOut> @this, I<TTo> _)
@@ -75,5 +77,11 @@ namespace Super
 
 		public static ISelect<TIn, TOut> Invoke<TIn, TOut>(this ISelect<TIn, Func<TOut>> @this)
 			=> @this.Select(Call<TOut>.Default);
+
+		public static ISelect<TIn, ISource<TOut>> Singleton<TIn, TOut>(this ISelect<TIn, ISource<TOut>> @this)
+			=> @this.Select(x => SingletonDelegateSelector<TOut>.Default.Get(x.ToDelegate()).Out());
+
+		public static ISelect<TIn, Func<TOut>> Singleton<TIn, TOut>(this ISelect<TIn, Func<TOut>> @this)
+			=> @this.Select(SingletonDelegateSelector<TOut>.Default);
 	}
 }

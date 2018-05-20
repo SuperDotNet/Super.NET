@@ -1,159 +1,138 @@
-﻿using AutoFixture;
-using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Running;
+﻿using BenchmarkDotNet.Attributes;
+using Super.Application.Hosting.BenchmarkDotNet;
 using Super.Model.Collections;
+using Super.Model.Selection;
+using Super.Model.Sources;
+using Super.Testing.Objects;
 using System;
-using System.Collections.Immutable;
 using System.Linq;
-using System.Linq.Expressions;
 
 namespace Super.Testing.Application
 {
-	sealed class Program
+	sealed class Program : Run<Benchmarks>
 	{
+		public static Program Default { get; } = new Program();
+
+		Program() {}
+
 		static void Main()
 		{
-			BenchmarkRunner.Run<Arrays>();
+			/*var x = "asdf".AsReadOnlySpan();
+			Console.WriteLine("Hello World!");*/
+			Default.Get();
 		}
 	}
 
-	[MemoryDiagnoser]
-	public class Arrays
+
+
+	public class Benchmarks
 	{
+		[Benchmark(Baseline = true)]
+		public int[] NativeArray() => Testing.Application.NativeArray.Default.Get();
+
+		[Benchmark]
+		public Array<int> Array() => Testing.Application.Array.Default.Get();
+
+		[Benchmark]
+		public int[] Sources() => Testing.Application.Sources.Default.Get();
+
+		[Benchmark]
+		public Array<int> Direct() => Testing.Application.Direct.Default.Get();
+
+		[Benchmark]
+		public Array<int> Raw() => Testing.Application.Raw.Default.Get();
+	}
+
+	sealed class NativeArray : ISource<int[]>
+	{
+		public static NativeArray Default { get; } = new NativeArray();
+
+		NativeArray() : this(Select.Default, Data.Default) {}
+
 		readonly Func<string, int> _select;
-		readonly Array<string> _array;
-		readonly string[] _data;
-		readonly ImmutableArray<string> _immutable;
+		readonly string[]          _data;
 
-		readonly IArray<string, int> _selector;
-		readonly IArray<string, int> _where;
-		readonly IArray<string, int> _inline;
-
-
-		public Arrays() : this(x => x.Length, new Fixture().CreateMany<string>(10_000).ToArray()) {}
-
-		public Arrays(Expression<Func<string, int>> expression, string[] data)
-			: this(expression, new Array<string>(data), data, data.ToImmutableArray()) {}
-
-		public Arrays(Expression<Func<string, int>> expression, Array<string> array, string[] data, ImmutableArray<string> immutable)
-			: this(expression, expression.Compile(), array, data, immutable) {}
-
-		public Arrays(Expression<Func<string, int>> expression, Func<string, int> select, Array<string> array, string[] data, ImmutableArray<string> immutable)
+		public NativeArray(Func<string, int> select, string[] data)
 		{
 			_select = select;
+			_data   = data;
+		}
+
+		public int[] Get() => _data.Select(_select).ToArray();
+	}
+
+	sealed class Array : ISource<Array<int>>
+	{
+		public static Array Default { get; } = new Array();
+
+		Array() : this(Select.Default, Data.Default) {}
+
+		readonly IArray<string, int> _array;
+		readonly Array<string>       _view;
+
+		public Array(Func<string, int> select, string[] data) : this(new ArraySelect<string, int>(select),
+		                                                             new Array<string>(data)) {}
+
+		public Array(IArray<string, int> array, Array<string> view)
+		{
 			_array = array;
-			_data = data;
-			_immutable = immutable ;
-			_selector = new ArraySelect<string, int>(In<string>.Select(_select));
-			_where = new ArrayWhere<string, int>(_select, x => x > 10);
-			_inline = new ArraySelectInline<string, int>(expression);
+			_view  = view;
 		}
 
-		[Benchmark]
-		public int[] Native() => _data.Select(_select)./*Where(x => x > 10).*/ToArray();
-
-		/*[Benchmark]
-		public Array<int> Select() => _selector.Get(_array);*/
-
-		/*[Benchmark]
-		public Array<int> Range() => _range.Get(_array);*/
-
-		[Benchmark]
-		public Array<int> Inline() => _inline.Get(_array);
-
-		/*
-
-		[Benchmark]
-		public Array<int> CustomConverter() => _converter.Get(_array);
-
-		[Benchmark]
-		public Array<int> CustomWhere() => _where.Get(_array);*/
+		public Array<int> Get() => _array.Get(_view);
 	}
 
-	/*public class Decorations
+	sealed class Sources : ISource<int[]>
 	{
-		readonly ICommand _action;
-		readonly ICommand _decorated;
+		public static Sources Default { get; } = new Sources();
 
-		public Decorations() : this(new ThrowCommand()) {}
+		Sources() : this(new SelectRaw<string, int>(Select.Default), Data.Default) {}
 
-		public Decorations(ICommand action) : this(action, Alteration.Default.Get(action)) {}
+		readonly ISelect<string[], int[]> _sources;
+		readonly string[]                 _data;
 
-		public Decorations(ICommand action, ICommand decorated)
+		public Sources(ISelect<string[], int[]> sources, string[] data)
 		{
-			_action    = action;
-			_decorated = decorated;
+			_sources = sources;
+			_data    = data;
 		}
 
-		[Benchmark]
-		public void Pure()
-		{
-			_action.Execute();
-		}
-
-		[Benchmark]
-		public void Decorated()
-		{
-			_decorated.Execute();
-		}
-
-		sealed class Alteration : IAlteration<ICommand>
-		{
-			public static Alteration Default { get; } = new Alteration();
-
-			Alteration() {}
-
-			public ICommand Get(ICommand parameter)
-			{
-				return Enumerable.Range(0, 10)
-				                 .Aggregate(parameter, (command, _) => new DecoratedCommand(command));
-			}
-
-			ICommand Alter(ICommand current) => new DecoratedCommand(current);
-		}
-	}*/
-
-	/*public interface ICommand
-	{
-		void Execute();
+		public int[] Get() => _sources.Get(_data);
 	}
 
-	sealed class DecoratedCommand : ICommand
+	sealed class Direct : ISource<Array<int>>
 	{
-		readonly ICommand _command;
+		public static Direct Default { get; } = new Direct();
 
-		public DecoratedCommand(ICommand command) => _command = command;
+		Direct() : this(new ArraySelectDirect<string, int>(Select.Default), View.Default) {}
 
-		public void Execute()
+		readonly IArray<string, int> _direct;
+		readonly Array<string>       _view;
+
+		public Direct(IArray<string, int> direct, Array<string> view)
 		{
-			_command.Execute();
+			_direct = direct;
+			_view   = view;
 		}
+
+		public Array<int> Get() => _direct.Get(_view);
 	}
 
-	sealed class ThrowCommand : ICommand
+	sealed class Raw : ISource<Array<int>>
 	{
-		public void Execute()
+		public static Raw Default { get; } = new Raw();
+
+		Raw() : this(new ArraySelectRaw<string, int>(Select.Default), View.Default) {}
+
+		readonly IArray<string, int> _raw;
+		readonly Array<string>       _view;
+
+		public Raw(IArray<string, int> raw, Array<string> view)
 		{
-			Command.methodA();
+			_raw  = raw;
+			_view = view;
 		}
+
+		public Array<int> Get() => _raw.Get(_view);
 	}
-
-	sealed class Command
-	{
-		public static Action<string> Call { get; set; } = s => {};
-
-		public static void methodA() {
-			methodB(); }
-
-		static void methodB() {
-			methodC(); }
-
-		static void methodC() {
-			badMethod(); }
-
-		static void badMethod()
-		{
-			Call("Hello World!");
-		}
-	}*/
 }

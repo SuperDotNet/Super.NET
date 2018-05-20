@@ -1,5 +1,8 @@
-﻿using Super.Model.Commands;
+﻿using System;
+using System.Reactive;
+using Super.Model.Commands;
 using Super.Model.Selection;
+using Super.Model.Selection.Alterations;
 using Super.Model.Sources;
 using Super.Model.Specifications;
 using Super.Reflection;
@@ -7,8 +10,6 @@ using Super.Runtime;
 using Super.Runtime.Activation;
 using Super.Runtime.Execution;
 using Super.Text;
-using System;
-using System.Reactive;
 using IAny = Super.Model.Specifications.IAny;
 
 namespace Super
@@ -22,7 +23,8 @@ namespace Super
 		public static ISelect<TParameter, TResult> Out<TParameter, TResult>(this ISource<TResult> @this, I<TParameter> _)
 			=> new DelegatedResult<TParameter, TResult>(@this.Get);
 
-		public static IAny Out<T>(this ISource<T> @this, ISpecification<T> specification) => @this.Out(specification.IsSatisfiedBy);
+		public static IAny Out<T>(this ISource<T> @this, ISpecification<T> specification)
+			=> @this.Out(specification.IsSatisfiedBy);
 
 		public static IAny Out<T>(this ISource<T> @this, ISelect<T, bool> specification) => @this.Out(specification.Get);
 
@@ -46,7 +48,8 @@ namespace Super
 
 		public static ISource<T> Out<T>(this Func<T> @this) => I<DelegatedSource<T>>.Default.From(@this);
 
-		public static ISource<T> Unless<T>(this ISource<T> @this, ISource<T> then) => @this.Unless(IsAssigned<T>.Default, then);
+		public static ISource<T> Unless<T>(this ISource<T> @this, ISource<T> then)
+			=> @this.Unless(IsAssigned<T>.Default, then);
 
 		public static ISource<T> Unless<T>(this ISource<T> @this, ISpecification<T> specification)
 			=> @this.Default().Unless(specification, @this);
@@ -66,8 +69,12 @@ namespace Super
 		public static ISource<TTo> Select<TFrom, TTo>(this ISource<TFrom> @this, Func<TFrom, TTo> select)
 			=> new DelegatedSelection<TFrom, TTo>(select, @this.Get);
 
-		public static ISource<TTo> AsSelect<TFrom, TTo>(this ISource<TFrom> @this, Func<ISelect<Unit, TFrom>, ISelect<Unit, TTo>> select)
+		public static ISource<TTo> AsSelect<TFrom, TTo>(this ISource<TFrom> @this,
+		                                                Func<ISelect<Unit, TFrom>, ISelect<Unit, TTo>> select)
 			=> select(@this.Out()).Out();
+
+		public static ISource<T> Singleton<T>(this ISource<T> @this)
+			=> @this.ToDelegate().To(SingletonDelegateSelector<T>.Default).Out();
 
 		public static ISource<T> ToSource<T>(this T @this) => Sources<T>.Default.Get(@this);
 
