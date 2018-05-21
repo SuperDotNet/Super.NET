@@ -17,8 +17,6 @@ namespace Super.Testing.Application
 
 		static void Main()
 		{
-			/*var x = "asdf".AsReadOnlySpan();
-			Console.WriteLine("Hello World!");*/
 			Default.Get();
 		}
 	}
