@@ -19,13 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-----
-
-Portions of this software are derived from prior work located at:
-https://extendedxmlserializer.github.io/
-
-Copyright (c) 2016-2018 Wojciech Nagórski & Michael DeMond
-
-Full License: 
-https://github.com/wojtpl2/ExtendedXmlSerializer/blob/master/Licence
