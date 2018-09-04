@@ -34,8 +34,8 @@ namespace Super.Testing.Application
 		[Benchmark]
 		public int[] Sources() => Testing.Application.Sources.Default.Get();
 
-		[Benchmark]
-		public Array<int> Direct() => Testing.Application.Direct.Default.Get();
+		/*[Benchmark]
+		public Array<int> Direct() => Testing.Application.Direct.Default.Get();*/
 
 		[Benchmark]
 		public Array<int> Raw() => Testing.Application.Raw.Default.Get();
@@ -98,7 +98,7 @@ namespace Super.Testing.Application
 		public int[] Get() => _sources.Get(_data);
 	}
 
-	sealed class Direct : ISource<Array<int>>
+	/*sealed class Direct : ISource<Array<int>>
 	{
 		public static Direct Default { get; } = new Direct();
 
@@ -114,7 +114,7 @@ namespace Super.Testing.Application
 		}
 
 		public Array<int> Get() => _direct.Get(_view);
-	}
+	}*/
 
 	sealed class Raw : ISource<Array<int>>
 	{

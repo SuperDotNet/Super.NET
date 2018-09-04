@@ -9,7 +9,7 @@ namespace Super.Model.Collections
 {
 	public readonly struct Array<T> : ISource<T[]>
 	{
-		internal readonly T[] _source;
+		readonly T[] _source;
 
 		public Array(T[] source) : this(source, source.Length) {}
 
@@ -43,7 +43,7 @@ namespace Super.Model.Collections
 
 
 
-	sealed class EnhancedArraySelect<TFrom, TTo> : ISelect<EnhancedArray<TFrom>, Array<TTo>>
+	/*sealed class EnhancedArraySelect<TFrom, TTo> : ISelect<EnhancedArray<TFrom>, Array<TTo>>
 	{
 		readonly Func<TFrom, TTo> _select;
 
@@ -64,9 +64,9 @@ namespace Super.Model.Collections
 			var result = new Array<TTo>(store);
 			return result;
 		}
-	}
+	}*/
 
-	public sealed class EnhancedArray<T>
+	/*public sealed class EnhancedArray<T>
 	{
 		const int I = sizeof(int);
 
@@ -125,5 +125,5 @@ namespace Super.Model.Collections
 
 		[Pure]
 		public T[] Get() => _source;
-	}
+	}*/
 }

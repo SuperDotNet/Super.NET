@@ -12,7 +12,7 @@ namespace Super.Testing.Application.Runtime.Activation
 	public sealed class ActivateTests
 	{
 		[Theory, AutoData]
-		public void Verify(int number)
+		public void VerifyNumber(int number)
 		{
 			var subject = I<Subject>.Default.From(number);
 			subject.Should().NotBeSameAs(I<Subject>.Default.From(number));
@@ -21,7 +21,7 @@ namespace Super.Testing.Application.Runtime.Activation
 		}
 
 		[Theory, AutoData]
-		void VerifyObject(I<Object> sut, object parameter)
+		void VerifyParameter(I<Object> sut, object parameter)
 		{
 			sut.New(parameter).Should().NotBeSameAs(sut.New(parameter));
 		}

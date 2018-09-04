@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -21,7 +22,8 @@ namespace Super.Application.Hosting.xUnit
 	{
 		public static IExecutionContext Default { get; } = new DefaultExecutionContext();
 
-		DefaultExecutionContext() : base(() => new ContextDetails("xUnit Testing Application Default (root) Execution Context")) {}
+		DefaultExecutionContext() :
+			base(() => new ContextDetails("xUnit Testing Application Default (root) Execution Context")) {}
 	}
 
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
@@ -37,7 +39,8 @@ namespace Super.Application.Hosting.xUnit
 
 	public class PriorityOrderer : ITestCaseOrderer
 	{
-		public IEnumerable<TTestCase> OrderTestCases<TTestCase>(IEnumerable<TTestCase> testCases) where TTestCase : ITestCase
+		public IEnumerable<TTestCase> OrderTestCases<TTestCase>(IEnumerable<TTestCase> testCases)
+			where TTestCase : ITestCase
 		{
 			var sortedMethods = new SortedDictionary<int, List<TTestCase>>();
 
@@ -45,7 +48,9 @@ namespace Super.Application.Hosting.xUnit
 			{
 				int priority = 0;
 
-				foreach (IAttributeInfo attr in testCase.TestMethod.Method.GetCustomAttributes((typeof(TestPriorityAttribute).AssemblyQualifiedName)))
+				foreach (IAttributeInfo attr in
+					testCase.TestMethod.Method.GetCustomAttributes((typeof(TestPriorityAttribute)
+							                                               .AssemblyQualifiedName)))
 					priority = attr.GetNamedArgument<int>("Priority");
 
 				GetOrCreate(sortedMethods, priority).Add(testCase);
@@ -53,7 +58,8 @@ namespace Super.Application.Hosting.xUnit
 
 			foreach (var list in sortedMethods.Keys.Select(priority => sortedMethods[priority]))
 			{
-				list.Sort((x, y) => StringComparer.OrdinalIgnoreCase.Compare(x.TestMethod.Method.Name, y.TestMethod.Method.Name));
+				list.Sort((x, y) => StringComparer.OrdinalIgnoreCase.Compare(x.TestMethod.Method.Name,
+				                                                             y.TestMethod.Method.Name));
 				foreach (TTestCase testCase in list)
 					yield return testCase;
 			}
@@ -88,10 +94,12 @@ namespace Super.Application.Hosting.xUnit
 		                IMessageSink diagnosticMessageSink)
 			: base(assemblyName, sourceInformationProvider, diagnosticMessageSink) {}
 
-		protected override async void RunTestCases(IEnumerable<IXunitTestCase> testCases, IMessageSink executionMessageSink,
+		protected override async void RunTestCases(IEnumerable<IXunitTestCase> testCases,
+		                                           IMessageSink executionMessageSink,
 		                                           ITestFrameworkExecutionOptions executionOptions)
 		{
-			using (var assemblyRunner = new AssemblyRunner(TestAssembly, testCases, DiagnosticMessageSink, executionMessageSink,
+			using (var assemblyRunner = new AssemblyRunner(TestAssembly, testCases, DiagnosticMessageSink,
+			                                               executionMessageSink,
 			                                               executionOptions))
 			{
 				StorageTypeDefinition.Default.Execute(typeof(Logical<>));
@@ -134,14 +142,16 @@ namespace Super.Application.Hosting.xUnit
 		protected override Task<RunSummary> RunTestClassAsync(ITestClass testClass, IReflectionTypeInfo @class,
 		                                                      IEnumerable<IXunitTestCase> testCases)
 			=> new TestClassRunner(testClass, @class, testCases, diagnosticMessageSink, MessageBus, TestCaseOrderer,
-			                       new ExceptionAggregator(Aggregator), CancellationTokenSource, CollectionFixtureMappings)
+			                       new ExceptionAggregator(Aggregator), CancellationTokenSource,
+			                       CollectionFixtureMappings)
 				.RunAsync();
 	}
 
 	sealed class TestClassRunner : XunitTestClassRunner
 	{
 		public TestClassRunner(ITestClass testClass, IReflectionTypeInfo @class, IEnumerable<IXunitTestCase> testCases,
-		                       IMessageSink diagnosticMessageSink, IMessageBus messageBus, ITestCaseOrderer testCaseOrderer,
+		                       IMessageSink diagnosticMessageSink, IMessageBus messageBus,
+		                       ITestCaseOrderer testCaseOrderer,
 		                       ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource,
 		                       IDictionary<Type, object> collectionFixtureMappings)
 			: base(testClass, @class, testCases, diagnosticMessageSink, messageBus, testCaseOrderer, aggregator,
@@ -218,18 +228,18 @@ namespace Super.Application.Hosting.xUnit
 		public ITypeInfo Type => _method.Type;
 	}
 
-
 	sealed class TestMethod : ITestMethod
 	{
 		readonly ITestMethod _method;
-		readonly IMethodInfo _info;
+
+		public TestMethod() {}
 
 		public TestMethod(ITestMethod method) : this(method, new Decorated(method.Method)) {}
 
 		public TestMethod(ITestMethod method, IMethodInfo info)
 		{
 			_method = method;
-			_info = info;
+			Method   = info;
 		}
 
 		public void Deserialize(IXunitSerializationInfo info)
@@ -242,10 +252,11 @@ namespace Super.Application.Hosting.xUnit
 			_method.Serialize(info);
 		}
 
-		public IMethodInfo Method => _info;
+		public IMethodInfo Method { get; }
 
 		public ITestClass TestClass => _method.TestClass;
 	}
+
 	sealed class TestMethodRunner : XunitTestMethodRunner
 	{
 		readonly IMessageSink _diagnosticMessageSink;
@@ -255,7 +266,8 @@ namespace Super.Application.Hosting.xUnit
 		                        IEnumerable<IXunitTestCase> testCases, IMessageSink diagnosticMessageSink,
 		                        IMessageBus messageBus, ExceptionAggregator aggregator,
 		                        CancellationTokenSource cancellationTokenSource, object[] constructorArguments)
-			: base(testMethod, @class, method, testCases, diagnosticMessageSink, messageBus, aggregator, cancellationTokenSource,
+			: base(testMethod, @class, method, testCases, diagnosticMessageSink, messageBus, aggregator,
+			       cancellationTokenSource,
 			       constructorArguments)
 		{
 			_diagnosticMessageSink = diagnosticMessageSink;
@@ -273,11 +285,13 @@ namespace Super.Application.Hosting.xUnit
 					break;
 				case XunitTheoryTestCase @case:
 					return new TheoryTestCaseRunner(@case, @case.DisplayName, @case.SkipReason, _constructorArguments,
-					                                _diagnosticMessageSink, MessageBus, new ExceptionAggregator(Aggregator),
+					                                _diagnosticMessageSink, MessageBus,
+					                                new ExceptionAggregator(Aggregator),
 					                                CancellationTokenSource);
 				case XunitTestCase @case:
 					return new TestCaseRunner(@case, @case.DisplayName, @case.SkipReason, _constructorArguments,
-					                          @case.TestMethodArguments, MessageBus, new ExceptionAggregator(Aggregator),
+					                          @case.TestMethodArguments, MessageBus,
+					                          new ExceptionAggregator(Aggregator),
 					                          CancellationTokenSource);
 			}
 
@@ -285,21 +299,24 @@ namespace Super.Application.Hosting.xUnit
 		}
 	}
 
-	sealed class TestCase : IXunitTestCase
+	sealed class TestCase : LongLivedMarshalByRefObject, IXunitTestCase
 	{
 		readonly IXunitTestCase _case;
-		readonly ITestMethod _method;
+		readonly ITestMethod    _method;
 		readonly ISpecification _specification;
-		readonly Action _action;
+		readonly Action         _action;
 
-		public TestCase(IXunitTestCase @case, Action action) : this(@case, new TestMethod(@case.TestMethod), new First(), action) {}
+		public TestCase() {}
+
+		public TestCase(IXunitTestCase @case, Action action) : this(@case, new TestMethod(@case.TestMethod),
+		                                                            new First(), action) {}
 
 		public TestCase(IXunitTestCase @case, ITestMethod method, ISpecification specification, Action action)
 		{
-			_case = @case;
-			_method = method;
+			_case          = @case;
+			_method        = method;
 			_specification = specification;
-			_action = action;
+			_action        = action;
 		}
 
 		public void Deserialize(IXunitSerializationInfo info)
@@ -331,6 +348,7 @@ namespace Super.Application.Hosting.xUnit
 					_action();
 					return _method;
 				}
+
 				return _case.TestMethod;
 			}
 		}
@@ -341,19 +359,24 @@ namespace Super.Application.Hosting.xUnit
 
 		public string UniqueID => _case.UniqueID;
 
-		public Task<RunSummary> RunAsync(IMessageSink diagnosticMessageSink, IMessageBus messageBus, object[] constructorArguments,
-		                     ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource)
-		{
-			return _case.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator, cancellationTokenSource);
-		}
+		public Task<RunSummary> RunAsync(IMessageSink diagnosticMessageSink, IMessageBus messageBus,
+		                                 object[] constructorArguments,
+		                                 ExceptionAggregator aggregator,
+		                                 CancellationTokenSource cancellationTokenSource)
+			=> _case.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator,
+			                  cancellationTokenSource);
+
+		public Exception InitializationException => _case.InitializationException;
 
 		public IMethodInfo Method => _method.Method;
+		public int Timeout => _case.Timeout;
 	}
 
 	sealed class TheoryTestCaseRunner : XunitTheoryTestCaseRunner
 	{
 		public TheoryTestCaseRunner(IXunitTestCase testCase, string displayName, string skipReason,
-		                            object[] constructorArguments, IMessageSink diagnosticMessageSink, IMessageBus messageBus,
+		                            object[] constructorArguments, IMessageSink diagnosticMessageSink,
+		                            IMessageBus messageBus,
 		                            ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource) :
 			base(testCase, displayName, skipReason, constructorArguments, diagnosticMessageSink, messageBus, aggregator,
 			     cancellationTokenSource) {}
@@ -369,16 +392,19 @@ namespace Super.Application.Hosting.xUnit
 		                                                    object[] constructorArguments,
 		                                                    MethodInfo testMethod, object[] testMethodArguments,
 		                                                    string skipReason,
-		                                                    IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes,
+		                                                    IReadOnlyList<BeforeAfterTestAttribute>
+			                                                    beforeAfterAttributes,
 		                                                    ExceptionAggregator aggregator,
 		                                                    CancellationTokenSource cancellationTokenSource)
 			=> new TestRunner(test, messageBus, testClass, constructorArguments, testMethod, testMethodArguments,
-			                  skipReason, beforeAfterAttributes, new ExceptionAggregator(aggregator), cancellationTokenSource);
+			                  skipReason, beforeAfterAttributes, new ExceptionAggregator(aggregator),
+			                  cancellationTokenSource);
 	}
 
 	sealed class TestCaseRunner : XunitTestCaseRunner
 	{
-		public TestCaseRunner(IXunitTestCase testCase, string displayName, string skipReason, object[] constructorArguments,
+		public TestCaseRunner(IXunitTestCase testCase, string displayName, string skipReason,
+		                      object[] constructorArguments,
 		                      object[] testMethodArguments, IMessageBus messageBus, ExceptionAggregator aggregator,
 		                      CancellationTokenSource cancellationTokenSource)
 			: base(testCase, displayName, skipReason, constructorArguments, testMethodArguments, messageBus, aggregator,
@@ -388,11 +414,13 @@ namespace Super.Application.Hosting.xUnit
 		                                                    object[] constructorArguments,
 		                                                    MethodInfo testMethod, object[] testMethodArguments,
 		                                                    string skipReason,
-		                                                    IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes,
+		                                                    IReadOnlyList<BeforeAfterTestAttribute>
+			                                                    beforeAfterAttributes,
 		                                                    ExceptionAggregator aggregator,
 		                                                    CancellationTokenSource cancellationTokenSource)
 			=> new TestRunner(test, messageBus, testClass, constructorArguments, testMethod, testMethodArguments,
-			                  skipReason, beforeAfterAttributes, new ExceptionAggregator(aggregator), cancellationTokenSource);
+			                  skipReason, beforeAfterAttributes, new ExceptionAggregator(aggregator),
+			                  cancellationTokenSource);
 	}
 
 	sealed class TestRunner : XunitTestRunner
@@ -413,13 +441,16 @@ namespace Super.Application.Hosting.xUnit
 	{
 		public TestInvoker(ITest test, IMessageBus messageBus, Type testClass, object[] constructorArguments,
 		                   MethodInfo testMethod, object[] testMethodArguments,
-		                   IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes, ExceptionAggregator aggregator,
+		                   IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes,
+		                   ExceptionAggregator aggregator,
 		                   CancellationTokenSource cancellationTokenSource)
-			: base(test, messageBus, testClass, constructorArguments, testMethod, testMethodArguments, beforeAfterAttributes,
+			: base(test, messageBus, testClass, constructorArguments, testMethod, testMethodArguments,
+			       beforeAfterAttributes,
 			       aggregator, cancellationTokenSource) {}
 
 		protected override object CallTestMethod(object testClassInstance)
-			=> Result(testClassInstance)?
+			=> Result(testClassInstance)
+				?
 				.ContinueWith(task => task.Exception
 				                          .InnerExceptions
 				                          .Select(x => x.Demystify())

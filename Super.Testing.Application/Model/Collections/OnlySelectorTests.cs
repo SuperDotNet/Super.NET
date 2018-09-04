@@ -14,7 +14,7 @@ namespace Super.Testing.Application.Model.Collections
 		{
 			var data = new Fixture().CreateMany<string>(100).ToArray();
 			var selected = new ArraySelectInline<string, int>(x => x.Length).Get(new Array<string>(data));
-			data.Select(x => x.Length).Should().Equal(selected._source);
+			data.Select(x => x.Length).Should().Equal(selected.Get());
 		}
 
 		[Fact]
@@ -23,7 +23,7 @@ namespace Super.Testing.Application.Model.Collections
 			var sut = new ArraySelectInline<string, string>(x => x + "Hello!");
 			var data = new[] {"One", "Two", "Three"};
 			var selected = sut.Get(new Array<string>(data));
-			selected._source.Should().Equal("OneHello!", "TwoHello!", "ThreeHello!");
+			selected.Get().Should().Equal("OneHello!", "TwoHello!", "ThreeHello!");
 		}
 
 		[Fact]
@@ -32,7 +32,7 @@ namespace Super.Testing.Application.Model.Collections
 			var sut      = new ArraySelectInline<string, string>(x => x + "Hello!" + x.Length);
 			var data     = new[] {"One", "Two", "Three"};
 			var selected = sut.Get(new Array<string>(data));
-			selected._source.Should().Equal("OneHello!3", "TwoHello!3", "ThreeHello!5");
+			selected.Get().Should().Equal("OneHello!3", "TwoHello!3", "ThreeHello!5");
 		}
 
 
