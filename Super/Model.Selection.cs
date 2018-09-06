@@ -12,6 +12,7 @@ using System.Reactive;
 
 namespace Super
 {
+	// ReSharper disable once MismatchedFileName
 	public static partial class ExtensionMethods
 	{
 		public static ISelect<TParameter, TResult> AsSelect<TParameter, TResult>(this ISelect<TParameter, TResult> @this)

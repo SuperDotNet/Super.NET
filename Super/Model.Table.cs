@@ -8,6 +8,8 @@ using System.Runtime.CompilerServices;
 
 namespace Super
 {
+	// ReSharper disable once MismatchedFileName
+
 	public static partial class ExtensionMethods
 	{
 		public static ISpecification<TParameter, TResult> ToStore<TParameter, TResult>(

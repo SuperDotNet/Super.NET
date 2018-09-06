@@ -5,6 +5,8 @@ using System.Reactive;
 
 namespace Super
 {
+	// ReSharper disable once MismatchedFileName
+
 	public static partial class ExtensionMethods
 	{
 		public static ISpecification<T> AsSpecification<T>(this ISpecification<T> @this) => @this;

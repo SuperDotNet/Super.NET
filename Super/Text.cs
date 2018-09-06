@@ -7,6 +7,8 @@ using System;
 
 namespace Super
 {
+	// ReSharper disable once MismatchedFileName
+
 	public static partial class ExtensionMethods
 	{
 		public static ISelect<object, Func<object, IFormattable>> Register<T>(this ISelectFormatter<T> @this)

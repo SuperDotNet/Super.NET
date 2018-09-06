@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace Super.Model.Collections
 {
-	sealed class ArraySelectInline<TFrom, TTo> : IArray<TFrom, TTo>
+	sealed class ArraySelectInline<TFrom, TTo> : IShape<TFrom, TTo>
 	{
 		readonly static ISelect<Expression<Func<TFrom, TTo>>, Action<TFrom[], TTo[], int, int>> Select
 			= InlineSelections<TFrom, TTo>.Default.Compile();
@@ -15,13 +15,12 @@ namespace Super.Model.Collections
 
 		public ArraySelectInline(Action<TFrom[], TTo[], int, int> iterate) => _iterate = iterate;
 
-		public Array<TTo> Get(Array<TFrom> parameter)
+		public ReadOnlyMemory<TTo> Get(ReadOnlyMemory<TFrom> parameter)
 		{
 			var length = parameter.Length;
-			var store  = new TTo[length];
-			_iterate(parameter.Get(), store, 0, length);
+			var result  = new TTo[length];
+			_iterate(parameter.ToArray(), result, 0, length);
 
-			var result = new Array<TTo>(store);
 			return result;
 		}
 	}

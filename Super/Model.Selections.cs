@@ -9,6 +9,8 @@ using IAny = Super.Model.Specifications.IAny;
 
 namespace Super
 {
+	// ReSharper disable once MismatchedFileName
+
 	public static partial class ExtensionMethods
 	{
 		public static ISelect<T, bool> Out<T>(this ISpecification<T> @this) => new Select<T, bool>(@this.IsSatisfiedBy);

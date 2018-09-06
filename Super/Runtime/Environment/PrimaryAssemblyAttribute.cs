@@ -23,8 +23,7 @@ namespace Super.Runtime.Environment
 		HostingAssembly() : base(PrimaryAssembly.Default
 		                                        .Select(x => x.Attribute<HostingAttribute>()
 		                                                      .Get())
-/*.AsSelect(x => x.Attribute(I<HostingAttribute>.Default)
-		                                                        .Value())*/
+		                                        /*.AsSelect(x => x.Attribute(I<HostingAttribute>.Default).Value())*/
 		                                        .Get()) {}
 	}
 }

@@ -8,10 +8,10 @@ namespace Super.Reflection.Types
 {
 	sealed class GenericActivation : IGenericActivation
 	{
-		readonly ImmutableArray<ParameterExpression> _expressions;
+		readonly ReadOnlyMemory<ParameterExpression> _expressions;
 		readonly ImmutableArray<Type>                _types;
 
-		public GenericActivation(ImmutableArray<Type> types, ImmutableArray<ParameterExpression> expressions)
+		public GenericActivation(ImmutableArray<Type> types, params ParameterExpression[] expressions)
 		{
 			_types       = types;
 			_expressions = expressions;
@@ -24,7 +24,7 @@ namespace Super.Reflection.Types
 			                  parameter.GetConstructor(_types.ToArray());
 			var types = constructor.GetParameters()
 			                       .Select(x => x.ParameterType);
-			var parameters = _expressions.AsEnumerable().Zip(types, Defaults.ExpressionZip);
+			var parameters = _expressions.AsEnumerable().Zip(types, Reflection.Defaults.ExpressionZip);
 			var result     = Expression.New(constructor, parameters);
 			return result;
 		}

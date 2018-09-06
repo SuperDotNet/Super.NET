@@ -9,6 +9,8 @@ using System.Linq.Expressions;
 
 namespace Super
 {
+	// ReSharper disable once MismatchedFileName
+
 	public static partial class ExtensionMethods
 	{
 		public static KeyValuePair<Type, Func<string, Func<object, IProjection>>> Entry<T>(

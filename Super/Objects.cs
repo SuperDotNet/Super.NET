@@ -8,6 +8,8 @@ using System.Linq;
 
 namespace Super
 {
+	// ReSharper disable once MismatchedFileName
+
 	public static partial class ExtensionMethods
 	{
 		public static T With<T>(this T @this, Action<T> action)

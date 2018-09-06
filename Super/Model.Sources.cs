@@ -1,6 +1,4 @@
-﻿using System;
-using System.Reactive;
-using Super.Model.Commands;
+﻿using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
 using Super.Model.Sources;
@@ -10,10 +8,13 @@ using Super.Runtime;
 using Super.Runtime.Activation;
 using Super.Runtime.Execution;
 using Super.Text;
+using System;
+using System.Reactive;
 using IAny = Super.Model.Specifications.IAny;
 
 namespace Super
 {
+	// ReSharper disable once MismatchedFileName
 	public static partial class ExtensionMethods
 	{
 		public static ISource<T> AsSource<T>(this ISource<T> @this) => @this;

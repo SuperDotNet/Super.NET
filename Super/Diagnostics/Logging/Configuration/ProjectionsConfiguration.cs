@@ -1,6 +1,5 @@
 ﻿using Super.Runtime.Objects;
 using System;
-using System.Collections.Immutable;
 using System.Linq;
 
 namespace Super.Diagnostics.Logging.Configuration
@@ -10,10 +9,10 @@ namespace Super.Diagnostics.Logging.Configuration
 		public static ProjectionsConfiguration Default { get; } = new ProjectionsConfiguration();
 
 		ProjectionsConfiguration() : this(Projectors.Default,
-		                                  KnownProjectors.Default.Get().Select(x => x.Key).ToImmutableArray()) {}
+		                                  KnownProjectors.Default.Get().Select(x => x.Key).ToArray()) {}
 
-		public ProjectionsConfiguration(IProjectors projectors, ImmutableArray<Type> projectionTypes)
+		public ProjectionsConfiguration(IProjectors projectors, params Type[] projectionTypes)
 			: base(new EnrichmentConfiguration(new ProjectionEnricher(projectors)).ToConfiguration(),
-			       new ScalarConfiguration(projectionTypes.AsEnumerable()).ToConfiguration()) {}
+			       new ScalarConfiguration(projectionTypes).ToConfiguration()) {}
 	}
 }

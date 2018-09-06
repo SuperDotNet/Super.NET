@@ -1,26 +1,63 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using Super.Model.Collections;
+using Super.Runtime.Activation;
+using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using Super.Model.Selection;
 
 namespace Super.Reflection.Types
 {
-	public sealed class AllInterfaces : IAllInterfaces
+	public static partial class Implementations
+	{
+		public static ISelect<TypeInfo, ReadOnlyMemory<TypeInfo>> AllInterfaces { get; } =
+			Types.AllInterfaces.Default.ToSequence().ToStore();
+	}
+
+	sealed class AllInterfaces : IStream<TypeInfo, TypeInfo>
 	{
 		public static AllInterfaces Default { get; } = new AllInterfaces();
 
-		AllInterfaces() => _selector = Yield;
+		AllInterfaces() : this(Defaults.Selector) {}
 
 		readonly Func<TypeInfo, IEnumerable<TypeInfo>> _selector;
 
-		public ImmutableArray<TypeInfo> Get(TypeInfo parameter) => Yield(parameter).ToImmutableArray();
+		public AllInterfaces(Func<TypeInfo, IEnumerable<TypeInfo>> selector) => _selector = selector;
 
-		IEnumerable<TypeInfo> Yield(TypeInfo parameter) =>
-			parameter.Yield()
-			         .Concat(parameter.ImplementedInterfaces.YieldMetadata()
-			                          .SelectMany(_selector))
-			         .Where(x => x.IsInterface)
-			         .Distinct();
+		public IEnumerable<TypeInfo> Get(TypeInfo parameter)
+			=> _selector(parameter).Where(x => x.IsInterface).Distinct();
+	}
+
+
+	static class Defaults
+	{
+		public static Func<TypeInfo, IEnumerable<TypeInfo>> Selector { get; } = In<TypeInfo>.Activate<Interfaces>().Get;
+	}
+
+	sealed class Interfaces : ItemsBase<TypeInfo>, IActivateMarker<TypeInfo>
+	{
+		readonly TypeInfo                              _metadata;
+		readonly Func<TypeInfo, IEnumerable<TypeInfo>> _selector;
+
+		[UsedImplicitly]
+		public Interfaces(TypeInfo metadata) : this(metadata, Defaults.Selector) {}
+
+		public Interfaces(TypeInfo metadata, Func<TypeInfo, IEnumerable<TypeInfo>> selector)
+		{
+			_metadata = metadata;
+			_selector = selector;
+		}
+
+		public override IEnumerator<TypeInfo> GetEnumerator()
+		{
+			yield return _metadata;
+			foreach (var metadata in _metadata.ImplementedInterfaces
+			                                  .YieldMetadata()
+			                                  .SelectMany(_selector))
+			{
+				yield return metadata;
+			}
+		}
 	}
 }

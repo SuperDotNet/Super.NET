@@ -7,6 +7,7 @@ using System.Linq;
 
 // ReSharper disable TooManyArguments
 // ReSharper disable once PossibleInvalidOperationException
+// ReSharper disable once MismatchedFileName
 
 namespace Super
 {
@@ -29,19 +30,19 @@ namespace Super
 		public static T[] Fixed<T>(this IEnumerable<T> @this, params T[] items) => @this.Append(items)
 		                                                                                .Fixed();
 
-		public static IEnumerable<T1> Introduce<T1, T2>(this IEnumerable<Func<T2, T1>> @this, T2 instance) =>
-			@this.Introduce(instance, tuple => tuple.Item1(tuple.Item2));
+		public static IEnumerable<T1> Introduce<T1, T2>(this IEnumerable<Func<T2, T1>> @this, T2 instance)
+			=> @this.Introduce(instance, tuple => tuple.Item1(tuple.Item2));
 
-		public static IEnumerable<(T1, T2)> Introduce<T1, T2>(this IEnumerable<T1> @this, T2 instance) =>
-			@this.Introduce(instance, x => true, Delegates<(T1, T2)>.Self);
+		public static IEnumerable<(T1, T2)> Introduce<T1, T2>(this IEnumerable<T1> @this, T2 instance)
+			=> @this.Introduce(instance, x => true, Delegates<(T1, T2)>.Self);
 
 		public static IEnumerable<T1> Introduce<T1, T2>(this IEnumerable<T1> @this, T2 instance,
-		                                                Func<(T1, T2), bool> where) =>
-			@this.Introduce(instance, where, tuple => tuple.Item1);
+		                                                Func<(T1, T2), bool> where)
+			=> @this.Introduce(instance, where, tuple => tuple.Item1);
 
 		public static IEnumerable<TResult> Introduce<T1, T2, TResult>(this IEnumerable<T1> @this, T2 instance,
-		                                                              Func<(T1, T2), TResult> select) =>
-			@this.Introduce(instance, x => true, select);
+		                                                              Func<(T1, T2), TResult> select)
+			=> @this.Introduce(instance, x => true, select);
 
 		public static IEnumerable<TResult> Introduce<T1, T2, TResult>(this IEnumerable<T1> @this, T2 instance,
 		                                                              Func<(T1, T2), bool> where,

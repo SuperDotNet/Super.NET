@@ -8,6 +8,8 @@ using System.Reflection;
 
 namespace Super
 {
+	// ReSharper disable once MismatchedFileName
+
 	public static partial class ExtensionMethods
 	{
 		public static T Attribute<T>(this ICustomAttributeProvider @this) => Reflection.Attribute<T>.Default.Get(@this);

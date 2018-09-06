@@ -1,7 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Super.Application.Hosting.BenchmarkDotNet;
 using Super.Model.Collections;
-using Super.Model.Selection;
 using Super.Model.Sources;
 using Super.Testing.Objects;
 using System;
@@ -9,19 +8,20 @@ using System.Linq;
 
 namespace Super.Testing.Application
 {
-	sealed class Program : Run<Benchmarks>
+	public class Program
 	{
-		public static Program Default { get; } = new Program();
-
-		Program() {}
-
 		static void Main()
 		{
-			Default.Get();
+			Run.Default.Get();
 		}
 	}
 
+	sealed class Run : Run<Benchmarks>
+	{
+		public static Run Default { get; } = new Run();
 
+		Run() {}
+	}
 
 	public class Benchmarks
 	{
@@ -29,16 +29,7 @@ namespace Super.Testing.Application
 		public int[] NativeArray() => Testing.Application.NativeArray.Default.Get();
 
 		[Benchmark]
-		public Array<int> Array() => Testing.Application.Array.Default.Get();
-
-		[Benchmark]
-		public int[] Sources() => Testing.Application.Sources.Default.Get();
-
-		/*[Benchmark]
-		public Array<int> Direct() => Testing.Application.Direct.Default.Get();*/
-
-		[Benchmark]
-		public Array<int> Raw() => Testing.Application.Raw.Default.Get();
+		public ReadOnlyMemory<int> Direct() => Testing.Application.Direct.Default.Get();
 	}
 
 	sealed class NativeArray : ISource<int[]>
@@ -59,78 +50,41 @@ namespace Super.Testing.Application
 		public int[] Get() => _data.Select(_select).ToArray();
 	}
 
-	sealed class Array : ISource<Array<int>>
-	{
-		public static Array Default { get; } = new Array();
-
-		Array() : this(Select.Default, Data.Default) {}
-
-		readonly IArray<string, int> _array;
-		readonly Array<string>       _view;
-
-		public Array(Func<string, int> select, string[] data) : this(new ArraySelect<string, int>(select),
-		                                                             new Array<string>(data)) {}
-
-		public Array(IArray<string, int> array, Array<string> view)
-		{
-			_array = array;
-			_view  = view;
-		}
-
-		public Array<int> Get() => _array.Get(_view);
-	}
-
-	sealed class Sources : ISource<int[]>
-	{
-		public static Sources Default { get; } = new Sources();
-
-		Sources() : this(new SelectRaw<string, int>(Select.Default), Data.Default) {}
-
-		readonly ISelect<string[], int[]> _sources;
-		readonly string[]                 _data;
-
-		public Sources(ISelect<string[], int[]> sources, string[] data)
-		{
-			_sources = sources;
-			_data    = data;
-		}
-
-		public int[] Get() => _sources.Get(_data);
-	}
-
-	/*sealed class Direct : ISource<Array<int>>
+	sealed class Direct : ISource<ReadOnlyMemory<int>>
 	{
 		public static Direct Default { get; } = new Direct();
 
-		Direct() : this(new ArraySelectDirect<string, int>(Select.Default), View.Default) {}
+		Direct() : this(new ArraySequence<string, int>(Select.Default), View.Default.Get()) {}
 
-		readonly IArray<string, int> _direct;
-		readonly Array<string>       _view;
+		readonly IShape<string, int> _direct;
+		readonly ReadOnlyMemory<string>       _view;
 
-		public Direct(IArray<string, int> direct, Array<string> view)
+		public Direct(IShape<string, int> direct, ReadOnlyMemory<string> view)
 		{
 			_direct = direct;
 			_view   = view;
 		}
 
-		public Array<int> Get() => _direct.Get(_view);
-	}*/
+		public ReadOnlyMemory<int> Get() => _direct.Get(_view);
+	}
 
-	sealed class Raw : ISource<Array<int>>
+	sealed class ArraySequence<TFrom, TTo> : IShape<TFrom, TTo> where TTo : unmanaged
 	{
-		public static Raw Default { get; } = new Raw();
+		readonly Func<TFrom, TTo> _select;
 
-		Raw() : this(new ArraySelectRaw<string, int>(Select.Default), View.Default) {}
+		public ArraySequence(Func<TFrom, TTo> select) => _select = select;
 
-		readonly IArray<string, int> _raw;
-		readonly Array<string>       _view;
-
-		public Raw(IArray<string, int> raw, Array<string> view)
+		public ReadOnlyMemory<TTo> Get(ReadOnlyMemory<TFrom> parameter)
 		{
-			_raw  = raw;
-			_view = view;
-		}
+			var length = parameter.Length;
+			var span = parameter.Span;
+			var store  = new TTo[length];
+			for (var i = 0; i < length; i++)
+			{
+				store[i] = _select(span[i]);
+			}
 
-		public Array<int> Get() => _raw.Get(_view);
+			return store;
+		}
 	}
 }

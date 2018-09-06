@@ -5,6 +5,7 @@ using System;
 using System.Collections.Immutable;
 
 // ReSharper disable TooManyArguments
+// ReSharper disable once MismatchedFileName
 
 namespace Super
 {

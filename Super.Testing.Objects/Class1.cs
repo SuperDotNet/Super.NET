@@ -1,7 +1,6 @@
 ﻿using AutoFixture;
 using Serilog;
 using Super.Diagnostics.Logging;
-using Super.Model.Collections;
 using Super.Model.Sources;
 using Super.Text;
 using Super.Text.Formatting;
@@ -11,18 +10,18 @@ using System.Linq.Expressions;
 
 namespace Super.Testing.Objects
 {
-	sealed class View : Source<Array<string>>
+	sealed class View : Source<ReadOnlyMemory<string>>
 	{
 		public static View Default { get; } = new View();
 
-		View() : base(new Array<string>(Data.Default)) {}
+		View() : base(Data.Default.Get()) {}
 	}
 
 	sealed class Data : Source<string[]>
 	{
 		public static Data Default { get; } = new Data();
 
-		Data() : base(new Fixture().CreateMany<string>(10_000).ToArray()) {}
+		Data() : base(new Fixture().CreateMany<string>(100_000).ToArray()) {}
 	}
 
 	sealed class Select : Source<Func<string, int>>

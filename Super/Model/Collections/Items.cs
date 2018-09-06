@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Super.Model.Collections
 {
-	public class Items<T> : /*ItemsBase<T>,*/ Source<IEnumerable<T>>, IItems<T>, IActivateMarker<IEnumerable<T>>, IEnumerable<T>
+	public class Items<T> : Source<IEnumerable<T>>, IItems<T>, IActivateMarker<IEnumerable<T>>, IEnumerable<T>
 	{
 		readonly ImmutableArray<T> _items;
 		readonly int _length;

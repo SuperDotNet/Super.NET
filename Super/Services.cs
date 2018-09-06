@@ -4,6 +4,8 @@ using System;
 
 namespace Super
 {
+	// ReSharper disable once MismatchedFileName
+
 	public static partial class ExtensionMethods
 	{
 		public static IServiceRegistry RegisterDefinition<T>(this IServiceRegistry @this)

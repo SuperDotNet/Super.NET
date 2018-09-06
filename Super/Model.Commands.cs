@@ -16,6 +16,8 @@ using IAny = Super.Model.Commands.IAny;
 
 namespace Super
 {
+	// ReSharper disable once MismatchedFileName
+
 	public static partial class ExtensionMethods
 	{
 		public static ICommand<T> AsCommand<T>(this ICommand<T> @this) => @this;

@@ -13,6 +13,7 @@ using System;
 
 namespace Super
 {
+	// ReSharper disable once MismatchedFileName
 	public static partial class ExtensionMethods
 	{
 		public static T Load<T>(this ILogger @this) where T : IActivateMarker<ILogger>

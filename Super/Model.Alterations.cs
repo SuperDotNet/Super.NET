@@ -7,6 +7,8 @@ using System.Linq;
 
 namespace Super
 {
+	// ReSharper disable once MismatchedFileName
+
 	public static partial class ExtensionMethods
 	{
 		public static T Alter<T>(this IEnumerable<IAlteration<T>> @this, T seed)
