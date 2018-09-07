@@ -39,7 +39,7 @@ namespace Super.Runtime.Objects
 		public override string ToString() => _text;
 	}
 
-	sealed class KnownProjectors : Items<KeyValuePair<Type, Func<string, Func<object, IProjection>>>>
+	sealed class KnownProjectors : Array<KeyValuePair<Type, Func<string, Func<object, IProjection>>>>
 	{
 		public static KnownProjectors Default { get; } = new KnownProjectors();
 
@@ -103,7 +103,7 @@ namespace Super.Runtime.Objects
 		public IProjection Get(T parameter)
 			=> new Projection(_formatter(parameter), parameter.GetType(), new Values(parameter, _properties));
 
-		sealed class Values : ItemsBase<KeyValuePair<string, object>>
+		sealed class Values : Enumerable<KeyValuePair<string, object>>
 		{
 			readonly T                            _subject;
 			readonly ImmutableArray<IProperty<T>> _properties;

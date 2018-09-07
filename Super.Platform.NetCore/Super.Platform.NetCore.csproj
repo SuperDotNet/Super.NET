@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Super\Super.csproj" />
   </ItemGroup>
 

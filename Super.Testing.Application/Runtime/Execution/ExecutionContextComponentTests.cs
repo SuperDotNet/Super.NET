@@ -4,8 +4,7 @@ using Super.Application.Hosting.xUnit;
 using Super.Model.Sources;
 using Super.Runtime.Environment;
 using Super.Runtime.Execution;
-using System;
-using System.Collections.Immutable;
+using System.Linq;
 using Xunit;
 
 namespace Super.Testing.Application.Runtime.Execution
@@ -25,7 +24,7 @@ namespace Super.Testing.Application.Runtime.Execution
 		[Fact, TestPriority(0)]
 		void Override()
 		{
-			Types.Default.Execute(typeof(DefaultExecutionContext));
+			Types.Default.Execute(typeof(DefaultExecutionContext).Yield().ToArray());
 
 			ExecutionContext.Default.Get()
 			                .To<ContextDetails>()
@@ -37,7 +36,7 @@ namespace Super.Testing.Application.Runtime.Execution
 		[Fact, TestPriority(2)]
 		void Empty()
 		{
-			Types.Default.Execute(ImmutableArray<Type>.Empty);
+			Types.Default.Execute(typeof(object).Yield().ToArray());
 
 			ExecutionContext.Default.Get()
 			                .To<ContextDetails>()

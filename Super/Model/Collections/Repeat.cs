@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Super.Model.Collections
 {
-	sealed class Repeat<T> : ItemsBase<T>
+	sealed class Repeat<T> : Enumerable<T>
 	{
 		readonly static Func<T> Create = New<T>.Default.ToDelegateReference();
 
@@ -21,7 +21,7 @@ namespace Super.Model.Collections
 
 		public override IEnumerator<T> GetEnumerator()
 		{
-			for (int i = 0; i < _times; i++)
+			for (var i = 0; i < _times; i++)
 			{
 				yield return _create();
 			}

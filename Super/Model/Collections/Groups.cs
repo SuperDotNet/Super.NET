@@ -6,7 +6,7 @@ using System.Linq;
 namespace Super.Model.Collections
 {
 	// ReSharper disable once PossibleInfiniteInheritance
-	class Groups<T> : ItemsBase<IGroup<T>>
+	class Groups<T> : Enumerable<IGroup<T>>
 	{
 		readonly Func<GroupName, IGroup<T>> _factory;
 		readonly ImmutableArray<GroupName>  _phases;

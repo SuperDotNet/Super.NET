@@ -8,7 +8,6 @@ using Super.Reflection.Types;
 using Super.Runtime.Activation;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 
 namespace Super.Runtime.Environment
@@ -20,21 +19,21 @@ namespace Super.Runtime.Environment
 		ComponentType() : base(ComponentTypes.Default.FirstAssigned()) {}
 	}
 
-	sealed class ComponentTypesDefinition : DecoratedSource<ISelect<Type, ImmutableArray<Type>>>
+	sealed class ComponentTypesDefinition : DecoratedSource<ISelect<Type, ReadOnlyMemory<Type>>>
 	{
 		public static ComponentTypesDefinition Default { get; } = new ComponentTypesDefinition();
 
-		ComponentTypesDefinition() : this(Types.Default, ComponentTypesPredicate.Default, x => x.Sort().Enumerate()) {}
+		ComponentTypesDefinition() : this(Types.Default, ComponentTypesPredicate.Default, x => x.Sort().Materialize()) {}
 
-		public ComponentTypesDefinition(IItems<Type> types, ISequenceAlteration<Type> where,
-		                                Func<ISelect<Type, IEnumerable<Type>>, ISelect<Type, ImmutableArray<Type>>> select)
+		public ComponentTypesDefinition(IArray<Type> types, IEnumerableAlteration<Type> where,
+		                                Func<ISelect<Type, IEnumerable<Type>>, ISelect<Type, ReadOnlyMemory<Type>>> select)
 			: base(types.Select(x => x.AsEnumerable())
 			            .Select(where)
 			            .Select(I<ComponentTypesSelector>.Default.From)
 			            .Select(select)) {}
 	}
 
-	sealed class ComponentTypes : DelegatedInstanceSelector<Type, ImmutableArray<Type>>
+	sealed class ComponentTypes : DelegatedInstanceSelector<Type, ReadOnlyMemory<Type>>
 	{
 		public static ComponentTypes Default { get; } = new ComponentTypes();
 

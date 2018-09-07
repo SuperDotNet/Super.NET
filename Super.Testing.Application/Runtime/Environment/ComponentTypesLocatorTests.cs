@@ -19,7 +19,7 @@ namespace Super.Testing.Application.Runtime.Environment
 
 			Types.Default.Execute(new NestedTypes<ComponentTypesTests>());
 
-			var types = ComponentTypes.Default.Get(typeof(IComponent));
+			var types = ComponentTypes.Default.Get(typeof(IComponent)).AsEnumerable();
 			types.Should().HaveCount(4);
 			types.Should().BeEquivalentTo(typeof(First), typeof(Subject), typeof(AnotherSubject), typeof(Last));
 			types.First().Should().Be(typeof(First));

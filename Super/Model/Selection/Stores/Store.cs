@@ -3,7 +3,7 @@ using System;
 
 namespace Super.Model.Selection.Stores
 {
-	class Store<TParameter, TResult> : DecoratedSelect<TParameter, TResult>
+	public class Store<TParameter, TResult> : DecoratedSelect<TParameter, TResult>
 	{
 		readonly static Func<TParameter, TResult> Source = New<TParameter, TResult>.Default.ToDelegateReference();
 

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Super.Application.Hosting.xUnit
 {
-	sealed class DefaultTransformations : Items<ISpecimenBuilderTransformation>
+	sealed class DefaultTransformations : Array<ISpecimenBuilderTransformation>
 	{
 		public static DefaultTransformations Default { get; } = new DefaultTransformations();
 
@@ -17,7 +17,7 @@ namespace Super.Application.Hosting.xUnit
 	{
 		public static EngineParts Default { get; } = new EngineParts();
 
-		EngineParts() : this(DefaultTransformations.Default) {}
+		EngineParts() : this(DefaultTransformations.Default.AsEnumerable()) {}
 
 		readonly IEnumerable<ISpecimenBuilderTransformation> _transformers;
 

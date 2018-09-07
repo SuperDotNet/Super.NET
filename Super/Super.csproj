@@ -3,18 +3,11 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>TRACE;DEBUG;NETSTANDARD2_0;JETBRAINS_ANNOTATIONS</DefineConstants>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Aspects\**" />
-    <EmbeddedResource Remove="Aspects\**" />
-    <None Remove="Aspects\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Humanizer.Core" Version="2.4.2" />
@@ -27,13 +20,5 @@
     <PackageReference Include="System.Interactive" Version="3.2.0" />
     <PackageReference Include="System.Memory" Version="4.5.1" />
     <PackageReference Include="System.Reactive" Version="4.1.0" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.1" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Text\Parsing\" />
-  </ItemGroup>
-
- 
-
 </Project>

@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Super.Reflection.Assemblies
 {
-	public sealed class Assemblies : Items<Assembly>
+	public sealed class Assemblies : Sequence<Assembly>
 	{
 		public static Assemblies Default { get; } = new Assemblies();
 

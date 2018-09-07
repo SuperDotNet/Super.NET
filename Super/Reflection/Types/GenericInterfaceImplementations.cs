@@ -6,18 +6,18 @@ using System.Reflection;
 
 namespace Super.Reflection.Types
 {
-	public sealed class GenericInterfaceImplementations : SequenceStore<TypeInfo, TypeInfo>, IActivateMarker<TypeInfo>
+	public sealed class GenericInterfaceImplementations : ArrayStore<TypeInfo, TypeInfo>, IActivateMarker<TypeInfo>
 	{
-		public GenericInterfaceImplementations(TypeInfo type) : base(I<Stream>.Default.From(type)) {}
+		public GenericInterfaceImplementations(TypeInfo type) : base(I<Sequence>.Default.From(type).ToArray().Get) {}
 
-		sealed class Stream : IStream<TypeInfo, TypeInfo>, IActivateMarker<TypeInfo>
+		sealed class Sequence : ISequence<TypeInfo, TypeInfo>, IActivateMarker<TypeInfo>
 		{
 			readonly IEnumerable<TypeInfo> _candidates;
 
 			[UsedImplicitly]
-			public Stream(TypeInfo type) : this(Implementations.GenericInterfaces.Get(type).AsEnumerable()) {}
+			public Sequence(TypeInfo type) : this(Implementations.GenericInterfaces.Get(type).AsEnumerable()) {}
 
-			public Stream(IEnumerable<TypeInfo> candidates) => _candidates = candidates;
+			public Sequence(IEnumerable<TypeInfo> candidates) => _candidates = candidates;
 
 			public IEnumerable<TypeInfo> Get(TypeInfo parameter)
 				=> _candidates.Introduce(parameter.GetGenericTypeDefinition(),

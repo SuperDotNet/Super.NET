@@ -1,5 +1,4 @@
 using Super.Model.Collections;
-using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Sources;
 using Super.Reflection;
@@ -8,7 +7,6 @@ using Super.Reflection.Types;
 using Super.Runtime.Activation;
 using Super.Runtime.Invocation;
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reactive;
@@ -16,22 +14,25 @@ using System.Reflection;
 
 namespace Super.Runtime.Environment
 {
-	public sealed class Types : SystemStore<IEnumerable<Type>>, IItems<Type>
+	public sealed class Types : SystemStore<ReadOnlyMemory<Type>>, IArray<Type>
 	{
 		public static Types Default { get; } = new Types();
 
 		Types() : this(Types<PublicAssemblyTypes>.Default) {}
 
-		public Types(IItems<Type> instance) : base(instance) {}
+		public Types(IArray<Type> instance) : base(instance) {}
 	}
 
-	public class Types<T> : Items<Type> where T : class, IActivateMarker<Assembly>, IEnumerable<Type>
+	public class Types<T> : DecoratedArray<Type> where T : class, IActivateMarker<Assembly>, IArray<Type>
 	{
 		public static Types<T> Default { get; } = new Types<T>();
 
 		Types() : this(Assemblies.Default) {}
 
-		public Types(IItems<Assembly> assemblies) : base(assemblies.Select(y => y.SelectMany(I<T>.Default.From)).Get()) {}
+		public Types(ISequence<Assembly> assemblies) : base(assemblies.Select(y => y.Select(I<T>.Default.From)
+		                                                                            .SelectMany(x => x.AsEnumerable()))
+		                                                              .ToSequence()
+		                                                              .ToArray()) {}
 	}
 
 	public sealed class StorageTypeDefinition : Variable<Type>
@@ -40,8 +41,6 @@ namespace Super.Runtime.Environment
 
 		StorageTypeDefinition() : base(typeof(Variable<>)) {}
 	}
-
-
 
 	sealed class SystemStores<T> : DecoratedSource<IMutable<T>>
 	{
@@ -58,12 +57,12 @@ namespace Super.Runtime.Environment
 			               .Out(Type<T>.Instance)) {}
 	}
 
-	public interface IInitialize : ICommand<ImmutableArray<Type>> {}
+	/*public interface IInitialize : ICommand<ImmutableArray<Type>> {}
 
 	class Initialize : IInitialize
 	{
 		public void Execute(ImmutableArray<Type> parameter) {}
-	}
+	}*/
 
 	public class Component<T> : SystemStore<T>
 	{

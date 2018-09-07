@@ -1,13 +1,12 @@
+﻿using System.Collections;
 using System.Collections.Generic;
 
 namespace Super.Model.Collections
 {
-	public class Enumerable<T> : ItemsBase<T>
+	public abstract class Enumerable<T> : IEnumerable<T>
 	{
-		readonly IEnumerable<T> _enumerable;
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-		public Enumerable(IEnumerable<T> enumerable) => _enumerable = enumerable;
-
-		public sealed override IEnumerator<T> GetEnumerator() => _enumerable.GetEnumerator();
+		public abstract IEnumerator<T> GetEnumerator();
 	}
 }

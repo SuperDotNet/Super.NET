@@ -1,13 +1,16 @@
-using Super.Model.Selection;
-using Super.Model.Specifications;
+﻿using Super.Model.Selection;
 using System;
 
 namespace Super.Model.Collections
 {
-	class Shape<TFrom, TTo> : IShape<TFrom, TTo>
+	public interface IShape<TFrom, TTo> : ISelect<ReadOnlyMemory<TFrom>, ReadOnlyMemory<TTo>> {}
+
+	/*class Shape<TFrom, TTo> : IShape<TFrom, TTo> where TTo : unmanaged
 	{
 		readonly Func<TFrom, TTo> _select;
 		readonly Func<TTo, bool>  _where;
+
+		public Shape(ISelect<TFrom, TTo> select) : this(@select, Always<TTo>.Default) {}
 
 		public Shape(ISelect<TFrom, TTo> select, ISpecification<TTo> where) : this(select.Get, where.IsSatisfiedBy) {}
 
@@ -19,9 +22,10 @@ namespace Super.Model.Collections
 
 		public ReadOnlyMemory<TTo> Get(ReadOnlyMemory<TFrom> parameter)
 		{
-			var store = new TTo[parameter.Length];
-			var count = 0;
-			var span = parameter.Span;
+			Span<TTo> store = stackalloc TTo[parameter.Length];
+			var       count = 0;
+			var       span  = parameter.Span;
+
 			for (var i = 0; i < store.Length; i++)
 			{
 				var element = _select(span[i]);
@@ -32,9 +36,8 @@ namespace Super.Model.Collections
 			}
 
 			var result = new TTo[count];
-			Array.Copy(store, result, count);
+			store.CopyTo(result);
 			return result;
-
 		}
-	}
+	}*/
 }

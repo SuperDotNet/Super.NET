@@ -5,17 +5,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Super.Model.Selection;
 
 namespace Super.Reflection.Types
 {
 	public static partial class Implementations
 	{
-		public static ISelect<TypeInfo, ReadOnlyMemory<TypeInfo>> AllInterfaces { get; } =
-			Types.AllInterfaces.Default.ToSequence().ToStore();
+		public static IArray<TypeInfo, TypeInfo> AllInterfaces { get; } = Types.AllInterfaces.Default.ToArray().ToStore();
 	}
 
-	sealed class AllInterfaces : IStream<TypeInfo, TypeInfo>
+	sealed class AllInterfaces : ISequence<TypeInfo, TypeInfo>
 	{
 		public static AllInterfaces Default { get; } = new AllInterfaces();
 
@@ -35,7 +33,7 @@ namespace Super.Reflection.Types
 		public static Func<TypeInfo, IEnumerable<TypeInfo>> Selector { get; } = In<TypeInfo>.Activate<Interfaces>().Get;
 	}
 
-	sealed class Interfaces : ItemsBase<TypeInfo>, IActivateMarker<TypeInfo>
+	sealed class Interfaces : Enumerable<TypeInfo>, IActivateMarker<TypeInfo>
 	{
 		readonly TypeInfo                              _metadata;
 		readonly Func<TypeInfo, IEnumerable<TypeInfo>> _selector;

@@ -14,7 +14,7 @@ namespace Super.Reflection.Types
 
 		public ImmutableArray<TypeInfo> Get(TypeInfo parameter) => new Hierarchy(parameter).ToImmutableArray();
 
-		sealed class Hierarchy : ItemsBase<TypeInfo>
+		sealed class Hierarchy : Enumerable<TypeInfo>
 		{
 			readonly TypeInfo _type;
 

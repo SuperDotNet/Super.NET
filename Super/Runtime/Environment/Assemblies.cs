@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Super.Runtime.Environment
 {
-	sealed class Assemblies : Items<Assembly>
+	sealed class Assemblies : DecoratedSequence<Assembly>
 	{
 		public static Assemblies Default { get; } = new Assemblies();
 
@@ -14,8 +14,7 @@ namespace Super.Runtime.Environment
 		                                   .Select(ComponentAssemblyNames.Default)
 		                                   .Select(Load.Default.Select())
 		                                   .Select(x => x.Append(HostingAssembly.Default, PrimaryAssembly.Default)
-		                                                 .Assigned()
-		                                                 .Distinct())
-		                                   .Get()) {}
+		                                                 .Where(y => y != null)
+		                                                 .Distinct())) {}
 	}
 }

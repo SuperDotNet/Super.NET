@@ -2,7 +2,6 @@
 using Super.Model.Selection;
 using Super.Model.Sources;
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace Super.Runtime.Activation
@@ -19,15 +18,15 @@ namespace Super.Runtime.Activation
 
 		SingletonProperty() : this(SingletonCandidates.Default) {}
 
-		public SingletonProperty(ISource<IEnumerable<string>> candidates)
-			: base(In<Type>.Select(x => new SelectSelector<string, PropertyInfo>(x.GetProperty))
+		public SingletonProperty(ISource<ReadOnlyMemory<string>> candidates)
+			: base(In<Type>.Select(x => new Selection<string, PropertyInfo>(x.GetProperty))
 			               .Select(candidates.Select)
 			               .Select(x => x.Select(SingletonPropertyPredicate.Default))
 			               .Value()
 			               .FirstAssigned()) {}
 	}
 
-	sealed class SingletonPropertyPredicate : WhereSelector<PropertyInfo>
+	sealed class SingletonPropertyPredicate : Where<PropertyInfo>
 	{
 		public static SingletonPropertyPredicate Default { get; } = new SingletonPropertyPredicate();
 

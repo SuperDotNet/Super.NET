@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
 using Super.Model.Specifications;
 using Super.Reflection.Members;
 using Super.Reflection.Types;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Super.Runtime.Activation
 {
@@ -14,7 +14,8 @@ namespace Super.Runtime.Activation
 		HasSingleParameterConstructor() : this(Parameters.Default) {}
 
 		public HasSingleParameterConstructor(ISelect<ConstructorInfo, ICollection<ParameterInfo>> parameters)
-			: base(parameters.FirstAssigned()
+			: base(parameters.Materialize()
+			                 .FirstAssigned()
 			                 .Out(ParameterType.Default
 			                                   .Select(TypeMetadataSelector.Default)
 			                                   .Select(IsAssignableFrom<T>.Default)

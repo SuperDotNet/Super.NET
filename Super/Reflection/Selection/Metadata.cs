@@ -6,7 +6,7 @@ using Super.Model.Collections;
 
 namespace Super.Reflection.Selection
 {
-	public sealed class Metadata : ItemsBase<MemberInfo>
+	public sealed class Metadata : Enumerable<MemberInfo>
 	{
 		readonly Func<TypeInfo, IEnumerable<MemberInfo>> _select;
 		readonly IEnumerable<TypeInfo>                   _types;

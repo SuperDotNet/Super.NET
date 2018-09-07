@@ -9,7 +9,7 @@ namespace Super.Diagnostics.Logging.Configuration
 		public static ProjectionsConfiguration Default { get; } = new ProjectionsConfiguration();
 
 		ProjectionsConfiguration() : this(Projectors.Default,
-		                                  KnownProjectors.Default.Get().Select(x => x.Key).ToArray()) {}
+		                                  KnownProjectors.Default.AsEnumerable().Select(x => x.Key).ToArray()) {}
 
 		public ProjectionsConfiguration(IProjectors projectors, params Type[] projectionTypes)
 			: base(new EnrichmentConfiguration(new ProjectionEnricher(projectors)).ToConfiguration(),

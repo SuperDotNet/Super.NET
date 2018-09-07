@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Super.Model.Collections
 {
-	public class Values<TKey, TValue> : ItemsBase<TValue>
+	public class Values<TKey, TValue> : Enumerable<TValue>
 	{
 		readonly IDictionary<TKey, TValue> _dictionary;
 
