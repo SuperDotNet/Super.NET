@@ -23,9 +23,9 @@ namespace Super.Runtime.Environment
 	{
 		public static ComponentTypesDefinition Default { get; } = new ComponentTypesDefinition();
 
-		ComponentTypesDefinition() : this(Types.Default, ComponentTypesPredicate.Default, x => x.Sort().Materialize()) {}
+		ComponentTypesDefinition() : this(Types.Default, ComponentTypesPredicate.Default, x => x.Sort().Access()) {}
 
-		public ComponentTypesDefinition(IArray<Type> types, IEnumerableAlteration<Type> where,
+		public ComponentTypesDefinition(IArray<Type> types, ISelectSequence<Type> where,
 		                                Func<ISelect<Type, IEnumerable<Type>>, ISelect<Type, ReadOnlyMemory<Type>>> select)
 			: base(types.Select(x => x.AsEnumerable())
 			            .Select(where)

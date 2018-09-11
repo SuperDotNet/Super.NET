@@ -59,7 +59,7 @@ namespace Super.Application
 
 		public Services(ISource<IRegistration> registration)
 			: base(In<T>.Activate<InstanceRegistration<T>>()
-			            .Sequence()
+			            .Yield()
 			            .Select(new AppendValueSelector<IRegistration>(registration))
 			            .Activate(I<CompositeRegistration>.Default)
 			            .Select(ServiceOptions.Default.Select(I<Services>.Default).Select)

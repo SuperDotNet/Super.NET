@@ -1,13 +1,13 @@
 using Super.Model.Selection;
 using System;
-using System.Collections.Immutable;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
 namespace Super.Model.Collections
 {
-	sealed class
-		InlineSelections<TFrom, TTo> : ISelect<Expression<Func<TFrom, TTo>>, Expression<Action<TFrom[], TTo[], int, int>>>
+	sealed class InlineSelections<TFrom, TTo>
+		: ISelect<Expression<Func<TFrom, TTo>>, Expression<Action<TFrom[], TTo[], int, int>>>
 	{
 		public static InlineSelections<TFrom, TTo> Default { get; } = new InlineSelections<TFrom, TTo>();
 
@@ -18,13 +18,13 @@ namespace Super.Model.Collections
 		                          Expression.Parameter(typeof(int), "finish")) {}
 
 		readonly ParameterExpression                  _index;
-		readonly ImmutableArray<ParameterExpression>  _input;
+		readonly IEnumerable<ParameterExpression>     _input;
 		readonly ISelect<string, ParameterExpression> _parameters;
 
 		public InlineSelections(ParameterExpression index, params ParameterExpression[] parameters)
-			: this(index, parameters.ToImmutableArray(), parameters.ToDictionary(x => x.Name).ToTable()) {}
+			: this(index, parameters.Hide(), parameters.ToDictionary(x => x.Name).ToTable()) {}
 
-		public InlineSelections(ParameterExpression index, ImmutableArray<ParameterExpression> input,
+		public InlineSelections(ParameterExpression index, IEnumerable<ParameterExpression> input,
 		                        ISelect<string, ParameterExpression> parameters)
 		{
 			_index      = index;
@@ -38,11 +38,13 @@ namespace Super.Model.Collections
 
 			var inline = new InlineVisitor(parameter.Parameters[0],
 			                               Expression.ArrayAccess(_parameters.Get("source"), _index))
-				             .Visit(parameter.Body) ?? throw new InvalidOperationException("Inline expression was not found");
+				             .Visit(parameter.Body) ??
+			             throw new InvalidOperationException("Inline expression was not found");
 
 			var body = Expression.Block(_index.Yield(),
 			                            Expression.Assign(_index,
-			                                              Expression.Subtract(_parameters.Get("start"), Expression.Constant(1))),
+			                                              Expression.Subtract(_parameters.Get("start"),
+			                                                                  Expression.Constant(1))),
 			                            Expression.Loop(Expression
 				                                            .IfThenElse(Expression.LessThan(Expression.PreIncrementAssign(_index), _parameters.Get("finish")),
 				                                                        Expression
@@ -51,7 +53,7 @@ namespace Super.Model.Collections
 				                                                        Expression.Break(label)),
 			                                            label));
 
-			var result = Expression.Lambda<Action<TFrom[], TTo[], int, int>>(body, _input.ToArray());
+			var result = Expression.Lambda<Action<TFrom[], TTo[], int, int>>(body, _input);
 			return result;
 		}
 	}

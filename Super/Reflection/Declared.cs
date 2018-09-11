@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Super.Reflection.Types;
+using System;
 using System.Linq;
 using System.Reflection;
-using Super.Reflection.Types;
 
 namespace Super.Reflection
 {
@@ -26,7 +25,7 @@ namespace Super.Reflection
 			_inherit = inherit;
 		}
 
-		public IEnumerable<T> Get(ICustomAttributeProvider parameter)
-			=> parameter.GetCustomAttributes(_type, _inherit).Cast<T>();
+		public ReadOnlyMemory<T> Get(ICustomAttributeProvider parameter)
+			=> parameter.GetCustomAttributes(_type, _inherit).Cast<T>().ToArray();
 	}
 }

@@ -13,8 +13,8 @@ namespace Super.Runtime.Activation
 
 		HasSingleParameterConstructor() : this(Parameters.Default) {}
 
-		public HasSingleParameterConstructor(ISelect<ConstructorInfo, ICollection<ParameterInfo>> parameters)
-			: base(parameters.Materialize()
+		public HasSingleParameterConstructor(ISelect<ConstructorInfo, IEnumerable<ParameterInfo>> parameters)
+			: base(parameters.Access()
 			                 .FirstAssigned()
 			                 .Out(ParameterType.Default
 			                                   .Select(TypeMetadataSelector.Default)

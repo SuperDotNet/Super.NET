@@ -30,7 +30,7 @@ namespace Super
 			=> @this.Select(Compiler<T>.Default);
 
 		public static ISelect<TIn, TResult> Out<TIn, TResult>(this ISelect<TIn, Type> @this, IGeneric<TResult> generic)
-			=> @this.Sequence().Enumerate().Select(generic).Invoke();
+			=> @this.Yield().Emit().Select(generic).Invoke();
 
 		public static ISelect<TIn, TTo> CastForValue<TIn, TOut, TTo>(this ISelect<TIn, TOut> @this, I<TTo> _)
 			=> @this.Select(ValueAwareCast<TOut, TTo>.Default);

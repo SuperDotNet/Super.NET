@@ -11,6 +11,8 @@ namespace Super.Testing.Application.Model.Collections
 		[Fact]
 		void Verify()
 		{
+
+
 			/*var items = new[] {6776};
 			var enhanced = new EnhancedArray<int>(items);*/
 		}

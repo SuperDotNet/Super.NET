@@ -18,6 +18,7 @@ namespace Super.Runtime.Environment
 		PrimaryAssembly() : base(Reflection.Assemblies
 		                                   .Assemblies
 		                                   .Default
+		                                   .ToArray()
 		                                   .AsSelect(y => y.Only(x => x.Has<HostingAttribute>()))
 		                                   .Select(PrimaryAssemblyMessage.Default)) {}
 	}

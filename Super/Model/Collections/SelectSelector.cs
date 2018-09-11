@@ -2,36 +2,103 @@
 using Super.Model.Specifications;
 using Super.Runtime.Activation;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Super.Model.Collections
 {
-	public class Selection<TFrom, TTo> : IShape<TFrom, TTo>
+	public class Selector<TFrom, TTo> : ISelector<TFrom, TTo>
 	{
 		readonly Func<TFrom, TTo> _select;
 
-		public Selection(ISelect<TFrom, TTo> select) : this(select.Get) {}
+		public Selector(ISelect<TFrom, TTo> select) : this(select.Get) {}
 
-		public Selection(Func<TFrom, TTo> select) => _select = select;
+		public Selector(Func<TFrom, TTo> select) => _select = select;
 
 		public ReadOnlyMemory<TTo> Get(ReadOnlyMemory<TFrom> parameter)
 		{
 			var length = parameter.Length;
 			var result = new TTo[length];
-			var count  = 0;
 			var span   = parameter.Span;
 
 			for (var i = 0; i < length; i++)
 			{
-				result[count++] = _select(span[i]);
+				result[i] = _select(span[i]);
 			}
 
 			return result;
 		}
 	}
 
-	public class Where<T> : IShape<T, T>
+
+	/*public class Rent<TFrom, TTo> : ISelector<TFrom, TTo>
+	{
+		readonly Func<TFrom, TTo> _select;
+
+		public Rent(ISelect<TFrom, TTo> select) : this(select.Get) {}
+
+		public Rent(Func<TFrom, TTo> select) => _select = select;
+
+		public ReadOnlyMemory<TTo> Get(ReadOnlyMemory<TFrom> parameter)
+		{
+			var length = parameter.Length;
+			var result = ArrayPool<TTo>.Shared.Rent(length);
+			var span   = parameter.Span;
+
+			for (var i = 0; i < length; i++)
+			{
+				result[i] = _select(span[i]);
+			}
+
+			return result;
+		}
+	}*/
+
+	public class Where<TIn, TOut> : ISelect<TIn, ReadOnlyMemory<TOut>>
+	{
+		readonly ISelect<TIn, ReadOnlyMemory<TOut>> _select;
+		readonly Func<TOut, bool>                   _where;
+
+		public Where(ISelect<TIn, ReadOnlyMemory<TOut>> select, ISpecification<TOut> where)
+			: this(select, where.IsSatisfiedBy) {}
+
+		public Where(ISelect<TIn, ReadOnlyMemory<TOut>> select, Func<TOut, bool> where)
+		{
+			_select = @select;
+			_where  = @where;
+		}
+
+		public ReadOnlyMemory<TOut> Get(TIn parameter)
+		{
+			var items = _select.Get(parameter);
+			var length = items.Length;
+
+			Span<int> indexes = stackalloc int[length];
+			var       count   = 0;
+			var       source  = items.Span;
+			for (var i = 0; i < length; i++)
+			{
+				var element = source[i];
+				if (_where(element))
+				{
+					indexes[count++] = i;
+				}
+			}
+
+			var result = new TOut[count];
+			for (var i = 0; i < count; i++)
+			{
+				result[i] = source[indexes[i]];
+			}
+
+			ArrayPool<TOut>.Shared.Return(items.Source()?.Array);
+
+			return result;
+		}
+	}
+
+	public class Where<T> : ISelector<T, T>
 	{
 		readonly Func<T, bool> _where;
 
@@ -41,22 +108,28 @@ namespace Super.Model.Collections
 
 		public ReadOnlyMemory<T> Get(ReadOnlyMemory<T> parameter)
 		{
-			Span<T> store = new T[parameter.Length];
-			var     count = 0;
-			var     span  = parameter.Span;
+			var length = parameter.Length;
 
-			for (var i = 0; i < store.Length; i++)
+			Span<int> indexes = stackalloc int[length];
+			var count  = 0;
+			var source   = parameter.Span;
+			for (var i = 0; i < length; i++)
 			{
-				var element = span[i];
+				var element = source[i];
 				if (_where(element))
 				{
-					store[count++] = element;
+					indexes[count++] = i;
 				}
 			}
 
-			var result = store.Slice(0, count).ToArray();
+			var result = new T[count];
+			for (var i = 0; i < count; i++)
+			{
+				result[i] = source[indexes[i]];
+			}
 			return result;
 		}
+
 	}
 
 	class SelectSelector<TFrom, TTo> : ISelect<IEnumerable<TFrom>, IEnumerable<TTo>>, IActivateMarker<Func<TFrom, TTo>>

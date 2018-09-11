@@ -50,8 +50,8 @@ namespace Super.Runtime.Environment
 
 		public SystemStores(ISource<ISelect<ImmutableArray<Type>, Type>> source)
 			: base(In<Type>.Start()
-			               .Sequence()
-			               .Enumerate()
+			               .Yield()
+			               .Emit()
 			               .Select(source)
 			               .Activate(I<IMutable<T>>.Default)
 			               .Out(Type<T>.Instance)) {}

@@ -12,7 +12,7 @@ namespace Super.Runtime.Environment
 		Assemblies() : base(PrimaryAssembly.Default
 		                                   .Select(AssemblyNameSelector.Default)
 		                                   .Select(ComponentAssemblyNames.Default)
-		                                   .Select(Load.Default.Select())
+		                                   .Select(x => x.Select(Load.Default.Get))
 		                                   .Select(x => x.Append(HostingAssembly.Default, PrimaryAssembly.Default)
 		                                                 .Where(y => y != null)
 		                                                 .Distinct())) {}

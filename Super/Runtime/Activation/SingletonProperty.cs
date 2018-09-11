@@ -19,7 +19,7 @@ namespace Super.Runtime.Activation
 		SingletonProperty() : this(SingletonCandidates.Default) {}
 
 		public SingletonProperty(ISource<ReadOnlyMemory<string>> candidates)
-			: base(In<Type>.Select(x => new Selection<string, PropertyInfo>(x.GetProperty))
+			: base(In<Type>.Select(x => new Selector<string, PropertyInfo>(x.GetProperty))
 			               .Select(candidates.Select)
 			               .Select(x => x.Select(SingletonPropertyPredicate.Default))
 			               .Value()

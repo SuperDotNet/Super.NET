@@ -1,5 +1,4 @@
-﻿using Super.Model.Collections;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
 using Super.Model.Specifications;
 using System;
 using System.Reflection;
@@ -26,6 +25,6 @@ namespace Super.Reflection
 
 		Attribute() : this(Declared<T>.Default) {}
 
-		public Attribute(IDeclared<T> declared) : base(declared.Select(SingleSelector<T>.Default)) {}
+		public Attribute(IDeclared<T> declared) : base(declared.Only()) {}
 	}
 }

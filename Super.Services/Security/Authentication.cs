@@ -12,6 +12,7 @@ namespace Super.Services.Security
 		                                             .Configure(AuthenticationStateAssignment.Default)
 		                                             .Select(Api<IAuthentication>.Default)
 		                                             .Request(x => x.Current())
-		                                             .Select(x => x.Only())) {}
+		                                             .Access()
+		                                             .Only()) {}
 	}
 }

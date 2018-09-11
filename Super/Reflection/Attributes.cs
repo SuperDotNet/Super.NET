@@ -1,12 +1,12 @@
-﻿using Super.Model.Selection;
+﻿using Super.Model.Collections;
+using Super.Model.Selection;
 using Super.Model.Specifications;
 using System;
-using System.Collections.Immutable;
 using System.Reflection;
 
 namespace Super.Reflection
 {
-	class Attributes<TAttribute, T> : Specification<ICustomAttributeProvider, ImmutableArray<T>>, IAttributes<T>
+	class Attributes<TAttribute, T> : Specification<ICustomAttributeProvider, ReadOnlyMemory<T>>, IAttributes<T>
 		where TAttribute : Attribute
 	{
 		public Attributes(Func<TAttribute, T> select) : this(Declared<TAttribute>.Default, select) {}
@@ -16,10 +16,10 @@ namespace Super.Reflection
 
 		public Attributes(ISpecification<ICustomAttributeProvider> specification,
 		                  IDeclared<TAttribute> attribute, Func<TAttribute, T> select)
-			: base(specification, attribute.Select(select.Out().Select()).Enumerate().ToStore().If(specification)) {}
+			: base(specification, attribute.Select(x => select(x)).ToStore().If(specification)) {}
 	}
 
-	sealed class Attributes<T> : DecoratedSelect<ICustomAttributeProvider, ImmutableArray<T>>, IAttributes<T>
+	sealed class Attributes<T> : ArrayStore<ICustomAttributeProvider, T>, IAttributes<T>
 	{
 		public static Attributes<T> Default { get; } = new Attributes<T>();
 
@@ -27,6 +27,6 @@ namespace Super.Reflection
 
 		Attributes() : this(Declared<T>.Default) {}
 
-		public Attributes(IDeclared<T> declared) : base(declared.Enumerate()) {}
+		public Attributes(IDeclared<T> declared) : base(declared.Get) {}
 	}
 }

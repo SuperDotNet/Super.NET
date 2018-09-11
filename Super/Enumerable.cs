@@ -1,4 +1,5 @@
 ﻿using Super.Model.Collections;
+using Super.Reflection;
 using Super.Runtime;
 using System;
 using System.Collections;
@@ -97,9 +98,10 @@ namespace Super
 			return true;
 		}
 
-		public static T Only<T>(this IEnumerable<T> @this) => OnlySelector<T>.Default.Get(@this);
+		public static T Only<T>(this IEnumerable<T> @this) => OnlyElement<T>.Default.Get(@this);
 
-		public static T Only<T>(this IEnumerable<T> @this, Func<T, bool> where) => new OnlySelector<T>(where).Get(@this);
+		public static T Only<T>(this IEnumerable<T> @this, Func<T, bool> where) => I<OnlyElement<T>>.Default.From(where)
+		                                                                                            .Get(@this);
 
 		public static void ForEach<TIn, TOut>(this IEnumerable<TIn> @this, Func<TIn, TOut> select)
 		{

@@ -1,8 +1,7 @@
-﻿using System.Collections.Immutable;
+﻿using Super.Model.Collections;
 using System.Reflection;
-using Super.Model.Selection;
 
 namespace Super.Reflection
 {
-	public interface IAttributes<T> : ISelect<ICustomAttributeProvider, ImmutableArray<T>> {}
+	public interface IAttributes<T> : IArray<ICustomAttributeProvider, T> {}
 }

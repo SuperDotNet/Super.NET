@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
 
 namespace Super.Reflection
 {
-	public interface IDeclared<out T> : IAttribute<IEnumerable<T>> {}
+	public interface IDeclared<T> : IAttribute<ReadOnlyMemory<T>> {}
 }

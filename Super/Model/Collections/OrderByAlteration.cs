@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Super.Model.Collections
 {
-	class OrderByAlteration<T, TMember> : IEnumerableAlteration<T>
+	class OrderByAlteration<T, TMember> : ISelectSequence<T>
 	{
 		readonly IComparer<TMember> _comparer;
 		readonly Func<T, TMember>   _select;

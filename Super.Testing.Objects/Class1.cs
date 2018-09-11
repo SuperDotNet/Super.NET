@@ -1,6 +1,8 @@
 ﻿using AutoFixture;
 using Serilog;
 using Super.Diagnostics.Logging;
+using Super.Model.Collections;
+using Super.Model.Selection;
 using Super.Model.Sources;
 using Super.Text;
 using Super.Text.Formatting;
@@ -10,18 +12,108 @@ using System.Linq.Expressions;
 
 namespace Super.Testing.Objects
 {
-	sealed class View : Source<ReadOnlyMemory<string>>
+	sealed class NativeArray : IArray<int>
+	{
+		public static NativeArray Default { get; } = new NativeArray();
+
+		NativeArray() : this(Select.Default, Data.Default) {}
+
+		readonly Func<string, int> _select;
+		readonly string[]          _data;
+
+		public NativeArray(Func<string, int> select, string[] data)
+		{
+			_select = select;
+			_data   = data;
+		}
+
+		public ReadOnlyMemory<int> Get() => _data.Select(_select).Where(x => x > 0).ToArray();
+	}
+
+	sealed class Chain : IArray<int>
+	{
+		public static Chain Default { get; } = new Chain();
+
+		Chain() : this(new Selector<string, int>(Select.Default).Where(x => x > 0), View.Default) {}
+
+		readonly ISelect<ReadOnlyMemory<string>, ReadOnlyMemory<int>> _direct;
+		readonly ReadOnlyMemory<string>                               _view;
+
+		public Chain(ISelect<ReadOnlyMemory<string>, ReadOnlyMemory<int>> direct, ReadOnlyMemory<string> view)
+		{
+			_direct = direct;
+			_view   = view;
+		}
+
+		public ReadOnlyMemory<int> Get() => _direct.Get(_view);
+	}
+
+	sealed class Combo : IArray<int>
+	{
+		public static Combo Default { get; } = new Combo();
+
+		Combo() : this(new SelectWhere<string, int>(Select.Default, x => x > 0), View.Default) {}
+
+		readonly ISelect<ReadOnlyMemory<string>, ReadOnlyMemory<int>> _direct;
+		readonly ReadOnlyMemory<string>                               _view;
+
+		public Combo(ISelect<ReadOnlyMemory<string>, ReadOnlyMemory<int>> direct, ReadOnlyMemory<string> view)
+		{
+			_direct = direct;
+			_view   = view;
+		}
+
+		public ReadOnlyMemory<int> Get() => _direct.Get(_view);
+	}
+
+	sealed class ExpressionCombo : IArray<int>
+	{
+		public static ExpressionCombo Default { get; } = new ExpressionCombo();
+
+		ExpressionCombo() : this(new SelectWhereDecorator<string, int>(new ExpressionSelector<string, int>(x => default), x => x > 0), View.Default) {}
+
+		readonly ISelect<ReadOnlyMemory<string>, ReadOnlyMemory<int>> _direct;
+		readonly ReadOnlyMemory<string>                               _view;
+
+		public ExpressionCombo(ISelect<ReadOnlyMemory<string>, ReadOnlyMemory<int>> direct, ReadOnlyMemory<string> view)
+		{
+			_direct = direct;
+			_view   = view;
+		}
+
+		public ReadOnlyMemory<int> Get() => _direct.Get(_view);
+	}
+
+	sealed class Expression : IArray<int>
+	{
+		public static Expression Default { get; } = new Expression();
+
+		Expression() : this(new ExpressionSelector<string, int>(x => default).Where(x => x > 0), View.Default) {}
+
+		readonly ISelect<ReadOnlyMemory<string>, ReadOnlyMemory<int>> _direct;
+		readonly ReadOnlyMemory<string>                               _view;
+
+		public Expression(ISelect<ReadOnlyMemory<string>, ReadOnlyMemory<int>> direct, ReadOnlyMemory<string> view)
+		{
+			_direct = direct;
+			_view   = view;
+		}
+
+		public ReadOnlyMemory<int> Get() => _direct.Get(_view);
+	}
+
+	sealed class View : Array<string>
 	{
 		public static View Default { get; } = new View();
 
-		View() : base(Data.Default.Get()) {}
+		View() : base(Data.Default) {}
 	}
 
 	sealed class Data : Source<string[]>
 	{
 		public static Data Default { get; } = new Data();
 
-		Data() : base(new Fixture().CreateMany<string>(100_000).ToArray()) {}
+		Data() : base(new Fixture().CreateMany<string>(10_000).ToArray()) {}
 	}
 
 	sealed class Select : Source<Func<string, int>>

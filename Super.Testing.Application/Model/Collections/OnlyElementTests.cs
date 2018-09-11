@@ -7,20 +7,20 @@ using Xunit;
 
 namespace Super.Testing.Application.Model.Collections
 {
-	public sealed class OnlySelectorTests
+	public sealed class OnlyElementTests
 	{
 		[Fact]
 		void Verify()
 		{
 			var data = new Fixture().CreateMany<string>(100).ToArray();
-			var selected = new ArraySelectInline<string, int>(x => x.Length).Get(data);
+			var selected = new ExpressionSelector<string, int>(x => x.Length).Get(data);
 			data.Select(x => x.Length).Should().Equal(selected.ToArray());
 		}
 
 		[Fact]
 		void VerifyInline()
 		{
-			var sut = new ArraySelectInline<string, string>(x => x + "Hello!");
+			var sut = new ExpressionSelector<string, string>(x => x + "Hello!");
 			var data = new[] {"One", "Two", "Three"};
 			var selected = sut.Get(data);
 			selected.ToArray().Should().Equal("OneHello!", "TwoHello!", "ThreeHello!");
@@ -29,7 +29,7 @@ namespace Super.Testing.Application.Model.Collections
 		[Fact]
 		void VerifyMultipleInline()
 		{
-			var sut      = new ArraySelectInline<string, string>(x => x + "Hello!" + x.Length);
+			var sut      = new ExpressionSelector<string, string>(x => x + "Hello!" + x.Length);
 			var data     = new[] {"One", "Two", "Three"};
 			var selected = sut.Get(data);
 			selected.ToArray().Should().Equal("OneHello!3", "TwoHello!3", "ThreeHello!5");
