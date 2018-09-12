@@ -4,108 +4,84 @@ using System.Runtime.CompilerServices;
 
 namespace Super.Model.Collections
 {
-	/*readonly ref struct BufferReference<T> // : IDisposable
+	public readonly ref struct Sequenced<T>
 	{
-		readonly ArrayPool<T> _pool;
-		readonly T[]          _source;
-		readonly Span<T>      _page;
-		readonly int          _index;
+		readonly T[]     _store;
+		readonly Span<T> _span;
 
-		public BufferReference(int pageSize, int index = 0) : this(ArrayPool<T>.Shared, pageSize, index) {}
+		public Sequenced(int size) : this(ArrayPool<T>.Shared.Rent(size)) {}
 
-		public BufferReference(ArrayPool<T> pool, int pageSize, int index = 0) : this(pool, pool.Rent(pageSize), index) {}
+		public Sequenced(T[] store) : this(store, store, store.Length) {}
 
-		public BufferReference(ArrayPool<T> pool, T[] source, int index = 0) : this(pool, source, source, index) {}
-
-		public BufferReference(ArrayPool<T> pool, T[] source, Span<T> page, int index = 0)
+		public Sequenced(T[] store, Span<T> span, int size)
 		{
-			_pool   = pool;
-			_source = source;
-			_page   = page;
-			_index  = index;
+			Size = size;
+			_store = store;
+			_span  = span;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public BufferReference<T> Add(T item)
-		{
-			_page[_index] = item;
-			return new BufferReference<T>(_pool, _source, _page, _index + 1);
-		}
+		public int Size { get; }
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public T[] Get()
-		{
-			var result = new T[_index];
-			Array.Copy(_source, 0, result, 0, _index);
-			/*var array = _page;
-			array.Slice(0, _index).CopyTo(result);#1#
-			_pool.Return(_source);
-			return result;
-		}
+		public ref T this[uint index] => ref _span[(int)index];
 
 		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Dispose()
+		public bool Add(in T element, ref uint index)
 		{
-			_pool.Return(_page);
+			_store[index] = element;
+			return ++index < _size;
+		}*/
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public T[] Get(in uint index)
+		{
+			if (index != Size)
+			{
+				var span   = _span;
+				var result = span.Slice(0, (int)index).ToArray();
+				ArrayPool<T>.Shared.Return(_store);
+				return result;
+			}
+
+			return _store;
+		}
+	}
+
+	/*public static class Extensions
+	{
+		/*public static TTo[] Select<TFrom, TTo>(this Sequenced<TTo> @this, TFrom[] source, Func<TFrom, TTo> select, ref uint index)
+			=> Select(@this, source, source.Length, @select, ref index);#1#
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static TTo[] Select<TFrom, TTo>(this Sequenced<TTo> @this, TFrom[] source, Func<TFrom, TTo> select, ref uint index)
+		{
+			var length = source.Length;
+			for (; index < length; index++)
+			{
+				@this.Add(select(source[index]), in index);
+			}
+
+			return @this.Get(in index);
+		}
+	}*/
+
+	/*readonly ref struct Materializer<T>
+	{
+		/*readonly T[] _source;
+		readonly uint _target;
+
+		public Materializer(T[] source, in uint target)
+		{
+			_source = source;
+			_target = target;
 		}#1#
-	}*/
-
-	/*readonly struct BufferingCopy<T> : IDisposable
-	{
-		readonly ArrayPool<T> _pool;
-		readonly T[]          _page;
-		readonly int          _index;
-
-		public BufferingCopy(int pageSize, int index = 0) : this(ArrayPool<T>.Shared, pageSize, index) {}
-
-		public BufferingCopy(ArrayPool<T> pool, int pageSize, int index = 0) : this(pool, pool.Rent(pageSize), index) {}
-
-		public BufferingCopy(ArrayPool<T> pool, T[] page, int index = 0)
-		{
-			_pool  = pool;
-			_page  = page;
-			_index = index;
-		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public BufferingCopy<T> Add(T item)
+		public TTo[] Select<TTo>(
+
+			Func<T, TTo> select, in int size, ref uint index)
 		{
-			_page[_index] = item;
-			return new BufferingCopy<T>(_pool, _page, _index + 1);
+
 		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public T[] Get() => _page.AsSpan(0, _index).ToArray();
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Dispose()
-		{
-			_pool.Return(_page);
-		}
-	}*/
-
-	/*ref struct PageCursor
-	{
-		/*public PageCursor(uint pageSize = 1024) : this() => PageSize = pageSize;
-
-		public uint PageIndex { get; set; }
-
-		public uint ItemIndex { get; set; }
-
-		public uint ItemCount { get; set; }
-
-
-		public uint Pages { get; set; }
-
-		public uint PageSize { get; set; }#1#
-
-		public PageCursor(uint pages, int pageSize = 1024) : this()
-		{
-			Pages     = pages;
-			PageSize  = pageSize;
-		}
-
-
 	}*/
 
 	ref struct Buffer<T>
@@ -116,7 +92,7 @@ namespace Super.Model.Collections
 
 		int          _pageIndex, _itemIndex, _itemCount;
 
-		public Buffer(uint pages, int pageSize = 1024) : this(new T[pages][], pageSize) {}
+		public Buffer(uint pages, int pageSize = 1024) : this(new T[1][]/*ArrayPool<T[]>.Shared.Rent((int)pages)*/, pageSize) {}
 
 		Buffer(T[][] store, int pageSize) : this()
 		{
@@ -127,14 +103,14 @@ namespace Super.Model.Collections
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Append(in T element)
 		{
-			var current = _store[_pageIndex] ?? (_store[_pageIndex] = ArrayPool<T>.Shared.Rent(_pageSize));
+			var current = _store[_pageIndex] ?? (_store[_pageIndex] = new T[10]);
 
 			current[_itemIndex] = element;
 
 			_itemCount++;
 			_itemIndex++;
 
-			if (_itemIndex >= _pageSize)
+			if (_itemIndex >= _store[_pageIndex].Length)
 			{
 				_pageIndex++;
 				_itemIndex = 0;
@@ -142,15 +118,22 @@ namespace Super.Model.Collections
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		T[] Rent() => ArrayPool<T>.Shared.Rent(/*_pageIndex == 0 ? 16 : Math.Max(_pageSize, _itemCount * 2)*/10);
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public T[] Flush()
 		{
 			var result = new T[_itemCount];
-			for (int i = 0, index = 0; _itemCount > 0; ArrayPool<T>.Shared.Return(_store[i++]), index += _pageSize)
+			for (int i = 0, index = 0; _itemCount > 0; i++)
 			{
-				var amount = Math.Min(_itemCount, _pageSize);
+				var size = _store[i].Length;
+				var amount = Math.Min(_itemCount, size);
 				Array.Copy(_store[i], 0, result, index, amount);
 				_itemCount -= amount;
+				index += size;
 			}
+
+			//ArrayPool<T>.Shared.Return(_store);
 			return result;
 		}
 	}

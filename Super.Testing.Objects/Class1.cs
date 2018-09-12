@@ -7,8 +7,10 @@ using Super.Model.Sources;
 using Super.Text;
 using Super.Text.Formatting;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Super.Model.Selection.Stores;
 
 namespace Super.Testing.Objects
 {
@@ -107,6 +109,20 @@ namespace Super.Testing.Objects
 		public static View Default { get; } = new View();
 
 		View() : base(Data.Default) {}
+	}
+
+	sealed class Numbers : Source<IEnumerable<int>>
+	{
+		public static Numbers Default { get; } = new Numbers();
+
+		Numbers() : base(Enumerable.Range(0, 1_000_000).Select(x => x)) {}
+	}
+
+	sealed class Count : Store<uint, int[]>
+	{
+		public static Count Default { get; } = new Count();
+
+		Count() : base(x => Numbers.Default.Get().Take((int)x).ToArray()) {}
 	}
 
 	sealed class Data : Source<string[]>

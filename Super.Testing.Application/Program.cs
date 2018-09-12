@@ -13,6 +13,9 @@ namespace Super.Testing.Application
 		static void Main()
 		{
 			Run.Default.Get();
+			/*var temp = new Benchmarks() { Count = 4};
+			var restul = temp.SequentialMethod();
+			Debugger.Break();*/
 			/*var benchmarks = new Benchmarks {Count = 1000};
 			var updated = benchmarks.Buffered();
 			var enumerable = benchmarks.Classic();
@@ -38,19 +41,6 @@ namespace Super.Testing.Application
 
 		Run() {}
 	}
-
-	/*public static class Extensions
-	{
-		public static Span<T> Append<T>(this Span<T> @this) where T : unmanaged
-		{
-			Span<T> result = stackalloc T[@this.Length];
-
-			/*var length = @this.Length;
-			var result = MemoryMarshal.CreateSpan(ref MemoryMarshal.GetReference(@this), length + 1);
-			//result[length] = item;
-			return result;#1#
-		}
-	}*/
 
 	static class Native
 	{
@@ -600,6 +590,7 @@ namespace Super.Testing.Application
 
 	public class Benchmarks
 	{
+		uint _count;
 		/*readonly IArray<int> _native;
 		readonly IArray<int> _chain;
 		readonly IArray<int> _combo;
@@ -633,84 +624,67 @@ namespace Super.Testing.Application
 		[Benchmark]
 		public ImmutableArray<int> Expression() => _expression.Get().ToArray().ToImmutableArray();*/
 
-		/*sealed class Builder<T> : ICommand<T>, IDisposable
+		[Params(/*1u, 2u, 3u, 4u, 5u,*/
+			8u
+			/*, 16u, 32u, 64u, 128u, 256u, 512u, 1024u*/
+			/*10, 100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000*/)]
+		public uint Count
 		{
-			readonly MemoryPool<T> _pool;
-
-			public Builder() : this(MemoryPool<T>.Shared) {}
-
-			public Builder(MemoryPool<T> pool) => _pool = pool;
-
-			public void Dispose()
+			get => _count;
+			set
 			{
-				_pool?.Dispose();
+				_count = value;
+				Data = Objects.Count.Default.Get(value);
 			}
-
-			public void Execute(T parameter)
-			{
-				_pool.
-			}
-		}*/
-
-		/*sealed class Segment<T> : ReadOnlySequenceSegment<T>
-		{
-			public Segment() : this(ReadOnlyMemory<T>.Empty) {}
-
-			public Segment(ReadOnlyMemory<T> memory) => Memory = memory;
-
-
-			public Segment<T> Add(ReadOnlyMemory<T> mem)
-			{
-				var result = new Segment<T>(mem) { RunningIndex = RunningIndex + Memory.Length };
-				Next = result;
-				return result;
-			}
-		}*/
-
-		public Benchmarks()
-		{
-			Buffered();
-			Classic();
 		}
 
-		[Params(/*1, 10, 100, 1_000, 10_000, 100_000, 1_000_000,*/ 1/*_000_000*//*, 100_000_000*/)]
-		public int Count { get; set; }
+		int[] Data { get; set; }
 
-		[Benchmark(Baseline = true)]
+
+		/*[IterationSetup]
+		public void Setup()
+		{
+			Data = Objects.Data.Default.Get().Take((int)Count).ToArray();
+		}*/
+
+		/*[Benchmark(Baseline = true)]
 		public int[] Buffered()
 		{
-			var pages = new Buffer<int>(1);
+			var pages = new Buffer<int>(12);
 			for (var i = 0; i < Count; i++)
 			{
 				pages.Append(in i);
 			}
 
 			return pages.Flush();
-		}
-
-
-		/*[Benchmark]
-		public int[] Reference()
-		{
-			using (var buffer = new BufferingCopy<int>(Count))
-			{
-				var current = buffer;
-				for (var i = 0; i < Count; i++)
-				{
-					current = current.Add(i);
-				}
-
-				return current.Get();
-			}
 		}*/
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		T[] Select<T>(T[] source, in int max, ref uint index)
+		{
+			var sequenced = new Sequenced<T>(max);
+			var target = Math.Min(Count, sequenced.Size);
+			while (index < target)
+			{
+				sequenced[index] = source[index++];
+			}
+			return sequenced.Get(in index);
+		}
+
 		[Benchmark]
+		public int[] SequentialMethod()
+		{
+			uint index = 0;
+			return Select(Data, int.MaxValue/2, ref index);
+		}
+
+		[Benchmark(Baseline = true)]
 		public int[] Classic()
 		{
 			var builder = new Native.LargeArrayBuilder<int>(true);
 			for (var i = 0; i < Count; i++)
 			{
-				builder.Add(i);
+				builder.Add(Data[i]);
 			}
 
 			return builder.ToArray();
