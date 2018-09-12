@@ -8,6 +8,6 @@ namespace Super.Application.Hosting.BenchmarkDotNet
 	{
 		public static Deployed Default { get; } = new Deployed();
 
-		Deployed() : base(DeployedConfiguration.Default, Job.MediumRun) {}
+		Deployed() : base(DeployedConfiguration.Default, Job.MediumRun.WithLaunchCount(1).WithWarmupCount(5).WithIterationCount(5)) {}
 	}
 }

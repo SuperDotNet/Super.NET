@@ -13,8 +13,8 @@ namespace Super.Testing.Application
 		static void Main()
 		{
 			Run.Default.Get();
-			/*var benchmarks = new Benchmarks {Count = 1000000};
-			var updated = benchmarks.Updated();
+			/*var benchmarks = new Benchmarks {Count = 1000};
+			var updated = benchmarks.Buffered();
 			var enumerable = benchmarks.Classic();
 			var equal = updated.SequenceEqual(enumerable);
 			Console.WriteLine(equal);
@@ -667,26 +667,48 @@ namespace Super.Testing.Application
 			}
 		}*/
 
-		[Params(10, 100, 1000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000 )]
+		public Benchmarks()
+		{
+			Buffered();
+			Classic();
+		}
+
+		[Params(/*1, 10, 100, 1_000, 10_000, 100_000, 1_000_000,*/ 1/*_000_000*//*, 100_000_000*/)]
 		public int Count { get; set; }
 
 		[Benchmark(Baseline = true)]
-		public int[] Updated()
+		public int[] Buffered()
 		{
-			var builder = Build.Array<int>();
+			var pages = new Buffer<int>(1);
 			for (var i = 0; i < Count; i++)
 			{
-				builder.Add(i);
+				pages.Append(in i);
 			}
 
-			return builder.ToArray();
+			return pages.Flush();
 		}
+
+
+		/*[Benchmark]
+		public int[] Reference()
+		{
+			using (var buffer = new BufferingCopy<int>(Count))
+			{
+				var current = buffer;
+				for (var i = 0; i < Count; i++)
+				{
+					current = current.Add(i);
+				}
+
+				return current.Get();
+			}
+		}*/
 
 		[Benchmark]
 		public int[] Classic()
 		{
 			var builder = new Native.LargeArrayBuilder<int>(true);
-			for (int i = 0; i < Count; i++)
+			for (var i = 0; i < Count; i++)
 			{
 				builder.Add(i);
 			}

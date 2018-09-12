@@ -65,12 +65,12 @@ namespace Super.Model.Collections
 		Access() : base(x => x.ToArray()) {}
 	}
 
-	static class Build
+	/*static class Build
 	{
 		public static Builder<T> Array<T>(int maxCapacity = int.MaxValue) => new Builder<T>(maxCapacity);
-	}
+	}*/
 
-	struct Builder<T>
+	/*struct Builder<T>
 	{
 		const int StartingCapacity = 4;
 
@@ -139,9 +139,9 @@ namespace Super.Model.Collections
 
 			return result;
 		}
-	}
+	}*/
 
-	struct Buffer<T>
+	/*struct Buffer<T>
 	{
 		public void Clear() => _array = null;
 
@@ -193,7 +193,7 @@ namespace Super.Model.Collections
 
 			return Math.Max(nextCapacity, minimum);
 		}
-	}
+	}*/
 
 	/*class Decorate<T> : ISequencer<T>
 	{

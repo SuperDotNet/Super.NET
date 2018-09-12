@@ -1,9 +1,11 @@
 ﻿// ReSharper disable ComplexConditionExpression
 
+using FluentAssertions;
 using Super.Model.Collections;
 using Super.Model.Selection;
 using Super.Model.Sources;
 using System;
+using System.Linq;
 using Xunit;
 
 namespace Super.Testing.Application.Model.Collections
@@ -13,13 +15,18 @@ namespace Super.Testing.Application.Model.Collections
 		[Fact]
 		void Verify()
 		{
+			var expected = Enumerable.Range(0, 10_000).Select(x => x).ToArray();
 
+			var buffer  = new Buffer<int>(10);
+			var current = buffer;
+			for (var i = 0; i < expected.Length; i++)
+			{
+				current.Append(i);
+			}
+			current.Flush().Should().Equal(expected);
 		}
 
-		public interface ISession<T> : ISelect<State<T>, State<T>?>, ISource<State<T>?>
-		{
-
-		}
+		public interface ISession<T> : ISelect<State<T>, State<T>?>, ISource<State<T>?> {}
 
 		public interface ISequencer<T> : ISelect<ISession<T>, ReadOnlyMemory<T>> {}
 
@@ -31,7 +38,7 @@ namespace Super.Testing.Application.Model.Collections
 
 			public ReadOnlyMemory<T> Get(ISession<T> parameter)
 			{
-				var builder = Build.Array<T>();
+				/*var builder = Build.Array<T>();
 				var state = parameter.Get();
 				while (state.HasValue)
 				{
@@ -39,7 +46,8 @@ namespace Super.Testing.Application.Model.Collections
 					state = parameter.Get(state.Value);
 				}
 				var result = builder.ToArray();
-				return result;
+				return result;*/
+				return ReadOnlyMemory<T>.Empty;
 			}
 		}
 
