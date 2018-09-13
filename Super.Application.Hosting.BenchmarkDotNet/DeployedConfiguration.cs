@@ -22,7 +22,7 @@ namespace Super.Application.Hosting.BenchmarkDotNet
 			var result = ManualConfig.Create(DefaultConfig.Instance);
 			result.Add(parameter);
 			result.Add(parameter.To(_configure));
-			result.Set(new DefaultOrderer(SummaryOrderPolicy.FastestToSlowest));
+			result.Set(new DefaultOrderer());
 			result.Add(MemoryDiagnoser.Default);
 			return result;
 		}

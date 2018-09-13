@@ -115,7 +115,7 @@ namespace Super.Testing.Objects
 	{
 		public static Numbers Default { get; } = new Numbers();
 
-		Numbers() : base(Enumerable.Range(0, 1_000_000).Select(x => x)) {}
+		Numbers() : base(Enumerable.Range(0, int.MaxValue).Select(x => x)) {}
 	}
 
 	sealed class Count : Store<uint, int[]>

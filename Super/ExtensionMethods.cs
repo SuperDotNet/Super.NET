@@ -27,7 +27,7 @@ namespace Super
 			=> @this.Select(Cast<TOut, TTo>.Default);
 
 		public static ISelect<TIn, T> Compile<TIn, T>(this ISelect<TIn, Expression<T>> @this)
-			=> @this.Select(Compiler<T>.Default);
+			=> @this.Select(Runtime.Invocation.Expressions.Compiler<T>.Default);
 
 		public static ISelect<TIn, TResult> Out<TIn, TResult>(this ISelect<TIn, Type> @this, IGeneric<TResult> generic)
 			=> @this.Yield().Emit().Select(generic).Invoke();
