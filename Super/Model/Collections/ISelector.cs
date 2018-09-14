@@ -6,6 +6,8 @@ using System.Linq.Expressions;
 
 namespace Super.Model.Collections
 {
+	public interface ISelection<TFrom, TTo> : ISelect<View<TFrom>, View<TTo>> {}
+
 	public interface ISelector<TFrom, TTo> : ISelect<ReadOnlyMemory<TFrom>, ReadOnlyMemory<TTo>> {}
 
 	public sealed class SelectWhere<TFrom, TTo> : ISelector<TFrom, TTo>

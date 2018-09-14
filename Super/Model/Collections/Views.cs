@@ -20,22 +20,24 @@ namespace Super.Model.Collections
 		public View<T> Compile(IEnumerator<T> parameter)
 		{
 			var  views = _views;
-			var  total = views[0].Total;
+			var masterPeek = views.Peek();
+			var  total = masterPeek[0].Available;
 			var  pages = 1u;
 			bool next;
 			do
 			{
 				var size   = Math.Min(int.MaxValue - total, total * 2);
 				var view   = new View<T>(_pool.Rent((int)size), _pool);
-				var target = view.Total;
+				var peek = view.Peek();
+				var target = view.Available;
 				var local  = 0u;
 				while (local < target && parameter.MoveNext())
 				{
-					view[local++] = parameter.Current;
+					peek[local++] = parameter.Current;
 					total++;
 				}
 
-				views[pages++] = view.Resize(in local);
+				masterPeek[pages++] = view.Resize(in local);
 				next           = local == target;
 			} while (next);
 
@@ -44,7 +46,7 @@ namespace Super.Model.Collections
 			var index = 0u;
 			for (var i = 0u; i < pages; i++)
 			{
-				var view = views[i];
+				var view = masterPeek[i];
 				master.Copy(in view, in index);
 				index += view.Used;
 				view.Release();

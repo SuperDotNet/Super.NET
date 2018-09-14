@@ -3,6 +3,7 @@ using Super.Model.Selection;
 using Super.Model.Sources;
 using Super.Reflection;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -48,6 +49,25 @@ namespace Super
 		public static ISelect<IEnumerable<TFrom>, IEnumerable<TTo>> SelectMany<TFrom, TTo>(
 			this ISelect<TFrom, IEnumerable<TTo>> @this)
 			=> @this.ToDelegate().To(I<SelectManySelector<TFrom, TTo>>.Default);
+
+
+
+		public static ISelect<TIn, View<TOut>> Iterate<TIn, TOut>(this ISelect<TIn, IEnumerable<TOut>> @this)
+			=> @this.Select(Model.Collections.Load<TOut>.Default);
+
+		public static ISelect<TIn, View<TTo>> Selection<TIn, TFrom, TTo>(
+			this ISelect<TIn, View<TFrom>> @this, Expression<Func<TFrom, TTo>> select, Expression<Func<TTo, bool>> where)
+			=> @this.Select(new SelectionWhere<TFrom, TTo>(select, where));
+
+		public static ISelect<TIn, View<TTo>> Selection<TIn, TFrom, TTo>(
+			this ISelect<TIn, View<TFrom>> @this, Expression<Func<TFrom, TTo>> select)
+			=> @this.Select(new ExpressionSelection<TFrom, TTo>(select));
+
+		public static ISelect<TIn, View<TOut>> Where<TIn, TOut>(
+			this ISelect<TIn, View<TOut>> @this, Expression<Func<TOut, bool>> specification)
+			=> @this.Select(new WhereSelection<TOut>(specification.Compile()));
+
+
 
 		public static ISelect<TIn, ReadOnlyMemory<TTo>> Select<TIn, TFrom, TTo>(
 			this ISelect<TIn, ReadOnlyMemory<TFrom>> @this, Expression<Func<TFrom, TTo>> select)

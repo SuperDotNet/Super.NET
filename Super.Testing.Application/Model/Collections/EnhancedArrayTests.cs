@@ -1,4 +1,6 @@
-﻿using Xunit;
+﻿using System.Reactive;
+using Super.Testing.Objects;
+using Xunit;
 
 namespace Super.Testing.Application.Model.Collections
 {
@@ -11,7 +13,13 @@ namespace Super.Testing.Application.Model.Collections
 		[Fact]
 		void Verify()
 		{
-
+			Data.Default.Get()
+			    .ToSource()
+			    .Out()
+			    .AsSelect()
+			    .Iterate()
+			    .Selection(x => x.Length, x => x > 1000)
+			    .Get(Unit.Default);
 
 			/*var items = new[] {6776};
 			var enhanced = new EnhancedArray<int>(items);*/

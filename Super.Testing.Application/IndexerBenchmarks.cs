@@ -1,12 +1,13 @@
 ﻿using BenchmarkDotNet.Attributes;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive;
 using System.Runtime.CompilerServices;
 using Super.Model.Collections;
-
-// ReSharper disable all
+using Super.Model.Selection;
 
 namespace Super.Testing.Application
 {
@@ -14,7 +15,7 @@ namespace Super.Testing.Application
 	{
 		/*[Params(1u, 2u, 3u, 4u, 5u, 8u, 16u, 32u, 64u, 128u, 256u, 512u, 1024u, 1025u, 2048u, 4096u, 8196u, 10_000u, 100_000u, 1_000_000u, 10_000_000u, 100_000_000u)]*/
 		/*[Params(1u, 2u, 3u, 4u, 5u)]*/
-		[Params(4096u)]
+		[Params(10_000u)]
 		public uint Count
 		{
 			get => _count;
@@ -25,12 +26,15 @@ namespace Super.Testing.Application
 			}
 		}
 
-		readonly static Enumerate<int> Enumerate = Enumerate<int>.Default;
-		readonly static Load<int> Load = Load<int>.Default;
+		readonly static string[] Strings = Objects.Data.Default.Get();
+
+		/*readonly static Enumerate<int> Enumerate = Enumerate<int>.Default;*/
+		readonly ISelect<Unit, View<int>> _load = Strings.ToSource().Out().AsSelect().Iterate().Selection(x => x.Length).Where(x => x > 1000);
 
 		uint _count;
 
 		int[] _data;
+
 
 		/*readonly Indexer<int> _indexer = Indexer<int>.Default;
 
@@ -42,11 +46,17 @@ namespace Super.Testing.Application
 		[Benchmark]
 		public ReadOnlyMemory<int> Classic() => _classic.Get(new ArrayIndex<int>(_data));*/
 
-		[Benchmark(Baseline = true)]
-		public int[] Iterate() => Load.Get(_data).Emit();
+		/*[Benchmark(Baseline = true)]
+		public int[] Iterate() => _load.Get(Count).Emit();
 
 		[Benchmark]
-		public int[] IterateClassic() => _data.ToArray();
+		public int[] IterateClassic() => Objects.Count.Default.Get(Count).Select(x => x + 1).ToArray();*/
+
+		[Benchmark(Baseline = true)]
+		public int[] Iterate() => _load.Get(Unit.Default).Emit();
+
+		[Benchmark]
+		public int[] IterateClassic() => Strings.Select(x => x.Length).Where(x => x > 1000).ToArray();
 
 		/*[Benchmark(Baseline = true)]
 		public int[] Enumeration() => Enumerate.Get(_data.Hide().GetEnumerator()).Emit();

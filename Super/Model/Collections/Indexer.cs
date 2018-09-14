@@ -199,21 +199,21 @@ namespace Super.Model.Collections
 
 		public View(T[] store, ArrayPool<T> pool = null) : this(store, store, pool) {}
 
-		public View(T[] store, Memory<T> view, ArrayPool<T> pool = null)
+		public View(T[] store, in Memory<T> view, ArrayPool<T> pool = null)
 		{
 			_store = store;
 			_pool = pool;
 			_view = view;
 
-			Total = (uint)_store.Length;
+			Available = (uint)_store.Length;
 			Used = (uint)view.Length;
 		}
 
 		public uint Used { get; }
 
-		public uint Total { get; }
+		public uint Available { get; }
 
-		public ref T this[in uint index] => ref _store[index];
+		public T this[in uint index] => _store[index];
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Copy(in View<T> source, in uint offset)
@@ -226,7 +226,9 @@ namespace Super.Model.Collections
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Release()
 		{
-			_pool?.Return(_store);
+			var arrayPool = _pool;
+			var result = _store;
+			arrayPool?.Return(result);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -238,6 +240,9 @@ namespace Super.Model.Collections
 			var result = (_view).ToArray().ToImmutableArray();
 			return result;
 		}*/
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public T[] Peek() => _store;
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public T[] Emit()
