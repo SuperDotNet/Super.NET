@@ -92,7 +92,7 @@ namespace Super.Model.Collections
 				result[i] = source[indexes[i]];
 			}
 
-			ArrayPool<TOut>.Shared.Return(items.Source()?.Array);
+			ArrayPool<TOut>.Shared.Return(items.Segment()?.Array);
 
 			return result;
 		}

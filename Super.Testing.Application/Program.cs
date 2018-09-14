@@ -10,7 +10,7 @@ namespace Super.Testing.Application
 		}
 	}
 
-	sealed class Run : Run<PagerBenchmarks>
+	sealed class Run : Run<IndexerBenchmarks>
 	{
 		public static Run Default { get; } = new Run();
 

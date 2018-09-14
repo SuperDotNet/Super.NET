@@ -4,9 +4,14 @@ using System.Runtime.CompilerServices;
 
 namespace Super.Model.Collections
 {
-	public interface IInstance<TIn, out TOut>
+	public interface IEnhancedSelect<TIn, out TOut>
 	{
 		TOut Get(in TIn parameter);
+	}
+
+	public interface IEnhancedCommand<T>
+	{
+		void Execute(in T parameter);
 	}
 
 	public readonly ref struct Page<T>
@@ -22,11 +27,11 @@ namespace Super.Model.Collections
 		public ref T this[in uint index] => ref _store[index];
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public T[] Get(in uint index)
+		public T[] Get(in uint length)
 		{
-			if (index != _store.Length)
+			if (length != _store.Length)
 			{
-				var result = View(in index).ToArray();
+				var result = View(in length).ToArray();
 				Clear();
 				return result;
 			}
@@ -41,6 +46,6 @@ namespace Super.Model.Collections
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public ReadOnlyMemory<T> View(in uint index) => _store.AsMemory().Slice(0, (int)index);
+		public ReadOnlyMemory<T> View(in uint length) => _store.AsMemory().Slice(0, (int)length);
 	}
 }

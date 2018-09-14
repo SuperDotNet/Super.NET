@@ -20,7 +20,7 @@ namespace Super.Model.Collections
 			var length = parameter.Length;
 			var result  = new TTo[length];
 
-			_iterate(parameter.Source()?.Array, result, 0, length);
+			_iterate(parameter.Segment()?.Array, result, 0, length);
 
 			return result;
 		}

@@ -14,6 +14,24 @@ using Super.Model.Selection.Stores;
 
 namespace Super.Testing.Objects
 {
+	/*sealed class Iterator : IArray<int>
+	{
+		public static Iterator Default { get; } = new Iterator();
+
+		Iterator() : this(Select.Default, Data.Default) {}
+
+		readonly Func<string, int> _select;
+		readonly string[]          _data;
+
+		public Iterator(Func<string, int> select, string[] data)
+		{
+			_select = select;
+			_data   = data;
+		}
+
+		public ReadOnlyMemory<int> Get() => default;
+	}*/
+
 	sealed class NativeArray : IArray<int>
 	{
 		public static NativeArray Default { get; } = new NativeArray();

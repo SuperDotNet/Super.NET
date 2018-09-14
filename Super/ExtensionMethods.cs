@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Reflection;
-using Super.Model.Collections;
+﻿using Super.Model.Collections;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
 using Super.Model.Sources;
@@ -11,8 +7,11 @@ using Super.Reflection;
 using Super.Reflection.Types;
 using Super.Runtime.Activation;
 using Super.Runtime.Invocation;
-using Super.Runtime.Invocation.Expressions;
 using Super.Runtime.Objects;
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Reflection;
 using Activator = Super.Runtime.Activation.Activator;
 
 namespace Super

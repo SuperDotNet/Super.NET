@@ -12,11 +12,13 @@ namespace Super
 
 		public static IEnumerable<T> AsEnumerable<T>(this ReadOnlyMemory<T> @this) => MemoryMarshal.ToEnumerable(@this);
 
-		public static ArraySegment<T>? Source<T>(this ReadOnlyMemory<T> @this)
+		public static ArraySegment<T>? Segment<T>(this ReadOnlyMemory<T> @this)
 			=> MemoryMarshal.TryGetArray(@this, out var result) ? result : (ArraySegment<T>?)null;
 
+		public static T[] Get<T>(this ReadOnlyMemory<T> @this) => @this.Segment()?.Array ?? @this.ToArray();
+
 		public static T[] Array<T>(this ReadOnlyMemory<T> @this)
-			=> @this.Source()?.Array ?? throw new InvalidOperationException("Could not locate array from ReadOnlyMemory");
+			=> @this.Segment()?.Array ?? throw new InvalidOperationException("Could not locate array from ReadOnlyMemory");
 
 		public static bool Any<T>(this ReadOnlyMemory<T> @this) => !@this.IsEmpty;
 	}

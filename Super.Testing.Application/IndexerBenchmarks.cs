@@ -3,23 +3,24 @@ using Super.Model.Collections;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 // ReSharper disable all
 
 namespace Super.Testing.Application
 {
-	public class PagerBenchmarks
+	public class IndexerBenchmarks
 	{
-		/*[Params(1u, 2u, 3u, 4u, 5u, 8u, 16u, 32u, 64u, 128u, 256u, 512u, 1024u, 1025u, 2048u, 4096u, 8196u, 10_000u, 100_000u, 1_000_000u, 10_000_000u, 100_000_000u)]*/
-		[Params( /*10_000u, 100_000u, 1_000_000u*/10_000u)]
+		[Params(1u, 2u, 3u, 4u, 5u, 8u, 16u, 32u, 64u, 128u, 256u, 512u, 1024u, 1025u, 2048u, 4096u, 8196u, 10_000u, 100_000u, 1_000_000u, 10_000_000u, 100_000_000u)]
+		/*[Params( /*10_000u, 100_000u, 1_000_000u#1#4096u)]*/
 		public uint Count
 		{
 			get => _count;
 			set
 			{
 				_count = value;
-				_data  = Objects.Count.Default.Get(value);
+				_data = Objects.Count.Default.Get(value);;
 			}
 		}
 
@@ -27,23 +28,41 @@ namespace Super.Testing.Application
 
 		int[] _data;
 
-		readonly Pager<int> _pager = Pager<int>.Default;
+		/*readonly Indexer<int> _indexer = Indexer<int>.Default;
 
 		[Benchmark(Baseline = true)]
-		public int[] Native() => _pager.Get(in _data);
+		public ReadOnlyMemory<int> Native() => _indexer.Get(new ArrayIndex<int>(_data));
 
-		/*[Benchmark]
-		public int[] Classic()
+		readonly ClassicIndexer<int> _classic = ClassicIndexer<int>.Default;
+
+		[Benchmark]
+		public ReadOnlyMemory<int> Classic() => _classic.Get(new ArrayIndex<int>(_data));*/
+
+		[Benchmark(Baseline = true)]
+		public int[] Iteration() => Iterator<int>.Default.Get(_data).Get();
+
+		[Benchmark]
+		public int[] Classic() => _data.Hide().ToArray();
+
+		sealed class ClassicIndexer<T> : IIndexer<T>
 		{
-			var builder = new LargeArrayBuilder<int>(true);
-			var length  = _data.Length;
-			for (var i = 0u; i < length; i++)
-			{
-				builder.Add(_data[i]);
-			}
+			public static ClassicIndexer<T> Default { get; } = new ClassicIndexer<T>();
 
-			return builder.ToArray();
-		}*/
+			ClassicIndexer() {}
+
+			public ReadOnlyMemory<T> Get(IIndex<T> parameter)
+			{
+				var builder = new LargeArrayBuilder<T>(true);
+				var index   = 0u;
+				while (parameter.Next(in index, out var element))
+				{
+					builder.Add(element);
+					index++;
+				}
+
+				return builder.ToArray();
+			}
+		}
 
 		struct ArrayBuilder<T>
 		{
