@@ -1,8 +1,4 @@
-﻿using System;
-using System.Buffers;
-using System.Runtime.CompilerServices;
-
-namespace Super.Model.Collections
+﻿namespace Super.Model.Collections
 {
 	public interface IEnhancedSelect<TIn, out TOut>
 	{
@@ -14,7 +10,7 @@ namespace Super.Model.Collections
 		void Execute(in T parameter);
 	}
 
-	public readonly ref struct Page<T>
+	/*public readonly ref struct Page<T>
 	{
 		readonly T[] _store;
 
@@ -32,7 +28,7 @@ namespace Super.Model.Collections
 			if (length != _store.Length)
 			{
 				var result = View(in length).ToArray();
-				Clear();
+				Release();
 				return result;
 			}
 
@@ -40,12 +36,12 @@ namespace Super.Model.Collections
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Clear()
+		public void Release()
 		{
 			ArrayPool<T>.Shared.Return(_store);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ReadOnlyMemory<T> View(in uint length) => _store.AsMemory().Slice(0, (int)length);
-	}
+	}*/
 }

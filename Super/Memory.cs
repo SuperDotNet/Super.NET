@@ -1,5 +1,6 @@
 ﻿using Super.Model.Collections;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
@@ -15,7 +16,25 @@ namespace Super
 		public static ArraySegment<T>? Segment<T>(this ReadOnlyMemory<T> @this)
 			=> MemoryMarshal.TryGetArray(@this, out var result) ? result : (ArraySegment<T>?)null;
 
-		public static T[] Get<T>(this ReadOnlyMemory<T> @this) => @this.Segment()?.Array ?? @this.ToArray();
+		public static T[] Get<T>(this ReadOnlyMemory<T> @this)
+		{
+			var value = @this.Segment();
+			if (value.HasValue)
+			{
+				var segment = value.Value;
+				var result = segment.Array;
+				if (segment.Count - segment.Offset == result?.Length)
+				{
+					return result;
+				}
+
+				var array = @this.ToArray();
+				ArrayPool<T>.Shared.Return(result);
+				return array;
+			}
+
+			return @this.ToArray();
+		}
 
 		public static T[] Array<T>(this ReadOnlyMemory<T> @this)
 			=> @this.Segment()?.Array ?? throw new InvalidOperationException("Could not locate array from ReadOnlyMemory");

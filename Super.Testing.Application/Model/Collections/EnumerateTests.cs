@@ -1,12 +1,18 @@
 ﻿using FluentAssertions;
 using Super.Model.Collections;
+using System.Linq;
 using Xunit;
 
 namespace Super.Testing.Application.Model.Collections
 {
-	public sealed class IndexerTests
+	public sealed class EnumerateTests
 	{
 		[Theory]
+		[InlineData(1u)]
+		[InlineData(2u)]
+		[InlineData(3u)]
+		[InlineData(4u)]
+		[InlineData(5u)]
 		[InlineData(1_000u)]
 		[InlineData(1_025u)]
 		[InlineData(10_000u)]
@@ -15,8 +21,8 @@ namespace Super.Testing.Application.Model.Collections
 		void Verify(uint count)
 		{
 			var source = Objects.Count.Default.Get(count);
-			var sut = Indexer<int>.Default;
-			sut.Get(new ArrayIndex<int>(source)).ToArray().Should().Equal(source);
+			var sut = Enumerate<int>.Default;
+			sut.Get(source.Cast<int>().GetEnumerator()).Emit().Should().Equal(source);
 		}
 	}
 }

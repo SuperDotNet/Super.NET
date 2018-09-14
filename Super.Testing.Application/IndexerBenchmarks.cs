@@ -1,10 +1,10 @@
 ﻿using BenchmarkDotNet.Attributes;
-using Super.Model.Collections;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Super.Model.Collections;
 
 // ReSharper disable all
 
@@ -12,8 +12,9 @@ namespace Super.Testing.Application
 {
 	public class IndexerBenchmarks
 	{
-		[Params(1u, 2u, 3u, 4u, 5u, 8u, 16u, 32u, 64u, 128u, 256u, 512u, 1024u, 1025u, 2048u, 4096u, 8196u, 10_000u, 100_000u, 1_000_000u, 10_000_000u, 100_000_000u)]
-		/*[Params( /*10_000u, 100_000u, 1_000_000u#1#4096u)]*/
+		/*[Params(1u, 2u, 3u, 4u, 5u, 8u, 16u, 32u, 64u, 128u, 256u, 512u, 1024u, 1025u, 2048u, 4096u, 8196u, 10_000u, 100_000u, 1_000_000u, 10_000_000u, 100_000_000u)]*/
+		/*[Params(1u, 2u, 3u, 4u, 5u)]*/
+		[Params(4096u)]
 		public uint Count
 		{
 			get => _count;
@@ -23,6 +24,9 @@ namespace Super.Testing.Application
 				_data = Objects.Count.Default.Get(value);;
 			}
 		}
+
+		readonly static Enumerate<int> Enumerate = Enumerate<int>.Default;
+		readonly static Load<int> Load = Load<int>.Default;
 
 		uint _count;
 
@@ -39,12 +43,18 @@ namespace Super.Testing.Application
 		public ReadOnlyMemory<int> Classic() => _classic.Get(new ArrayIndex<int>(_data));*/
 
 		[Benchmark(Baseline = true)]
-		public int[] Iteration() => Iterator<int>.Default.Get(_data).Get();
+		public int[] Iterate() => Load.Get(_data).Emit();
 
 		[Benchmark]
-		public int[] Classic() => _data.Hide().ToArray();
+		public int[] IterateClassic() => _data.ToArray();
 
-		sealed class ClassicIndexer<T> : IIndexer<T>
+		/*[Benchmark(Baseline = true)]
+		public int[] Enumeration() => Enumerate.Get(_data.Hide().GetEnumerator()).Emit();
+
+		[Benchmark]
+		public int[] EnumerationClassic() => _data.Hide().ToArray();*/
+
+		/*sealed class ClassicIndexer<T> : IIndexer<T>
 		{
 			public static ClassicIndexer<T> Default { get; } = new ClassicIndexer<T>();
 
@@ -62,7 +72,7 @@ namespace Super.Testing.Application
 
 				return builder.ToArray();
 			}
-		}
+		}*/
 
 		struct ArrayBuilder<T>
 		{
