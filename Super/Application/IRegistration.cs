@@ -88,7 +88,8 @@ namespace Super.Application
 
 	sealed class RegisterWithDependencies<TFrom, TTo> : CompositeRegistration where TTo : class, TFrom
 	{
-		public static RegisterWithDependencies<TFrom, TTo> Default { get; } = new RegisterWithDependencies<TFrom, TTo>();
+		public static RegisterWithDependencies<TFrom, TTo> Default { get; } =
+			new RegisterWithDependencies<TFrom, TTo>();
 
 		RegisterWithDependencies() : base(new ImplementationRegistration(typeof(TFrom), typeof(TTo)),
 		                                  RegisterDependencies<TTo>.Default) {}
@@ -152,9 +153,9 @@ namespace Super.Application
 		}
 
 		public IServiceRegistry Get(IServiceRegistry parameter)
-			=> _candidates.Where(_where(parameter))
-			              .Aggregate(parameter, (repository, t) => repository.Register(t)
-			                                                                 .RegisterDependencies(t));
+			=> ImmutableArrayExtensions.Where(_candidates, _where(parameter))
+			                           .Aggregate(parameter, (repository, t) => repository.Register(t)
+			                                                                              .RegisterDependencies(t));
 	}
 
 	class ImplementationRegistration : IRegistration
@@ -191,10 +192,12 @@ namespace Super.Application
 
 		public CompositeRegistration(params IRegistration[] configurations) : this(configurations.AsEnumerable()) {}
 
-		public CompositeRegistration(IEnumerable<IRegistration> registrations) : this(registrations.ToImmutableArray()) {}
+		public CompositeRegistration(IEnumerable<IRegistration> registrations) :
+			this(registrations.ToImmutableArray()) {}
 
 		public CompositeRegistration(ImmutableArray<IRegistration> configurations) => _configurations = configurations;
 
-		public IServiceRegistry Get(IServiceRegistry parameter) => _configurations.ToArray().Alter(parameter);
+		public IServiceRegistry Get(IServiceRegistry parameter) => ImmutableArrayExtensions.ToArray(_configurations)
+		                                                                                   .Alter(parameter);
 	}
 }

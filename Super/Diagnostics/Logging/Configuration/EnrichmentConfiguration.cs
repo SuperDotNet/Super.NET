@@ -14,6 +14,7 @@ namespace Super.Diagnostics.Logging.Configuration
 
 		public EnrichmentConfiguration(ImmutableArray<ILogEventEnricher> enrichers) => _enrichers = enrichers;
 
-		public LoggerConfiguration Get(LoggerEnrichmentConfiguration parameter) => parameter.With(_enrichers.ToArray());
+		public LoggerConfiguration Get(LoggerEnrichmentConfiguration parameter)
+			=> parameter.With(ImmutableArrayExtensions.ToArray(_enrichers));
 	}
 }

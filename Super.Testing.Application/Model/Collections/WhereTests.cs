@@ -1,8 +1,7 @@
 ﻿// ReSharper disable ComplexConditionExpression
 
-using Super.Model.Collections;
-using Super.Model.Selection;
-using System.Reactive;
+using FluentAssertions;
+using System.Linq;
 using Xunit;
 
 namespace Super.Testing.Application.Model.Collections
@@ -28,12 +27,24 @@ namespace Super.Testing.Application.Model.Collections
 				current.Append(i);
 			}
 			current.Flush().Should().Equal(expected);*/
-			Objects.Data.Default.Get().ToSource()
+			/*Objects.Data.Default.Get().ToSource()
 			       .Out()
 			       .AsSelect()
 			       .Iterate().Where(x => x.Length > 1000)
 			       .Get(Unit.Default)
-			       .Allocate();
+			       .Allocate();*/
+			/*Objects.Count.Default
+			       .Iterate()
+			       /*.Skip(10_000_000 - 5)
+			       .Take(5)#1#
+			       .Get(10_000_000).Allocate().Should().HaveCount(5);*/
+			var segment = Objects.Count.Default
+			                          .Iterate2()
+			                          .Selection2(x => x + 1)
+			                          .Get(10_000);
+			segment.Count.Should().Be(10_000);
+
+			segment.ToArray().Sum(x => x).Should().Be(Objects.Count.Default.Get(10_000).Sum(x => x) + 10_000);
 		}
 
 

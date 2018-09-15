@@ -9,12 +9,16 @@ using Super.Text;
 using System;
 using System.Collections.Immutable;
 using System.Reactive;
+using System.Runtime.CompilerServices;
 
 namespace Super
 {
 	// ReSharper disable once MismatchedFileName
 	public static partial class ExtensionMethods
 	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static T Invoke<T>(this Func<uint, T> @this, int parameter) => @this((uint)parameter);
+
 		public static ISelect<TParameter, TResult> AsSelect<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
 			=> @this;
 

@@ -26,9 +26,12 @@ namespace Super
 
 		public static KeyValuePair<string, Func<T, IProjection>> Entry<T>(this IFormatEntry<T> @this,
 		                                                                  params Expression<Func<T, object>>[] expressions)
-			=> @this.Get().Entry(expressions);
+		{
+			var pair = @this.Get();
+			return pair.Entry(expressions);
+		}
 
-		public static KeyValuePair<string, Func<T, IProjection>> Entry<T>(this KeyValuePair<string, Func<T, string>> @this,
+		public static KeyValuePair<string, Func<T, IProjection>> Entry<T>(ref this KeyValuePair<string, Func<T, string>> @this,
 		                                                                  params Expression<Func<T, object>>[] expressions)
 			=> Pairs.Create(@this.Key, new Projection<T>(@this.Value, expressions).ToDelegate());
 	}

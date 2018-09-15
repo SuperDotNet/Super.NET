@@ -1,9 +1,7 @@
-﻿using System;
-using BenchmarkDotNet.Attributes;
+﻿using BenchmarkDotNet.Attributes;
 using Super.Model.Collections;
 using Super.Model.Selection;
-using System.Linq;
-using System.Reactive;
+using System;
 
 namespace Super.Testing.Application
 {
@@ -22,25 +20,38 @@ namespace Super.Testing.Application
 			}
 		}
 
-		readonly static string[] Strings = Objects.Data.Default.Get();
-
-		readonly ISelect<Unit, View<int>> _load = Strings.ToSource()
-		                                                    .Out()
-		                                                    .AsSelect()
+		readonly ISelect<uint, View<int>> _numbers = Objects.Count.Default
 		                                                    .Iterate()
-		                                                    .Selection(x => x.Length)
-		                                                    .Where(x => x > 1000);
+		                                                    .Selection(x => x + 1)
+		                                                    .Where(x => x > 5000)
+			/*.Skip(10_000_000 - 5)
+			.Take(5)*/;
+
+		readonly ISelect<uint, ArraySegment<int>> _numbers2 = Objects.Count.Default
+		                                                             .Iterate2()
+		                                                             .Selection2(x => x + 1)
+		                                                             .Where2(x => x > 5000)
+			/*.Where(x => true)*/
+			/*.Skip(10_000_000 - 5)
+			.Take(5)*/;
 
 		uint _count;
 
 		int[] _data;
 
 		[Benchmark(Baseline = true)]
-		public Array Iterate() => _load.Get(Unit.Default).Allocate();
+		public Array ArraySegment() => _numbers2.Get(Count).ToArray();
 
 		[Benchmark]
-		public Array IterateClassic() => Strings.Select(x => x.Length).Where(x => x > 1000).ToArray();
+		public Array View() => _numbers.Get(Count).Allocate();
 
+		/*[Benchmark]
+		public Array IterateClassic() => Objects.Count.Default.Get(Count)
+		                                        .Select(x => x + 1)
+		                                        /*.Where(x => true)#1#
+		                                        /*.Skip(10_000_000 - 5)
+		                                        .Take(5)#1#
+		                                        .ToArray();*/
 
 		/*[Benchmark(Baseline = true)]
 		public int[] Enumeration() => Enumerate.Get(_data.Hide().GetEnumerator()).Emit();

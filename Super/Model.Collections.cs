@@ -49,9 +49,6 @@ namespace Super
 			this ISelect<TFrom, IEnumerable<TTo>> @this)
 			=> @this.ToDelegate().To(I<SelectManySelector<TFrom, TTo>>.Default);
 
-
-
-
 		public static ISelect<TIn, View<TOut>> Iterate<TIn, TOut>(this ISelect<TIn, IEnumerable<TOut>> @this)
 			=> @this.Select(Model.Collections.Load<TOut>.Default);
 
@@ -71,6 +68,99 @@ namespace Super
 			this ISelect<TIn, View<TOut>> @this, Expression<Func<TOut, bool>> specification)
 			=> @this.Select(new WhereSelection<TOut>(specification.Compile()));
 
+		public static ISelect<TIn, ArraySegment<TOut>> Where2<TIn, TOut>(
+			this ISelect<TIn, ArraySegment<TOut>> @this, Expression<Func<TOut, bool>> where)
+			=> new Model.Collections.Result<TIn,TOut, TOut>(@this, new ViewSelector<TOut, TOut>(new WhereView<TOut>(where)));
+
+
+
+		public static ISelect<TIn, ArraySegment<TOut>> Iterate2<TIn, TOut>(this ISelect<TIn, IEnumerable<TOut>> @this)
+			=> @this.Select(Loader<TOut>.Default);
+
+		public static ISelect<TIn, ArraySegment<TTo>> Selection2<TIn, TFrom, TTo>(
+			this ISelect<TIn, ArraySegment<TFrom>> @this, Expression<Func<TFrom, TTo>> select)
+			=> new Model.Collections.Result<TIn,TFrom, TTo>(@this, new ViewSelector<TFrom, TTo>(new ViewSelect<TFrom, TTo>(select)));
+
+
+		/*public static ISelect<TIn, View<TOut>> Skip<TIn, TOut>(this ISelect<TIn, View<TOut>> @this, uint skip)
+			=> @this.Select(new SkipSelection<TOut>(skip));
+
+		public static ISelect<TIn, View<TOut>> Take<TIn, TOut>(this ISelect<TIn, View<TOut>> @this, uint take)
+			=> @this.Select(new TakeSelection<TOut>(take));
+
+		sealed class SkipSelection<T> : ISelection<T, T>
+		{
+			readonly static ArrayPool<T> Pool = ArrayPool<T>.Shared;
+
+			readonly ArrayPool<T> _pool;
+			readonly uint         _skip;
+
+			public SkipSelection(uint skip) : this(Pool, skip) {}
+
+			public SkipSelection(ArrayPool<T> pool, uint skip)
+			{
+				_pool = pool;
+				_skip = skip;
+			}
+
+			public View<T> Get(View<T> parameter)
+			{
+				ref var view        = ref parameter;
+				var     size        = view.Used - _skip;
+				var     source      = view.Source;
+				var     length      = (int)size;
+				var     destination = _pool.Rent(length);
+				for (var i = _skip; i < size; i++)
+				{
+					destination[i] = source[i];
+				}
+
+				view.Release();
+
+				return new View<T>(_pool, new ArraySegment<T>(destination, 0, length));
+			}
+
+			/*public View<T> Get(View<T> parameter) => Get(parameter, (int)_skip);
+
+			View<T> Get(View<T> parameter, int skip)
+				=> new View<T>(_pool, new ArraySegment<T>(parameter.Source,
+				                                          parameter.Segment.Offset + skip,
+				                                          parameter.Segment.Count - skip));#1#
+		}
+
+		sealed class TakeSelection<T> : ISelection<T, T>
+		{
+			readonly static ArrayPool<T> Pool = ArrayPool<T>.Shared;
+
+			readonly ArrayPool<T> _pool;
+			readonly uint         _take;
+
+			public TakeSelection(uint take) : this(Pool, take) {}
+
+			public TakeSelection(ArrayPool<T> pool, uint take)
+			{
+				_pool = pool;
+				_take = take;
+			}
+
+			/*public View<T> Get(View<T> parameter)
+				=> new View<T>(_pool, new ArraySegment<T>(parameter.Source, parameter.Segment.Offset, (int)_take));#1#
+			public View<T> Get(View<T> parameter)
+			{
+				ref var view        = ref parameter;
+				var     source      = view.Source;
+				var     length      = (int)_take;
+				var     destination = _pool.Rent(length);
+				for (var i = 0; i < _take; i++)
+				{
+					destination[i] = source[i];
+				}
+
+				view.Release();
+
+				return new View<T>(_pool, new ArraySegment<T>(destination, 0, length));
+			}
+		}*/
 
 		/*class EnhancedResult<TParameter, TFrom, TTo> : ISelect<TParameter, TTo>
 		{
@@ -90,12 +180,10 @@ namespace Super
 			}
 		}*/
 
-
-
 		public static ISelect<TIn, ReadOnlyMemory<TTo>> Select<TIn, TFrom, TTo>(
 			this ISelect<TIn, ReadOnlyMemory<TFrom>> @this, Expression<Func<TFrom, TTo>> select)
-			=> /*@this.Select(new ExpressionSelector<TFrom, TTo>(select))*/
-		null; // TODO: FIX!
+			=>        /*@this.Select(new ExpressionSelector<TFrom, TTo>(select))*/
+				null; // TODO: FIX!
 
 		public static ISelect<TIn, ReadOnlyMemory<TOut>> Where<TIn, TOut>(
 			this ISelect<TIn, ReadOnlyMemory<TOut>> @this, Expression<Func<TOut, bool>> specification)
@@ -127,9 +215,9 @@ namespace Super
 		public static ISelect<TIn, ReadOnlyMemory<TOut>> Access<TIn, TOut>(this ISelect<TIn, IEnumerable<TOut>> @this)
 			=> @this.Select(x => new ReadOnlyMemory<TOut>(x.ToArray()));
 
-		public static ISelect<TIn, ReadOnlyMemory<TOut>> Access<TIn, TOut>(
+		/*public static ISelect<TIn, ReadOnlyMemory<TOut>> Access<TIn, TOut>(
 			this ISelect<TIn, ImmutableArray<TOut>> @this)
-			=> @this.Select(x => new ReadOnlyMemory<TOut>(x.ToArray()));
+			=> @this.Select(x => new ReadOnlyMemory<TOut>(x.ToArray()));*/
 
 		/*public static ISelect<TIn, ImmutableArray<TOut>> Emit<TIn, TOut>(this IArray<TIn, TOut> @this)
 			=> @this.Select(Immutable<TOut>.Default);*/

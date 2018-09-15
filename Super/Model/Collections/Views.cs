@@ -30,7 +30,7 @@ namespace Super.Model.Collections
 					total++;
 				}
 
-				array[pages++] = view.Resize(in local);
+				array[pages++] = view.Resize(local);
 				next           = local == target;
 			} while (next);
 
@@ -39,7 +39,7 @@ namespace Super.Model.Collections
 			for (var i = 0u; i < pages; i++)
 			{
 				var view = array[i];
-				master.Copy(in view, in offset);
+				master.Copy(in view, offset);
 				offset += view.Used;
 				view.Release();
 			}

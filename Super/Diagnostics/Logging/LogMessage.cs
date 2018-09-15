@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Immutable;
 using System.Linq;
-using Serilog;
 
 namespace Super.Diagnostics.Logging
 {
@@ -18,7 +18,10 @@ namespace Super.Diagnostics.Logging
 			_messageTemplate = messageTemplate;
 		}
 
-		public void Execute(ImmutableArray<object> parameter) => _action(_messageTemplate, parameter.ToArray());
+		public void Execute(ImmutableArray<object> parameter)
+		{
+			_action(_messageTemplate, ImmutableArrayExtensions.ToArray(parameter));
+		}
 	}
 
 	public class LogMessage<T> : ILogMessage<T>

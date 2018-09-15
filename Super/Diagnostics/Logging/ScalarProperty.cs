@@ -2,7 +2,7 @@
 
 namespace Super.Diagnostics.Logging
 {
-	public struct ScalarProperty : ISource<string>
+	public readonly struct ScalarProperty : ISource<string>
 	{
 		readonly IFormats _formats;
 

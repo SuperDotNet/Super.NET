@@ -1,6 +1,5 @@
 ﻿using Super.Model.Selection;
 using System.Collections.Immutable;
-using System.Linq;
 
 namespace Super.Model.Collections
 {
@@ -10,6 +9,10 @@ namespace Super.Model.Collections
 
 		AnyOrNullSelector() {}
 
-		public ImmutableArray<T>? Get(ImmutableArray<T> parameter) => parameter.Any() ? parameter : (ImmutableArray<T>?)null;
+		public ImmutableArray<T>? Get(ImmutableArray<T> parameter)
+		{
+			var array = parameter;
+			return array.Length > 0 ? array : (ImmutableArray<T>?)null;
+		}
 	}
 }

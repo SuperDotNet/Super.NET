@@ -22,7 +22,7 @@ namespace Super
 
 		public static TResult To<T, TResult>(this T @this, Func<T, TResult> select) => select(@this);
 
-		public static T If<T>(this bool @this, T @true, T @false) => @this ? @true : @false;
+		public static T If<T>(ref this bool @this, T @true, T @false) => @this ? @true : @false;
 
 		public static TResult Return<T, TResult>(this T _, TResult result) => result;
 

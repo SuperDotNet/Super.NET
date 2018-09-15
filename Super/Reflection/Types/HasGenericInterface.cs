@@ -9,6 +9,6 @@ namespace Super.Reflection.Types
 	{
 		[UsedImplicitly]
 		public HasGenericInterface(TypeInfo type)
-			: base(I<GenericInterfaceImplementations>.Default.From(type).Out(x => x.Any())) {}
+			: base(I<GenericInterfaceImplementations>.Default.From(type).Out(x => x.Length > 0)) {}
 	}
 }

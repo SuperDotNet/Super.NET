@@ -20,7 +20,7 @@ namespace Super.Model.Collections
 		readonly ArrayPool<View<T>> _views;
 		readonly uint               _size;
 
-		public Enumerate(ArrayPool<T> pool, ArrayPool<View<T>> views, in uint size = 1024)
+		public Enumerate(ArrayPool<T> pool, ArrayPool<View<T>> views, uint size = 1024)
 		{
 			_pool  = pool;
 			_views = views;
@@ -75,11 +75,11 @@ namespace Super.Model.Collections
 				items[count++] = parameter.Current;
 			}
 
-			var seed = view.Resize(in count);
+			var seed = view.Resize(count);
 			return count < size ? seed : Views(seed).Compile(parameter);
 		}
 
-		Views<T> Views(View<T> first)
+		Views<T> Views(in View<T> first)
 		{
 			var store = _views.Rent(32);
 			store[0] = first;
@@ -191,7 +191,7 @@ namespace Super.Model.Collections
 
 	public static class Extensions
 	{
-		public static View<TOut> Select<TIn, TOut>(this in View<TIn> source, ArrayPool<TOut> pool, in uint? size = null)
+		public static View<TOut> Select<TIn, TOut>(this in View<TIn> source, ArrayPool<TOut> pool, uint? size = null)
 		{
 			var length = (int)(size ?? source.Used);
 			var store  = pool.Rent(length);
@@ -210,7 +210,7 @@ namespace Super.Model.Collections
 
 		public View(ArrayPool<T> pool, params T[] store) : this(pool, new ArraySegment<T>(store)) {}
 
-		public View(ArrayPool<T> pool, in ArraySegment<T> view)
+		public View(ArrayPool<T> pool, ArraySegment<T> view)
 		{
 			_pool = pool;
 			_view = view;
@@ -225,16 +225,21 @@ namespace Super.Model.Collections
 
 		public T[] Source => _view.Array;
 
-		public void Copy(in View<T> source, in uint offset)
+		/*public ArraySegment<T> Segment => _view;*/
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Copy(in View<T> source, uint offset)
 		{
-			source._view.AsSpan().CopyTo(_view.AsSpan((int)offset));
+			Array.ConstrainedCopy(source.Source, 0, Source, (int)offset, (int)source.Used);
+			//source._view.CopyTo(_view.Array, offset);
 		}
 
-		public View<T> New(in uint? size = null)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public View<T> New(uint? size = null)
 		{
 			var used  = (int)(size ?? Used);
 			var pool  = _pool ?? ArrayPool;
-			return new View<T>(pool, new ArraySegment<T>(pool.Rent(used), 0, used));
+			return new View<T>(pool, new ArraySegment<T>(pool.Rent(used), _view.Offset, used));
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -243,12 +248,22 @@ namespace Super.Model.Collections
 			_pool?.Return(Source);
 		}
 
-		public View<T> Resize(in uint length) => new View<T>(_pool, new ArraySegment<T>(Source, 0, (int)length));
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public View<T> Resize(uint length) => new View<T>(_pool, new ArraySegment<T>(Source, _view.Offset, (int)length));
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public T[] Allocate()
 		{
-			var result = _view.AsSpan().ToArray();
+			var result = new T[Used];
+			Array.Copy(Source, result, Used);
+			Release();
+			return result;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public T[] ToArray(Func<ArraySegment<T>, T[]> wat)
+		{
+			var result = wat(_view);
 			Release();
 			return result;
 		}
