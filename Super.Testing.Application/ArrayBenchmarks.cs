@@ -9,21 +9,21 @@ namespace Super.Testing.Application
 		readonly IArray<int> _native;
 		readonly IArray<int> _chain;
 		readonly IArray<int> _combo;
-		readonly IArray<int> _expressionCombo;
-		readonly IArray<int> _expression;
+		/*readonly IArray<int> _expressionCombo;
+		readonly IArray<int> _expression;*/
 
-		public ArrayBenchmarks() : this(Objects.NativeArray.Default, Objects.Chain.Default, Objects.Combo.Default,
-		                                Objects.ExpressionCombo.Default, Objects.Expression.Default) {}
+		public ArrayBenchmarks() : this(Objects.NativeArray.Default, Objects.Chain.Default, Objects.Combo.Default/*,
+		                                Objects.ExpressionCombo.Default, Objects.Expression.Default*/) {}
 
 		// ReSharper disable once TooManyDependencies
-		public ArrayBenchmarks(IArray<int> native, IArray<int> chain, IArray<int> combo, IArray<int> expressionCombo,
-		                       IArray<int> expression)
+		public ArrayBenchmarks(IArray<int> native, IArray<int> chain, IArray<int> combo/*, IArray<int> expressionCombo,
+		                       IArray<int> expression*/)
 		{
 			_native          = native;
 			_chain           = chain;
 			_combo           = combo;
-			_expressionCombo = expressionCombo;
-			_expression      = expression;
+			/*_expressionCombo = expressionCombo;
+			_expression      = expression;*/
 		}
 
 		[Benchmark(Baseline = true)]
@@ -35,10 +35,10 @@ namespace Super.Testing.Application
 		[Benchmark]
 		public ImmutableArray<int> Combo() => _combo.Get().ToArray().ToImmutableArray();
 
-		[Benchmark]
+		/*[Benchmark]
 		public ImmutableArray<int> ExpressionCombo() => _expressionCombo.Get().ToArray().ToImmutableArray();
 
 		[Benchmark]
-		public ImmutableArray<int> Expression() => _expression.Get().ToArray().ToImmutableArray();
+		public ImmutableArray<int> Expression() => _expression.Get().ToArray().ToImmutableArray();*/
 	}
 }

@@ -2,13 +2,12 @@
 using Super.Model.Specifications;
 using Super.Runtime.Activation;
 using System;
-using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Super.Model.Collections
 {
-	public class Selector<TFrom, TTo> : ISelector<TFrom, TTo>
+	public sealed class Selector<TFrom, TTo> : ISelector<TFrom, TTo>
 	{
 		readonly Func<TFrom, TTo> _select;
 
@@ -27,88 +26,6 @@ namespace Super.Model.Collections
 				result[i] = _select(span[i]);
 			}
 
-			return result;
-		}
-	}
-
-	/*public class Selection<TFrom, TTo> //: ISelection<TFrom, TTo>
-	{
-		readonly static ArrayPool<TTo> Pool = ArrayPool<TTo>.Shared;
-
-		readonly Func<TFrom, TTo> _select;
-
-		/*public Selection(ISelect<TFrom, TTo> select) : this(select.Get) {}#1#
-
-		public Selection(Func<TFrom, TTo> select) => _select = select;
-
-		public View<TTo> Get(View<TFrom> parameter)
-		{
-			var length = (int)parameter.Used;
-			var store = Pool.Rent(length);
-
-			for (var i = 0u; i < length; i++)
-			{
-				store[i] = _select(parameter[i]);
-			}
-
-			parameter.Release();
-
-			return new View<TTo>(store, store.AsMemory(length), Pool);
-		}
-	}*/
-
-	/*public class Rent<TFrom, TTo> : ISelector<TFrom, TTo>
-	{
-		readonly Func<TFrom, TTo> _select;
-
-		public Rent(ISelect<TFrom, TTo> select) : this(select.Get) {}
-
-		public Rent(Func<TFrom, TTo> select) => _select = select;
-
-		public ReadOnlyMemory<TTo> Get(ReadOnlyMemory<TFrom> parameter)
-		{
-			var length = parameter.Length;
-			var result = ArrayPool<TTo>.Shared.Rent(length);
-			var span   = parameter.Span;
-
-			for (var i = 0; i < length; i++)
-			{
-				result[i] = _select(span[i]);
-			}
-
-			return result;
-		}
-	}*/
-
-	public class WhereSelection<T> : ISelection<T, T>
-	{
-		readonly static ArrayPool<T> Pool = ArrayPool<T>.Shared;
-
-		readonly Func<T, bool> _where;
-
-		public WhereSelection(Func<T, bool> where) => _where = @where;
-
-		public View<T> Get(View<T> parameter)
-		{
-			var used = (int)parameter.Used;
-
-			//var peek = parameter.Peek();
-			var store = Pool.Rent(used);
-
-			var length = store.Length;
-			var count  = 0u;
-			for (var i = 0u; i < length; i++)
-			{
-				var item = parameter[i];
-				if (_where(item))
-				{
-					store[count++] = item;
-				}
-			}
-
-			parameter.Release();
-
-			var result = new View<T>(store, store.AsMemory(0, (int)count), Pool);
 			return result;
 		}
 	}

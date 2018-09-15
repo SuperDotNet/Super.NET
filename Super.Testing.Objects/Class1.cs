@@ -3,6 +3,7 @@ using Serilog;
 using Super.Diagnostics.Logging;
 using Super.Model.Collections;
 using Super.Model.Selection;
+using Super.Model.Selection.Stores;
 using Super.Model.Sources;
 using Super.Text;
 using Super.Text.Formatting;
@@ -10,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using Super.Model.Selection.Stores;
 
 namespace Super.Testing.Objects
 {
@@ -68,11 +68,11 @@ namespace Super.Testing.Objects
 		public ReadOnlyMemory<int> Get() => _direct.Get(_view);
 	}
 
-	sealed class ExpressionCombo : IArray<int>
+	/*sealed class ExpressionCombo : IArray<int>
 	{
 		public static ExpressionCombo Default { get; } = new ExpressionCombo();
 
-		ExpressionCombo() : this(new SelectWhereDecorator<string, int>(new ExpressionSelector<string, int>(x => default), x => x > 0), View.Default) {}
+		ExpressionCombo() : this(new SelectWhereDecorator<string, int>(new ExpressionSelection<string, int>(x => default), x => x > 0), View.Default) {}
 
 		readonly ISelect<ReadOnlyMemory<string>, ReadOnlyMemory<int>> _direct;
 		readonly ReadOnlyMemory<string>                               _view;
@@ -84,13 +84,13 @@ namespace Super.Testing.Objects
 		}
 
 		public ReadOnlyMemory<int> Get() => _direct.Get(_view);
-	}
+	}*/
 
-	sealed class Expression : IArray<int>
+	/*sealed class Expression : IArray<int>
 	{
 		public static Expression Default { get; } = new Expression();
 
-		Expression() : this(new ExpressionSelector<string, int>(x => default).Where(x => x > 0), View.Default) {}
+		Expression() : this(new ExpressionSelection<string, int>(x => default).Where(x => x > 0), View.Default) {}
 
 		readonly ISelect<ReadOnlyMemory<string>, ReadOnlyMemory<int>> _direct;
 		readonly ReadOnlyMemory<string>                               _view;
@@ -102,7 +102,7 @@ namespace Super.Testing.Objects
 		}
 
 		public ReadOnlyMemory<int> Get() => _direct.Get(_view);
-	}
+	}*/
 
 	sealed class View : Array<string>
 	{

@@ -36,9 +36,11 @@ namespace Super.Model.Collections
 		{
 			var label = Expression.Label();
 
-			var inline = new InlineVisitor(parameter.Parameters[0],
-			                               Expression.ArrayAccess(_parameters.Get("source"), _index))
-				             .Visit(parameter.Body) ??
+			var from = Expression.ArrayAccess(_parameters.Get("source"), _index);
+			var to   = Expression.ArrayAccess(_parameters.Get("destination"), _index);
+
+			var inline = new InlineVisitor(parameter.Parameters[0], from).Visit(parameter.Body)
+			             ??
 			             throw new InvalidOperationException("Inline expression was not found");
 
 			var body = Expression.Block(_index.Yield(),
@@ -46,10 +48,9 @@ namespace Super.Model.Collections
 			                                              Expression.Subtract(_parameters.Get("start"),
 			                                                                  Expression.Constant(1))),
 			                            Expression.Loop(Expression
-				                                            .IfThenElse(Expression.LessThan(Expression.PreIncrementAssign(_index), _parameters.Get("finish")),
-				                                                        Expression
-					                                                        .Assign(Expression.ArrayAccess(_parameters.Get("destination"), _index),
-					                                                                inline),
+				                                            .IfThenElse(Expression.LessThan(Expression.PreIncrementAssign(_index),
+				                                                                            _parameters.Get("finish")),
+				                                                        Expression.Assign(to, inline),
 				                                                        Expression.Break(label)),
 			                                            label));
 

@@ -16,15 +16,15 @@ namespace Super.Model.Collections
 
 		Enumerate() : this(ArrayPool<T>.Shared, ArrayPool<View<T>>.Shared) {}
 
-		readonly ArrayPool<T> _pool;
+		readonly ArrayPool<T>       _pool;
 		readonly ArrayPool<View<T>> _views;
-		readonly uint _size;
+		readonly uint               _size;
 
 		public Enumerate(ArrayPool<T> pool, ArrayPool<View<T>> views, in uint size = 1024)
 		{
-			_pool = pool;
+			_pool  = pool;
 			_views = views;
-			_size = size;
+			_size  = size;
 		}
 
 		public View<T> Get(IEnumerator<T> parameter)
@@ -67,8 +67,8 @@ namespace Super.Model.Collections
 			items[2] = three;
 			items[3] = four;
 			items[4] = five;
-			var view = new View<T>(items, _pool);
-			var size = items.Length;
+			var view  = new View<T>(_pool, items);
+			var size  = items.Length;
 			var count = 5u;
 			while (count < size && parameter.MoveNext())
 			{
@@ -79,12 +79,11 @@ namespace Super.Model.Collections
 			return count < size ? seed : Views(seed).Compile(parameter);
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		Views<T> Views(View<T> first)
 		{
 			var store = _views.Rent(32);
 			store[0] = first;
-			return new Views<T>(new View<View<T>>(store, _views), _pool);
+			return new Views<T>(new View<View<T>>(_views, store));
 		}
 	}
 
@@ -164,12 +163,12 @@ namespace Super.Model.Collections
 		Load() : this(Enumerate<T>.Default, ArrayPool<T>.Shared) {}
 
 		readonly IEnumerate<T> _enumerate;
-		readonly ArrayPool<T> _pool;
+		readonly ArrayPool<T>  _pool;
 
 		public Load(IEnumerate<T> enumerate, ArrayPool<T> pool)
 		{
 			_enumerate = enumerate;
-			_pool = pool;
+			_pool      = pool;
 		}
 
 		public View<T> Get(IEnumerable parameter)
@@ -177,108 +176,81 @@ namespace Super.Model.Collections
 			switch (parameter)
 			{
 				case T[] array:
-					return new View<T>(array, array.AsMemory());
+					return new View<T>(array);
 				case ICollection<T> collection:
 					var rental = _pool.Rent(collection.Count);
 					collection.CopyTo(rental, 0);
-					return new View<T>(rental, rental.AsMemory(0, collection.Count), _pool);
+					return new View<T>(_pool, new ArraySegment<T>(rental, 0, collection.Count));
 				case IEnumerable<T> enumerable:
 					return _enumerate.Get(enumerable.GetEnumerator());
 			}
+
 			throw new InvalidOperationException($"Unsupported view type: {parameter.GetType().FullName}");
+		}
+	}
+
+	public static class Extensions
+	{
+		public static View<TOut> Select<TIn, TOut>(this in View<TIn> source, ArrayPool<TOut> pool, in uint? size = null)
+		{
+			var length = (int)(size ?? source.Used);
+			var store  = pool.Rent(length);
+			return new View<TOut>(pool, new ArraySegment<TOut>(store, 0, length));
 		}
 	}
 
 	public readonly struct View<T>
 	{
-		readonly T[] _store;
-		readonly ArrayPool<T> _pool;
-		readonly Memory<T> _view;
+		readonly static ArrayPool<T> ArrayPool = ArrayPool<T>.Shared;
 
-		public View(params T[] items) : this(items, null) {}
+		readonly ArraySegment<T> _view;
+		readonly ArrayPool<T>    _pool;
 
-		public View(T[] store, ArrayPool<T> pool = null) : this(store, store, pool) {}
+		public View(params T[] store) : this(null, store) {}
 
-		public View(T[] store, in Memory<T> view, ArrayPool<T> pool = null)
+		public View(ArrayPool<T> pool, params T[] store) : this(pool, new ArraySegment<T>(store)) {}
+
+		public View(ArrayPool<T> pool, in ArraySegment<T> view)
 		{
-			_store = store;
 			_pool = pool;
 			_view = view;
 
-			Available = (uint)_store.Length;
-			Used = (uint)view.Length;
+			Used      = (uint)_view.Count;
+			Available = (uint)_view.Array.Length;
 		}
 
 		public uint Used { get; }
 
 		public uint Available { get; }
 
-		public T this[in uint index] => _store[index];
+		public T[] Source => _view.Array;
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Copy(in View<T> source, in uint offset)
 		{
-			var sourceView = source._view;
-			var memory = _view;
-			sourceView.CopyTo(memory.Slice((int)offset, sourceView.Length));
+			source._view.AsSpan().CopyTo(_view.AsSpan((int)offset));
+		}
+
+		public View<T> New(in uint? size = null)
+		{
+			var used  = (int)(size ?? Used);
+			var pool  = _pool ?? ArrayPool;
+			return new View<T>(pool, new ArraySegment<T>(pool.Rent(used), 0, used));
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Release()
 		{
-			var arrayPool = _pool;
-			var result = _store;
-			arrayPool?.Return(result);
+			_pool?.Return(Source);
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public View<T> Resize(in uint length) => new View<T>(_store, (_view).Slice(0, (int)length), _pool);
+		public View<T> Resize(in uint length) => new View<T>(_pool, new ArraySegment<T>(Source, 0, (int)length));
 
-		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public ImmutableArray<T> Get()
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public T[] Allocate()
 		{
-			var result = (_view).ToArray().ToImmutableArray();
-			return result;
-		}*/
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public T[] Peek() => _store;
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public T[] Emit()
-		{
-			var result = (_view).ToArray();
+			var result = _view.AsSpan().ToArray();
 			Release();
 			return result;
 		}
-	}
-
-	/*sealed class ArrayIndex<T> : IIndex<T>
-	{
-		readonly T[]  _source;
-		readonly uint _length;
-		readonly T _default;
-
-		public ArrayIndex(T[] source) : this(source, (uint)source.Length, Sources.Default<T>.Instance) {}
-
-		public ArrayIndex(T[] source, in uint length, in T @default)
-		{
-			_source = source;
-			_length = length;
-			_default = @default;
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public bool Next(in uint index, out T element)
-		{
-			var result = index < _length;
-			element = result ? _source[index] : _default;
-			return result;
-		}
-	}*/
-
-	public interface IIndex<TIn, TOut>
-	{
-		bool Next(in TIn index, out TOut element);
 	}
 }

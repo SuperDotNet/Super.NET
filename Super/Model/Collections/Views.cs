@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Buffers;
 using System.Collections.Generic;
 
 namespace Super.Model.Collections
@@ -7,53 +6,46 @@ namespace Super.Model.Collections
 	readonly struct Views<T>
 	{
 		readonly View<View<T>> _views;
-		readonly ArrayPool<T>  _pool;
 
-		/*public Indexing(View<T> first, ArrayPool<T> pool) : this(pool) {}*/
-
-		public Views(View<View<T>> views, ArrayPool<T> pool)
-		{
-			_views = views;
-			_pool  = pool;
-		}
+		public Views(View<View<T>> views) => _views = views;
 
 		public View<T> Compile(IEnumerator<T> parameter)
 		{
 			var  views = _views;
-			var masterPeek = views.Peek();
-			var  total = masterPeek[0].Available;
+			var array = views.Source;
+			var  first = array[0];
+			var  total = first.Available;
 			var  pages = 1u;
 			bool next;
 			do
 			{
 				var size   = Math.Min(int.MaxValue - total, total * 2);
-				var view   = new View<T>(_pool.Rent((int)size), _pool);
-				var peek = view.Peek();
+				var view   = first.New(size);
 				var target = view.Available;
 				var local  = 0u;
+				var source = view.Source;
 				while (local < target && parameter.MoveNext())
 				{
-					peek[local++] = parameter.Current;
+					source[local++] = parameter.Current;
 					total++;
 				}
 
-				masterPeek[pages++] = view.Resize(in local);
+				array[pages++] = view.Resize(in local);
 				next           = local == target;
 			} while (next);
 
-			var store  = _pool.Rent((int)total);
-			var master = new View<T>(store, _pool);
-			var index = 0u;
+			var master = first.New(total);
+			var offset = 0u;
 			for (var i = 0u; i < pages; i++)
 			{
-				var view = masterPeek[i];
-				master.Copy(in view, in index);
-				index += view.Used;
+				var view = array[i];
+				master.Copy(in view, in offset);
+				offset += view.Used;
 				view.Release();
 			}
 
 			views.Release();
-			return master.Resize(index);
+			return master.Resize(offset);
 		}
 	}
 }

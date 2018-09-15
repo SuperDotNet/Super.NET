@@ -15,7 +15,7 @@ namespace Super.Reflection
 			: this(IsDefined<TAttribute>.Default, attribute, select) {}
 
 		public Attributes(ISpecification<ICustomAttributeProvider> specification,
-		                  IDeclared<TAttribute> attribute, Func<TAttribute, T> select)
+		                  IDeclared<TAttribute> attribute, Func<TAttribute, T> select) // TODO: fix.
 			: base(specification, attribute.Select(x => select(x)).ToStore().If(specification)) {}
 	}
 

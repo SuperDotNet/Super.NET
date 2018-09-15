@@ -3,7 +3,6 @@ using Super.Model.Selection;
 using Super.Model.Sources;
 using Super.Reflection;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -52,26 +51,51 @@ namespace Super
 
 
 
+
 		public static ISelect<TIn, View<TOut>> Iterate<TIn, TOut>(this ISelect<TIn, IEnumerable<TOut>> @this)
 			=> @this.Select(Model.Collections.Load<TOut>.Default);
 
-		public static ISelect<TIn, View<TTo>> Selection<TIn, TFrom, TTo>(
+		/*public static ISelect<TIn, View<TTo>> Selection<TIn, TFrom, TTo>(
 			this ISelect<TIn, View<TFrom>> @this, Expression<Func<TFrom, TTo>> select, Expression<Func<TTo, bool>> where)
-			=> @this.Select(new SelectionWhere<TFrom, TTo>(select, where));
+			=> @this.Select(new SelectionWhere<TFrom, TTo>(select, where).Get);*/
 
 		public static ISelect<TIn, View<TTo>> Selection<TIn, TFrom, TTo>(
 			this ISelect<TIn, View<TFrom>> @this, Expression<Func<TFrom, TTo>> select)
-			=> @this.Select(new ExpressionSelection<TFrom, TTo>(select));
+			=> @this.Select(new Selection<TFrom, TTo>(select));
+
+		/*public static ISelect<TIn, View<TTo>> Selection<TIn, TFrom, TTo>(
+			this ISelect<TIn, View<TFrom>> @this, Expression<Func<TFrom, TTo>> select)
+			=> new EnhancedResult<TIn, View<TFrom>, View<TTo>>(@this.Get, new ExpressionSelection<TFrom, TTo>(select));*/
 
 		public static ISelect<TIn, View<TOut>> Where<TIn, TOut>(
 			this ISelect<TIn, View<TOut>> @this, Expression<Func<TOut, bool>> specification)
 			=> @this.Select(new WhereSelection<TOut>(specification.Compile()));
 
 
+		/*class EnhancedResult<TParameter, TFrom, TTo> : ISelect<TParameter, TTo>
+		{
+			readonly IEnhancedSelect<TFrom, TTo> _select;
+			readonly Func<TParameter, TFrom> _source;
+
+			public EnhancedResult(Func<TParameter, TFrom> source, IEnhancedSelect<TFrom, TTo> @select)
+			{
+				_select = @select;
+				_source = source;
+			}
+
+			public TTo Get(TParameter parameter)
+			{
+				var source = _source(parameter);
+				return _select.Get(in source);
+			}
+		}*/
+
+
 
 		public static ISelect<TIn, ReadOnlyMemory<TTo>> Select<TIn, TFrom, TTo>(
 			this ISelect<TIn, ReadOnlyMemory<TFrom>> @this, Expression<Func<TFrom, TTo>> select)
-			=> @this.Select(new ExpressionSelector<TFrom, TTo>(select));
+			=> /*@this.Select(new ExpressionSelector<TFrom, TTo>(select))*/
+		null; // TODO: FIX!
 
 		public static ISelect<TIn, ReadOnlyMemory<TOut>> Where<TIn, TOut>(
 			this ISelect<TIn, ReadOnlyMemory<TOut>> @this, Expression<Func<TOut, bool>> specification)

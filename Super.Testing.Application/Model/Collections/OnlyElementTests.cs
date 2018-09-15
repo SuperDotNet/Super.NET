@@ -12,27 +12,27 @@ namespace Super.Testing.Application.Model.Collections
 		[Fact]
 		void Verify()
 		{
-			var data = new Fixture().CreateMany<string>(100).ToArray();
-			var selected = new ExpressionSelector<string, int>(x => x.Length).Get(data);
-			data.Select(x => x.Length).Should().Equal(selected.ToArray());
+			var data = new View<string>(new Fixture().CreateMany<string>(100).ToArray());
+			var selected = new Selection<string, int>(x => x.Length).Get(data);
+			data.Allocate().Select(x => x.Length).Should().Equal(selected.Allocate());
 		}
 
 		[Fact]
 		void VerifyInline()
 		{
-			var sut = new ExpressionSelector<string, string>(x => x + "Hello!");
-			var data = new[] {"One", "Two", "Three"};
+			var sut = new Selection<string, string>(x => x + "Hello!");
+			var data = new View<string>("One", "Two", "Three");
 			var selected = sut.Get(data);
-			selected.ToArray().Should().Equal("OneHello!", "TwoHello!", "ThreeHello!");
+			selected.Allocate().Should().Equal("OneHello!", "TwoHello!", "ThreeHello!");
 		}
 
 		[Fact]
 		void VerifyMultipleInline()
 		{
-			var sut      = new ExpressionSelector<string, string>(x => x + "Hello!" + x.Length);
-			var data     = new[] {"One", "Two", "Three"};
+			var sut      = new Selection<string, string>(x => x + "Hello!" + x.Length);
+			var data = new View<string>("One", "Two", "Three");
 			var selected = sut.Get(data);
-			selected.ToArray().Should().Equal("OneHello!3", "TwoHello!3", "ThreeHello!5");
+			selected.Allocate().Should().Equal("OneHello!3", "TwoHello!3", "ThreeHello!5");
 		}
 
 

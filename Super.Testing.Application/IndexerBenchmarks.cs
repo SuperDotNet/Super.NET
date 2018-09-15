@@ -1,13 +1,9 @@
-﻿using BenchmarkDotNet.Attributes;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reactive;
-using System.Runtime.CompilerServices;
+﻿using System;
+using BenchmarkDotNet.Attributes;
 using Super.Model.Collections;
 using Super.Model.Selection;
+using System.Linq;
+using System.Reactive;
 
 namespace Super.Testing.Application
 {
@@ -22,41 +18,29 @@ namespace Super.Testing.Application
 			set
 			{
 				_count = value;
-				_data = Objects.Count.Default.Get(value);;
+				_data  = Objects.Count.Default.Get(value);
 			}
 		}
 
 		readonly static string[] Strings = Objects.Data.Default.Get();
 
-		/*readonly static Enumerate<int> Enumerate = Enumerate<int>.Default;*/
-		readonly ISelect<Unit, View<int>> _load = Strings.ToSource().Out().AsSelect().Iterate().Selection(x => x.Length).Where(x => x > 1000);
+		readonly ISelect<Unit, View<int>> _load = Strings.ToSource()
+		                                                    .Out()
+		                                                    .AsSelect()
+		                                                    .Iterate()
+		                                                    .Selection(x => x.Length)
+		                                                    .Where(x => x > 1000);
 
 		uint _count;
 
 		int[] _data;
 
-
-		/*readonly Indexer<int> _indexer = Indexer<int>.Default;
-
 		[Benchmark(Baseline = true)]
-		public ReadOnlyMemory<int> Native() => _indexer.Get(new ArrayIndex<int>(_data));
-
-		readonly ClassicIndexer<int> _classic = ClassicIndexer<int>.Default;
+		public Array Iterate() => _load.Get(Unit.Default).Allocate();
 
 		[Benchmark]
-		public ReadOnlyMemory<int> Classic() => _classic.Get(new ArrayIndex<int>(_data));*/
+		public Array IterateClassic() => Strings.Select(x => x.Length).Where(x => x > 1000).ToArray();
 
-		/*[Benchmark(Baseline = true)]
-		public int[] Iterate() => _load.Get(Count).Emit();
-
-		[Benchmark]
-		public int[] IterateClassic() => Objects.Count.Default.Get(Count).Select(x => x + 1).ToArray();*/
-
-		[Benchmark(Baseline = true)]
-		public int[] Iterate() => _load.Get(Unit.Default).Emit();
-
-		[Benchmark]
-		public int[] IterateClassic() => Strings.Select(x => x.Length).Where(x => x > 1000).ToArray();
 
 		/*[Benchmark(Baseline = true)]
 		public int[] Enumeration() => Enumerate.Get(_data.Hide().GetEnumerator()).Emit();
@@ -84,7 +68,7 @@ namespace Super.Testing.Application
 			}
 		}*/
 
-		struct ArrayBuilder<T>
+		/*struct ArrayBuilder<T>
 		{
 			private const int DefaultCapacity       = 4;
 			private const int MaxCoreClrArrayLength = 0x7fefffff; // For byte arrays the limit is slightly larger
@@ -485,7 +469,7 @@ namespace Super.Testing.Application
 				 * R0:  [0]  [1]  [2] .. [31]
 				 * R1: [32] [33] [34] .. [63]
 				 * R2: [64] [65] [66] .. [95] .. [127]
-				 */
+				 #1#
 
 				int row    = position.Row;
 				int column = position.Column;
@@ -627,6 +611,6 @@ namespace Super.Testing.Application
 					_index   = 0;
 				}
 			}
-		}
+		}*/
 	}
 }

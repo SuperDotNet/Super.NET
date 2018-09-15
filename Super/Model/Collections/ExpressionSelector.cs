@@ -8,43 +8,44 @@ namespace Super.Model.Collections
 	sealed class SelectionWhere<TFrom, TTo> : ISelection<TFrom, TTo>
 	{
 		readonly Func<TFrom, TTo> _select;
-		readonly Func<TTo, bool> _where;
-		readonly static ArrayPool<TTo> Pool = ArrayPool<TTo>.Shared;
+		readonly Func<TTo, bool>  _where;
+		readonly ArrayPool<TTo>   _pool;
 
 		public SelectionWhere(Expression<Func<TFrom, TTo>> select, Expression<Func<TTo, bool>> where)
-			: this(select.Compile(), where.Compile()) {}
+			: this(select.Compile(), where.Compile(), ArrayPool<TTo>.Shared) {}
 
-		public SelectionWhere(Func<TFrom, TTo> select, Func<TTo, bool> where)
+		public SelectionWhere(Func<TFrom, TTo> select, Func<TTo, bool> where, ArrayPool<TTo> pool)
 		{
 			_select = @select;
-			_where = @where;
+			_where  = @where;
+			_pool   = pool;
 		}
 
 		public View<TTo> Get(View<TFrom> parameter)
 		{
-			var view = parameter;
-			var used = (int)view.Used;
-			//var peek = parameter.Peek();
-			var store = Pool.Rent(used);
+			ref var view        = ref parameter;
+			var     used        = (int)view.Used;
+			var     result      = view.Select(_pool);
+			var     source      = view.Source;
+			var     destination = result.Source;
 
-			var count  = 0u;
+			var count = 0u;
 			for (var i = 0u; i < used; i++)
 			{
-				var item = _select(view[i]);
+				var item = _select(source[i]);
 				if (_where(item))
 				{
-					store[count++] = item;
+					destination[count++] = item;
 				}
 			}
 
 			view.Release();
 
-			var result = new View<TTo>(store, store.AsMemory(0, (int)count), Pool);
-			return result;
+			return result.Resize(count);
 		}
 	}
 
-	sealed class ExpressionSelection<TFrom, TTo> : ISelection<TFrom, TTo>
+	/*sealed class ExpressionSelection<TFrom, TTo> : ISelection<TFrom, TTo>
 	{
 		readonly static ArrayPool<TTo> Pool = ArrayPool<TTo>.Shared;
 
@@ -90,5 +91,5 @@ namespace Super.Model.Collections
 
 			return result;
 		}
-	}
+	}*/
 }

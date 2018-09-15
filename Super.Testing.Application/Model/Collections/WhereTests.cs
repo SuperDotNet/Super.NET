@@ -1,11 +1,21 @@
 ﻿// ReSharper disable ComplexConditionExpression
 
+using Super.Model.Collections;
+using Super.Model.Selection;
+using System.Reactive;
 using Xunit;
 
 namespace Super.Testing.Application.Model.Collections
 {
 	public sealed class WhereTests
 	{
+		/*readonly static string[] Strings = Objects.Data.Default.Get();
+
+		readonly ISelect<Unit, View<int>> _load = Strings.ToSource()
+		                                                 .Out()
+		                                                 .AsSelect()
+		                                                 .Iterate()
+		                                                 .Selection(x => x.Length);*/
 		[Fact]
 		void Verify()
 		{
@@ -18,8 +28,14 @@ namespace Super.Testing.Application.Model.Collections
 				current.Append(i);
 			}
 			current.Flush().Should().Equal(expected);*/
+			Objects.Data.Default.Get().ToSource()
+			       .Out()
+			       .AsSelect()
+			       .Iterate().Where(x => x.Length > 1000)
+			       .Get(Unit.Default)
+			       .Allocate();
 		}
 
-		
+
 	}
 }
