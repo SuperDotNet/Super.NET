@@ -11,5 +11,10 @@ namespace Super.Model.Commands
 		void Execute(T parameter);
 	}
 
+	public interface IEnhancedCommand<T>
+	{
+		void Execute(in T parameter);
+	}
+
 	public interface IDelegateAware<in T> : ISource<Action<T>> {}
 }

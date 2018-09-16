@@ -71,12 +71,15 @@ namespace Super
 			=> @this.Select(new DelegatedInstanceSelector<TFrom, TTo>(source).Get);
 
 		public static ISelect<TIn, bool> Select<TIn, TFrom>(this ISelect<TIn, TFrom> @this, ISpecification<TFrom> select)
-			=> @this.Select(select.ToDelegate());
+			=> @this.Select(select.IsSatisfiedBy);
 
 		public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this, ISelect<TFrom, TTo> select)
-			=> @this.Select(select.ToDelegate());
+			=> @this.Select(select.Get);
+
+		public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this, IEnhancedSelect<TFrom, TTo> select) where TFrom : struct
+			=> new EnhancedSelection<TIn,TFrom,TTo>(@this.Get, select.Get);
 
 		public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this, Func<TFrom, TTo> select)
-			=> new Result<TIn, TFrom, TTo>(@this.Get, select);
+			=> new Selection<TIn, TFrom, TTo>(@this.Get, select);
 	}
 }

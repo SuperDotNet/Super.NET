@@ -67,6 +67,6 @@ namespace Super.Runtime
 	public class IsAssigned<TParameter, TResult> : DelegatedSpecification<TParameter> where TResult : class
 	{
 		protected IsAssigned(Func<TParameter, TResult> source)
-			: base(new Result<TParameter, TResult, bool>(source, IsAssigned.Default.IsSatisfiedBy).Get) {}
+			: base(new Selection<TParameter, TResult, bool>(source, IsAssigned.Default.IsSatisfiedBy).Get) {}
 	}
 }

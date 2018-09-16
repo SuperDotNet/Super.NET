@@ -87,72 +87,6 @@ namespace Super.Model.Collections
 		}
 	}
 
-	/*public interface IIndexes<T> : ISelect<IEnumerable, IIndex<T>> {}
-
-	sealed class Indexes<T> : IIndexes<T>
-	{
-		public static Indexes<T> Default { get; } = new Indexes<T>();
-
-		Indexes() {}
-
-		public IIndex<T> Get(IEnumerable parameter)
-		{
-			switch (parameter)
-			{
-				case ICollection<T>:
-					return null;
-				case T[] array:
-					return new ArrayIndex<T>(array);
-				case IEnumerable<T> enumerable:
-					return new Index<T>(enumerable.GetEnumerator());
-			}
-			throw new InvalidOperationException($"Unsupported index type: {parameter.GetType().FullName}");
-		}
-	}*/
-
-	/*public interface IIterator<T> : ISelect<IEnumerable, ReadOnlyMemory<T>> {}
-
-	sealed class Iterator<T> : IIterator<T>
-	{
-		readonly IIndexes<T> _indexes;
-		readonly IIndexer<T> _indexer;
-
-		public static Iterator<T> Default { get; } = new Iterator<T>();
-
-		Iterator() : this(Indexer<T>.Default, Indexes<T>.Default) {}
-
-		public Iterator(IIndexer<T> indexer, IIndexes<T> indexes)
-		{
-			_indexes = indexes;
-			_indexer = indexer;
-		}
-
-		public ReadOnlyMemory<T> Get(IEnumerable parameter) => _indexer.Get(_indexes.Get(parameter));
-	}*/
-
-	/*public interface IIndex<T> : IIndex<uint, T> {}
-
-	sealed class Index<T> : IIndex<T>
-	{
-		readonly IEnumerator<T> _enumerator;
-		readonly T _default;
-
-		public Index(IEnumerator<T> enumerator) : this(enumerator, Sources.Default<T>.Instance) {}
-
-		public Index(IEnumerator<T> enumerator, T @default)
-		{
-			_enumerator = enumerator;
-			_default = @default;
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public bool Next(in uint index, out T element)
-		{
-			var result = _enumerator.MoveNext();
-			element = result ? _enumerator.Current : _default;
-			return result;
-		}
-	}*/
 
 	public interface ILoad<T> : ISelect<IEnumerable, View<T>> {}
 
@@ -186,16 +120,6 @@ namespace Super.Model.Collections
 			}
 
 			throw new InvalidOperationException($"Unsupported view type: {parameter.GetType().FullName}");
-		}
-	}
-
-	public static class Extensions
-	{
-		public static View<TOut> Select<TIn, TOut>(this in View<TIn> source, ArrayPool<TOut> pool, uint? size = null)
-		{
-			var length = (int)(size ?? source.Used);
-			var store  = pool.Rent(length);
-			return new View<TOut>(pool, new ArraySegment<TOut>(store, 0, length));
 		}
 	}
 
