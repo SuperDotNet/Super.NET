@@ -1,70 +1,83 @@
 using Super.Model.Selection;
 using System;
-using System.Buffers;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 
 namespace Super.Model.Collections
 {
 	public interface ISegment<T> : ISegmentation<T, T> {}
 
-	public interface ISegmentSelect<TIn, TOut> : IEnhancedSelect<Segment<TIn, TOut>, ArraySegment<TOut>> {}
+	public interface ISegmentSelect<TIn, TOut> : IEnhancedSelect<Segue<TIn, TOut>, ArrayView<TOut>> {}
 
-	public interface ISegmentation<TIn, TOut> : IEnhancedSelect<ArraySegment<TIn>, ArraySegment<TOut>> {}
+	public interface ISegmentation<TIn, TOut> : IEnhancedSelect<ArrayView<TIn>, ArrayView<TOut>> {}
 
-	public interface ISegments<TFrom, TTo> : IEnhancedSelect<ArraySegment<TFrom>, Segment<TFrom, TTo>> {}
+	public interface ISegments<TFrom, TTo> : IEnhancedSelect<ArrayView<TFrom>, Segue<TFrom, TTo>> {}
 
 	sealed class Segments<TFrom, TTo> : ISegments<TFrom, TTo>
 	{
 		public static Segments<TFrom, TTo> Default { get; } = new Segments<TFrom, TTo>();
 
-		Segments() : this(ArrayPool<TTo>.Shared) {}
+		Segments() : this(Lease<TTo>.Default) {}
 
-		readonly ArrayPool<TTo> _pool;
+		readonly ILease<TTo> _lease;
 
-		public Segments(ArrayPool<TTo> pool) => _pool = pool;
+		public Segments(ILease<TTo> lease) => _lease = lease;
 
-		public Segment<TFrom, TTo> Get(in ArraySegment<TFrom> parameter)
-			=> new Segment<TFrom, TTo>(parameter, _pool.Rent(parameter.Count), _pool);
+		public Segue<TFrom, TTo> Get(in ArrayView<TFrom> parameter)
+			=> new Segue<TFrom, TTo>(parameter, _lease.Get(parameter.Length));
 	}
 
-	public readonly struct Segment<TFrom, TTo> : IDisposable
+	public readonly struct Segue<TFrom, TTo> : IDisposable
 	{
-		readonly ArrayPool<TTo> _pool;
-
-		public Segment(ArraySegment<TFrom> source, TTo[] destination, ArrayPool<TTo> pool)
+		public Segue(ArrayView<TFrom> source, ArrayView<TTo> destination)
 		{
-			_pool       = pool;
 			Source      = source;
 			Destination = destination;
 		}
 
-		public ArraySegment<TFrom> Source { get; }
+		public ArrayView<TFrom> Source { get; }
 
-		public TTo[] Destination { get; }
+		public ArrayView<TTo> Destination { get; }
 
 		public void Dispose()
 		{
-			_pool.Return(Destination);
+			Source.Dispose();
+			Destination.Dispose();
 		}
 	}
 
+	/*sealed class Segue<TIn, TOut> : ISelect<ArrayView<TIn>, ArrayView<TOut>>
+	{
+		readonly ISegmentation<TIn, TOut> _segmentation;
+
+		public Segue(ISegmentation<TIn, TOut> segmentation) => _segmentation = segmentation;
+
+		public ArrayView<TOut> Get(ArrayView<TIn> parameter)
+		{
+			using (parameter)
+			{
+				return _segmentation.Get(parameter);
+			}
+		}
+	}*/
+
 	sealed class Segmentation<TIn, TOut> : ISegmentation<TIn, TOut>
 	{
-		readonly Selection<ArraySegment<TIn>, Segment<TIn, TOut>>  _segments;
-		readonly Selection<Segment<TIn, TOut>, ArraySegment<TOut>> _select;
+		readonly Selection<ArrayView<TIn>, Segue<TIn, TOut>>  _segments;
+		readonly Selection<Segue<TIn, TOut>, ArrayView<TOut>> _select;
 
 		public Segmentation(Expression<Func<TIn, TOut>> select) : this(new SegmentSelect<TIn, TOut>(select)) {}
 
 		public Segmentation(ISegmentSelect<TIn, TOut> @select) : this(Segments<TIn, TOut>.Default.Get, select.Get) {}
 
-		public Segmentation(Selection<ArraySegment<TIn>, Segment<TIn, TOut>> segments,
-		                    Selection<Segment<TIn, TOut>, ArraySegment<TOut>> select)
+		public Segmentation(Selection<ArrayView<TIn>, Segue<TIn, TOut>> segments,
+		                    Selection<Segue<TIn, TOut>, ArrayView<TOut>> select)
 		{
 			_segments = segments;
 			_select   = select;
 		}
 
-		public ArraySegment<TOut> Get(in ArraySegment<TIn> parameter)
+		public ArrayView<TOut> Get(in ArrayView<TIn> parameter)
 		{
 			using (var context = _segments(in parameter))
 			{
@@ -75,19 +88,20 @@ namespace Super.Model.Collections
 
 	sealed class SegmentSelect<TIn, TOut> : ISegmentSelect<TIn, TOut>
 	{
-		readonly static ISelect<Expression<Func<TIn, TOut>>, Action<TIn[], TOut[], int, int>>
+		readonly static ISelect<Expression<Func<TIn, TOut>>, Action<TIn[], TOut[], uint, uint>>
 			Select = InlineSelections<TIn, TOut>.Default.Compile();
 
-		readonly Action<TIn[], TOut[], int, int> _iterate;
+		readonly Action<TIn[], TOut[], uint, uint> _iterate;
 
 		public SegmentSelect(Expression<Func<TIn, TOut>> select) : this(Select.Get(select)) {}
 
-		public SegmentSelect(Action<TIn[], TOut[], int, int> iterate) => _iterate = iterate;
+		public SegmentSelect(Action<TIn[], TOut[], uint, uint> iterate) => _iterate = iterate;
 
-		public ArraySegment<TOut> Get(in Segment<TIn, TOut> parameter)
+		public ArrayView<TOut> Get(in Segue<TIn, TOut> parameter)
 		{
-			_iterate(parameter.Source.Array, parameter.Destination, parameter.Source.Offset, parameter.Source.Count);
-			return new ArraySegment<TOut>(parameter.Destination, parameter.Source.Offset, parameter.Source.Count);
+			var view = parameter.Source;
+			_iterate(view.Array, parameter.Destination.Array, view.Start, view.Length);
+			return parameter.Destination;
 		}
 	}
 
@@ -99,11 +113,11 @@ namespace Super.Model.Collections
 
 		public WhereSegment(Func<T, bool> where) => _where = where;
 
-		public ArraySegment<T> Get(in ArraySegment<T> parameter)
+		public ArrayView<T> Get(in ArrayView<T> parameter)
 		{
-			var used  = parameter.Count;
+			var used  = parameter.Length;
 			var array = parameter.Array;
-			var count = 0;
+			var count = 0u;
 			for (var i = 0u; i < used; i++)
 			{
 				var item = array[i];
@@ -113,27 +127,28 @@ namespace Super.Model.Collections
 				}
 			}
 
-			return new ArraySegment<T>(array, parameter.Offset, count);
+			return parameter.Resize(count);
 		}
 	}
 
 	sealed class SkipSelection<T> : ISegment<T>
 	{
-		readonly int _skip;
+		readonly uint _skip;
 
-		public SkipSelection(int skip) => _skip = skip;
+		public SkipSelection(uint skip) => _skip = skip;
 
-		public ArraySegment<T> Get(in ArraySegment<T> parameter)
-			=> new ArraySegment<T>(parameter.Array, parameter.Offset + _skip, parameter.Count - _skip);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public ArrayView<T> Get(in ArrayView<T> parameter)
+			=> new ArrayView<T>(parameter.Array, parameter.Start + _skip, parameter.Length - _skip);
 	}
 
 	sealed class TakeSelection<T> : ISegment<T>
 	{
-		readonly int _take;
+		readonly uint _take;
 
-		public TakeSelection(int take) => _take = take;
+		public TakeSelection(uint take) => _take = take;
 
-		public ArraySegment<T> Get(in ArraySegment<T> parameter)
-			=> new ArraySegment<T>(parameter.Array, parameter.Offset, _take);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public ArrayView<T> Get(in ArrayView<T> parameter) => new ArrayView<T>(parameter.Array, parameter.Start, _take);
 	}
 }

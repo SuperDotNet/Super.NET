@@ -2,7 +2,9 @@
 
 using FluentAssertions;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Super.Testing.Application.Model.Collections
 {
@@ -39,6 +41,39 @@ namespace Super.Testing.Application.Model.Collections
 			data.Select(x => x.Length).ToArray().Should().Equal(array);
 		}*/
 
+		readonly ITestOutputHelper _output;
+
+		public WhereTests(ITestOutputHelper output) => _output = output;
+
+		[Fact]
+		void Output()
+		{
+			_output.WriteLine($" {Unsafe.SizeOf<Lease<int>>()} - {Unsafe.SizeOf<View<int>>()}");
+		}
+
+		struct View<T>
+		{
+			public View(Lease<T> lease) => Lease = lease;
+
+			public Lease<T> Lease { get; }
+		}
+
+		public struct Lease<T>
+		{
+			public Lease(T[] reference, uint requested, uint actual)
+			{
+				Reference = reference;
+				Requested = requested;
+				Actual    = actual;
+			}
+
+			public T[] Reference { get; }
+
+			public uint Requested { get; }
+
+			public uint Actual { get; }
+		}
+
 		[Fact]
 		void Verify()
 		{
@@ -63,7 +98,8 @@ namespace Super.Testing.Application.Model.Collections
 			                   .Skip(count - 5)
 			                   .Take(5)
 			                   .Get(count)
-			                   .ToArray();
+			                   .Get()
+			                   ;
 			array.Should().HaveCount(5);
 
 

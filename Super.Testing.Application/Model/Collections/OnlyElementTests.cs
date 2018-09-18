@@ -1,9 +1,9 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using Super.Model.Collections;
-using System;
 using System.Linq;
 using Xunit;
+
 // ReSharper disable ComplexConditionExpression
 
 namespace Super.Testing.Application.Model.Collections
@@ -13,29 +13,27 @@ namespace Super.Testing.Application.Model.Collections
 		[Fact]
 		void Verify()
 		{
-			var data = new ArraySegment<string>(new Fixture().CreateMany<string>(100).ToArray());
-			var selected = new Segmentation<string, int>(x => x.Length).Get(data);
-			data.ToArray().Select(x => x.Length).Should().Equal(selected.ToArray());
+			var data     = new Fixture().CreateMany<string>(100).ToArray();
+			var selected = new Segmentation<string, int>(x => x.Length).Get(new ArrayView<string>(data));
+			data.Select(x => x.Length).Should().Equal(selected.Get());
 		}
 
 		[Fact]
 		void VerifyInline()
 		{
-			var sut = new Segmentation<string, string>(x => x + "Hello!");
-			var data = new ArraySegment<string>(new []{"One", "Two", "Three"});
-			var selected = sut.Get(data);
-			selected.ToArray().Should().Equal("OneHello!", "TwoHello!", "ThreeHello!");
+			var sut  = new Segmentation<string, string>(x => x + "Hello!");
+			var data = new[] {"One", "Two", "Three"};
+			sut.Get(new ArrayView<string>(data)).Get().Should().Equal("OneHello!", "TwoHello!", "ThreeHello!");
 		}
 
 		[Fact]
 		void VerifyMultipleInline()
 		{
 			var sut      = new Segmentation<string, string>(x => x + "Hello!" + x.Length);
-			var data = new ArraySegment<string>(new []{"One", "Two", "Three"});
-			var selected = sut.Get(data);
-			selected.ToArray().Should().Equal("OneHello!3", "TwoHello!3", "ThreeHello!5");
+			var data     = new[] {"One", "Two", "Three"};
+			var selected = sut.Get(new ArrayView<string>(data));
+			selected.Get().Should().Equal("OneHello!3", "TwoHello!3", "ThreeHello!5");
 		}
-
 
 		/*public sealed class OnlySelector<T> : ISelect<ImmutableArray<T>, T>
 		{

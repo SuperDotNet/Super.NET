@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Super.Model.Selection
 {
@@ -13,6 +14,7 @@ namespace Super.Model.Selection
 			_source = source;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public TTo Get(TParameter parameter) => _select(_source(parameter));
 	}
 
@@ -27,7 +29,12 @@ namespace Super.Model.Selection
 			_source = source;
 		}
 
-		public TTo Get(TIn parameter) => _select(_source(parameter));
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public TTo Get(TIn parameter)
+		{
+			var source = _source(parameter);
+			return _select(in source);
+		}
 	}
 
 	public delegate TOut Selection<TIn, out TOut>(in TIn parameter);

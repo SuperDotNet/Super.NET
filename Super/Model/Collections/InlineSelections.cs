@@ -7,15 +7,15 @@ using System.Linq.Expressions;
 namespace Super.Model.Collections
 {
 	sealed class InlineSelections<TFrom, TTo>
-		: ISelect<Expression<Func<TFrom, TTo>>, Expression<Action<TFrom[], TTo[], int, int>>>
+		: ISelect<Expression<Func<TFrom, TTo>>, Expression<Action<TFrom[], TTo[], uint, uint>>>
 	{
 		public static InlineSelections<TFrom, TTo> Default { get; } = new InlineSelections<TFrom, TTo>();
 
-		InlineSelections() : this(Expression.Variable(typeof(int), "index"),
+		InlineSelections() : this(Expression.Variable(typeof(uint), "index"),
 		                          Expression.Parameter(typeof(TFrom[]), "source"),
 		                          Expression.Parameter(typeof(TTo[]), "destination"),
-		                          Expression.Parameter(typeof(int), "start"),
-		                          Expression.Parameter(typeof(int), "finish")) {}
+		                          Expression.Parameter(typeof(uint), "start"),
+		                          Expression.Parameter(typeof(uint), "finish")) {}
 
 		readonly ParameterExpression                  _index;
 		readonly IEnumerable<ParameterExpression>     _input;
@@ -32,29 +32,29 @@ namespace Super.Model.Collections
 			_parameters = parameters;
 		}
 
-		public Expression<Action<TFrom[], TTo[], int, int>> Get(Expression<Func<TFrom, TTo>> parameter)
+		public Expression<Action<TFrom[], TTo[], uint, uint>> Get(Expression<Func<TFrom, TTo>> parameter)
 		{
 			var label = Expression.Label();
-
-			var from = Expression.ArrayAccess(_parameters.Get("source"), _index);
-			var to   = Expression.ArrayAccess(_parameters.Get("destination"), _index);
+			var cast = Expression.Convert(_index, typeof(int));
+			var from = Expression.ArrayAccess(_parameters.Get("source"), cast);
+			var to   = Expression.ArrayAccess(_parameters.Get("destination"), cast);
 
 			var inline = new InlineVisitor(parameter.Parameters[0], from).Visit(parameter.Body)
 			             ??
 			             throw new InvalidOperationException("Inline expression was not found");
 
 			var body = Expression.Block(_index.Yield(),
-			                            Expression.Assign(_index,
-			                                              Expression.Subtract(_parameters.Get("start"),
-			                                                                  Expression.Constant(1))),
+			                            Expression.Assign(_index, Expression.Subtract(_parameters.Get("start"),
+			                                                                          Expression.Constant(1u))),
 			                            Expression.Loop(Expression
-				                                            .IfThenElse(Expression.LessThan(Expression.PreIncrementAssign(_index),
-				                                                                            _parameters.Get("finish")),
+				                                            .IfThenElse(Expression
+					                                                        .LessThan(Expression.PreIncrementAssign(_index),
+					                                                                  _parameters.Get("finish")),
 				                                                        Expression.Assign(to, inline),
 				                                                        Expression.Break(label)),
 			                                            label));
 
-			var result = Expression.Lambda<Action<TFrom[], TTo[], int, int>>(body, _input);
+			var result = Expression.Lambda<Action<TFrom[], TTo[], uint, uint>>(body, _input);
 			return result;
 		}
 	}

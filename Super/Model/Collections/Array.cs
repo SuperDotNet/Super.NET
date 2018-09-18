@@ -4,12 +4,14 @@ using Super.Reflection.Types;
 using Super.Runtime;
 using Super.Runtime.Environment;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
 namespace Super.Model.Collections
 {
-	public readonly struct Array<T>
+	public readonly struct Array<T> : IReadOnlyList<T>
 	{
 		public static Array<T> Empty { get; } = new Array<T>(Empty<T>.Array);
 
@@ -32,6 +34,14 @@ namespace Super.Model.Collections
 		public ref readonly T this[uint index] => ref _source[index];
 
 		public T[] Peek() => _source;
+
+		public IEnumerator<T> GetEnumerator() => _source.Hide().GetEnumerator();
+
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+		public int Count => _source.Length;
+
+		public T this[int index] => _source[index];
 	}
 
 	/*public interface IIterator<T>

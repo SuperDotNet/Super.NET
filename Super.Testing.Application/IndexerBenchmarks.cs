@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
+using Super.Model.Collections;
 using Super.Model.Selection;
 using System;
 using System.Collections.Generic;
@@ -9,12 +10,12 @@ namespace Super.Testing.Application
 {
 	public class IndexerBenchmarks
 	{
-		const uint Total = 10_000_000u;
+		const uint Total = 100_000u;
 
 		readonly static IEnumerable<string> Strings = Enumerable.Range(0, (int)Total)
 		                                                        .Select(x => string.Empty);
 
-		ISelect<Unit, ArraySegment<int>> _select;
+		ISelect<Unit, ArrayView<int>> _select;
 		uint                             _count;
 		string[]                         _data;
 
@@ -40,23 +41,10 @@ namespace Super.Testing.Application
 		}
 
 		[Benchmark(Baseline = true)]
-		public Array Iterate() => _select.Get(Unit.Default).ToArray();
+		public Array Iterate() => _select.Get(Unit.Default).Release();
 
-		[Benchmark]
+		/*[Benchmark]
 		public Array IterateClassic() => Enumerable.Range(0, (int)Count)
-		                                           //.Where(x => x > 1000)
-		                                           .Skip((int)(Count - 5u))
-		                                           .Take(5)
-		                                           .ToArray();
-
-/*readonly IArrayBuilder<int> _builder = new ArrayBuilder<int>(Total - 5u, 5);
-
-		[Benchmark(Baseline = true)]
-		public Array Iterate() => _builder.Get(new ArrayIterator<int>(_data));
-
-		[Benchmark]
-		public Array IterateClassic() => Enumerable.Range(0, int.MaxValue)
-		                                           //.Select(x => x.Length)
 		                                           //.Where(x => x > 1000)
 		                                           .Skip((int)(Count - 5u))
 		                                           .Take(5)
