@@ -39,7 +39,7 @@ namespace Super.Runtime.Objects
 		public override string ToString() => _text;
 	}
 
-	sealed class KnownProjectors : Array<KeyValuePair<Type, Func<string, Func<object, IProjection>>>>
+	sealed class KnownProjectors : Arrays<KeyValuePair<Type, Func<string, Func<object, IProjection>>>>
 	{
 		public static KnownProjectors Default { get; } = new KnownProjectors();
 

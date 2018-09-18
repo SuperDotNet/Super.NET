@@ -6,17 +6,17 @@ namespace Super.Testing.Application
 {
 	public class ArrayBenchmarks
 	{
-		readonly IArray<int> _native;
-		readonly IArray<int> _chain;
-		readonly IArray<int> _combo;
+		readonly IArrays<int> _native;
+		readonly IArrays<int> _chain;
+		readonly IArrays<int> _combo;
 		/*readonly IArray<int> _expressionCombo;
 		readonly IArray<int> _expression;*/
 
-		public ArrayBenchmarks() : this(Objects.NativeArray.Default, Objects.Chain.Default, Objects.Combo.Default/*,
+		public ArrayBenchmarks() : this(Objects.NativeArrays.Default, Objects.Chain.Default, Objects.Combo.Default/*,
 		                                Objects.ExpressionCombo.Default, Objects.Expression.Default*/) {}
 
 		// ReSharper disable once TooManyDependencies
-		public ArrayBenchmarks(IArray<int> native, IArray<int> chain, IArray<int> combo/*, IArray<int> expressionCombo,
+		public ArrayBenchmarks(IArrays<int> native, IArrays<int> chain, IArrays<int> combo/*, IArray<int> expressionCombo,
 		                       IArray<int> expression*/)
 		{
 			_native          = native;

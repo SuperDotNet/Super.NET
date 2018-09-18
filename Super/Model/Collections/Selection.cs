@@ -1,45 +1,10 @@
 using Super.Model.Selection;
 using System;
 using System.Buffers;
-using System.Collections;
 using System.Linq.Expressions;
 
 namespace Super.Model.Collections
 {
-	/*sealed class Result<TIn, TFrom, TTo> : ISelect<TIn, ArraySegment<TTo>>
-	{
-		readonly Func<TIn, ArraySegment<TFrom>> _source;
-		readonly Func<ArraySegment<TFrom>, ArraySegment<TTo>> _select;
-
-		public Result(Func<TIn, ArraySegment<TFrom>> source, Func<ArraySegment<TFrom>, ArraySegment<TTo>> select)
-		{
-			_source = source;
-			_select = @select;
-		}
-
-		public ArraySegment<TTo> Get(TIn parameter) => _select(_source(parameter));
-	}*/
-
-	public interface ILoader<T> : ISelect<IEnumerable, ArraySegment<T>> {}
-
-	sealed class Loader<T> : ILoader<T>
-	{
-		public static Loader<T> Default { get; } = new Loader<T>();
-
-		Loader() {}
-
-		public ArraySegment<T> Get(IEnumerable parameter)
-		{
-			switch (parameter)
-			{
-				case T[] array:
-					return new ArraySegment<T>(array);
-			}
-
-			throw new InvalidOperationException($"Unsupported view type: {parameter.GetType().FullName}");
-		}
-	}
-
 	public interface ISegment<T> : ISegmentation<T, T> {}
 
 	public interface ISegmentSelect<TIn, TOut> : IEnhancedSelect<Segment<TIn, TOut>, ArraySegment<TOut>> {}
@@ -152,74 +117,23 @@ namespace Super.Model.Collections
 		}
 	}
 
-	/*sealed class Selection<TFrom, TTo> : ISelection<TFrom, TTo>
+	sealed class SkipSelection<T> : ISegment<T>
 	{
-		readonly static ArrayPool<TTo> Pool = ArrayPool<TTo>.Shared;
+		readonly int _skip;
 
-		readonly static ISelect<Expression<Func<TFrom, TTo>>, Action<TFrom[], TTo[], int, int>> Select
-			= InlineSelections<TFrom, TTo>.Default.Compile();
+		public SkipSelection(int skip) => _skip = skip;
 
-		readonly Action<TFrom[], TTo[], int, int> _iterate;
-		readonly ArrayPool<TTo>                   _pool;
+		public ArraySegment<T> Get(in ArraySegment<T> parameter)
+			=> new ArraySegment<T>(parameter.Array, parameter.Offset + _skip, parameter.Count - _skip);
+	}
 
-		public Selection(Expression<Func<TFrom, TTo>> select) : this(Select.Get(select), Pool) {}
-
-		public Selection(Action<TFrom[], TTo[], int, int> iterate, ArrayPool<TTo> pool)
-		{
-			_iterate = iterate;
-			_pool    = pool;
-		}
-
-		public View<TTo> Get(View<TFrom> parameter)
-		{
-			ref var view = ref parameter;
-
-			var used = (int)view.Used;
-
-			var destination = _pool.Rent(used);
-
-			_iterate(view.Source, destination, 0, used);
-
-			view.Release();
-
-			return new View<TTo>(_pool, new ArraySegment<TTo>(destination, 0, used));
-		}
-	}*/
-
-	/*public sealed class WhereSelection<T> : ISelection<T, T>
+	sealed class TakeSelection<T> : ISegment<T>
 	{
-		readonly static ArrayPool<T> Pool = ArrayPool<T>.Shared;
+		readonly int _take;
 
-		readonly Func<T, bool> _where;
-		readonly ArrayPool<T>  _pool;
+		public TakeSelection(int take) => _take = take;
 
-		public WhereSelection(Func<T, bool> where) : this(@where, Pool) {}
-
-		public WhereSelection(Func<T, bool> where, ArrayPool<T> pool)
-		{
-			_where = @where;
-			_pool  = pool;
-		}
-
-		public View<T> Get(View<T> parameter)
-		{
-			var view        = parameter;
-			var used        = (int)view.Used;
-			var destination = _pool.Rent(used);
-			var count       = 0;
-			var source      = view.Source;
-			for (var i = 0u; i < used; i++)
-			{
-				var item = source[i];
-				if (_where(item))
-				{
-					destination[count++] = item;
-				}
-			}
-
-			view.Release();
-
-			return new View<T>(_pool, new ArraySegment<T>(destination, 0, count));
-		}
-	}*/
+		public ArraySegment<T> Get(in ArraySegment<T> parameter)
+			=> new ArraySegment<T>(parameter.Array, parameter.Offset, _take);
+	}
 }

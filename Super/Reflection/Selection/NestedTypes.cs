@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Super.Reflection.Selection
 {
-	public sealed class NestedTypes<T> : Array<Type>
+	public sealed class NestedTypes<T> : Arrays<Type>
 	{
 		public NestedTypes() : this(new NestedTypes(typeof(T)).Get()
 		                                                      .AsEnumerable()) {}
@@ -13,7 +13,7 @@ namespace Super.Reflection.Selection
 		public NestedTypes(IEnumerable<Type> items) : base(items) {}
 	}
 
-	public sealed class NestedTypes : Array<Type>
+	public sealed class NestedTypes : Arrays<Type>
 	{
 		public NestedTypes(Type referenceType) : base(referenceType.GetTypeInfo()
 		                                                           .DeclaredNestedTypes) {}

@@ -14,16 +14,16 @@ using System.Linq.Expressions;
 
 namespace Super.Testing.Objects
 {
-	sealed class NativeArray : IArray<int>
+	sealed class NativeArrays : IArrays<int>
 	{
-		public static NativeArray Default { get; } = new NativeArray();
+		public static NativeArrays Default { get; } = new NativeArrays();
 
-		NativeArray() : this(Select.Default, Data.Default) {}
+		NativeArrays() : this(Select.Default, Data.Default) {}
 
 		readonly Func<string, int> _select;
 		readonly string[]          _data;
 
-		public NativeArray(Func<string, int> select, string[] data)
+		public NativeArrays(Func<string, int> select, string[] data)
 		{
 			_select = select;
 			_data   = data;
@@ -32,7 +32,7 @@ namespace Super.Testing.Objects
 		public ReadOnlyMemory<int> Get() => _data.Select(_select).Where(x => x > 0).ToArray();
 	}
 
-	sealed class Chain : IArray<int>
+	sealed class Chain : IArrays<int>
 	{
 		public static Chain Default { get; } = new Chain();
 
@@ -50,7 +50,7 @@ namespace Super.Testing.Objects
 		public ReadOnlyMemory<int> Get() => _direct.Get(_view);
 	}
 
-	sealed class Combo : IArray<int>
+	sealed class Combo : IArrays<int>
 	{
 		public static Combo Default { get; } = new Combo();
 
@@ -104,7 +104,7 @@ namespace Super.Testing.Objects
 		public ReadOnlyMemory<int> Get() => _direct.Get(_view);
 	}*/
 
-	sealed class View : Array<string>
+	sealed class View : Arrays<string>
 	{
 		public static View Default { get; } = new View();
 
@@ -115,7 +115,7 @@ namespace Super.Testing.Objects
 	{
 		public static Numbers Default { get; } = new Numbers();
 
-		Numbers() : base(Enumerable.Range(0, int.MaxValue).Select(x => x)) {}
+		Numbers() : base(Enumerable.Range(0, int.MaxValue)) {}
 	}
 
 	sealed class Count : Store<uint, int[]>
@@ -132,6 +132,13 @@ namespace Super.Testing.Objects
 		Data() : base(new Fixture().CreateMany<string>(10_000).ToArray()) {}
 	}
 
+	sealed class Strings : Source<IEnumerable<string>>
+	{
+		public static Strings Default { get; } = new Strings();
+
+		Strings() : base(new Fixture().CreateMany<string>()) {}
+	}
+
 	sealed class Select : Source<Func<string, int>>
 	{
 		public static Select Default { get; } = new Select();
@@ -139,6 +146,15 @@ namespace Super.Testing.Objects
 		Select() : this(x => default) {}
 
 		public Select(Expression<Func<string, int>> instance) : base(instance.Compile()) {}
+	}
+
+	sealed class Convert : Source<Converter<string, int>>
+	{
+		public static  Convert Default { get; } = new  Convert();
+
+		Convert() : this(x => default) {}
+
+		public  Convert(Expression<Converter<string, int>> instance) : base(instance.Compile()) {}
 	}
 
 	sealed class ApplicationDomainName : FormatEntry<AppDomain>

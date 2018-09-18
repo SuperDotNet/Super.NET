@@ -19,16 +19,16 @@ namespace Super
 		public static ISequence<T> ToSequence<T>(this ISource<IEnumerable<T>> @this)
 			=> @this as ISequence<T> ?? new DecoratedSequence<T>(@this);
 
-		public static IArray<T> ToArray<T>(this ISequence<T> @this)
-			=> new DelegatedArray<T>(Access<T>.Default.Out(@this).Get);
+		public static IArrays<T> ToArray<T>(this ISequence<T> @this)
+			=> new DelegatedArrays<T>(Access<T>.Default.Out(@this).Get);
 
-		public static IArray<T> ToStore<T>(this ISequence<T> @this)
-			=> new DelegatedArray<T>(Access<T>.Default.Out(@this).Singleton().Get);
+		public static IArrays<T> ToStore<T>(this ISequence<T> @this)
+			=> new DelegatedArrays<T>(Access<T>.Default.Out(@this).Singleton().Get);
 
-		public static IArray<T> ToStore<T>(this IArray<T> @this) => @this.ToDelegate().ToStore();
+		public static IArrays<T> ToStore<T>(this IArrays<T> @this) => @this.ToDelegate().ToStore();
 
-		public static IArray<T> ToStore<T>(this Func<ReadOnlyMemory<T>> @this)
-			=> new DelegatedArray<T>(@this.Out().Singleton().Get);
+		public static IArrays<T> ToStore<T>(this Func<ReadOnlyMemory<T>> @this)
+			=> new DelegatedArrays<T>(@this.Out().Singleton().Get);
 
 		public static IArray<TFrom, TTo> ToArray<TFrom, TTo>(this ISequence<TFrom, TTo> @this)
 			=> @this.ToDelegate().ToArray();
@@ -49,27 +49,12 @@ namespace Super
 			this ISelect<TFrom, IEnumerable<TTo>> @this)
 			=> @this.ToDelegate().To(I<SelectManySelector<TFrom, TTo>>.Default);
 
-		/*public static ISelect<TIn, View<TOut>> Iterate<TIn, TOut>(this ISelect<TIn, IEnumerable<TOut>> @this)
-			=> @this.Select(Model.Collections.Load<TOut>.Default);*/
+		
 
-		/*public static ISelect<TIn, View<TTo>> Selection<TIn, TFrom, TTo>(
-			this ISelect<TIn, View<TFrom>> @this, Expression<Func<TFrom, TTo>> select, Expression<Func<TTo, bool>> where)
-			=> @this.Select(new SelectionWhere<TFrom, TTo>(select, where).Get);*/
 
-		/*public static ISelect<TIn, View<TTo>> Selection<TIn, TFrom, TTo>(
-			this ISelect<TIn, View<TFrom>> @this, Expression<Func<TFrom, TTo>> select)
-			=> @this.Select(new Selection<TFrom, TTo>(select));*/
-
-		/*public static ISelect<TIn, View<TTo>> Selection<TIn, TFrom, TTo>(
-			this ISelect<TIn, View<TFrom>> @this, Expression<Func<TFrom, TTo>> select)
-			=> new EnhancedResult<TIn, View<TFrom>, View<TTo>>(@this.Get, new ExpressionSelection<TFrom, TTo>(select));*/
-
-		/*public static ISelect<TIn, View<TOut>> Where<TIn, TOut>(
-			this ISelect<TIn, View<TOut>> @this, Expression<Func<TOut, bool>> specification)
-			=> @this.Select(new WhereSelection<TOut>(specification.Compile()));*/
 
 		public static ISelect<TIn, ArraySegment<TOut>> Iterate<TIn, TOut>(this ISelect<TIn, IEnumerable<TOut>> @this)
-			=> @this.Select(Loader<TOut>.Default);
+			=> @this.Select(Model.Collections.Load<TOut>.Default);
 
 		public static ISelect<TIn, ArraySegment<TTo>> Selection<TIn, TFrom, TTo>(
 			this ISelect<TIn, ArraySegment<TFrom>> @this, Expression<Func<TFrom, TTo>> select)
@@ -87,25 +72,7 @@ namespace Super
 		                                                               uint take)
 			=> @this.Select(new TakeSelection<TOut>((int)take));
 
-		sealed class SkipSelection<T> : ISegment<T>
-		{
-			readonly int _skip;
-
-			public SkipSelection(int skip) => _skip = skip;
-
-			public ArraySegment<T> Get(in ArraySegment<T> parameter)
-				=> new ArraySegment<T>(parameter.Array, parameter.Offset + _skip, parameter.Count - _skip);
-		}
-
-		sealed class TakeSelection<T> : ISegment<T>
-		{
-			readonly int _take;
-
-			public TakeSelection(int take) => _take = take;
-
-			public ArraySegment<T> Get(in ArraySegment<T> parameter)
-				=> new ArraySegment<T>(parameter.Array, parameter.Offset, _take);
-		}
+		
 
 		public static ISelect<TIn, ReadOnlyMemory<TTo>> Select<TIn, TFrom, TTo>(
 			this ISelect<TIn, ReadOnlyMemory<TFrom>> @this, Expression<Func<TFrom, TTo>> select)

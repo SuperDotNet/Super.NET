@@ -14,16 +14,16 @@ using System.Reflection;
 
 namespace Super.Runtime.Environment
 {
-	public sealed class Types : SystemStore<ReadOnlyMemory<Type>>, IArray<Type>
+	public sealed class Types : SystemStore<ReadOnlyMemory<Type>>, IArrays<Type>
 	{
 		public static Types Default { get; } = new Types();
 
 		Types() : this(Types<PublicAssemblyTypes>.Default) {}
 
-		public Types(IArray<Type> instance) : base(instance) {}
+		public Types(IArrays<Type> instance) : base(instance) {}
 	}
 
-	public class Types<T> : DecoratedArray<Type> where T : class, IActivateMarker<Assembly>, IArray<Type>
+	public class Types<T> : DecoratedArrays<Type> where T : class, IActivateMarker<Assembly>, IArrays<Type>
 	{
 		public static Types<T> Default { get; } = new Types<T>();
 

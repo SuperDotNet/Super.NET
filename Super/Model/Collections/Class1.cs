@@ -7,23 +7,23 @@ using System.Linq;
 
 namespace Super.Model.Collections
 {
-	public interface IArray<T> : ISource<ReadOnlyMemory<T>> {}
+	public interface IArrays<T> : ISource<ReadOnlyMemory<T>> {}
 
-	public class Array<T> : Source<ReadOnlyMemory<T>>, IArray<T>
+	public class Arrays<T> : Source<ReadOnlyMemory<T>>, IArrays<T>
 	{
-		public Array(IEnumerable<T> enumerable) : this(enumerable.ToArray()) {}
+		public Arrays(IEnumerable<T> enumerable) : this(enumerable.ToArray()) {}
 
-		public Array(params T[] instance) : base(instance) {}
+		public Arrays(params T[] instance) : base(instance) {}
 	}
 
-	public class DelegatedArray<T> : DelegatedSource<ReadOnlyMemory<T>>, IArray<T>
+	public class DelegatedArrays<T> : DelegatedSource<ReadOnlyMemory<T>>, IArrays<T>
 	{
-		public DelegatedArray(Func<ReadOnlyMemory<T>> source) : base(source) {}
+		public DelegatedArrays(Func<ReadOnlyMemory<T>> source) : base(source) {}
 	}
 
-	public class DecoratedArray<T> : DecoratedSource<ReadOnlyMemory<T>>, IArray<T>
+	public class DecoratedArrays<T> : DecoratedSource<ReadOnlyMemory<T>>, IArrays<T>
 	{
-		public DecoratedArray(ISource<ReadOnlyMemory<T>> source) : base(source) {}
+		public DecoratedArrays(ISource<ReadOnlyMemory<T>> source) : base(source) {}
 	}
 
 	public interface IArray<in TFrom, TItem> : ISelect<TFrom, ReadOnlyMemory<TItem>> {}

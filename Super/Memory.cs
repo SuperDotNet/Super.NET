@@ -8,7 +8,7 @@ namespace Super
 	// ReSharper disable once MismatchedFileName
 	public static partial class ExtensionMethods
 	{
-		public static IEnumerable<T> AsEnumerable<T>(this IArray<T> @this) => @this.Get().AsEnumerable();
+		public static IEnumerable<T> AsEnumerable<T>(this IArrays<T> @this) => @this.Get().AsEnumerable();
 
 		public static IEnumerable<T> AsEnumerable<T>(in this ReadOnlyMemory<T> @this) => MemoryMarshal.ToEnumerable(@this);
 

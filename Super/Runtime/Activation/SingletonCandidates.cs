@@ -2,7 +2,7 @@
 
 namespace Super.Runtime.Activation
 {
-	sealed class SingletonCandidates : Array<string>, ISingletonCandidates
+	sealed class SingletonCandidates : Arrays<string>, ISingletonCandidates
 	{
 		public static SingletonCandidates Default { get; } = new SingletonCandidates();
 

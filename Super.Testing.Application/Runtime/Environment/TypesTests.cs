@@ -41,7 +41,7 @@ namespace Super.Testing.Application.Runtime.Environment
 			counter.Get().Should().Be(1);
 		}
 
-		sealed class Types : Array<Type>
+		sealed class Types : Arrays<Type>
 		{
 			public Types(Counter counter, IEnumerable<Type> types) : base(types.Select(counter.ExecuteAndReturn)) {}
 		}

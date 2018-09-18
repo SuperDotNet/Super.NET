@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Super.Application.Hosting.xUnit
 {
-	sealed class DefaultTransformations : Array<ISpecimenBuilderTransformation>
+	sealed class DefaultTransformations : Arrays<ISpecimenBuilderTransformation>
 	{
 		public static DefaultTransformations Default { get; } = new DefaultTransformations();
 

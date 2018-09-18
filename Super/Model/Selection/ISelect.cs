@@ -7,7 +7,7 @@ namespace Super.Model.Selection
 		TResult Get(TParameter parameter);
 	}
 
-	public interface IEnhancedSelect<TIn, out TOut> where TIn : struct
+	public interface IEnhancedSelect<TIn, out TOut>
 	{
 		TOut Get(in TIn parameter);
 	}

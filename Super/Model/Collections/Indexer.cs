@@ -87,10 +87,7 @@ namespace Super.Model.Collections
 		}
 	}
 
-
-	public interface ILoad<T> : ISelect<IEnumerable, View<T>> {}
-
-	sealed class Load<T> : ILoad<T>
+	sealed class Load<T> : ISelect<IEnumerable, ArraySegment<T>>
 	{
 		public static Load<T> Default { get; } = new Load<T>();
 
@@ -105,21 +102,21 @@ namespace Super.Model.Collections
 			_pool      = pool;
 		}
 
-		public View<T> Get(IEnumerable parameter)
+		public ArraySegment<T> Get(IEnumerable parameter)
 		{
 			switch (parameter)
 			{
 				case T[] array:
-					return new View<T>(array);
+					return new ArraySegment<T>(array);
 				case ICollection<T> collection:
 					var rental = _pool.Rent(collection.Count);
 					collection.CopyTo(rental, 0);
-					return new View<T>(_pool, new ArraySegment<T>(rental, 0, collection.Count));
-				case IEnumerable<T> enumerable:
-					return _enumerate.Get(enumerable.GetEnumerator());
+					return new ArraySegment<T>(rental, 0, collection.Count);
+				default:
+					//var enumerable = parameter is IEnumerable<T> e ? e : parameter.OfType<T>();
+					return /*_enumerate.Get(enumerable.GetEnumerator())*/new ArraySegment<T>();
 			}
 
-			throw new InvalidOperationException($"Unsupported view type: {parameter.GetType().FullName}");
 		}
 	}
 

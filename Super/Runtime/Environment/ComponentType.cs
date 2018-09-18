@@ -25,7 +25,7 @@ namespace Super.Runtime.Environment
 
 		ComponentTypesDefinition() : this(Types.Default, ComponentTypesPredicate.Default, x => x.Sort().Access()) {}
 
-		public ComponentTypesDefinition(IArray<Type> types, ISelectSequence<Type> where,
+		public ComponentTypesDefinition(IArrays<Type> types, ISelectSequence<Type> where,
 		                                Func<ISelect<Type, IEnumerable<Type>>, ISelect<Type, ReadOnlyMemory<Type>>> select)
 			: base(types.Select(x => x.AsEnumerable())
 			            .Select(where)

@@ -15,6 +15,30 @@ namespace Super.Testing.Application.Model.Collections
 		                                                 .AsSelect()
 		                                                 .Iterate()
 		                                                 .Selection(x => x.Length);*/
+		/*[Fact]
+		void Builder()
+		{
+			var total = 100_000u;
+			var data = Objects.Count.Default.Get(total);
+			var builder = new ArrayBuilder<int>(total - 5u, 5);
+			var iterator = new ArrayIterator<int>(data);
+			var array = builder.Get(iterator);
+
+			Objects.Count.Default.Get(total).Skip((int)(total - 5)).Take(5).ToArray().Should().Equal(array);
+		}
+
+		[Theory, AutoData]
+		void Select(IEnumerable<string> strings)
+		{
+			var total    = 100_000u;
+			var data     = strings.Take((int)total).ToArray();
+			var builder  = new ArrayBuilder<int>(0, total);
+			var iterator = new Iterator<string,int>(new ArrayIterator<string>(data), x => x.Length);
+			var array    = builder.Get(iterator);
+
+			data.Select(x => x.Length).ToArray().Should().Equal(array);
+		}*/
+
 		[Fact]
 		void Verify()
 		{
