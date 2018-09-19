@@ -18,7 +18,7 @@ namespace Super.Model.Selection
 		public TTo Get(TParameter parameter) => _select(_source(parameter));
 	}
 
-	sealed class EnhancedSelection<TIn, TFrom, TTo> : ISelect<TIn, TTo> where TFrom : struct
+	class EnhancedSelection<TIn, TFrom, TTo> : ISelect<TIn, TTo> where TFrom : struct
 	{
 		readonly Func<TIn, TFrom>      _source;
 		readonly Selection<TFrom, TTo> _select;
@@ -30,11 +30,7 @@ namespace Super.Model.Selection
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public TTo Get(TIn parameter)
-		{
-			var source = _source(parameter);
-			return _select(in source);
-		}
+		public TTo Get(TIn parameter) => _select(_source(parameter));
 	}
 
 	public delegate TOut Selection<TIn, out TOut>(in TIn parameter);

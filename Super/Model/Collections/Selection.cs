@@ -11,25 +11,9 @@ namespace Super.Model.Collections
 
 	public interface ISegmentation<TIn, TOut> : IEnhancedSelect<ArrayView<TIn>, ArrayView<TOut>> {}
 
-	public interface ISegments<TFrom, TTo> : IEnhancedSelect<ArrayView<TFrom>, Segue<TFrom, TTo>> {}
-
-	sealed class Segments<TFrom, TTo> : ISegments<TFrom, TTo>
+	public readonly struct Segue<TFrom, TTo>
 	{
-		public static Segments<TFrom, TTo> Default { get; } = new Segments<TFrom, TTo>();
-
-		Segments() : this(Lease<TTo>.Default) {}
-
-		readonly ILease<TTo> _lease;
-
-		public Segments(ILease<TTo> lease) => _lease = lease;
-
-		public Segue<TFrom, TTo> Get(in ArrayView<TFrom> parameter)
-			=> new Segue<TFrom, TTo>(parameter, _lease.Get(parameter.Length));
-	}
-
-	public readonly struct Segue<TFrom, TTo> : IDisposable
-	{
-		public Segue(ArrayView<TFrom> source, ArrayView<TTo> destination)
+		public Segue(ArrayView<TFrom> source, TTo[] destination)
 		{
 			Source      = source;
 			Destination = destination;
@@ -37,52 +21,33 @@ namespace Super.Model.Collections
 
 		public ArrayView<TFrom> Source { get; }
 
-		public ArrayView<TTo> Destination { get; }
-
-		public void Dispose()
-		{
-			Source.Dispose();
-			Destination.Dispose();
-		}
+		public TTo[] Destination { get; }
 	}
-
-	/*sealed class Segue<TIn, TOut> : ISelect<ArrayView<TIn>, ArrayView<TOut>>
-	{
-		readonly ISegmentation<TIn, TOut> _segmentation;
-
-		public Segue(ISegmentation<TIn, TOut> segmentation) => _segmentation = segmentation;
-
-		public ArrayView<TOut> Get(ArrayView<TIn> parameter)
-		{
-			using (parameter)
-			{
-				return _segmentation.Get(parameter);
-			}
-		}
-	}*/
 
 	sealed class Segmentation<TIn, TOut> : ISegmentation<TIn, TOut>
 	{
-		readonly Selection<ArrayView<TIn>, Segue<TIn, TOut>>  _segments;
 		readonly Selection<Segue<TIn, TOut>, ArrayView<TOut>> _select;
+		readonly ILease<TIn>                                  _source;
+		readonly ILease<TOut>                                 _lease;
 
 		public Segmentation(Expression<Func<TIn, TOut>> select) : this(new SegmentSelect<TIn, TOut>(select)) {}
 
-		public Segmentation(ISegmentSelect<TIn, TOut> @select) : this(Segments<TIn, TOut>.Default.Get, select.Get) {}
+		public Segmentation(ISegmentSelect<TIn, TOut> @select)
+			: this(select.Get, Lease<TIn>.Default, Lease<TOut>.Default) {}
 
-		public Segmentation(Selection<ArrayView<TIn>, Segue<TIn, TOut>> segments,
-		                    Selection<Segue<TIn, TOut>, ArrayView<TOut>> select)
+		public Segmentation(Selection<Segue<TIn, TOut>, ArrayView<TOut>> select, ILease<TIn> source, ILease<TOut> lease)
 		{
-			_segments = segments;
-			_select   = select;
+			_select = select;
+			_source = source;
+			_lease  = lease;
 		}
 
 		public ArrayView<TOut> Get(in ArrayView<TIn> parameter)
 		{
-			using (var context = _segments(in parameter))
-			{
-				return _select(in context);
-			}
+			var lease  = _lease.Get(parameter.Count);
+			var result = _select(new Segue<TIn, TOut>(parameter, lease.Array));
+			_source.Execute(parameter);
+			return result;
 		}
 	}
 
@@ -100,8 +65,8 @@ namespace Super.Model.Collections
 		public ArrayView<TOut> Get(in Segue<TIn, TOut> parameter)
 		{
 			var view = parameter.Source;
-			_iterate(view.Array, parameter.Destination.Array, view.Start, view.Length);
-			return parameter.Destination;
+			_iterate(view.Array, parameter.Destination, view.Offset, view.Count);
+			return new ArrayView<TOut>(parameter.Destination, view.Offset, view.Count);
 		}
 	}
 
@@ -115,7 +80,7 @@ namespace Super.Model.Collections
 
 		public ArrayView<T> Get(in ArrayView<T> parameter)
 		{
-			var used  = parameter.Length;
+			var used  = parameter.Count;
 			var array = parameter.Array;
 			var count = 0u;
 			for (var i = 0u; i < used; i++)
@@ -139,7 +104,7 @@ namespace Super.Model.Collections
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ArrayView<T> Get(in ArrayView<T> parameter)
-			=> new ArrayView<T>(parameter.Array, parameter.Start + _skip, parameter.Length - _skip);
+			=> parameter.Resize(parameter.Offset + _skip, parameter.Count - _skip);
 	}
 
 	sealed class TakeSelection<T> : ISegment<T>
@@ -149,6 +114,6 @@ namespace Super.Model.Collections
 		public TakeSelection(uint take) => _take = take;
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public ArrayView<T> Get(in ArrayView<T> parameter) => new ArrayView<T>(parameter.Array, parameter.Start, _take);
+		public ArrayView<T> Get(in ArrayView<T> parameter) => parameter.Resize(_take);
 	}
 }

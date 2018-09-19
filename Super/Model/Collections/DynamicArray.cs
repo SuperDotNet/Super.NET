@@ -18,7 +18,7 @@ namespace Super.Model.Collections
 		{
 			var  array = _views;
 			var  first = array[0];
-			var  total = first.Length;
+			var  total = first.Count;
 			var  pages = 1u;
 			bool next;
 			do
@@ -34,7 +34,7 @@ namespace Super.Model.Collections
 					total++;
 				}
 
-				array[pages++] = lease.Resize(local);
+				array[pages++] = new ArrayView<T>(store, 0, local);
 				next           = local == target;
 			} while (next);
 
@@ -43,13 +43,12 @@ namespace Super.Model.Collections
 			var destination = result.Array;
 			for (var i = 0u; i < pages; i++)
 			{
-				var segment = array[i];
-				Array.ConstrainedCopy(segment.Array, 0, destination, (int)offset, (int)segment.Length);
-				offset += segment.Length;
-				segment.Dispose();
+				var segment = array[i].Copy(destination, offset);
+				offset += segment.Count;
+				_lease.Execute(segment);
 			}
 
-			return result.Resize(offset);
+			return new ArrayView<T>(destination, 0, offset);
 		}
 	}
 }

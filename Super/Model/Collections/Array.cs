@@ -15,9 +15,9 @@ namespace Super.Model.Collections
 	{
 		public static Array<T> Empty { get; } = new Array<T>(Empty<T>.Array);
 
-		public static implicit operator ImmutableArray<T>(Array<T> source) => source._source.ToImmutableArray();
+		public static implicit operator ImmutableArray<T>(Array<T> source) => source.Get();
 
-		public static implicit operator T[](Array<T> source) => source._source.ToArray();
+		public static implicit operator T[](Array<T> source) => source.Copy();
 
 		readonly T[] _source;
 
@@ -33,7 +33,11 @@ namespace Super.Model.Collections
 
 		public ref readonly T this[uint index] => ref _source[index];
 
-		public T[] Peek() => _source;
+		public T[] Reference() => _source;
+
+		public T[] Copy() => _source.ToArray();
+
+		public ImmutableArray<T> Get() => ImmutableArray.Create(_source);
 
 		public IEnumerator<T> GetEnumerator() => _source.Hide().GetEnumerator();
 

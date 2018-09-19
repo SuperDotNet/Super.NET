@@ -49,16 +49,22 @@ namespace Super
 			this ISelect<TFrom, IEnumerable<TTo>> @this)
 			=> @this.ToDelegate().To(I<SelectManySelector<TFrom, TTo>>.Default);
 
+		public static ISelect<TIn, ArrayView<TOut>> Iterate<TIn, TOut>(this ISelect<TIn, ICollection<TOut>> @this)
+			=> @this.Select(Fill<TOut>.Default);
+
 		public static ISelect<TIn, ArrayView<TOut>> Iterate<TIn, TOut>(this ISelect<TIn, IEnumerable<TOut>> @this)
-			=> @this.Select(Model.Collections.Load<TOut>.Default);
+			=> @this.Select(Iterate<TOut>.Default);
 
-		public static ISelect<TIn, ArrayView<TTo>> Selection<TIn, TFrom, TTo>(
+		public static ISelect<TIn, ArrayView<TOut>> Iterate<TIn, TOut>(this ISelect<TIn, TOut[]> @this)
+			=> @this.Select(x => new ArrayView<TOut>(x));
+
+		/*public static ISelect<TIn, ArrayView<TTo>> Selection<TIn, TFrom, TTo>(
 			this ISelect<TIn, ArrayView<TFrom>> @this, Expression<Func<TFrom, TTo>> select)
-			=> @this.Select(new Segmentation<TFrom, TTo>(select));
+			=> @this.Select(new Segmentation<TFrom, TTo>(select));*/
 
-		public static ISelect<TIn, ArrayView<TOut>> Where<TIn, TOut>(
+		/*public static ISelect<TIn, ArrayView<TOut>> Where<TIn, TOut>(
 			this ISelect<TIn, ArrayView<TOut>> @this, Expression<Func<TOut, bool>> where)
-			=> @this.Select(new WhereSegment<TOut>(where));
+			=> @this.Select(new WhereSegment<TOut>(where));*/
 
 		public static ISelect<TIn, ArrayView<TOut>> Skip<TIn, TOut>(this ISelect<TIn, ArrayView<TOut>> @this,
 		                                                            uint skip)
@@ -67,6 +73,12 @@ namespace Super
 		public static ISelect<TIn, ArrayView<TOut>> Take<TIn, TOut>(this ISelect<TIn, ArrayView<TOut>> @this,
 		                                                            uint take)
 			=> @this.Select(new TakeSelection<TOut>(take));
+
+		public static ISelect<TIn, Array<TOut>> Emit<TIn, TOut>(this ISelect<TIn, ArrayView<TOut>> @this)
+			=> @this.Select(x => x.Get());
+
+		public static ISelect<TIn, Array<TOut>> Release<TIn, TOut>(this ISelect<TIn, ArrayView<TOut>> @this)
+			=> @this.Select(Release<TOut>.Default);
 
 		public static ISelect<TIn, ReadOnlyMemory<TTo>> Select<TIn, TFrom, TTo>(
 			this ISelect<TIn, ReadOnlyMemory<TFrom>> @this, Expression<Func<TFrom, TTo>> select)
