@@ -24,7 +24,18 @@ namespace Super.Model.Collections
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static ArrayView<T> Resize<T>(in this ArrayView<T> @this, in Selection selection)
+		{
+			var length = selection.Length.GetValueOrDefault(@this.Count);
+			return selection.Start != @this.Offset || length != @this.Count ?
+				       new ArrayView<T>(@this.Array, selection.Start, length) : @this;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Array<T> Get<T>(in this ArrayView<T> @this) => new Array<T>(@this.Offset == 0 && @this.Count == @this.Array.Length ? @this.Array : @this.Copy());
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static T[] Source<T>(in this ArrayView<T> @this) => @this.Offset == 0 && @this.Count == @this.Array.Length ? @this.Array : @this.Copy();
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] Copy<T>(in this ArrayView<T> @this)

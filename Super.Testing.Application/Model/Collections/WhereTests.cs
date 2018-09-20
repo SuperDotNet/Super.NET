@@ -3,23 +3,35 @@
 using FluentAssertions;
 using Super.Model.Collections;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Super.Testing.Application.Model.Collections
 {
 	public sealed class WhereTests
 	{
+		readonly ITestOutputHelper _output;
+
+		public WhereTests(ITestOutputHelper output) => _output = output;
+
+		[Fact]
+		void Size()
+		{
+			_output.WriteLine($"{Unsafe.SizeOf<Store<int>>()}");
+		}
 
 		[Fact]
 		void Verify()
 		{
 			const uint count = 10_000_000u;
 			var array = Objects.Count.Default
-			                   .Iterate()
+			                   .Iteration()
 			                   .Skip(count - 5)
 			                   .Take(5)
+			                   .Result()
 			                   .Get(count)
-			                   .Get()
+			                   //.Get()
 			                   ;
 			array.Should().HaveCount(5);
 

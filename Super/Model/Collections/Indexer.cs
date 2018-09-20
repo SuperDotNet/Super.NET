@@ -1,12 +1,8 @@
 ﻿using Super.Model.Commands;
 using Super.Model.Selection;
-using Super.Model.Sources;
-using Super.Model.Specifications;
-using System;
 using System.Buffers;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Super.Model.Collections
 {
@@ -94,81 +90,32 @@ namespace Super.Model.Collections
 
 	public interface ILease<T> : ISelect<uint, ArrayView<T>>, IEnhancedCommand<ArrayView<T>> {}
 
-	/*public interface IRelease<in T> : ICommand<T[]> {}
-
-	sealed class Release<T> : IRelease<T>
-	{
-		public static Release<T> Default { get; } = new Release<T>();
-
-		Release() : this(ArrayPool<T>.Shared) {}
-
-		readonly ArrayPool<T> _pool;
-
-		public Release(ArrayPool<T> pool) => _pool = pool;
-
-		public void Execute(T[] parameter)
-		{
-			_pool.Return(parameter);
-		}
-	}*/
-
 	sealed class Lease<T> : ILease<T>
 	{
 		public static Lease<T> Default { get; } = new Lease<T>();
 
-		Lease() : this(ArrayPool<T>.Shared, Leases<T>.Default) {}
+		Lease() : this(ArrayPool<T>.Shared) {}
 
 		readonly ArrayPool<T> _pool;
-		readonly ILeases<T> _leases;
 
-		public Lease(ArrayPool<T> pool, ILeases<T> leases)
-		{
-			_pool    = pool;
-			_leases = leases;
-		}
+		public Lease(ArrayPool<T> pool) => _pool    = pool;
 
 		public ArrayView<T> Get(uint parameter) => new ArrayView<T>(_pool.Rent((int)parameter), 0, parameter);
 
 		public void Execute(in ArrayView<T> parameter)
 		{
-			if (_leases.IsSatisfiedBy(parameter.Array))
-			{
-				_pool.Return(parameter.Array);
-			}
+			_pool.Return(parameter.Array);
 		}
 	}
 
-	public interface ILeases<T> : ISource<ISet<T[]>>, ISpecification<T[]> {}
-
-	sealed class Leases<T> : DeferredSingleton<ISet<T[]>>, ILeases<T>
+	sealed class Result<T> : IEnhancedSelect<ArrayView<T>, T[]>
 	{
-		public static Leases<T> Default { get; } = new Leases<T>();
+		public static Result<T> Default { get; } = new Result<T>();
 
-		Leases() : this(new Lazy<ISet<T[]>>(() => new HashSet<T[]>())) {}
+		Result() {}
 
-		readonly Lazy<ISet<T[]>> _source;
-
-		public Leases(Lazy<ISet<T[]>> source) : base(source) => _source = source;
-
-		public bool IsSatisfiedBy(T[] parameter) => _source.IsValueCreated && Get().Contains(parameter);
-	}
-
-	sealed class Fill<T> : ISelect<ICollection<T>, ArrayView<T>>
-	{
-		public static Fill<T> Default { get; } = new Fill<T>();
-
-		Fill() : this(Lease<T>.Default) {}
-
-		readonly ILease<T> _lease;
-
-		public Fill(ILease<T> lease) => _lease = lease;
-
-		public ArrayView<T> Get(ICollection<T> parameter)
-		{
-			var result = _lease.Get(parameter.Count);
-			parameter.CopyTo(result.Array, 0);
-			return result;
-		}
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public T[] Get(in ArrayView<T> parameter) => parameter.Source();
 	}
 
 	sealed class Release<T> : ISelect<ArrayView<T>, Array<T>>
@@ -183,29 +130,12 @@ namespace Super.Model.Collections
 
 		public Array<T> Get(ArrayView<T> parameter)
 		{
+			EmptyCommand<T[]>.Default.Execute(parameter.Array);
 			var result = parameter.Get();
 			if (result.Reference() != parameter.Array)
 			{
 				_lease.Execute(in parameter);
 			}
-			return result;
-		}
-	}
-
-	sealed class Iterate<T> : ISelect<IEnumerable, ArrayView<T>>
-	{
-		public static Iterate<T> Default { get; } = new Iterate<T>();
-
-		Iterate() : this(Enumerate<T>.Default) {}
-
-		readonly IEnumerate<T> _enumerate;
-
-		public Iterate(IEnumerate<T> enumerate) => _enumerate = enumerate;
-
-		public ArrayView<T> Get(IEnumerable parameter)
-		{
-			var enumerable = parameter is IEnumerable<T> e ? e : parameter.OfType<T>();
-			var result     = _enumerate.Get(enumerable.GetEnumerator());
 			return result;
 		}
 	}

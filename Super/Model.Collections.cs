@@ -49,30 +49,34 @@ namespace Super
 			this ISelect<TFrom, IEnumerable<TTo>> @this)
 			=> @this.ToDelegate().To(I<SelectManySelector<TFrom, TTo>>.Default);
 
-		public static ISelect<TIn, ArrayView<TOut>> Iterate<TIn, TOut>(this ISelect<TIn, ICollection<TOut>> @this)
+		/*public static ISelect<TIn, ArrayView<TOut>> Iterate<TIn, TOut>(this ISelect<TIn, ICollection<TOut>> @this)
 			=> @this.Select(Fill<TOut>.Default);
 
 		public static ISelect<TIn, ArrayView<TOut>> Iterate<TIn, TOut>(this ISelect<TIn, IEnumerable<TOut>> @this)
-			=> @this.Select(Iterate<TOut>.Default);
+			=> @this.Select(Iterate<TOut>.Default);*/
+
+		public static ArrayResultView<_, T> Iteration<_, T>(this ISelect<_, T[]> @this)
+			=> new ArrayResultView<_, T>(@this, ArrayStores<T>.Default);
+
+		public static ArrayResultView<_, T> Skip<_, T>(in this ArrayResultView<_, T> @this, uint skip)
+			=> new SkipSelection<_, T>(skip).Get(@this);
+
+		public static ArrayResultView<_, T> Take<_, T>(in this ArrayResultView<_, T> @this, uint take)
+			=> new TakeSelection<_, T>(take).Get(@this);
+
+		public static ISelect<_, T[]> Result<_, T>(in this ArrayResultView<_, T> @this)
+			=> ResultSelect<_, T>.Default.Get(@this);
 
 		public static ISelect<TIn, ArrayView<TOut>> Iterate<TIn, TOut>(this ISelect<TIn, TOut[]> @this)
 			=> @this.Select(x => new ArrayView<TOut>(x));
 
-		/*public static ISelect<TIn, ArrayView<TTo>> Selection<TIn, TFrom, TTo>(
+		public static ISelect<TIn, ArrayView<TTo>> Selection<TIn, TFrom, TTo>(
 			this ISelect<TIn, ArrayView<TFrom>> @this, Expression<Func<TFrom, TTo>> select)
-			=> @this.Select(new Segmentation<TFrom, TTo>(select));*/
+			=> @this.Select(new Segmentation<TFrom, TTo>(select));
 
-		/*public static ISelect<TIn, ArrayView<TOut>> Where<TIn, TOut>(
+		public static ISelect<TIn, ArrayView<TOut>> Where<TIn, TOut>(
 			this ISelect<TIn, ArrayView<TOut>> @this, Expression<Func<TOut, bool>> where)
-			=> @this.Select(new WhereSegment<TOut>(where));*/
-
-		public static ISelect<TIn, ArrayView<TOut>> Skip<TIn, TOut>(this ISelect<TIn, ArrayView<TOut>> @this,
-		                                                            uint skip)
-			=> @this.Select(new SkipSelection<TOut>(skip));
-
-		public static ISelect<TIn, ArrayView<TOut>> Take<TIn, TOut>(this ISelect<TIn, ArrayView<TOut>> @this,
-		                                                            uint take)
-			=> @this.Select(new TakeSelection<TOut>(take));
+			=> @this.Select(new WhereSegment<TOut>(where));
 
 		public static ISelect<TIn, Array<TOut>> Emit<TIn, TOut>(this ISelect<TIn, ArrayView<TOut>> @this)
 			=> @this.Select(x => x.Get());
