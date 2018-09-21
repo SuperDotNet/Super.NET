@@ -34,8 +34,8 @@ namespace Super.Model.Collections
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Array<T> Get<T>(in this ArrayView<T> @this) => new Array<T>(@this.Offset == 0 && @this.Count == @this.Array.Length ? @this.Array : @this.Copy());
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T[] Source<T>(in this ArrayView<T> @this) => @this.Offset == 0 && @this.Count == @this.Array.Length ? @this.Array : @this.Copy();
+		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static T[] Source<T>(in this ArrayView<T> @this) => @this.Offset == 0 && @this.Count == @this.Array.Length ? @this.Array : @this.Copy();*/
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] Copy<T>(in this ArrayView<T> @this)

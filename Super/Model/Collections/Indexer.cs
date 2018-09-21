@@ -2,7 +2,6 @@
 using Super.Model.Selection;
 using System.Buffers;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace Super.Model.Collections
 {
@@ -98,24 +97,14 @@ namespace Super.Model.Collections
 
 		readonly ArrayPool<T> _pool;
 
-		public Lease(ArrayPool<T> pool) => _pool    = pool;
+		public Lease(ArrayPool<T> pool) => _pool = pool;
 
 		public ArrayView<T> Get(uint parameter) => new ArrayView<T>(_pool.Rent((int)parameter), 0, parameter);
 
 		public void Execute(in ArrayView<T> parameter)
 		{
-			_pool.Return(parameter.Array);
+			//_pool.Return(parameter.Array);
 		}
-	}
-
-	sealed class Result<T> : IEnhancedSelect<ArrayView<T>, T[]>
-	{
-		public static Result<T> Default { get; } = new Result<T>();
-
-		Result() {}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public T[] Get(in ArrayView<T> parameter) => parameter.Source();
 	}
 
 	sealed class Release<T> : ISelect<ArrayView<T>, Array<T>>
@@ -130,12 +119,12 @@ namespace Super.Model.Collections
 
 		public Array<T> Get(ArrayView<T> parameter)
 		{
-			EmptyCommand<T[]>.Default.Execute(parameter.Array);
 			var result = parameter.Get();
 			if (result.Reference() != parameter.Array)
 			{
 				_lease.Execute(in parameter);
 			}
+
 			return result;
 		}
 	}

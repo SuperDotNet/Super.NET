@@ -1,12 +1,10 @@
 using Super.Model.Commands;
 using Super.Model.Selection;
-using Super.Model.Selection.Alterations;
-using Super.Model.Sources;
 using Super.Runtime.Activation;
 using System;
 using System.Buffers;
-using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 
 namespace Super.Model.Collections
 {
@@ -128,117 +126,6 @@ namespace Super.Model.Collections
 	{
 	}*/
 
-	sealed class Storage<T> : DelegatedCommand<T[]>, ISelect<T[], ArrayView<T>>, IActivateMarker<Selection>
-	{
-		readonly Selection _selection;
-
-		public Storage(Selection selection) : this(selection, EmptyCommand<T[]>.Default.Execute) {}
-
-		public Storage(Selection selection, Action<T[]> complete) : base(complete) => _selection = selection;
-
-		public ArrayView<T> Get(T[] parameter)
-			=> new ArrayView<T>(parameter, _selection.Start, _selection.Length ?? (uint)parameter.Length - _selection.Start);
-	}
-
-	public interface IStores<T> : ICommand<T[]>, IEnhancedSelect<Selection, ISelect<IEnumerable<T>, ArrayView<T>>> {}
-
-	sealed class ArrayStores<T> : DelegatedCommand<T[]>, IStores<T>
-	{
-		public static ArrayStores<T> Default { get; } = new ArrayStores<T>();
-
-		ArrayStores() : this(EmptyCommand<T[]>.Default.Execute) {}
-
-		public ArrayStores(Action<T[]> command) : base(command) {}
-
-
-		public ISelect<IEnumerable<T>, ArrayView<T>> Get(in Selection parameter)
-			=> In<IEnumerable<T>>.Select(x => (T[])x)
-			                     .Select(new Storage<T>(parameter));
-	}
-
-	/*sealed class Fill<T> : ISelect<ICollection<T>, ArrayView<T>>
-	{
-		public static Fill<T> Default { get; } = new Fill<T>();
-
-		Fill() : this(Lease<T>.Default) {}
-
-		readonly ILease<T> _lease;
-
-		public Fill(ILease<T> lease) => _lease = lease;
-
-		public ArrayView<T> Get(ICollection<T> parameter)
-		{
-			var result = _lease.Get(parameter.Count);
-			parameter.CopyTo(result.Array, 0);
-			return result;
-		}
-	}
-
-	sealed class Iterate<T> : ISelect<IEnumerable<T>, ArrayView<T>>
-	{
-		public static Iterate<T> Default { get; } = new Iterate<T>();
-
-		Iterate() : this(Enumerate<T>.Default) {}
-
-		readonly IEnumerate<T> _enumerate;
-
-		public Iterate(IEnumerate<T> enumerate) => _enumerate = enumerate;
-
-		public ArrayView<T> Get(IEnumerable<T> parameter) => _enumerate.Get(parameter.GetEnumerator());
-	}*/
-
-	public readonly struct ArrayResultView<_, T>
-	{
-		public ArrayResultView(ISelect<_, IEnumerable<T>> source, IStores<T> stores)
-			: this(source, stores, Result<T>.Default, Selection.Default) {}
-
-		// ReSharper disable once TooManyDependencies
-		public ArrayResultView(ISelect<_, IEnumerable<T>> source, IStores<T> stores,
-		                       IEnhancedSelect<ArrayView<T>, T[]> result, Selection selection)
-		{
-			Source    = source;
-			Stores    = stores;
-			Result    = result;
-			Selection = selection;
-		}
-
-		public ISelect<_, IEnumerable<T>> Source { get; }
-
-		public IEnhancedSelect<ArrayView<T>, T[]> Result { get; }
-
-		public Selection Selection { get; }
-
-		public IStores<T> Stores { get; }
-	}
-
-	sealed class ResultSelect<_, T> : IEnhancedSelect<ArrayResultView<_, T>, ISelect<_, T[]>>
-	{
-		public static ResultSelect<_, T> Default { get; } = new ResultSelect<_, T>();
-
-		ResultSelect() {}
-
-		public ISelect<_, T[]> Get(in ArrayResultView<_, T> parameter)
-			=> new ArrayResult<_, T>(parameter.Source.Select(parameter.Stores.Get(parameter.Selection)),
-			                         parameter.Result, parameter.Stores.Execute);
-	}
-
-	readonly struct Session<T> : IDisposable
-	{
-		readonly T[]         _parameter;
-		readonly Action<T[]> _return;
-
-		public Session(T[] parameter, Action<T[]> @return)
-		{
-			_parameter = parameter;
-			_return    = @return;
-		}
-
-		public void Dispose()
-		{
-			_return?.Invoke(_parameter);
-		}
-	}
-
 	/*sealed class ArrayView<_, TOut> : ISelect<ISelect<_, TOut[]>, View<_, TOut>>
 	{
 		public static ArrayView<_,TOut> Default { get; } = new ArrayView<_,TOut>();
@@ -303,8 +190,8 @@ namespace Super.Model.Collections
 	sealed class Segmentation<_, T> : ISegmentation<_, T>
 	{
 		readonly Selection<Segue<_, T>, ArrayView<T>> _select;
-		readonly ILease<_>                                  _source;
-		readonly ILease<T>                               _lease;
+		readonly ILease<_>                            _source;
+		readonly ILease<T>                            _lease;
 
 		public Segmentation(Expression<Func<_, T>> select) : this(new SegmentSelect<_, T>(select)) {}
 
@@ -371,18 +258,11 @@ namespace Super.Model.Collections
 		}
 	}
 
-	sealed class SkipSelection<_, T> : IAlteration<ArrayResultView<_, T>>
-	{
-		readonly uint _skip;
 
-		public SkipSelection(uint skip) => _skip = skip;
 
-		public ArrayResultView<_, T> Get(ArrayResultView<_, T> parameter)
-			=> new ArrayResultView<_, T>(parameter.Source, parameter.Stores, parameter.Result,
-			                             new Selection(parameter.Selection.Start + _skip, parameter.Selection.Length - _skip));
-	}
 
-	/*sealed class SkipSelection<T> : ISegment<T>
+
+	sealed class SkipSelection<T> : ISegment<T>
 	{
 		readonly uint _skip;
 
@@ -391,16 +271,18 @@ namespace Super.Model.Collections
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ArrayView<T> Get(in ArrayView<T> parameter)
 			=> parameter.Resize(parameter.Offset + _skip, parameter.Count - _skip);
-	}*/
+	}
 
-	sealed class TakeSelection<_, T> : IAlteration<ArrayResultView<_, T>>
+	sealed class TakeSelection<T> : ISegment<T>
 	{
 		readonly uint _take;
 
 		public TakeSelection(uint take) => _take = take;
 
-		public ArrayResultView<_, T> Get(ArrayResultView<_, T> parameter)
-			=> new ArrayResultView<_, T>(parameter.Source, parameter.Stores, parameter.Result,
-			                             new Selection(parameter.Selection.Start, _take));
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public ArrayView<T> Get(in ArrayView<T> parameter)
+			=> parameter.Resize(_take);
 	}
+
+
 }

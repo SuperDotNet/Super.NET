@@ -1,11 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
-using Super.Model.Collections;
 using Super.Model.Selection;
-using Super.Testing.Objects;
 using System;
 using System.Linq;
-using System.Reactive;
-using Super.Runtime;
 
 namespace Super.Testing.Application
 {
@@ -16,9 +12,9 @@ namespace Super.Testing.Application
 		/*readonly static IEnumerable<string> Strings = Enumerable.Range(0, (int)Total)
 		                                                        .Select(x => string.Empty);*/
 
-		readonly Func<string, int> _selection = Select.Default;
+		//readonly Func<string, int> _selection = Select.Default;
 
-		ISelect<Unit, Array<int>> _select;
+		 /*ISelect<Unit, Array<int>> _select;*/
 		ISelect<int[], int[]>     _iteration;
 		int[]                     _data;
 
@@ -36,38 +32,37 @@ namespace Super.Testing.Application
 				                  //.Select(x => string.Empty)
 				                  //.Take(count)
 				                  .ToArray();
-				var @select = _data.ToSource()
+				/*var @select = _data.ToSource()
 				                   .Out()
-				                   .AsSelect();
+				                   .AsSelect();*/
 
-				_select = @select.Iterate()
+				/*_select = @select.Iterate()
+				                 .Skip(Count - 5)
+				                 .Take(5)
 				                 //.Selection(x => 0)
-				                 .Release();
+				                 .Release();*/
 				/*.Skip(Count - 5)
 					.Take(5)*/
 
 				_iteration = In<int[]>.Start()
 				                      .Iteration()
-				                      .Skip(1)
-				                      /*.Skip(Count - 5)
-				                      .Take(5)*/
-				                      .Result();
+				                      .Skip(Count - 5)
+				                      .Take(5)
+				                      .Reference();
 			}
 		}
 
 		uint _count;
 
+		[Benchmark]
+		public Array IterateClassic() => Enumerable.Range(0, (int)Count) //.Select(_selection)
+			/*.Where(x => x > 1000)*/
+			.Skip((int)(Count - 5u))
+			.Take(5)
+			.ToArray();
+
+		
 		[Benchmark(Baseline = true)]
 		public Array Iteration() => _iteration.Get(_data);
-
-		/*[Benchmark]
-		public Array Iterate() => _select.Get(Unit.Default).Reference();*/
-
-		[Benchmark]
-		public Array IterateClassic() => _data //.Select(_selection)
-		                                           /*.Where(x => x > 1000)*/
-		                                           /*.Skip((int)(Count - 5u))
-		                                           .Take(5)*/
-		                                           .ToArray();
 	}
 }

@@ -49,11 +49,7 @@ namespace Super
 			this ISelect<TFrom, IEnumerable<TTo>> @this)
 			=> @this.ToDelegate().To(I<SelectManySelector<TFrom, TTo>>.Default);
 
-		/*public static ISelect<TIn, ArrayView<TOut>> Iterate<TIn, TOut>(this ISelect<TIn, ICollection<TOut>> @this)
-			=> @this.Select(Fill<TOut>.Default);
-
-		public static ISelect<TIn, ArrayView<TOut>> Iterate<TIn, TOut>(this ISelect<TIn, IEnumerable<TOut>> @this)
-			=> @this.Select(Iterate<TOut>.Default);*/
+		/**/
 
 		public static ArrayResultView<_, T> Iteration<_, T>(this ISelect<_, T[]> @this)
 			=> new ArrayResultView<_, T>(@this, ArrayStores<T>.Default);
@@ -64,15 +60,28 @@ namespace Super
 		public static ArrayResultView<_, T> Take<_, T>(in this ArrayResultView<_, T> @this, uint take)
 			=> new TakeSelection<_, T>(take).Get(@this);
 
-		public static ISelect<_, T[]> Result<_, T>(in this ArrayResultView<_, T> @this)
+		public static ISelect<_, T[]> Reference<_, T>(in this ArrayResultView<_, T> @this)
 			=> ResultSelect<_, T>.Default.Get(@this);
 
-		public static ISelect<TIn, ArrayView<TOut>> Iterate<TIn, TOut>(this ISelect<TIn, TOut[]> @this)
+		public static ISelect<_, Array<T>> Result<_, T>(in this ArrayResultView<_, T> @this)
+			=> @this.Reference().Select(x => new Array<T>(x));
+
+		/**/
+
+		/*public static ISelect<TIn, ArrayView<TOut>> Iterate<TIn, TOut>(this ISelect<TIn, TOut[]> @this)
 			=> @this.Select(x => new ArrayView<TOut>(x));
 
 		public static ISelect<TIn, ArrayView<TTo>> Selection<TIn, TFrom, TTo>(
 			this ISelect<TIn, ArrayView<TFrom>> @this, Expression<Func<TFrom, TTo>> select)
 			=> @this.Select(new Segmentation<TFrom, TTo>(select));
+
+		public static ISelect<TIn, ArrayView<TTo>> Skip<TIn, TTo>(
+			this ISelect<TIn, ArrayView<TTo>> @this, uint skip)
+			=> @this.Select(new SkipSelection<TTo>(skip));
+
+		public static ISelect<TIn, ArrayView<TTo>> Take<TIn, TTo>(
+			this ISelect<TIn, ArrayView<TTo>> @this, uint take)
+			=> @this.Select(new TakeSelection<TTo>(take));
 
 		public static ISelect<TIn, ArrayView<TOut>> Where<TIn, TOut>(
 			this ISelect<TIn, ArrayView<TOut>> @this, Expression<Func<TOut, bool>> where)
@@ -82,7 +91,7 @@ namespace Super
 			=> @this.Select(x => x.Get());
 
 		public static ISelect<TIn, Array<TOut>> Release<TIn, TOut>(this ISelect<TIn, ArrayView<TOut>> @this)
-			=> @this.Select(Release<TOut>.Default);
+			=> @this.Select(Release<TOut>.Default);*/
 
 		public static ISelect<TIn, ReadOnlyMemory<TTo>> Select<TIn, TFrom, TTo>(
 			this ISelect<TIn, ReadOnlyMemory<TFrom>> @this, Expression<Func<TFrom, TTo>> select)
