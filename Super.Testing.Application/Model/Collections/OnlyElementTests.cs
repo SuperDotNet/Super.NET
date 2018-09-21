@@ -1,16 +1,10 @@
-﻿using AutoFixture;
-using FluentAssertions;
-using Super.Model.Collections;
-using System.Linq;
-using Xunit;
-
-// ReSharper disable ComplexConditionExpression
+﻿// ReSharper disable ComplexConditionExpression
 
 namespace Super.Testing.Application.Model.Collections
 {
 	public sealed class OnlyElementTests
 	{
-		[Fact]
+		/*[Fact]
 		void Verify()
 		{
 			var data     = new Fixture().CreateMany<string>(100).ToArray();
@@ -33,7 +27,7 @@ namespace Super.Testing.Application.Model.Collections
 			var data     = new[] {"One", "Two", "Three"};
 			var selected = sut.Get(new ArrayView<string>(data));
 			selected.Get().Should().Equal("OneHello!3", "TwoHello!3", "ThreeHello!5");
-		}
+		}*/
 
 		/*public sealed class OnlySelector<T> : ISelect<ImmutableArray<T>, T>
 		{

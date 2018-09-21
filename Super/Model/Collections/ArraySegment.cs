@@ -8,39 +8,41 @@ namespace Super.Model.Collections
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static ArrayView<T> Copy<T>(in this ArrayView<T> @this, T[] into, uint start = 0)
 		{
-			System.Array.ConstrainedCopy(@this.Array, (int)@this.Offset, into, (int)start, (int)@this.Count);
+			System.Array.ConstrainedCopy(@this.Array, (int)@this.Start, into, (int)start, (int)@this.Length);
 			return @this;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static ArrayView<T> Resize<T>(in this ArrayView<T> @this, uint size) => @this.Resize(@this.Offset, size);
+		public static ArrayView<T> Resize<T>(in this ArrayView<T> @this, uint size) => @this.Resize(@this.Start, size);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static ArrayView<T> Resize<T>(in this ArrayView<T> @this, uint start, uint size)
 		{
 			var index  = start;
 			var length = size;
-			return index != @this.Offset || length != @this.Count ? new ArrayView<T>(@this.Array, index, length) : @this;
+			return index != @this.Start || length != @this.Length ? new ArrayView<T>(@this.Array, index, length) : @this;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static ArrayView<T> Resize<T>(in this ArrayView<T> @this, in Selection selection)
 		{
-			var length = selection.Length.GetValueOrDefault(@this.Count);
-			return selection.Start != @this.Offset || length != @this.Count ?
+			var length = selection.Length.GetValueOrDefault(@this.Length);
+			return selection.Start != @this.Start || length != @this.Length ?
 				       new ArrayView<T>(@this.Array, selection.Start, length) : @this;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Array<T> Get<T>(in this ArrayView<T> @this) => new Array<T>(@this.Offset == 0 && @this.Count == @this.Array.Length ? @this.Array : @this.Copy());
+		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Array<T> Get<T>(in this ArrayView<T> @this) => new Array<T>(@this.Start == 0 && @this.Length == @this.Array.Length ? @this.Array : @this.Copy());*/
 
 		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] Source<T>(in this ArrayView<T> @this) => @this.Offset == 0 && @this.Count == @this.Array.Length ? @this.Array : @this.Copy();*/
 
+		public static Array<T> Result<T>(in this ArrayView<T> @this) => new Array<T>(Collections.Result<T>.Default.Get(@this));
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] Copy<T>(in this ArrayView<T> @this)
 		{
-			var result = new T[@this.Count];
+			var result = new T[@this.Length];
 			@this.Copy(result);
 			return result;
 		}
@@ -52,17 +54,17 @@ namespace Super.Model.Collections
 
 		public ArrayView(T[] array) : this(array, 0, (uint)array.Length) {}
 
-		public ArrayView(T[] array, uint offset, uint count)
+		public ArrayView(T[] array, uint start, uint length)
 		{
 			Array  = array;
-			Offset  = offset;
-			Count = count;
+			Start  = start;
+			Length = length;
 		}
 
 		public T[] Array { get; }
 
-		public uint Offset { get; }
+		public uint Start { get; }
 
-		public uint Count { get; }
+		public uint Length { get; }
 	}
 }

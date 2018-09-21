@@ -1,10 +1,7 @@
 using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Runtime.Activation;
-using System;
 using System.Buffers;
-using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 
 namespace Super.Model.Collections
 {
@@ -27,7 +24,7 @@ namespace Super.Model.Collections
 		public TTo[] Destination { get; }
 	}
 
-	public readonly struct Store<T>
+	/*public readonly struct Store<T>
 	{
 		public Store(T[] instance, uint requested)
 		{
@@ -38,7 +35,7 @@ namespace Super.Model.Collections
 		public T[] Instance { get; }
 
 		public uint Requested { get; }
-	}
+	}*/
 
 	/*public interface IStores<T> : ISelect<uint, Store<T>> {}
 
@@ -187,7 +184,7 @@ namespace Super.Model.Collections
 		public ISelection<_, TTo> Get() => null;
 	}*/
 
-	sealed class Segmentation<_, T> : ISegmentation<_, T>
+	/*sealed class Segmentation<_, T> : ISegmentation<_, T>
 	{
 		readonly Selection<Segue<_, T>, ArrayView<T>> _select;
 		readonly ILease<_>                            _source;
@@ -207,14 +204,14 @@ namespace Super.Model.Collections
 
 		public ArrayView<T> Get(in ArrayView<_> parameter)
 		{
-			var lease  = /*_lease.Get(parameter.Count)*/new T[parameter.Count];
+			var lease  = /*_lease.Get(parameter.Count)#1#new T[parameter.Count];
 			var result = _select(new Segue<_, T>(parameter, lease));
 			//_source.Execute(parameter);
 			return result;
 		}
-	}
+	}*/
 
-	sealed class SegmentSelect<TIn, TOut> : ISegmentSelect<TIn, TOut>
+	/*sealed class SegmentSelect<TIn, TOut> : ISegmentSelect<TIn, TOut>
 	{
 		readonly static ISelect<Expression<Func<TIn, TOut>>, Action<TIn[], TOut[], uint, uint>>
 			Select = InlineSelections<TIn, TOut>.Default.Compile();
@@ -230,39 +227,15 @@ namespace Super.Model.Collections
 			_iterate(parameter.Source.Array, parameter.Destination, parameter.Source.Offset, parameter.Source.Count);
 			return new ArrayView<TOut>(parameter.Destination, parameter.Source.Offset, parameter.Source.Count);
 		}
-	}
-
-	sealed class WhereSegment<T> : ISegment<T>
-	{
-		readonly Func<T, bool> _where;
-
-		public WhereSegment(Expression<Func<T, bool>> where) : this(where.Compile()) {}
-
-		public WhereSegment(Func<T, bool> where) => _where = where;
-
-		public ArrayView<T> Get(in ArrayView<T> parameter)
-		{
-			var used  = parameter.Count;
-			var array = parameter.Array;
-			var count = 0u;
-			for (var i = 0u; i < used; i++)
-			{
-				var item = array[i];
-				if (_where(item))
-				{
-					array[count++] = item;
-				}
-			}
-
-			return parameter.Resize(count);
-		}
-	}
+	}*/
 
 
 
 
 
-	sealed class SkipSelection<T> : ISegment<T>
+
+
+	/*sealed class SkipSelection<T> : ISegment<T>
 	{
 		readonly uint _skip;
 
@@ -282,7 +255,7 @@ namespace Super.Model.Collections
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ArrayView<T> Get(in ArrayView<T> parameter)
 			=> parameter.Resize(_take);
-	}
+	}*/
 
 
 }

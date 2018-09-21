@@ -39,17 +39,14 @@ namespace Super.Model.Collections
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public T[] Get(in ArrayView<T> parameter)
-			=> parameter.Offset == 0 && parameter.Count == parameter.Array.Length ? parameter.Array : Fill(parameter);
+			=> parameter.Start == 0 && parameter.Length == parameter.Array.Length ? parameter.Array : Fill(parameter);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		static T[] Fill(in ArrayView<T> parameter)
 		{
-			/*var result = parameter.Array;
-			Array.Copy(ref result, (int)parameter.Count);
-			return result;*/
-			var length = (int)parameter.Count;
+			var length = (int)parameter.Length;
 			var result = new T[length];
-			Array.ConstrainedCopy(parameter.Array, (int)parameter.Offset, result, 0, length);
+			Array.ConstrainedCopy(parameter.Array, (int)parameter.Start, result, 0, length);
 			return result;
 		}
 	}
@@ -170,26 +167,100 @@ namespace Super.Model.Collections
 		}
 	}
 
-	sealed class SkipSelection<_, T> : IAlteration<ArrayResultView<_, T>>
+	public interface ILink<_, T> : IEnhancedSelect<ArrayResultView<_, T>, ArrayResultView<_, T>> {}
+
+	sealed class SkipLink<_, T> : ILink<_, T>
 	{
 		readonly uint _skip;
 
-		public SkipSelection(uint skip) => _skip = skip;
+		public SkipLink(uint skip) => _skip = skip;
 
-		public ArrayResultView<_, T> Get(ArrayResultView<_, T> parameter)
+		public ArrayResultView<_, T> Get(in ArrayResultView<_, T> parameter)
 			=> new ArrayResultView<_, T>(parameter.Source, parameter.Stores, parameter.Result,
 			                             new Selection(parameter.Selection.Start + _skip,
 			                                           parameter.Selection.Length - _skip));
 	}
 
-	sealed class TakeSelection<_, T> : IAlteration<ArrayResultView<_, T>>
+	sealed class TakeLink<_, T> : ILink<_, T>
 	{
 		readonly uint _take;
 
-		public TakeSelection(uint take) => _take = take;
+		public TakeLink(uint take) => _take = take;
 
-		public ArrayResultView<_, T> Get(ArrayResultView<_, T> parameter)
+		public ArrayResultView<_, T> Get(in ArrayResultView<_, T> parameter)
 			=> new ArrayResultView<_, T>(parameter.Source, parameter.Stores, parameter.Result,
 			                             new Selection(parameter.Selection.Start, _take));
+	}
+
+	sealed class WhereLink<_, T> : LinkAlteration<_, T>
+	{
+		public WhereLink(Func<T, bool> where) : base(new WhereSegment<T>(where)) {}
+	}
+
+	class LinkAlteration<_, T> : ILink<_, T>
+	{
+		readonly IStoreAlteration<T> _alteration;
+
+		public LinkAlteration(ISegment<T> segment) : this(new StoreAlteration<T>(segment)) {}
+
+		public LinkAlteration(IStoreAlteration<T> alteration) => _alteration = alteration;
+
+		public ArrayResultView<_, T> Get(in ArrayResultView<_, T> parameter)
+			=> new ArrayResultView<_, T>(parameter.Source,
+			                             new StoresAlteration<T>(parameter.Stores, _alteration),
+			                             parameter.Result, parameter.Selection);
+	}
+
+	public interface IStoreAlteration<T> : IAlteration<ISelect<IEnumerable<T>, ArrayView<T>>> {}
+
+	sealed class StoresAlteration<T> : IStores<T>
+	{
+		readonly IStores<T> _stores;
+		readonly IStoreAlteration<T> _alteration;
+
+		public StoresAlteration(IStores<T> stores, IStoreAlteration<T> alteration)
+		{
+			_stores = stores;
+			_alteration = alteration;
+		}
+
+		public Complete<T> Get() => _stores.Get();
+
+		public ISelect<IEnumerable<T>, ArrayView<T>> Get(in Selection parameter)
+			=> _alteration.Get(_stores.Get(in parameter));
+	}
+
+	sealed class StoreAlteration<T> : IStoreAlteration<T>
+	{
+		readonly ISegment<T> _select;
+
+		public StoreAlteration(ISegment<T> select) => _select = @select;
+
+		public ISelect<IEnumerable<T>, ArrayView<T>> Get(ISelect<IEnumerable<T>, ArrayView<T>> parameter)
+			=> parameter.Select(_select);
+	}
+
+	sealed class WhereSegment<T> : ISegment<T>
+	{
+		readonly Func<T, bool> _where;
+
+		public WhereSegment(Func<T, bool> where) => _where = where;
+
+		public ArrayView<T> Get(in ArrayView<T> parameter)
+		{
+			var used  = parameter.Length;
+			var array = parameter.Array;
+			var count = 0u;
+			for (var i = parameter.Start; i < used; i++)
+			{
+				var item = array[i];
+				if (_where(item))
+				{
+					array[count++] = item;
+				}
+			}
+
+			return parameter.Resize(0, count);
+		}
 	}
 }

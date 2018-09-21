@@ -51,14 +51,20 @@ namespace Super
 
 		/**/
 
-		public static ArrayResultView<_, T> Iteration<_, T>(this ISelect<_, T[]> @this)
+		public static ArrayResultView<_, T> Iterate<_, T>(this ISelect<_, T[]> @this)
 			=> new ArrayResultView<_, T>(@this, ArrayStores<T>.Default);
 
 		public static ArrayResultView<_, T> Skip<_, T>(in this ArrayResultView<_, T> @this, uint skip)
-			=> new SkipSelection<_, T>(skip).Get(@this);
+			=> new SkipLink<_, T>(skip).Get(@this);
 
 		public static ArrayResultView<_, T> Take<_, T>(in this ArrayResultView<_, T> @this, uint take)
-			=> new TakeSelection<_, T>(take).Get(@this);
+			=> new TakeLink<_, T>(take).Get(@this);
+
+		public static ArrayResultView<_, T> WhereBy<_, T>(in this ArrayResultView<_, T> @this, Expression<Func<T, bool>> where)
+			=> new WhereLink<_, T>(where.Compile()).Get(@this);
+
+		public static ArrayResultView<_, T> Where<_, T>(in this ArrayResultView<_, T> @this, Func<T, bool> where)
+			=> new WhereLink<_, T>(where).Get(@this);
 
 		public static ISelect<_, T[]> Reference<_, T>(in this ArrayResultView<_, T> @this)
 			=> ResultSelect<_, T>.Default.Get(@this);

@@ -18,7 +18,7 @@ namespace Super.Model.Collections
 		{
 			var  array = _views;
 			var  first = array[0];
-			var  total = first.Count;
+			var  total = first.Length;
 			var  pages = 1u;
 			bool next;
 			do
@@ -44,7 +44,7 @@ namespace Super.Model.Collections
 			for (var i = 0u; i < pages; i++)
 			{
 				var segment = array[i].Copy(destination, offset);
-				offset += segment.Count;
+				offset += segment.Length;
 				_lease.Execute(segment);
 			}
 

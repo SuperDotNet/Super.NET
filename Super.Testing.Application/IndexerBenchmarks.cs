@@ -1,6 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Super.Model.Selection;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace Super.Testing.Application
@@ -45,9 +46,10 @@ namespace Super.Testing.Application
 					.Take(5)*/
 
 				_iteration = In<int[]>.Start()
-				                      .Iteration()
-				                      .Skip(Count - 5)
-				                      .Take(5)
+				                      .Iterate()
+				                      .WhereBy(x => x > 1000)
+				                      /*.Skip(Count - 5)
+				                      .Take(5)*/
 				                      .Reference();
 			}
 		}
@@ -55,13 +57,13 @@ namespace Super.Testing.Application
 		uint _count;
 
 		[Benchmark]
-		public Array IterateClassic() => Enumerable.Range(0, (int)Count) //.Select(_selection)
-			/*.Where(x => x > 1000)*/
-			.Skip((int)(Count - 5u))
-			.Take(5)
+		public Array IterateClassic() => _data //.Select(_selection)
+			.Where(x => x > 1000)
+			/*.Skip((int)(Count - 5u))
+			.Take(5)*/
 			.ToArray();
 
-		
+
 		[Benchmark(Baseline = true)]
 		public Array Iteration() => _iteration.Get(_data);
 	}

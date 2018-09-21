@@ -107,7 +107,7 @@ namespace Super.Model.Collections
 		}
 	}
 
-	sealed class Release<T> : ISelect<ArrayView<T>, Array<T>>
+	/*sealed class Release<T> : ISelect<ArrayView<T>, Array<T>>
 	{
 		public static Release<T> Default { get; } = new Release<T>();
 
@@ -127,5 +127,5 @@ namespace Super.Model.Collections
 
 			return result;
 		}
-	}
+	}*/
 }
