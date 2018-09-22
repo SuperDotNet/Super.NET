@@ -50,19 +50,16 @@ namespace Super
 			this ISelect<TFrom, IEnumerable<TTo>> @this)
 			=> @this.ToDelegate().To(I<SelectManySelector<TFrom, TTo>>.Default);
 
-		/**//*public DefinitionAlteration(IContentAlteration<T> content, ISelect<T[], ArrayView<T>> enter = null,
-		                            Complete<T> exit = null)
-			: this(new BodyContentAlteration<T>(content, enter, exit)) {}*/
+		/**/
+
+		public static Composition<_, T> Iterate<_, T>(this ISelect<_, T[]> @this) => new ArrayComposition<_, T>(@this);
 
 		public static Composition<_, T> Alter<_, T>(this Composition<_, T> @this, IContentAlteration<T> alteration,
-		                                            ISelect<T[], ArrayView<T>> enter = null, Complete<T> exit = null)
+		                                            ISelectView<T> enter = null, Complete<T> exit = null)
 			=> Alter(@this, new DefinitionAlteration<T>(new BodyContentAlteration<T>(alteration, enter, exit)));
 
 		public static Composition<_, T> Alter<_, T>(this Composition<_, T> @this, IDefinitionAlteration<T> alteration)
 			=> new Composition<_, T>(@this.Enter, alteration.Get(@this.Definition));
-
-		public static Composition<_, T> Iterate<_, T>(this ISelect<_, T[]> @this)
-			=> ArrayCompositions<_, T>.Default.Get(@this);
 
 		public static Composition<_, T> Skip <_, T>(this Composition<_, T> @this, uint skip) => @this.Alter(new Skip<T>(skip));
 
@@ -75,7 +72,7 @@ namespace Super
 			=> @this.Alter(new WhereDefinition<T>(where));
 
 		public static ISelect<_, T[]> Reference<_, T>(this Composition<_, T> @this)
-			=> Compose<_, T>.Default.Get(@this);
+			=> Composer<_, T>.Default.Get(@this);
 
 		public static ISelect<_, Array<T>> Result<_, T>(this Composition<_, T> @this)
 			=> @this.Reference().Select(x => new Array<T>(x));

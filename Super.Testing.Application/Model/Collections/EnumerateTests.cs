@@ -22,7 +22,7 @@ namespace Super.Testing.Application.Model.Collections
 		{
 			var source = Objects.Count.Default.Get(count);
 			var sut = Enumerate<int>.Default;
-			sut.Get(source.Cast<int>().GetEnumerator()).Result().Reference().Should().Equal(source);
+			sut.Get(source.Cast<int>().GetEnumerator()).Result().Should().Equal(source);
 		}
 	}
 }

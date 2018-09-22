@@ -13,7 +13,7 @@ namespace Super.Testing.Application
 		}
 	}
 
-	sealed class Run : Run<ArrayBenchmarks>
+	sealed class Run : Run<IndexerBenchmarks>
 	{
 		public static Run Default { get; } = new Run();
 

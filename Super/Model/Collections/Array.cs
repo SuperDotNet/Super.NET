@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Super.Model.Collections
 {
-	public readonly struct Array<T> : IReadOnlyList<T>
+	public readonly struct Array<T> : ISource<ImmutableArray<T>>, IReadOnlyList<T>
 	{
 		public static Array<T> Empty { get; } = new Array<T>(Empty<T>.Array);
 
@@ -19,33 +19,39 @@ namespace Super.Model.Collections
 
 		public static implicit operator T[](Array<T> source) => source.Copy();
 
-		readonly T[] _source;
+		readonly T[] _reference;
+		readonly ImmutableArray<T> _array;
 
-		public Array(T[] source) : this(source, (uint)source.Length) {}
+		public Array(T[] reference) : this(reference, ImmutableArray.Create(reference), (uint)reference.Length) {}
 
-		public Array(T[] source, uint length)
+		public Array(T[] reference, ImmutableArray<T> array, uint length)
 		{
-			_source = source;
+			_reference = reference;
+			_array = array;
 			Length  = length;
 		}
 
 		public uint Length { get; }
 
-		public ref readonly T this[uint index] => ref _source[index];
+		public ref readonly T this[uint index] => ref _reference[index];
 
-		public T[] Reference() => _source;
+		public T[] Copy()
+		{
+			var length = _reference.Length;
+			var result = new T[length];
+			Array.Copy(_reference, 0, result, 0, length);
+			return result;
+		}
 
-		public T[] Copy() => _source.ToArray();
+		public ImmutableArray<T> Get() => _array;
 
-		public ImmutableArray<T> Get() => ImmutableArray.Create(_source);
-
-		public IEnumerator<T> GetEnumerator() => _source.Hide().GetEnumerator();
+		public IEnumerator<T> GetEnumerator() => _reference.Hide().GetEnumerator();
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-		public int Count => _source.Length;
+		public int Count => _reference.Length;
 
-		public T this[int index] => _source[index];
+		public T this[int index] => _reference[index];
 	}
 
 	static class Implementations

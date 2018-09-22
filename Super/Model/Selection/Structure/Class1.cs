@@ -18,7 +18,7 @@ namespace Super.Model.Selection.Structure
 		public T Get(in T parameter) => parameter;
 	}
 
-	class Structure<TIn, TFrom, TTo> : IStructure<TIn, TTo> where TIn : struct where TFrom : struct
+	sealed class Structure<TIn, TFrom, TTo> : IStructure<TIn, TTo> where TIn : struct where TFrom : struct
 	{
 		readonly Selection<TIn, TFrom>  _source;
 		readonly Selection<TFrom, TTo> _select;
@@ -31,5 +31,14 @@ namespace Super.Model.Selection.Structure
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public TTo Get(in TIn parameter) => _select(_source(parameter));
+	}
+
+	class DelegatedStructure<TIn, TOut> : IStructure<TIn, TOut> where TIn : struct
+	{
+		readonly Selection<TIn, TOut> _select;
+
+		public DelegatedStructure(Selection<TIn, TOut> select) => _select = select;
+
+		public TOut Get(in TIn parameter) => _select(in parameter);
 	}
 }
