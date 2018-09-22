@@ -18,12 +18,12 @@ namespace Super.Model.Selection
 		public TTo Get(TParameter parameter) => _select(_source(parameter));
 	}
 
-	class EnhancedSelection<TIn, TFrom, TTo> : ISelect<TIn, TTo> where TFrom : struct
+	class StructureSelection<TIn, TFrom, TTo> : ISelect<TIn, TTo> where TFrom : struct
 	{
 		readonly Func<TIn, TFrom>      _source;
 		readonly Selection<TFrom, TTo> _select;
 
-		public EnhancedSelection(Func<TIn, TFrom> source, Selection<TFrom, TTo> select)
+		public StructureSelection(Func<TIn, TFrom> source, Selection<TFrom, TTo> select)
 		{
 			_select = select;
 			_source = source;

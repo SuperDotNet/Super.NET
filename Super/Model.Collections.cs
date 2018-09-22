@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Linq.Expressions;
+// ReSharper disable TooManyArguments
 
 namespace Super
 {
@@ -49,27 +50,34 @@ namespace Super
 			this ISelect<TFrom, IEnumerable<TTo>> @this)
 			=> @this.ToDelegate().To(I<SelectManySelector<TFrom, TTo>>.Default);
 
-		/**/
+		/**//*public DefinitionAlteration(IContentAlteration<T> content, ISelect<T[], ArrayView<T>> enter = null,
+		                            Complete<T> exit = null)
+			: this(new BodyContentAlteration<T>(content, enter, exit)) {}*/
 
-		public static ArrayResultView<_, T> Iterate<_, T>(this ISelect<_, T[]> @this)
-			=> new ArrayResultView<_, T>(@this, ArrayStores<T>.Default);
+		public static Composition<_, T> Alter<_, T>(this Composition<_, T> @this, IContentAlteration<T> alteration,
+		                                            ISelect<T[], ArrayView<T>> enter = null, Complete<T> exit = null)
+			=> Alter(@this, new DefinitionAlteration<T>(new BodyContentAlteration<T>(alteration, enter, exit)));
 
-		public static ArrayResultView<_, T> Skip<_, T>(in this ArrayResultView<_, T> @this, uint skip)
-			=> new SkipLink<_, T>(skip).Get(@this);
+		public static Composition<_, T> Alter<_, T>(this Composition<_, T> @this, IDefinitionAlteration<T> alteration)
+			=> new Composition<_, T>(@this.Enter, alteration.Get(@this.Definition));
 
-		public static ArrayResultView<_, T> Take<_, T>(in this ArrayResultView<_, T> @this, uint take)
-			=> new TakeLink<_, T>(take).Get(@this);
+		public static Composition<_, T> Iterate<_, T>(this ISelect<_, T[]> @this)
+			=> ArrayCompositions<_, T>.Default.Get(@this);
 
-		public static ArrayResultView<_, T> WhereBy<_, T>(in this ArrayResultView<_, T> @this, Expression<Func<T, bool>> where)
-			=> new WhereLink<_, T>(where.Compile()).Get(@this);
+		public static Composition<_, T> Skip <_, T>(this Composition<_, T> @this, uint skip) => @this.Alter(new Skip<T>(skip));
 
-		public static ArrayResultView<_, T> Where<_, T>(in this ArrayResultView<_, T> @this, Func<T, bool> where)
-			=> new WhereLink<_, T>(where).Get(@this);
+		public static Composition<_, T> Take< _, T>(this Composition<_, T> @this, uint take)=> @this.Alter(new Take<T>(take));
 
-		public static ISelect<_, T[]> Reference<_, T>(in this ArrayResultView<_, T> @this)
-			=> ResultSelect<_, T>.Default.Get(@this);
+		public static Composition<_, T> WhereBy<_, T>(this Composition<_, T> @this, Expression<Func<T, bool>> where)
+			=> @this.Where(where.Compile());
 
-		public static ISelect<_, Array<T>> Result<_, T>(in this ArrayResultView<_, T> @this)
+		public static Composition<_, T> Where<_, T>(this Composition<_, T> @this, Func<T, bool> where)
+			=> @this.Alter(new WhereDefinition<T>(where));
+
+		public static ISelect<_, T[]> Reference<_, T>(this Composition<_, T> @this)
+			=> Compose<_, T>.Default.Get(@this);
+
+		public static ISelect<_, Array<T>> Result<_, T>(this Composition<_, T> @this)
 			=> @this.Reference().Select(x => new Array<T>(x));
 
 		/**/

@@ -7,9 +7,8 @@ namespace Super.Testing.Application
 		static void Main()
 		{
 			Run.Default.Get();
-			/*var benchmarks = new IndexerBenchmarks{ Count = 100_000u };
-			var iterate = benchmarks.Iterate();
-			var classic = benchmarks.IterateClassic();
+			/*var benchmarks = new IndexerBenchmarks{ Count = 10_000u };
+			var iterate = benchmarks.Iteration();
 			Console.WriteLine(iterate.Length);*/
 		}
 	}

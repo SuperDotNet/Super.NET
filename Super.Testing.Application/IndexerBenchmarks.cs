@@ -1,7 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Super.Model.Selection;
 using System;
-using System.IO;
 using System.Linq;
 
 namespace Super.Testing.Application
@@ -15,9 +14,9 @@ namespace Super.Testing.Application
 
 		//readonly Func<string, int> _selection = Select.Default;
 
-		 /*ISelect<Unit, Array<int>> _select;*/
-		ISelect<int[], int[]>     _iteration;
-		int[]                     _data;
+		/*ISelect<Unit, Array<int>> _select;*/
+		ISelect<int[], int[]> _iteration;
+		int[]                 _data;
 
 		/*[Params(1u, 2u, 3u, 4u, 5u, 8u, 16u, 32u, 64u, 128u, 256u, 512u, 1024u, 1025u, 2048u, 4096u, 8196u, 10_000u,
 			100_000u, 1_000_000u, 10_000_000u, 100_000_000u)]*/
@@ -33,23 +32,11 @@ namespace Super.Testing.Application
 				                  //.Select(x => string.Empty)
 				                  //.Take(count)
 				                  .ToArray();
-				/*var @select = _data.ToSource()
-				                   .Out()
-				                   .AsSelect();*/
-
-				/*_select = @select.Iterate()
-				                 .Skip(Count - 5)
-				                 .Take(5)
-				                 //.Selection(x => 0)
-				                 .Release();*/
-				/*.Skip(Count - 5)
-					.Take(5)*/
-
 				_iteration = In<int[]>.Start()
 				                      .Iterate()
 				                      .WhereBy(x => x > 1000)
-				                      /*.Skip(Count - 5)
-				                      .Take(5)*/
+				                      .Skip(8500)
+				                      .Take(5)
 				                      .Reference();
 			}
 		}
@@ -57,12 +44,11 @@ namespace Super.Testing.Application
 		uint _count;
 
 		[Benchmark]
-		public Array IterateClassic() => _data //.Select(_selection)
-			.Where(x => x > 1000)
-			/*.Skip((int)(Count - 5u))
-			.Take(5)*/
-			.ToArray();
-
+		public Array IterateClassic() => _data
+		                                 .Where(x => x > 1000)
+		                                 .Skip(8500)
+		                                 .Take(5)
+		                                 .ToArray();
 
 		[Benchmark(Baseline = true)]
 		public Array Iteration() => _iteration.Get(_data);

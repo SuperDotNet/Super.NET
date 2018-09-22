@@ -13,13 +13,13 @@ namespace Super.Testing.Application.Model.Collections
 		{
 			var numbers  = new[] {1, 2, 3, 4, 5};
 			var expected = numbers.Where(x => x > 3).ToArray();
-			In<int[]>.Start()
-			         .Iterate()
-			         .WhereBy(x => x > 3)
-			         .Reference()
-			         .Get(numbers)
-			         .Should()
-			         .Equal(expected);
+			var ints = In<int[]>.Start()
+			                    .Iterate()
+			                    .WhereBy(x => x > 3)
+			                    .Reference()
+			                    .Get(numbers);
+			ints.Should().Equal(expected);
+			ints.Should().NotBeSameAs(numbers);
 		}
 
 		[Fact]
@@ -27,23 +27,25 @@ namespace Super.Testing.Application.Model.Collections
 		{
 			var source   = Enumerable.Range(0, 10_000).ToArray();
 			var expected = source.Where(x => x > 1000).ToArray();
-			In<int[]>.Start()
-			         .Iterate()
-			         .WhereBy(x => x > 1000)
-			         .Reference()
-			         .Get(source)
-			         .Should()
-			         .Equal(expected);
+			var ints = In<int[]>.Start()
+			                    .Iterate()
+			                    .WhereBy(x => x > 1000)
+			                    .Reference()
+			                    .Get(source);
+			ints.Should().NotBeSameAs(source);
+			ints.Should().Equal(expected);
+			ints.Should().HaveCountGreaterThan(5000);
 		}
 
-		/*[Fact]
+		[Fact]
 		void VerifyWhereTake()
 		{
 			var numbers  = new[] {1, 2, 3, 4, 5};
 			var expected = numbers.Where(x => x > 3).Take(1).ToArray();
-			var actual   = In<int[]>.Start().Iterate().WhereAs(x => x > 3).Take(1).Reference().Get(numbers);
+			var actual   = In<int[]>.Start().Iterate().WhereBy(x => x > 3).Take(1).Reference().Get(numbers);
 			actual.Should().Equal(expected);
-		}*/
+			actual.Should().NotBeSameAs(numbers);
+		}
 
 		[Fact]
 		void Verify()
@@ -53,21 +55,30 @@ namespace Super.Testing.Application.Model.Collections
 			                   .Iterate()
 			                   .Skip(count - 5)
 			                   .Take(5)
-			                   .Result()
-			                   .Get(count)
-				//.Get()
-				;
+			                   .Reference()
+			                   .Get(count);
 			array.Should().HaveCount(5);
 
 			Objects.Count.Default.Get(count).Skip((int)(count - 5)).Take(5).Sum().Should().Be(array.Sum());
+		}
 
-			/*var segment = Objects.Count.Default
-			                          .Iterate()
-			                          .Selection(x => x + 1)
-			                          .Get(10_000);
-			segment.Count.Should().Be(10_000);
-
-			segment.ToArray().Sum(x => x).Should().Be(Objects.Count.Default.Get(10_000).Sum(x => x) + 10_000);*/
+		[Fact]
+		void VerifyWhereSkipTake()
+		{
+			var source = Enumerable.Range(0, 10_000).ToArray();
+			var count = 8500;
+			source
+				.Where(x => x > 1000)
+				.Skip(count)
+				.Take(5)
+				.Should()
+				.Equal(In<int[]>.Start()
+				                .Iterate()
+				                .WhereBy(x => x > 1000)
+				                .Skip((uint)count)
+				                .Take(5)
+				                .Reference()
+				                .Get(source));
 		}
 	}
 }

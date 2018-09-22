@@ -1,6 +1,5 @@
 ﻿using Super.Model.Commands;
 using Super.Model.Selection;
-using System.Buffers;
 using System.Collections.Generic;
 
 namespace Super.Model.Collections
@@ -93,17 +92,17 @@ namespace Super.Model.Collections
 	{
 		public static Lease<T> Default { get; } = new Lease<T>();
 
-		Lease() : this(ArrayPool<T>.Shared) {}
+		Lease() : this(Allotted<T>.Default) {}
 
-		readonly ArrayPool<T> _pool;
+		readonly IStores<T> _stores;
 
-		public Lease(ArrayPool<T> pool) => _pool = pool;
+		public Lease(IStores<T> stores) => _stores = stores;
 
-		public ArrayView<T> Get(uint parameter) => new ArrayView<T>(_pool.Rent((int)parameter), 0, parameter);
+		public ArrayView<T> Get(uint parameter) => new ArrayView<T>(_stores.Get(parameter), 0, parameter);
 
 		public void Execute(in ArrayView<T> parameter)
 		{
-			//_pool.Return(parameter.Array);
+			_stores.Return(parameter.Array);
 		}
 	}
 

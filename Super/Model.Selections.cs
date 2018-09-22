@@ -1,5 +1,6 @@
 ﻿using Super.Model.Commands;
 using Super.Model.Selection;
+using Super.Model.Selection.Structure;
 using Super.Model.Sources;
 using Super.Model.Specifications;
 using Super.Reflection;
@@ -76,8 +77,13 @@ namespace Super
 		public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this, ISelect<TFrom, TTo> select)
 			=> @this.Select(select.Get);
 
-		public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this, IEnhancedSelect<TFrom, TTo> select) where TFrom : struct
-			=> new EnhancedSelection<TIn,TFrom,TTo>(@this.Get, select.Get);
+		public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this, IStructure<TFrom, TTo> select) where TFrom : struct
+			=> new StructureSelection<TIn,TFrom,TTo>(@this.Get, select.Get);
+
+		public static IStructure<TIn, TTo> Select<TIn, TFrom, TTo>(this IStructure<TIn, TFrom> @this, IStructure<TFrom, TTo> select)
+			where TIn : struct
+			where TFrom : struct
+			=> new Structure<TIn,TFrom,TTo>(@this.Get, select.Get);
 
 		public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this, Func<TFrom, TTo> select)
 			=> new Selection<TIn, TFrom, TTo>(@this.Get, select);

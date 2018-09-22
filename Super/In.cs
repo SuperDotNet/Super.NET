@@ -1,5 +1,6 @@
 ﻿using Super.Model.Commands;
 using Super.Model.Selection;
+using Super.Model.Selection.Structure;
 using Super.Model.Sources;
 using Super.Model.Specifications;
 using Super.Reflection;
@@ -13,6 +14,8 @@ namespace Super
 	{
 		public static ISource<T> New<T>(Func<T> select) => new DelegatedSource<T>(select);
 		public static ISource<T> New<T>(ISpecification<T> specification) => new Source<T>(default).Unless(specification);
+
+		public static IStructure<T, T> Structure<T>() where T : struct => Model.Selection.Structure.Self<T>.Default;
 	}
 
 	public static class In<T>
@@ -37,7 +40,7 @@ namespace Super
 
 		public static ISelect<T, TResult> Start<TResult>(TResult @this) => new FixedResult<T, TResult>(@this);
 
-		public static ISelect<T, T> Start() => Self<T>.Default;
+		public static ISelect<T, T> Start() => Model.Selection.Self<T>.Default;
 
 		public static ISelect<T, TResult> Select<TResult>(ISource<TResult> @this) => @this.Out(I<T>.Default);
 

@@ -75,7 +75,7 @@ namespace Super.Runtime.Environment
 
 	static class Implementations<T>
 	{
-		public static ISource<IStore<T>> Store { get; } = SystemStores<T>.Default.Select(I<Model.Sources.Store<T>>.Default);
+		public static ISource<IStore<T>> Store { get; } = SystemStores<T>.Default.Select(I<Store<T>>.Default);
 	}
 
 	public class SystemStore<T> : Deferred<T>, IStore<T>

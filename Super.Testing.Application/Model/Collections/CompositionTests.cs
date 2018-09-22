@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Super.Testing.Application.Model.Collections
 {
-	public class ReturnedTests
+	public class CompositionTests
 	{
 		[Fact]
 		void Verify()
@@ -49,16 +49,5 @@ namespace Super.Testing.Application.Model.Collections
 			result.Should().Equal(expected);
 			result.Should().NotBeSameAs(array);
 		}
-
-		/*[Fact]
-		void SkipTakeTemp()
-		{
-			var array    = new[] {1, 2, 3, 4, 5};
-			var expected = array.Skip(3).Take(2).ToArray();
-
-			var result = In<int[]>.Start().Iterate().Skip(3).Take(2).Release().Get(array);
-			result.Should().Equal(expected);
-			result.Should().NotBeSameAs(array);
-		}*/
 	}
 }
