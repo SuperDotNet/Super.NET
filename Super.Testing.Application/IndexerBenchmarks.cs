@@ -34,9 +34,9 @@ namespace Super.Testing.Application
 				                  .ToArray();
 				_iteration = In<int[]>.Start()
 				                      .Iterate()
-				                      .WhereBy(x => x > 1000)
+				                      /*.WhereBy(x => x > 1000)
 				                      .Skip(8500)
-				                      .Take(5)
+				                      .Take(5)*/
 				                      .Reference();
 			}
 		}
@@ -45,9 +45,9 @@ namespace Super.Testing.Application
 
 		[Benchmark]
 		public Array IterateClassic() => _data
-		                                 .Where(x => x > 1000)
+		                                 /*.Where(x => x > 1000)
 		                                 .Skip(8500)
-		                                 .Take(5)
+		                                 .Take(5)*/
 		                                 .ToArray();
 
 		[Benchmark(Baseline = true)]
