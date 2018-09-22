@@ -1,35 +1,13 @@
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
 using Super.Model.Selection.Structure;
+using Super.Runtime;
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Super.Model.Collections
 {
-	/*public readonly struct ArrayResultView<_, T>
-	{
-		public ArrayResultView(ISelect<_, IEnumerable<T>> source, IStores<T> stores)
-			: this(source, stores, Result<T>.Default, Selection.Default) {}
-
-		// ReSharper disable once TooManyDependencies
-		public ArrayResultView(ISelect<_, IEnumerable<T>> source, IStores<T> stores,
-		                       IStructure<ArrayView<T>, T[]> result, Selection selection)
-		{
-			Source    = source;
-			Stores    = stores;
-			Result    = result;
-			Selection = selection;
-		}
-
-		public ISelect<_, IEnumerable<T>> Source { get; }
-
-		public IStructure<ArrayView<T>, T[]> Result { get; }
-
-		public Selection Selection { get; }
-
-		public IStores<T> Stores { get; }
-	}*/
-
 	sealed class Result<T> : IStructure<ArrayView<T>, T[]>
 	{
 		public static Result<T> Default { get; } = new Result<T>();
@@ -44,22 +22,59 @@ namespace Super.Model.Collections
 		public T[] Get(in ArrayView<T> parameter)
 			=> parameter.Start == 0 && parameter.Length == parameter.Array.Length
 				   ? parameter.Array
-				   : Fill(in parameter);
+				   : parameter.Copied(_stores.Get(parameter.Length).Instance);
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		T[] Fill(in ArrayView<T> parameter)
-		{
-			var result = _stores.Get(parameter.Length);
-			Array.Copy(parameter.Array, (int)parameter.Start, result, 0, (int)parameter.Length);
-			return result;
-		}
+
 	}
 
 	sealed class ArrayStore<T> : Select<T[], Store<T>>
 	{
 		public static ArrayStore<T> Default { get; } = new ArrayStore<T>();
 
-		ArrayStore() : base(x => new Store<T>(x, (uint)x.Length)) {}
+		ArrayStore() : base(x => new Store<T>(x)) {}
+	}
+
+	/*sealed class AllottedStores<T> : ISelect<T[], Store<T>>
+	{
+		public static AllottedStores<T> Default { get; } = new AllottedStores<T>();
+
+		AllottedStores() : this(Allotted<T>.Default) {}
+
+		readonly IStores<T> _stores;
+
+		public AllottedStores(IStores<T> stores) => _stores = stores;
+
+		public Store<T> Get(T[] parameter) => new Store<T>(_stores.Get(parameter.Length), (uint)parameter.Length);
+	}*/
+
+	sealed class RuntimeStores<T> : ISelect<IEnumerable<T>, Store<T>>
+	{
+		public static RuntimeStores<T> Default { get; } = new RuntimeStores<T>();
+
+		RuntimeStores() : this(ArrayStore<T>.Default.Get, Enumerate<T>.Default.Get) {}
+
+		readonly Func<T[], Store<T>> _array;
+		readonly Func<IEnumerator<T>, Store<T>> _enumerate;
+
+		public RuntimeStores(Func<T[], Store<T>> array, Func<IEnumerator<T>, Store<T>> enumerate)
+		{
+			_array = array;
+			_enumerate = enumerate;
+		}
+
+		public Store<T> Get(IEnumerable<T> parameter)
+		{
+/*
+			switch (parameter)
+			{
+				case T[] array:
+					return _array(array);
+				default:
+					return _enumerate(parameter.GetEnumerator());
+			}
+*/
+			return _enumerate(parameter.GetEnumerator());
+		}
 	}
 
 	sealed class SelectView<T> : ISelectView<T>
@@ -82,12 +97,7 @@ namespace Super.Model.Collections
 		public Copy(IStores<T> stores) => _stores = stores;
 
 		public ArrayView<T> Get(in Store<T> parameter)
-		{
-			var store  = _stores.Get(parameter.Length);
-			var result = new ArrayView<T>(store, 0, parameter.Length);
-			Array.Copy(parameter.Instance, 0, store, 0, parameter.Length);
-			return result;
-		}
+			=> new ArrayView<T>(parameter.Copied(_stores.Get(parameter.Length).Instance), 0, parameter.Length);
 	}
 
 	public interface ISelectView<T> : IStructure<Store<T>, ArrayView<T>> {}
@@ -157,9 +167,8 @@ namespace Super.Model.Collections
 
 		public IStructure<Store<T>, ArrayView<T>> Get(Body<T> parameter)
 		{
-			var content = _content.Get(parameter.Content);
-			var select  = parameter.Enter.Select(content);
-			var result  = parameter.Exit != null ? select.Select(new Completed<T>(parameter.Exit)) : select;
+			var select = parameter.Enter.Select(_content.Get(parameter.Content));
+			var result = parameter.Exit != null ? select.Select(new Completed<T>(parameter.Exit)) : select;
 			return result;
 		}
 	}
@@ -183,6 +192,10 @@ namespace Super.Model.Collections
 
 	public readonly struct Store<T>
 	{
+		public static Store<T> Empty { get; } = new Store<T>(Empty<T>.Array);
+
+		public Store(T[] instance) : this(instance, (uint)instance.Length) {}
+
 		public Store(T[] instance, uint length)
 		{
 			Instance = instance;
@@ -197,6 +210,12 @@ namespace Super.Model.Collections
 	sealed class ArrayComposition<_, T> : Composition<_, T>
 	{
 		public ArrayComposition(ISelect<_, T[]> enter) : base(enter.Select(ArrayStore<T>.Default)) {}
+	}
+
+	sealed class EnumerableComposition<_, T> : Composition<_, T>
+	{
+		public EnumerableComposition(ISelect<_, IEnumerable<T>> enter)
+			: base(enter.Select(RuntimeStores<T>.Default), Allotted<T>.Default.Execute) {}
 	}
 
 	public class Composition<_, T>
@@ -342,7 +361,7 @@ namespace Super.Model.Collections
 	{
 		readonly static Complete<T> Complete = Allotted<T>.Default.Execute;
 
-		public AllottedDefinitionAlteration(ISegment<T> segment): base(Copy<T>.Default, segment, Complete) {}
+		public AllottedDefinitionAlteration(ISegment<T> segment) : base(Copy<T>.Default, segment, Complete) {}
 	}
 
 	public interface IBodyAlteration<T> : IAlteration<Body<T>> {}

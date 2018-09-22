@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
-using Super.Model.Collections;
-using System.Linq;
+using System.Collections.Generic;
 using Xunit;
 
 namespace Super.Testing.Application.Model.Collections
@@ -21,8 +20,9 @@ namespace Super.Testing.Application.Model.Collections
 		void Verify(uint count)
 		{
 			var source = Objects.Count.Default.Get(count);
-			var sut = Enumerate<int>.Default;
-			sut.Get(source.Cast<int>().GetEnumerator()).Result().Should().Equal(source);
+			var sut = In<IEnumerable<int>>.Start().Iterate().Reference().Get(source);
+
+			sut.Should().Equal(source);
 		}
 	}
 }

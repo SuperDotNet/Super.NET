@@ -53,6 +53,8 @@ namespace Super
 		/**/
 
 		public static Composition<_, T> Iterate<_, T>(this ISelect<_, T[]> @this) => new ArrayComposition<_, T>(@this);
+		public static Composition<_, T> Iterate<_, T>(this ISelect<_, IEnumerable<T>> @this)
+			=> new EnumerableComposition<_, T>(@this);
 
 		public static Composition<_, T> Alter<_, T>(this Composition<_, T> @this, IContentAlteration<T> alteration,
 		                                            ISelectView<T> enter = null, Complete<T> exit = null)
