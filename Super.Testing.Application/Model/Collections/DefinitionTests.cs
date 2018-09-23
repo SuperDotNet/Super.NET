@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Super.Testing.Application.Model.Collections
 {
-	public class CompositionTests
+	public class DefinitionTests
 	{
 		[Fact]
 		void Verify()

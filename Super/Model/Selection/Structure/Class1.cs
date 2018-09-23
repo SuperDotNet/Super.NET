@@ -2,7 +2,7 @@
 
 namespace Super.Model.Selection.Structure
 {
-	public interface IStructure<TIn, out TOut> where TIn : struct
+	public interface IStructure<TIn, out TOut>
 	{
 		TOut Get(in TIn parameter);
 	}

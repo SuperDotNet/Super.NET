@@ -52,31 +52,30 @@ namespace Super
 
 		/**/
 
-		public static Composition<_, T> Iterate<_, T>(this ISelect<_, T[]> @this) => new ArrayComposition<_, T>(@this);
-		public static Composition<_, T> Iterate<_, T>(this ISelect<_, IEnumerable<T>> @this)
-			=> new EnumerableComposition<_, T>(@this);
+		public static Definition<_, T> Iterate<_, T>(this ISelect<_, T[]> @this) => new ArrayDefinition<_, T>(@this);
+		public static Definition<_, T> Iterate<_, T>(this ISelect<_, IEnumerable<T>> @this)
+			=> new EnumerableDefinition<_, T>(@this);
 
-		public static Composition<_, T> Alter<_, T>(this Composition<_, T> @this, IContentAlteration<T> alteration,
-		                                            ISelectView<T> enter = null, Complete<T> exit = null)
-			=> Alter(@this, new DefinitionAlteration<T>(new BodyContentAlteration<T>(alteration, enter, exit)));
+		public static Definition<_, T> Alter<_, T>(this Definition<_, T> @this, IContentAlteration<T> alteration)
+			=> @this.Alter(new BodyContentAlteration<T>(alteration));
 
-		public static Composition<_, T> Alter<_, T>(this Composition<_, T> @this, IDefinitionAlteration<T> alteration)
-			=> new Composition<_, T>(@this.Enter, alteration.Get(@this.Definition));
+		public static Definition<_, T> Alter<_, T>(this Definition<_, T> @this, IBodyAlteration<T> alteration)
+			=> new Definition<_, T>(@this.Start, alteration.Get(@this.Body), @this.Complete);
 
-		public static Composition<_, T> Skip <_, T>(this Composition<_, T> @this, uint skip) => @this.Alter(new Skip<T>(skip));
+		public static Definition<_, T> Skip <_, T>(this Definition<_, T> @this, uint skip) => @this.Alter(new Skip<T>(skip));
 
-		public static Composition<_, T> Take< _, T>(this Composition<_, T> @this, uint take)=> @this.Alter(new Take<T>(take));
+		public static Definition<_, T> Take<_, T>(this Definition<_, T> @this, uint take)=> @this.Alter(new Take<T>(take));
 
-		public static Composition<_, T> WhereBy<_, T>(this Composition<_, T> @this, Expression<Func<T, bool>> where)
+		public static Definition<_, T> WhereBy<_, T>(this Definition<_, T> @this, Expression<Func<T, bool>> where)
 			=> @this.Where(where.Compile());
 
-		public static Composition<_, T> Where<_, T>(this Composition<_, T> @this, Func<T, bool> where)
-			=> @this.Alter(new WhereDefinition<T>(where));
+		public static Definition<_, T> Where<_, T>(this Definition<_, T> @this, Func<T, bool> where)
+			=> @this.Alter(new WhereSelection<T>(where));
 
-		public static ISelect<_, T[]> Reference<_, T>(this Composition<_, T> @this)
-			=> Composer<_, T>.Default.Get(@this);
+		public static ISelect<_, T[]> Reference<_, T>(this Definition<_, T> @this)
+			=> Composer<_, T>.Default.Get(@this).Select(Results<T>.Default);
 
-		public static ISelect<_, Array<T>> Result<_, T>(this Composition<_, T> @this)
+		public static ISelect<_, Array<T>> Result<_, T>(this Definition<_, T> @this)
 			=> @this.Reference().Select(x => new Array<T>(x));
 
 		/**/

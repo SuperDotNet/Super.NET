@@ -13,7 +13,7 @@ namespace Super.Testing.Application
 		}
 	}
 
-	sealed class Run : Run<IndexerBenchmarks>
+	sealed class Run : Run<EnumerableBenchmarks>
 	{
 		public static Run Default { get; } = new Run();
 

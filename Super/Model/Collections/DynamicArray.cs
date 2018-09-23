@@ -5,50 +5,49 @@ namespace Super.Model.Collections
 {
 	readonly struct DynamicArray<T>
 	{
-		readonly IStores<T> _lease;
-		readonly Store<T>[] _stores;
-		readonly uint       _count;
+		readonly IStores<T> _stores;
+		readonly Store<T>[] _store;
 
-		public DynamicArray(IStores<T> lease, Store<T>[] stores, uint count)
+		public DynamicArray(IStores<T> stores, Store<T>[] store)
 		{
-			_lease  = lease;
 			_stores = stores;
-			_count  = count;
+			_store  = store;
 		}
 
-		public Store<T> Get(IEnumerator<T> parameter)
+		public ArrayView<T> Get(IEnumerator<T> parameter, in Selection selection)
 		{
-			var  total = _count;
+			var  total = selection.Start;
 			var  pages = 1u;
 			bool next;
+			var length = selection.Length ?? int.MaxValue;
 			do
 			{
 				var size   = Math.Min(int.MaxValue - total, total * 2);
-				var lease  = _lease.Get(size);
+				var lease  = _stores.Get(size);
 				var store  = lease.Instance;
 				var target = store.Length;
 				var local  = 0u;
-				while (local < target && parameter.MoveNext())
+				while (local < target && total < length && parameter.MoveNext())
 				{
 					store[local++] = parameter.Current;
 					total++;
 				}
 
-				_stores[pages++] = new Store<T>(store, local);
-				next             = local == target;
+				_store[pages++] = new Store<T>(store, local);
+				next            = local == target;
 			} while (next);
 
-			var result      = _lease.Get(total);
+			var result      = _stores.Get(total);
 			var offset      = 0u;
 			var destination = result.Instance;
 			for (var i = 0u; i < pages; i++)
 			{
-				var store = _stores[i].Copy(destination, offset);
+				var store = _store[i].Copy(destination, offset);
 				offset += store.Length;
-				_lease.Execute(store.Instance);
+				_stores.Execute(store.Instance);
 			}
 
-			return new Store<T>(destination, offset);
+			return new ArrayView<T>(destination, 0, offset);
 		}
 	}
 }

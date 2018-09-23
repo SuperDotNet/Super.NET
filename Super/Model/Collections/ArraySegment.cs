@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using Super.Runtime;
+using System.Runtime.CompilerServices;
 
 namespace Super.Model.Collections
 {
@@ -56,7 +57,7 @@ namespace Super.Model.Collections
 
 	public readonly struct ArrayView<T>
 	{
-		/*public static ArrayView<T> Empty { get; } = new ArrayView<T>(Empty<T>.Array);*/
+		public static ArrayView<T> Empty { get; } = new ArrayView<T>(Empty<T>.Array);
 
 		public ArrayView(T[] array) : this(array, 0, (uint)array.Length) {}
 

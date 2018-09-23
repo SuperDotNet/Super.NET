@@ -45,7 +45,7 @@ namespace Super.Model.Collections
 
 		readonly ArrayPool<T> _pool;
 
-		public Allotted(ArrayPool<T> pool) => _pool     = pool;
+		public Allotted(ArrayPool<T> pool) => _pool = pool;
 
 		public Store<T> Get(uint parameter) => new Store<T>(_pool.Rent((int)parameter), parameter);
 

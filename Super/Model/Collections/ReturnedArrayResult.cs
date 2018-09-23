@@ -1,70 +1,62 @@
+using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
 using Super.Model.Selection.Structure;
 using Super.Runtime;
+using Super.Runtime.Activation;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Super.Model.Collections
 {
-	sealed class Result<T> : IStructure<ArrayView<T>, T[]>
+	sealed class Results<T> : IStructure<ArrayView<T>, T[]>
 	{
-		public static Result<T> Default { get; } = new Result<T>();
+		public static Results<T> Default { get; } = new Results<T>();
 
-		Result() : this(Allocated<T>.Default) {}
+		Results() : this(Allocated<T>.Default) {}
 
 		readonly IStores<T> _stores;
 
-		public Result(IStores<T> stores) => _stores = stores;
+		public Results(IStores<T> stores) => _stores = stores;
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public T[] Get(in ArrayView<T> parameter)
 			=> parameter.Start == 0 && parameter.Length == parameter.Array.Length
 				   ? parameter.Array
 				   : parameter.Copied(_stores.Get(parameter.Length).Instance);
-
-
 	}
 
-	sealed class ArrayStore<T> : Select<T[], Store<T>>
+	sealed class ArrayStores<T> : ISelect<T[], ArrayView<T>>
 	{
-		public static ArrayStore<T> Default { get; } = new ArrayStore<T>();
+		public static ArrayStores<T> Default { get; } = new ArrayStores<T>();
 
-		ArrayStore() : base(x => new Store<T>(x)) {}
+		ArrayStores() : this(Selection.Default) {}
+
+		readonly Selection _selection;
+
+		public ArrayStores(Selection selection) => _selection = selection;
+
+		public ArrayView<T> Get(T[] parameter)
+			=> new ArrayView<T>(parameter, _selection.Start, _selection.Length ?? (uint)parameter.Length - _selection.Start);
 	}
 
-	/*sealed class AllottedStores<T> : ISelect<T[], Store<T>>
+	sealed class RuntimeStores<T> : ISelect<IEnumerable<T>, ArrayView<T>>, IActivateMarker<Selection>
 	{
-		public static AllottedStores<T> Default { get; } = new AllottedStores<T>();
+		readonly Func<T[], ArrayView<T>>            _array;
+		readonly Func<IEnumerator<T>, ArrayView<T>> _enumerate;
 
-		AllottedStores() : this(Allotted<T>.Default) {}
+		public RuntimeStores(Selection selection)
+			: this(new ArrayStores<T>(selection).Get, new Enumerate<T>(selection).Get) {}
 
-		readonly IStores<T> _stores;
-
-		public AllottedStores(IStores<T> stores) => _stores = stores;
-
-		public Store<T> Get(T[] parameter) => new Store<T>(_stores.Get(parameter.Length), (uint)parameter.Length);
-	}*/
-
-	sealed class RuntimeStores<T> : ISelect<IEnumerable<T>, Store<T>>
-	{
-		public static RuntimeStores<T> Default { get; } = new RuntimeStores<T>();
-
-		RuntimeStores() : this(ArrayStore<T>.Default.Get, Enumerate<T>.Default.Get) {}
-
-		readonly Func<T[], Store<T>> _array;
-		readonly Func<IEnumerator<T>, Store<T>> _enumerate;
-
-		public RuntimeStores(Func<T[], Store<T>> array, Func<IEnumerator<T>, Store<T>> enumerate)
+		public RuntimeStores(Func<T[], ArrayView<T>> array, Func<IEnumerator<T>, ArrayView<T>> enumerate)
 		{
-			_array = array;
+			_array     = array;
 			_enumerate = enumerate;
 		}
 
-		public Store<T> Get(IEnumerable<T> parameter)
+		public ArrayView<T> Get(IEnumerable<T> parameter)
 		{
-/*
 			switch (parameter)
 			{
 				case T[] array:
@@ -72,9 +64,22 @@ namespace Super.Model.Collections
 				default:
 					return _enumerate(parameter.GetEnumerator());
 			}
-*/
-			return _enumerate(parameter.GetEnumerator());
 		}
+	}
+
+	sealed class EnumerableStores<T> : ISelect<IEnumerable<T>, ArrayView<T>>, IActivateMarker<Selection>
+	{
+		public static EnumerableStores<T> Default { get; } = new EnumerableStores<T>();
+
+		EnumerableStores() : this(Enumerate<T>.Default.Get) {}
+
+		readonly Func<IEnumerator<T>, ArrayView<T>> _enumerate;
+
+		public EnumerableStores(Selection selection) : this(new Enumerate<T>(selection).Get) {}
+
+		public EnumerableStores(Func<IEnumerator<T>, ArrayView<T>> enumerate) => _enumerate = enumerate;
+
+		public ArrayView<T> Get(IEnumerable<T> parameter) => _enumerate(parameter.GetEnumerator());
 	}
 
 	sealed class SelectView<T> : ISelectView<T>
@@ -83,7 +88,7 @@ namespace Super.Model.Collections
 
 		SelectView() {}
 
-		public ArrayView<T> Get(in Store<T> parameter) => new ArrayView<T>(parameter.Instance, 0, parameter.Length);
+		public ArrayView<T> Get(in ArrayView<T> parameter) => parameter;
 	}
 
 	sealed class Copy<T> : ISelectView<T>
@@ -96,47 +101,58 @@ namespace Super.Model.Collections
 
 		public Copy(IStores<T> stores) => _stores = stores;
 
-		public ArrayView<T> Get(in Store<T> parameter)
+		public ArrayView<T> Get(in ArrayView<T> parameter)
 			=> new ArrayView<T>(parameter.Copied(_stores.Get(parameter.Length).Instance), 0, parameter.Length);
 	}
 
-	public interface ISelectView<T> : IStructure<Store<T>, ArrayView<T>> {}
+	public interface ISelectView<T> : IStructure<ArrayView<T>, ArrayView<T>> {}
+
+	public interface IBodyAlteration<T> : IAlteration<Body<T>> {}
+
+	sealed class BodyContentAlteration<T> : IBodyAlteration<T>
+	{
+		readonly IContentAlteration<T> _alteration;
+
+		public BodyContentAlteration(IContentAlteration<T> alteration) => _alteration = alteration;
+
+		public Body<T> Get(Body<T> parameter) => new Body<T>(_alteration.Get(parameter.Content), parameter.Selection);
+	}
 
 	public sealed class Body<T>
 	{
 		public static Body<T> Default { get; } = new Body<T>();
 
-		Body() : this(SelectView<T>.Default, Content<T>.Default) {}
+		Body() : this(Content<T>.Default) {}
 
-		public Body(ISelectView<T> enter, Content<T> content, Complete<T> exit = null)
+		public Body(Content<T> content, Selection? selection = null)
 		{
-			Enter   = enter;
-			Content = content;
-			Exit    = exit;
+			Content   = content;
+			Selection = selection;
 		}
-
-		public ISelectView<T> Enter { get; }
 
 		public Content<T> Content { get; }
 
-		public Complete<T> Exit { get; }
+		public Selection? Selection { get; }
 	}
 
 	public sealed class Content<T>
 	{
 		public static Content<T> Default { get; } = new Content<T>();
 
-		Content() : this(Start.Structure<ArrayView<T>>()) {}
+		Content() : this(SelectView<T>.Default, Start.Structure<ArrayView<T>>()) {}
 
-		public Content(IStructure<ArrayView<T>, ArrayView<T>> select, Selection? selection = null)
+		public Content(ISelectView<T> enter, IStructure<ArrayView<T>, ArrayView<T>> @select, Complete<T> exit = null)
 		{
-			Select    = @select;
-			Selection = selection;
+			Enter  = enter;
+			Select = @select;
+			Exit   = exit;
 		}
+
+		public ISelectView<T> Enter { get; }
 
 		public IStructure<ArrayView<T>, ArrayView<T>> Select { get; }
 
-		public Selection? Selection { get; }
+		public Complete<T> Exit { get; }
 	}
 
 	public interface IContentComposer<T> : ISelect<Content<T>, IStructure<ArrayView<T>, ArrayView<T>>> {}
@@ -148,46 +164,11 @@ namespace Super.Model.Collections
 		ContentComposer() {}
 
 		public IStructure<ArrayView<T>, ArrayView<T>> Get(Content<T> parameter)
-			=> parameter.Selection == null
-				   ? parameter.Select
-				   : parameter.Select.Select(new SelectionSegment<T>(parameter.Selection.Value));
-	}
-
-	public interface IBodyComposer<T> : ISelect<Body<T>, IStructure<Store<T>, ArrayView<T>>> {}
-
-	sealed class BodyComposer<T> : IBodyComposer<T>
-	{
-		public static BodyComposer<T> Default { get; } = new BodyComposer<T>();
-
-		BodyComposer() : this(ContentComposer<T>.Default) {}
-
-		readonly IContentComposer<T> _content;
-
-		public BodyComposer(IContentComposer<T> content) => _content = content;
-
-		public IStructure<Store<T>, ArrayView<T>> Get(Body<T> parameter)
 		{
-			var select = parameter.Enter.Select(_content.Get(parameter.Content));
+			var select = parameter.Enter.Select(parameter.Select);
 			var result = parameter.Exit != null ? select.Select(new Completed<T>(parameter.Exit)) : select;
 			return result;
 		}
-	}
-
-	public sealed class Definition<T>
-	{
-		public static Definition<T> Default { get; } = new Definition<T>();
-
-		Definition() : this(Body<T>.Default, Result<T>.Default) {}
-
-		public Definition(Body<T> body, IStructure<ArrayView<T>, T[]> result)
-		{
-			Body   = body;
-			Result = result;
-		}
-
-		public Body<T> Body { get; }
-
-		public IStructure<ArrayView<T>, T[]> Result { get; }
 	}
 
 	public readonly struct Store<T>
@@ -207,32 +188,62 @@ namespace Super.Model.Collections
 		public uint Length { get; }
 	}
 
-	sealed class ArrayComposition<_, T> : Composition<_, T>
-	{
-		public ArrayComposition(ISelect<_, T[]> enter) : base(enter.Select(ArrayStore<T>.Default)) {}
-	}
+	public interface IStart<in _, T> : IStructure<Selection?, ISelect<_, ArrayView<T>>> {}
 
-	sealed class EnumerableComposition<_, T> : Composition<_, T>
+	sealed class ArrayDefinition<_, T> : Definition<_, T>
 	{
-		public EnumerableComposition(ISelect<_, IEnumerable<T>> enter)
-			: base(enter.Select(RuntimeStores<T>.Default), Allotted<T>.Default.Execute) {}
-	}
+		public ArrayDefinition(ISelect<_, T[]> enter) : base(new Entrance(enter)) {}
 
-	public class Composition<_, T>
-	{
-		public Composition(ISelect<_, Store<T>> enter, Complete<T> complete = null)
-			: this(enter, Definition<T>.Default, complete) {}
-
-		public Composition(ISelect<_, Store<T>> enter, Definition<T> definition, Complete<T> complete = null)
+		sealed class Entrance : IStart<_, T>
 		{
-			Enter      = enter;
-			Definition = definition;
-			Complete   = complete;
+			readonly ISelect<_, T[]> _select;
+
+			public Entrance(ISelect<_, T[]> @select) => _select = @select;
+
+			public ISelect<_, ArrayView<T>> Get(in Selection? parameter)
+				=> _select.Select(parameter.HasValue ? new ArrayStores<T>(parameter.Value) : ArrayStores<T>.Default);
+		}
+	}
+
+	sealed class EnumerableDefinition<_, T> : Definition<_, T>
+	{
+		public EnumerableDefinition(ISelect<_, IEnumerable<T>> enter)
+			: base(new Entrance(enter), Return.Default.Execute) {}
+
+		sealed class Entrance : IStart<_, T>
+		{
+			readonly ISelect<_, IEnumerable<T>> _select;
+
+			public Entrance(ISelect<_, IEnumerable<T>> @select) => _select = @select;
+
+			public ISelect<_, ArrayView<T>> Get(in Selection? parameter)
+				=> _select.Select(parameter.HasValue
+					                  ? new EnumerableStores<T>(parameter.Value)
+					                  : EnumerableStores<T>.Default);
 		}
 
-		public ISelect<_, Store<T>> Enter { get; }
+		sealed class Return : ValidatedCommand<T[]>
+		{
+			public static Return Default { get; } = new Return();
 
-		public Definition<T> Definition { get; }
+			Return() : base(In<T[]>.Is(x => x.Length > 4), Allotted<T>.Default) {}
+		}
+	}
+
+	public class Definition<_, T>
+	{
+		public Definition(IStart<_, T> start, Complete<T> complete = null) : this(start, Body<T>.Default, complete) {}
+
+		public Definition(IStart<_, T> start, Body<T> body, Complete<T> complete = null)
+		{
+			Start    = start;
+			Body     = body;
+			Complete = complete;
+		}
+
+		public IStart<_, T> Start { get; }
+
+		public Body<T> Body { get; }
 
 		public Complete<T> Complete { get; }
 	}
@@ -250,154 +261,120 @@ namespace Super.Model.Collections
 		}
 	}
 
-	sealed class Returned<T> : IStructure<Store<T>, T[]>
+	sealed class Returned<T> : IStructure<ArrayView<T>, ArrayView<T>>
 	{
-		readonly Selection<Store<T>, T[]> _reference;
-		readonly Complete<T>              _complete;
+		readonly Selection<ArrayView<T>, ArrayView<T>> _reference;
+		readonly Complete<T>                           _complete;
 
-		public Returned(Selection<Store<T>, T[]> reference, Complete<T> complete)
+		public Returned(Selection<ArrayView<T>, ArrayView<T>> reference, Complete<T> complete)
 		{
 			_reference = reference;
 			_complete  = complete;
 		}
 
-		public T[] Get(in Store<T> parameter)
+		public ArrayView<T> Get(in ArrayView<T> parameter)
 		{
 			var result = _reference(parameter);
-			_complete(parameter.Instance);
+			_complete(parameter.Array);
 			return result;
 		}
 	}
 
-	public interface IDefinitionComposer<T> : ISelect<Definition<T>, IStructure<Store<T>, T[]>> {}
-
-	sealed class DefinitionComposer<T> : IDefinitionComposer<T>
-	{
-		public static DefinitionComposer<T> Default { get; } = new DefinitionComposer<T>();
-
-		DefinitionComposer() : this(BodyComposer<T>.Default) {}
-
-		readonly IBodyComposer<T> _body;
-
-		public DefinitionComposer(IBodyComposer<T> body) => _body = body;
-
-		public IStructure<Store<T>, T[]> Get(Definition<T> parameter) => _body.Get(parameter.Body)
-		                                                                      .Select(parameter.Result);
-	}
-
-	sealed class Composer<_, T> : ISelect<Composition<_, T>, ISelect<_, T[]>>
+	sealed class Composer<_, T> : ISelect<Definition<_, T>, ISelect<_, ArrayView<T>>>
 	{
 		public static Composer<_, T> Default { get; } = new Composer<_, T>();
 
-		Composer() : this(DefinitionComposer<T>.Default) {}
+		Composer() : this(ContentComposer<T>.Default) {}
 
-		readonly IDefinitionComposer<T> _definition;
+		readonly IContentComposer<T> _content;
 
-		public Composer(IDefinitionComposer<T> definition) => _definition = definition;
+		public Composer(IContentComposer<T> content) => _content = content;
 
-		public ISelect<_, T[]> Get(Composition<_, T> parameter)
+		public ISelect<_, ArrayView<T>> Get(Definition<_, T> parameter)
 		{
-			var definition = _definition.Get(parameter.Definition);
+			var current   = parameter.Body.Content;
+			var modified  = current != Content<T>.Default;
+			var selection = parameter.Body.Selection;
+			var selected  = selection.HasValue;
+
+			var accounted = modified && selected
+				                ? new Content<T>(current.Enter,
+				                                 current.Select.Select(new SelectionSegment<T>(selection.Value)),
+				                                 current.Exit)
+				                : current;
+
+			var content = _content.Get(accounted);
 			var contents = parameter.Complete != null
-				               ? new Returned<T>(definition.Get, parameter.Complete)
-				               : definition;
-			var result = parameter.Enter.Select(contents);
+				               ? new Returned<T>(content.Get, parameter.Complete)
+				               : content;
+			var start = parameter.Start.Get(modified ? null : selection);
+			var result  = start.Select(contents);
 			return result;
 		}
 	}
 
 	public delegate void Complete<in T>(T[] resource);
 
-	public interface IDefinitionAlteration<T> : IAlteration<Definition<T>> {}
-
-	sealed class Skip<T> : IContentAlteration<T>
+	sealed class Skip<T> : IBodyAlteration<T>
 	{
 		readonly uint _skip;
 
 		public Skip(uint skip) => _skip = skip;
 
-		public Content<T> Get(Content<T> parameter)
+		public Body<T> Get(Body<T> parameter)
 		{
 			var current   = parameter.Selection ?? Selection.Default;
 			var selection = new Selection(current.Start + _skip, current.Length - _skip);
-			var result    = new Content<T>(parameter.Select, selection);
+			var result    = new Body<T>(parameter.Content, selection);
 			return result;
 		}
 	}
 
-	sealed class Take<T> : IContentAlteration<T>
+	sealed class Take<T> : IBodyAlteration<T>
 	{
 		readonly uint _take;
 
 		public Take(uint take) => _take = take;
 
-		public Content<T> Get(Content<T> parameter)
+		public Body<T> Get(Body<T> parameter)
 		{
 			var current = parameter.Selection ?? Selection.Default;
-			var result  = new Content<T>(parameter.Select, new Selection(current.Start, _take));
+			var result  = new Body<T>(parameter.Content, new Selection(current.Start, _take));
 			return result;
 		}
 	}
 
-	sealed class WhereDefinition<T> : AllottedDefinitionAlteration<T>
+	sealed class WhereSelection<T> : AllottedContentAlteration<T>
 	{
-		public WhereDefinition(Func<T, bool> where) : base(new WhereSegment<T>(where)) {}
+		public WhereSelection(Func<T, bool> where) : base(new WhereSegment<T>(where)) {}
 	}
 
-	class DefinitionAlteration<T> : IDefinitionAlteration<T>
-	{
-		readonly IBodyAlteration<T> _alteration;
-
-		public DefinitionAlteration(ISelectView<T> enter, ISegment<T> select, Complete<T> exit = null)
-			: this(new BodyContentAlteration<T>(new SegmentAlteration<T>(@select), enter, exit)) {}
-
-		public DefinitionAlteration(IBodyAlteration<T> alteration) => _alteration = alteration;
-
-		public Definition<T> Get(Definition<T> parameter)
-			=> new Definition<T>(_alteration.Get(parameter.Body), parameter.Result);
-	}
-
-	class AllottedDefinitionAlteration<T> : DefinitionAlteration<T>
+	class AllottedContentAlteration<T> : ContentAlteration<T>
 	{
 		readonly static Complete<T> Complete = Allotted<T>.Default.Execute;
 
-		public AllottedDefinitionAlteration(ISegment<T> segment) : base(Copy<T>.Default, segment, Complete) {}
+		public AllottedContentAlteration(ISegment<T> segment) : base(segment, Copy<T>.Default, Complete) {}
 	}
-
-	public interface IBodyAlteration<T> : IAlteration<Body<T>> {}
 
 	public interface IContentAlteration<T> : IAlteration<Content<T>> {}
 
-	class SegmentAlteration<T> : IContentAlteration<T>
+	class ContentAlteration<T> : IContentAlteration<T>
 	{
-		readonly ISegment<T> _select;
-		readonly Selection?  _selection;
+		readonly IStructure<ArrayView<T>, ArrayView<T>> _content;
+		readonly ISelectView<T>                         _enter;
+		readonly Complete<T>                            _exit;
 
-		public SegmentAlteration(ISegment<T> select, Selection? selection = null)
-		{
-			_select    = @select;
-			_selection = selection;
-		}
-
-		public Content<T> Get(Content<T> parameter) => new Content<T>(parameter.Select.Select(_select), _selection);
-	}
-
-	sealed class BodyContentAlteration<T> : IBodyAlteration<T>
-	{
-		readonly IContentAlteration<T> _content;
-		readonly ISelectView<T>        _enter;
-		readonly Complete<T>           _exit;
-
-		public BodyContentAlteration(IContentAlteration<T> content, ISelectView<T> enter = null,
-		                             Complete<T> exit = null)
+		public ContentAlteration(IStructure<ArrayView<T>, ArrayView<T>> content,
+		                         ISelectView<T> enter = null,
+		                         Complete<T> exit = null)
 		{
 			_content = content;
 			_enter   = enter;
 			_exit    = exit;
 		}
 
-		public Body<T> Get(Body<T> parameter)
-			=> new Body<T>(_enter ?? parameter.Enter, _content.Get(parameter.Content), _exit ?? parameter.Exit);
+		public Content<T> Get(Content<T> parameter)
+			=> new Content<T>(_enter ?? parameter.Enter, parameter.Select.Select(_content), _exit ?? parameter.Exit);
 	}
 
 	sealed class SelectionSegment<T> : ISegment<T>

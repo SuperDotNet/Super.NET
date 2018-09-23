@@ -1,67 +1,78 @@
 ﻿using Super.Model.Selection;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Super.Model.Collections
 {
-	public interface IEnumerate<T> : ISelect<IEnumerator<T>, Store<T>> {}
+	public interface IEnumerate<T> : ISelect<IEnumerator<T>, ArrayView<T>> {}
 
 	sealed class Enumerate<T> : IEnumerate<T>
 	{
 		public static Enumerate<T> Default { get; } = new Enumerate<T>();
 
-		Enumerate() : this(1024) {}
+		Enumerate() : this(Selection.Default) {}
 
 		readonly IStores<Store<T>> _items;
 		readonly IStores<T>        _item;
-		readonly uint              _size;
+		readonly uint?             _skip;
+		readonly Selection _target;
 
-		public Enumerate(uint size = 1024) : this(Allotted<Store<T>>.Default, Allotted<T>.Default, size) {}
+		public Enumerate(Selection selection, uint size = 1024)
+			: this(Allotted<Store<T>>.Default, Allotted<T>.Default,
+			       selection.Start == 0 ? (uint?)null : selection.Start, new Selection(size, selection.Length)) {}
 
-		public Enumerate(IStores<Store<T>> items, IStores<T> item, uint size = 1024)
+		// ReSharper disable once TooManyDependencies
+		public Enumerate(IStores<Store<T>> items, IStores<T> item, uint? skip, Selection target)
 		{
-			_items = items;
-			_item  = item;
-			_size  = size;
+			_items  = items;
+			_item   = item;
+			_skip   = skip;
+			_target = target;
 		}
 
-		static Store<T> Get(params T[] items) => new Store<T>(items);
+		static ArrayView<T> Get(params T[] items) => new ArrayView<T>(items);
 
-		public Store<T> Get(IEnumerator<T> parameter)
+		public ArrayView<T> Get(IEnumerator<T> parameter)
 		{
-			if (!parameter.MoveNext())
+			if (_skip.HasValue)
 			{
-				return Store<T>.Empty;
+				for (var i = 0; i < _skip && parameter.MoveNext(); i++) {}
+			}
+
+			if (_target.Length == 0 || !parameter.MoveNext())
+			{
+				return ArrayView<T>.Empty;
 			}
 
 			var one = parameter.Current;
 
-			if (!parameter.MoveNext())
+			if (_target.Length == 1 || !parameter.MoveNext())
 			{
 				return Get(one);
 			}
 
 			var two = parameter.Current;
-			if (!parameter.MoveNext())
+			if (_target.Length == 2 || !parameter.MoveNext())
 			{
 				return Get(one, two);
 			}
 
 			var three = parameter.Current;
-			if (!parameter.MoveNext())
+			if (_target.Length == 3 || !parameter.MoveNext())
 			{
 				return Get(one, two, three);
 			}
 
 			var four = parameter.Current;
-			if (!parameter.MoveNext())
+			if (_target.Length == 4 || !parameter.MoveNext())
 			{
 				return Get(one, two, three, four);
 			}
 
 			var five = parameter.Current;
 
-			var first = _item.Get(_size);
+			var first = _item.Get(_target.Length.HasValue ? Math.Min(_target.Start, _target.Length.Value) : _target.Start);
 			var items = first.Instance;
 			items[0] = one;
 			items[1] = two;
@@ -75,16 +86,16 @@ namespace Super.Model.Collections
 				items[count++] = parameter.Current;
 			}
 
-			return count < size ? new Store<T>(items, count) : Compile(first, parameter);
+			return count < size ? new ArrayView<T>(items, 0, count) : Compile(first, parameter);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		Store<T> Compile(in Store<T> first, IEnumerator<T> parameter)
+		ArrayView<T> Compile(in Store<T> first, IEnumerator<T> parameter)
 		{
 			var store    = _items.Get(32);
 			var instance = store.Instance;
 			instance[0] = first;
-			var result = new DynamicArray<T>(_item, instance, first.Length).Get(parameter);
+			var result = new DynamicArray<T>(_item, instance).Get(parameter, _target);
 			_items.Execute(instance);
 			return result;
 		}
