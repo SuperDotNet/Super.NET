@@ -3,6 +3,7 @@ using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Selection.Structure;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Super.Model.Sequences
 {
@@ -30,48 +31,60 @@ namespace Super.Model.Sequences
 
 	static class Extensions
 	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Session<T> Session<T>(this IStores<T> @this, uint amount) => @this.Session(@this.Get(amount));
 
-		public static Session<T> Session<T>(this IStores<T> @this, Store<T> store) => new Session<T>(store, @this);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Session<T> Session<T>(this IStores<T> @this, in Store<T> store) => new Session<T>(store, @this);
 	}
 
 	readonly ref struct ExpandingStore<T>
 	{
-		readonly IStores<T> _stores;
-		readonly Store<T>   _store;
+		readonly static Allotted<T>        Stores     = Allotted<T>.Default;
+		readonly static StoreReferences<T> References = StoreReferences<T>.Default;
 
-		public ExpandingStore(uint size) : this(Allotted<T>.Default, size) {}
+		readonly Store<T>              _store;
+		readonly Collections.Selection _selection;
 
-		public ExpandingStore(IStores<T> stores, uint size)
-			: this(stores, new Store<T>(stores.Get(size).Instance, 0)) {}
+		public ExpandingStore(uint size) : this(Stores, size) {}
 
-		ExpandingStore(IStores<T> stores, Store<T> store)
+		public ExpandingStore(IStores<T> stores, uint size) : this(new Store<T>(stores.Get(size).Instance, 0)) {}
+
+		ExpandingStore(Store<T> store) : this(store, new Collections.Selection(store.Length)) {}
+
+		ExpandingStore(Store<T> store, Collections.Selection selection)
 		{
-			_stores = stores;
-			_store  = store;
+			_store     = store;
+			_selection = selection;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ExpandingStore<T> Add(in Store<T> page)
+			=> new ExpandingStore<T>(page.CopyInto(Size(page), _selection).Resize(page.Length));
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public T[] Get()
 		{
-			var size   = Size(page);
-			var store  = page.CopyInto(size, new Collections.Selection(_store.Length))
-			                 .Resize(page.Length);
-			var result = new ExpandingStore<T>(_stores, store);
-			return result;
+			using (Stores.Session(_store))
+			{
+				return References.Get(_store);
+			}
 		}
 
-		public Session<T> Session() => _stores.Session(_store);
+		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public Session<T> Session() => _stores.Session(_store);*/
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		Store<T> Size(in Store<T> page)
 		{
 			var actual = (uint)_store.Instance.Length;
 			var size   = page.Length;
 			if (size > actual)
 			{
-				using (var session = Session())
+				using (var session = Stores.Session(_store))
 				{
 					return session.Store
-					              .CopyInto(_stores.Get(Math.Min(int.MaxValue - size, size * 2)),
+					              .CopyInto(Stores.Get(Math.Min(int.MaxValue - size, size * 2)),
 					                        new Collections.Selection(0, actual));
 				}
 			}
@@ -84,36 +97,30 @@ namespace Super.Model.Sequences
 	{
 		public static Iterator<T> Default { get; } = new Iterator<T>();
 
-		Iterator() : this(StoreReferences<T>.Default, Allotted<T>.Default) {}
+		Iterator() : this(Allotted<T>.Default) {}
 
-		readonly IStoreReferences<T> _references;
-		readonly IStores<T>          _stores;
-		readonly uint                _size;
+		readonly IStores<T> _stores;
+		readonly uint       _size;
 
-		public Iterator(IStoreReferences<T> references, IStores<T> stores, uint size = 1024)
+		public Iterator(IStores<T> stores, uint size = 1024)
 		{
-			_references = references;
-			_stores     = stores;
-			_size       = size;
+			_stores = stores;
+			_size   = size;
 		}
 
 		public T[] Get(IIteration<T> parameter)
 		{
+			var store = new ExpandingStore<T>(_size);
 			using (var session = _stores.Session(_size))
 			{
-				var store = new ExpandingStore<T>(_size);
-
 				Store<T>? next = new Store<T>(session.Items, 0);
 				while ((next = parameter.Get(next.Value)) != null)
 				{
 					store = store.Add(next.Value);
 				}
-
-				using (var @new = store.Session())
-				{
-					return _references.Get(@new.Store);
-				}
 			}
+
+			return store.Get();
 		}
 	}
 
