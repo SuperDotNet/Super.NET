@@ -57,9 +57,9 @@ namespace Super.Model.Collections
 
 	public readonly struct Selection
 	{
-		public static Selection Default { get; } = new Selection(0, null);
+		public static Selection Default { get; } = new Selection(0);
 
-		public Selection(uint start, uint? length)
+		public Selection(uint start, uint? length = null)
 		{
 			Start  = start;
 			Length = length;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Super.Model.Sequences;
+using System;
 using System.Collections.Generic;
 
 namespace Super.Model.Collections
@@ -22,43 +23,46 @@ namespace Super.Model.Collections
 
 		public ArrayView<T> Get(IEnumerator<T> parameter, in Store<T> first)
 		{
-			var items = _items.Get(32).Instance;
-			items[0] = first;
-
-			var  total = _selection.Start;
-			var  pages = 1u;
-			bool next;
-			var  length = _selection.Length ?? int.MaxValue;
-			do
+			using (var session = _items.Session(32))
 			{
-				var size   = Math.Min(int.MaxValue - total, total * 2);
-				var lease  = _item.Get(size);
-				var store  = lease.Instance;
-				var target = store.Length;
-				var local  = 0u;
-				while (local < target && total < length && parameter.MoveNext())
+				var  items  = session.Items;
+				var  total  = _selection.Start;
+				var  pages  = 1u;
+				var  length = _selection.Length ?? int.MaxValue;
+				bool next;
+				items[0] = first;
+				do
 				{
-					store[local++] = parameter.Current;
-					total++;
+					var size   = Math.Min(int.MaxValue - total, total * 2);
+					var lease  = _item.Get(size);
+					var store  = lease.Instance;
+					var target = store.Length;
+					var local  = 0u;
+					while (local < target && total < length && parameter.MoveNext())
+					{
+						store[local++] = parameter.Current;
+						total++;
+					}
+
+					items[pages++] = new Store<T>(store, local);
+					next           = local == target;
+				} while (next);
+
+				var result      = _item.Get(total);
+				var offset      = 0u;
+				var destination = result.Instance;
+				for (var i = 0u; i < pages; i++)
+				{
+					using (var item = _item.Session(items[i]))
+					{
+						var amount = item.Store.Length;
+						Array.Copy(items[i].Instance, 0u, destination, offset, amount);
+						offset += amount;
+					}
 				}
 
-				items[pages++] = new Store<T>(store, local);
-				next           = local == target;
-			} while (next);
-
-			var result      = _item.Get(total);
-			var offset      = 0u;
-			var destination = result.Instance;
-			for (var i = 0u; i < pages; i++)
-			{
-				var store = items[i].Copy(destination, offset);
-				offset += store.Length;
-				_item.Execute(store.Instance);
+				return new ArrayView<T>(destination, 0, offset);
 			}
-
-			_items.Execute(items);
-
-			return new ArrayView<T>(destination, 0, offset);
 		}
 	}
 }

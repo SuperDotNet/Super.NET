@@ -26,7 +26,7 @@ namespace Super.Model.Collections
 		public T[] Get(in Store<T> parameter)
 			=> parameter.Length == parameter.Instance.Length
 				   ? parameter.Instance
-				   : parameter.Into(_stores.Get(parameter.Length).Instance);
+				   : parameter.CopyInto(_stores.Get(parameter.Length)).Instance;
 	}
 
 	public interface IReferences<T> : IStructure<ArrayView<T>, T[]> {}

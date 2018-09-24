@@ -22,13 +22,6 @@ namespace Super.Model.Collections
 		}*/
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Store<T> Copy<T>(in this Store<T> @this, T[] into, uint start = 0)
-		{
-			System.Array.Copy(@this.Instance, 0, into, (int)start, (int)@this.Length);
-			return @this;
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] Into<T>(in this ArrayView<T> @this, T[] into, uint start = 0)
 		{
 			System.Array.Copy(@this.Array, @this.Start, into, (int)start, (int)@this.Length);
@@ -36,20 +29,31 @@ namespace Super.Model.Collections
 		}
 
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+
+		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Store<T> Copy<T>(in this Store<T> @this, T[] into, uint start = 0)
+		{
+			System.Array.Copy(@this.Instance, 0, into, (int)start, (int)@this.Length);
+			return @this;
+		}*/
+
+		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] Into<T>(in this Store<T> @this, T[] into, uint start = 0)
 		{
 			System.Array.Copy(@this.Instance, 0, into, (int)start, (int)@this.Length);
 			return into;
+		}*/
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Store<T> CopyInto<T>(in this Store<T> @this, in Store<T> into, Selection? selection = null)
+		{
+			var index = selection?.Start ?? 0;
+			System.Array.Copy(@this.Instance, 0, into.Instance, index, selection?.Length ?? @this.Length - index);
+			return into;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		// ReSharper disable once TooManyArguments
-		public static Store<T> Into<T>(in this Store<T> @this, in Store<T> into, uint start = 0, uint? length = null)
-		{
-			System.Array.Copy(@this.Instance, 0, into.Instance, (int)start, length ?? @this.Length);
-			return into;
-		}
+		public static Store<T> Resize<T>(in this Store<T> @this, uint size) => new Store<T>(@this.Instance, size);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static ArrayView<T> Resize<T>(in this ArrayView<T> @this, uint size) => @this.Resize(@this.Start, size);
