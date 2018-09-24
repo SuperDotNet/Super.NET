@@ -1,7 +1,6 @@
 ﻿using Super.Model.Selection;
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace Super.Model.Collections
 {
@@ -13,22 +12,25 @@ namespace Super.Model.Collections
 
 		Enumerate() : this(Selection.Default) {}
 
-		readonly IStores<Store<T>> _items;
-		readonly IStores<T>        _item;
-		readonly uint?             _skip;
-		readonly Selection _target;
+		readonly IStores<T> _item;
+		readonly uint?      _skip;
+		readonly Selection  _target;
+		readonly DynamicArray<T> _array;
 
 		public Enumerate(Selection selection, uint size = 1024)
-			: this(Allotted<Store<T>>.Default, Allotted<T>.Default,
-			       selection.Start == 0 ? (uint?)null : selection.Start, new Selection(size, selection.Length)) {}
+			: this(Allotted<T>.Default, selection.Start == 0 ? (uint?)null : selection.Start,
+			       new Selection(size, selection.Length)) {}
+
+		public Enumerate(IStores<T> item, uint? skip, Selection target)
+			: this(item, skip, target, new DynamicArray<T>(item, target)) {}
 
 		// ReSharper disable once TooManyDependencies
-		public Enumerate(IStores<Store<T>> items, IStores<T> item, uint? skip, Selection target)
+		public Enumerate(IStores<T> item, uint? skip, Selection target, DynamicArray<T> array)
 		{
-			_items  = items;
 			_item   = item;
 			_skip   = skip;
 			_target = target;
+			_array = array;
 		}
 
 		static ArrayView<T> Get(params T[] items) => new ArrayView<T>(items);
@@ -72,7 +74,9 @@ namespace Super.Model.Collections
 
 			var five = parameter.Current;
 
-			var first = _item.Get(_target.Length.HasValue ? Math.Min(_target.Start, _target.Length.Value) : _target.Start);
+			var first = _item.Get(_target.Length.HasValue
+				                      ? Math.Min(_target.Start, _target.Length.Value)
+				                      : _target.Start);
 			var items = first.Instance;
 			items[0] = one;
 			items[1] = two;
@@ -86,18 +90,7 @@ namespace Super.Model.Collections
 				items[count++] = parameter.Current;
 			}
 
-			return count < size ? new ArrayView<T>(items, 0, count) : Compile(first, parameter);
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		ArrayView<T> Compile(in Store<T> first, IEnumerator<T> parameter)
-		{
-			var store    = _items.Get(32);
-			var instance = store.Instance;
-			instance[0] = first;
-			var result = new DynamicArray<T>(_item, instance).Get(parameter, _target);
-			_items.Execute(instance);
-			return result;
+			return count < size ? new ArrayView<T>(items, 0, count) : _array.Get(parameter, first);
 		}
 	}
 }

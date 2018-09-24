@@ -3,27 +3,36 @@ using System.Collections.Generic;
 
 namespace Super.Model.Collections
 {
-	readonly struct DynamicArray<T>
+	sealed class DynamicArray<T>
 	{
-		readonly IStores<T> _stores;
-		readonly Store<T>[] _store;
+		readonly static Allotted<Store<T>> Allotted = Allotted<Store<T>>.Default;
 
-		public DynamicArray(IStores<T> stores, Store<T>[] store)
+		readonly IStores<T>        _item;
+		readonly IStores<Store<T>> _items;
+		readonly Selection         _selection;
+
+		public DynamicArray(IStores<T> item, in Selection selection) : this(item, Allotted, in selection) {}
+
+		public DynamicArray(IStores<T> item, IStores<Store<T>> items, in Selection selection)
 		{
-			_stores = stores;
-			_store  = store;
+			_item      = item;
+			_items     = items;
+			_selection = selection;
 		}
 
-		public ArrayView<T> Get(IEnumerator<T> parameter, in Selection selection)
+		public ArrayView<T> Get(IEnumerator<T> parameter, in Store<T> first)
 		{
-			var  total = selection.Start;
+			var items = _items.Get(32).Instance;
+			items[0] = first;
+
+			var  total = _selection.Start;
 			var  pages = 1u;
 			bool next;
-			var length = selection.Length ?? int.MaxValue;
+			var  length = _selection.Length ?? int.MaxValue;
 			do
 			{
 				var size   = Math.Min(int.MaxValue - total, total * 2);
-				var lease  = _stores.Get(size);
+				var lease  = _item.Get(size);
 				var store  = lease.Instance;
 				var target = store.Length;
 				var local  = 0u;
@@ -33,19 +42,21 @@ namespace Super.Model.Collections
 					total++;
 				}
 
-				_store[pages++] = new Store<T>(store, local);
-				next            = local == target;
+				items[pages++] = new Store<T>(store, local);
+				next           = local == target;
 			} while (next);
 
-			var result      = _stores.Get(total);
+			var result      = _item.Get(total);
 			var offset      = 0u;
 			var destination = result.Instance;
 			for (var i = 0u; i < pages; i++)
 			{
-				var store = _store[i].Copy(destination, offset);
+				var store = items[i].Copy(destination, offset);
 				offset += store.Length;
-				_stores.Execute(store.Instance);
+				_item.Execute(store.Instance);
 			}
+
+			_items.Execute(items);
 
 			return new ArrayView<T>(destination, 0, offset);
 		}

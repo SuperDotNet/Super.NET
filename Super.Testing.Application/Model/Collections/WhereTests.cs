@@ -66,7 +66,7 @@ namespace Super.Testing.Application.Model.Collections
 		void VerifyWhereSkipTake()
 		{
 			var source = Enumerable.Range(0, 10_000).ToArray();
-			var count = 8500;
+			var count  = 8500;
 			source
 				.Where(x => x > 1000)
 				.Skip(count)
@@ -80,5 +80,20 @@ namespace Super.Testing.Application.Model.Collections
 				                .Reference()
 				                .Get(source));
 		}
+
+		/*[Fact]
+		void Temp()
+		{
+			throw new InvalidOperationException(Enumerable.Range(0, 10000).ToArray().Where(x => x > 1000).Skip(500).GetType().AssemblyQualifiedName);
+			//var array = Enumerable.Range(0, 10000).ToArray();
+			/*var result = In<int[]>.Start()
+			                      .Iterate()
+			                      .WhereBy(x => x > 1000)
+			                      .Skip(500)
+			                      .Take(100)
+			                      .Reference()
+			                      .Get(array);
+			Debugger.Break();#1#
+		}*/
 	}
 }

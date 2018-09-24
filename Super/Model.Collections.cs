@@ -73,7 +73,7 @@ namespace Super
 			=> @this.Alter(new WhereSelection<T>(where));
 
 		public static ISelect<_, T[]> Reference<_, T>(this Definition<_, T> @this)
-			=> Composer<_, T>.Default.Get(@this).Select(Results<T>.Default);
+			=> Composer<_, T>.Default.Get(@this).Select(References<T>.Default);
 
 		public static ISelect<_, Array<T>> Result<_, T>(this Definition<_, T> @this)
 			=> @this.Reference().Select(x => new Array<T>(x));

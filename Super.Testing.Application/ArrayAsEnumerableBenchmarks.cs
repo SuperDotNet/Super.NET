@@ -32,9 +32,9 @@ namespace Super.Testing.Application
 
 				_array = In<uint[]>.Start()
 				                   .Iterate()
-				                   //.WhereBy(x => x > 1000)
-				                   .Skip(500)
-				                   .Take(100)
+				                   .WhereBy(x => true)
+				                   /*.Skip(100)
+				                   .Take(5)*/
 				                   .Reference();
 			}
 		}
@@ -42,12 +42,9 @@ namespace Super.Testing.Application
 		uint _count;
 
 		[Benchmark]
-		public Array Classic() => _data.Skip(500)
-		                               .Take(100)
-		                               //.Hide()
-		                               /*.Where(x => x > 1000)
-		                               .Skip(8500)
-		                               .Take(5)*/
+		public Array Classic() => _data.Where(x => true)
+		                               .Skip(100)
+		                               .Take(5)
 		                               .ToArray();
 
 		/*[Benchmark]
@@ -63,7 +60,7 @@ namespace Super.Testing.Application
 		/*[Benchmark]
 		public Array Root()
 		{
-			using (var enumerable = _enumerable.GetEnumerator())
+			using (var enumerable = Numbers().GetEnumerator())
 			{
 				while (enumerable.MoveNext()) {}
 			}

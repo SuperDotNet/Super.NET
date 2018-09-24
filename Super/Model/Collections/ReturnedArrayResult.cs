@@ -10,21 +10,42 @@ using System.Runtime.CompilerServices;
 
 namespace Super.Model.Collections
 {
-	sealed class Results<T> : IStructure<ArrayView<T>, T[]>
-	{
-		public static Results<T> Default { get; } = new Results<T>();
+	public interface IStoreReferences<T> : IStructure<Store<T>, T[]> {}
 
-		Results() : this(Allocated<T>.Default) {}
+	sealed class StoreReferences<T> : IStoreReferences<T>
+	{
+		public static StoreReferences<T> Default { get; } = new StoreReferences<T>();
+
+		StoreReferences() : this(Allocated<T>.Default) {}
 
 		readonly IStores<T> _stores;
 
-		public Results(IStores<T> stores) => _stores = stores;
+		public StoreReferences(IStores<T> stores) => _stores = stores;
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public T[] Get(in Store<T> parameter)
+			=> parameter.Length == parameter.Instance.Length
+				   ? parameter.Instance
+				   : parameter.Into(_stores.Get(parameter.Length).Instance);
+	}
+
+	public interface IReferences<T> : IStructure<ArrayView<T>, T[]> {}
+
+	sealed class References<T> : IReferences<T>
+	{
+		public static References<T> Default { get; } = new References<T>();
+
+		References() : this(Allocated<T>.Default) {}
+
+		readonly IStores<T> _stores;
+
+		public References(IStores<T> stores) => _stores = stores;
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public T[] Get(in ArrayView<T> parameter)
 			=> parameter.Start == 0 && parameter.Length == parameter.Array.Length
 				   ? parameter.Array
-				   : parameter.Copied(_stores.Get(parameter.Length).Instance);
+				   : parameter.Into(_stores.Get(parameter.Length).Instance);
 	}
 
 	sealed class ArrayStores<T> : ISelect<T[], ArrayView<T>>
@@ -38,7 +59,8 @@ namespace Super.Model.Collections
 		public ArrayStores(Selection selection) => _selection = selection;
 
 		public ArrayView<T> Get(T[] parameter)
-			=> new ArrayView<T>(parameter, _selection.Start, _selection.Length ?? (uint)parameter.Length - _selection.Start);
+			=> new ArrayView<T>(parameter, _selection.Start,
+			                    _selection.Length ?? (uint)parameter.Length - _selection.Start);
 	}
 
 	sealed class RuntimeStores<T> : ISelect<IEnumerable<T>, ArrayView<T>>, IActivateMarker<Selection>
@@ -102,7 +124,7 @@ namespace Super.Model.Collections
 		public Copy(IStores<T> stores) => _stores = stores;
 
 		public ArrayView<T> Get(in ArrayView<T> parameter)
-			=> new ArrayView<T>(parameter.Copied(_stores.Get(parameter.Length).Instance), 0, parameter.Length);
+			=> new ArrayView<T>(parameter.Into(_stores.Get(parameter.Length).Instance), 0, parameter.Length);
 	}
 
 	public interface ISelectView<T> : IStructure<ArrayView<T>, ArrayView<T>> {}
@@ -307,8 +329,8 @@ namespace Super.Model.Collections
 			var contents = parameter.Complete != null
 				               ? new Returned<T>(content.Get, parameter.Complete)
 				               : content;
-			var start = parameter.Start.Get(modified ? null : selection);
-			var result  = start.Select(contents);
+			var start  = parameter.Start.Get(modified ? null : selection);
+			var result = start.Select(contents);
 			return result;
 		}
 	}
@@ -344,7 +366,7 @@ namespace Super.Model.Collections
 		}
 	}
 
-	sealed class WhereSelection<T> : AllottedContentAlteration<T>
+	sealed class WhereSelection<T> : ContentAlteration<T>
 	{
 		public WhereSelection(Func<T, bool> where) : base(new WhereSegment<T>(where)) {}
 	}
@@ -391,14 +413,14 @@ namespace Super.Model.Collections
 	{
 		readonly Func<T, bool> _where;
 
-		public WhereSegment(Func<T, bool> where) => _where = where;
+		public WhereSegment(Func<T, bool> where) => _where = @where;
 
 		public ArrayView<T> Get(in ArrayView<T> parameter)
 		{
 			var used  = parameter.Length;
 			var array = parameter.Array;
 			var count = 0u;
-			for (var i = 0u; i < used; i++)
+			for (var i = 0; i < used; i++)
 			{
 				var item = array[i];
 				if (_where(item))

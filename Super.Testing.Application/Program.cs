@@ -10,10 +10,14 @@ namespace Super.Testing.Application
 			/*var benchmarks = new IndexerBenchmarks{ Count = 10_000u };
 			var iterate = benchmarks.Iteration();
 			Console.WriteLine(iterate.Length);*/
+
+/*			var benchmarks = new IterationBenchmarks { Count = 10_000u };
+			var array = benchmarks.VerifyBuffer();
+			Debugger.Break();*/
 		}
 	}
 
-	sealed class Run : Run<EnumerableBenchmarks>
+	sealed class Run : Run<IterationBenchmarks>
 	{
 		public static Run Default { get; } = new Run();
 

@@ -3,6 +3,8 @@ using System.Runtime.CompilerServices;
 
 namespace Super.Model.Collections
 {
+	// ReSharper disable LocalSuppression
+
 	public static class Extensions
 	{
 		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -27,16 +29,25 @@ namespace Super.Model.Collections
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T[] Copied<T>(in this ArrayView<T> @this, T[] into, uint start = 0)
+		public static T[] Into<T>(in this ArrayView<T> @this, T[] into, uint start = 0)
 		{
 			System.Array.Copy(@this.Array, @this.Start, into, (int)start, (int)@this.Length);
 			return into;
 		}
 
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T[] Copied<T>(in this Store<T> @this, T[] into, uint start = 0)
+		public static T[] Into<T>(in this Store<T> @this, T[] into, uint start = 0)
 		{
 			System.Array.Copy(@this.Instance, 0, into, (int)start, (int)@this.Length);
+			return into;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		// ReSharper disable once TooManyArguments
+		public static Store<T> Into<T>(in this Store<T> @this, in Store<T> into, uint start = 0, uint? length = null)
+		{
+			System.Array.Copy(@this.Instance, 0, into.Instance, (int)start, length ?? @this.Length);
 			return into;
 		}
 
