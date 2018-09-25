@@ -1,23 +1,19 @@
 ﻿using Super.Application.Hosting.BenchmarkDotNet;
+using System.Linq;
 
 namespace Super.Testing.Application
 {
 	public class Program
 	{
-		static void Main()
+		static void Main(params string[] arguments)
 		{
-			Run.Default.Get();
-			/*var benchmarks = new IndexerBenchmarks{ Count = 10_000u };
-			var iterate = benchmarks.Iteration();
-			Console.WriteLine(iterate.Length);*/
-
-/*			var benchmarks = new IterationBenchmarks { Count = 10_000u };
-			var array = benchmarks.VerifyBuffer();
-			Debugger.Break();*/
+			Run.Default
+			   .Out(arguments.Any() ? Quick.Default : Deployed.Default)
+			   .Get();
 		}
 	}
 
-	sealed class Run : Run<IterationBenchmarks>
+	sealed class Run : Run<CopyArrayBenchmarks<int>>
 	{
 		public static Run Default { get; } = new Run();
 

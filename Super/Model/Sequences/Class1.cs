@@ -38,7 +38,7 @@ namespace Super.Model.Sequences
 		public static Session<T> Session<T>(this IStores<T> @this, in Store<T> store) => new Session<T>(store, @this);
 	}
 
-	readonly ref struct ExpandingStore<T>
+	/*readonly ref struct ExpandingStore<T>
 	{
 		readonly static Allotted<T>        Stores     = Allotted<T>.Default;
 		readonly static StoreReferences<T> References = StoreReferences<T>.Default;
@@ -72,7 +72,7 @@ namespace Super.Model.Sequences
 		}
 
 		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public Session<T> Session() => _stores.Session(_store);*/
+		public Session<T> Session() => _stores.Session(_store);#1#
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		Store<T> Size(in Store<T> page)
@@ -91,7 +91,7 @@ namespace Super.Model.Sequences
 
 			return _store;
 		}
-	}
+	}*/
 
 	sealed class Iterator<T> : IIterator<T>
 	{
@@ -102,7 +102,7 @@ namespace Super.Model.Sequences
 		readonly IStores<T> _stores;
 		readonly uint       _size;
 
-		public Iterator(IStores<T> stores, uint size = 1024)
+		public Iterator(IStores<T> stores, uint size = 4096)
 		{
 			_stores = stores;
 			_size   = size;
@@ -110,7 +110,7 @@ namespace Super.Model.Sequences
 
 		public T[] Get(IIteration<T> parameter)
 		{
-			var store = new ExpandingStore<T>(_size);
+			var store = new DynamicStore<T>(_size);
 			using (var session = _stores.Session(_size))
 			{
 				Store<T>? next = new Store<T>(session.Items, 0);
@@ -119,7 +119,6 @@ namespace Super.Model.Sequences
 					store = store.Add(next.Value);
 				}
 			}
-
 			return store.Get();
 		}
 	}

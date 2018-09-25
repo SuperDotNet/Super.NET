@@ -1,15 +1,15 @@
-﻿using System;
-using BenchmarkDotNet.Configs;
+﻿using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
-using Super.Model.Sources;
+using Super.Model.Selection;
+using System;
 
 namespace Super.Application.Hosting.BenchmarkDotNet
 {
-	public class Run<T> : DelegatedSelection<IConfig, Summary> // TODO: Convert to application.
+	public class Run<T> : Select<IConfig, Summary>
 	{
-		protected Run() : this(BenchmarkRunner.Run<T>, Configuration.Default.Get) {}
+		protected Run() : this(BenchmarkRunner.Run<T>) {}
 
-		public Run(Func<IConfig, Summary> source, Func<IConfig> parameter) : base(source, parameter) {}
+		public Run(Func<IConfig, Summary> source) : base(source) {}
 	}
 }

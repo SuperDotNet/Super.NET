@@ -15,14 +15,10 @@ namespace Super.Testing.Application
 		public uint Count { get; set; }
 
 		[Benchmark]
-		public Array For()
+		public Array CopyTo()
 		{
 			var result = new T[Count];
-			for (var i = 0u; i < Count; i++)
-			{
-				result[i] = _source[i];
-			}
-
+			_source.CopyTo(result, 0);
 			return result;
 		}
 
@@ -30,12 +26,7 @@ namespace Super.Testing.Application
 		public Array Span()
 		{
 			var result = new T[Count];
-			var span = result.AsSpan();
-			for (var i = 0; i < Count; i++)
-			{
-				span[i] = _source[i];
-			}
-
+			_source.CopyTo(result.AsSpan());
 			return result;
 		}
 
@@ -43,12 +34,7 @@ namespace Super.Testing.Application
 		public Array Memory()
 		{
 			var result = new T[Count];
-			var memory = result.AsMemory().Span;
-			for (var i = 0; i < Count; i++)
-			{
-				memory[i] = _source[i];
-			}
-
+			_source.CopyTo(result.AsMemory());
 			return result;
 		}
 
@@ -62,13 +48,5 @@ namespace Super.Testing.Application
 			Array.Copy(_source, 0, result, 0, _source.Length);
 			return result;
 		}
-
-		/*[Benchmark]
-		public Array ConstrainedCopy()
-		{
-			var result = new string[Count];
-			Array.ConstrainedCopy(_source, 0, result, 0, _source.Length);
-			return result;
-		}*/
 	}
 }

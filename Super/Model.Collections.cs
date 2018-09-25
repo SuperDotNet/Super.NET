@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
+
 // ReSharper disable TooManyArguments
 
 namespace Super
@@ -15,6 +17,15 @@ namespace Super
 
 	public static partial class ExtensionMethods
 	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static T[] New<T>(this T[] @this)
+		{
+			var length = @this.Length;
+			var result = new T[length];
+			System.Array.Copy(@this, 0, result, 0, length);
+			return result;
+		}
+
 		public static ISequence<T> ToSequence<T>(this IEnumerable<T> @this) => new Sequence<T>(@this);
 
 		public static ISequence<T> ToSequence<T>(this ISource<IEnumerable<T>> @this)
@@ -53,6 +64,7 @@ namespace Super
 		/**/
 
 		public static Definition<_, T> Iterate<_, T>(this ISelect<_, T[]> @this) => new ArrayDefinition<_, T>(@this);
+
 		public static Definition<_, T> Iterate<_, T>(this ISelect<_, IEnumerable<T>> @this)
 			=> new EnumerableDefinition<_, T>(@this);
 
@@ -62,9 +74,11 @@ namespace Super
 		public static Definition<_, T> Alter<_, T>(this Definition<_, T> @this, IBodyAlteration<T> alteration)
 			=> new Definition<_, T>(@this.Start, alteration.Get(@this.Body), @this.Complete);
 
-		public static Definition<_, T> Skip <_, T>(this Definition<_, T> @this, uint skip) => @this.Alter(new Skip<T>(skip));
+		public static Definition<_, T> Skip<_, T>(this Definition<_, T> @this, uint skip)
+			=> @this.Alter(new Skip<T>(skip));
 
-		public static Definition<_, T> Take<_, T>(this Definition<_, T> @this, uint take)=> @this.Alter(new Take<T>(take));
+		public static Definition<_, T> Take<_, T>(this Definition<_, T> @this, uint take)
+			=> @this.Alter(new Take<T>(take));
 
 		public static Definition<_, T> WhereBy<_, T>(this Definition<_, T> @this, Expression<Func<T, bool>> where)
 			=> @this.Where(where.Compile());

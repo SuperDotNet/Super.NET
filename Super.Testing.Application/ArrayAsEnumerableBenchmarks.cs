@@ -32,7 +32,7 @@ namespace Super.Testing.Application
 
 				_array = In<uint[]>.Start()
 				                   .Iterate()
-				                   .WhereBy(x => true)
+				                   /*.WhereBy(x => true)*/
 				                   /*.Skip(100)
 				                   .Take(5)*/
 				                   .Reference();
@@ -42,9 +42,9 @@ namespace Super.Testing.Application
 		uint _count;
 
 		[Benchmark]
-		public Array Classic() => _data.Where(x => true)
+		public Array Classic() => _data/*.Where(x => true)
 		                               .Skip(100)
-		                               .Take(5)
+		                               .Take(5)*/
 		                               .ToArray();
 
 		/*[Benchmark]
