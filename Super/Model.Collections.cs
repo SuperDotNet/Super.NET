@@ -82,6 +82,9 @@ namespace Super
 		public static ISelect<_, Array<T>> Result<_, T>(this Definition<_, T> @this)
 			=> @this.Reference().Select(x => new Array<T>(x));
 
+		public static ISelect<_, Array<T>> Array<_, T>(this ISelect<_, T[]> @this)
+			=> @this.Select(x => new Array<T>(x));
+
 		/**/
 
 		/*public static ISelect<TIn, ArrayView<TOut>> Iterate<TIn, TOut>(this ISelect<TIn, TOut[]> @this)

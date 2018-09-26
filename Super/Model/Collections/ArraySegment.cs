@@ -1,12 +1,45 @@
-﻿using Super.Runtime;
+﻿using Super.Model.Commands;
+using Super.Model.Selection;
+using Super.Model.Sequences;
+using Super.Runtime;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace Super.Model.Collections
 {
+	public interface IIterator<T> : ISelect<IIteration<T>, T[]> {}
+
+	public readonly struct Session<T> : IDisposable
+	{
+		readonly ICommand<T[]> _command;
+
+		public Session(T[] store, ICommand<T[]> command)
+		{
+			Array    = store;
+			_command = command;
+		}
+
+		public T[] Array { get; }
+
+		public void Dispose()
+		{
+			_command.Execute(Array);
+		}
+	}
+
 	// ReSharper disable LocalSuppression
 
 	public static class Extensions
 	{
+		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Session<T> Session<T>(this IStores<T> @this, T[] reference) => @this.Session(@this.New(reference));*/
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Session<T> Session<T>(this IStores<T> @this, uint amount) => @this.Session(@this.Get(amount));
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Session<T> Session<T>(this IStores<T> @this, in Store<T> store) => new Session<T>(store.Instance, @this);
+
 		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Store<T> Copy<T>(in this Store<T> @this, T[] into, uint start = 0)
 		{
@@ -24,7 +57,7 @@ namespace Super.Model.Collections
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] Into<T>(in this ArrayView<T> @this, T[] into, uint start = 0)
 		{
-			System.Array.Copy(@this.Array, @this.Start, into, (int)start, (int)@this.Length);
+			Array.Copy(@this.Array, @this.Start, into, (int)start, (int)@this.Length);
 			return into;
 		}
 
@@ -45,10 +78,10 @@ namespace Super.Model.Collections
 		}*/
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Store<T> CopyInto<T>(in this Store<T> @this, in Store<T> into, Selection? selection = null)
+		public static T[] CopyInto<T>(in this Store<T> @this, T[] into, Selection? selection = null)
 		{
 			var index = selection?.Start ?? 0;
-			System.Array.Copy(@this.Instance, 0, into.Instance, index, selection?.Length ?? @this.Length - index);
+			Array.Copy(@this.Instance, 0, into, index, selection?.Length ?? @this.Length - index);
 			return into;
 		}
 

@@ -1,58 +1,9 @@
 ﻿using Super.Model.Collections;
-using Super.Model.Commands;
-using Super.Model.Selection;
 using Super.Model.Selection.Structure;
 using System;
-using System.Runtime.CompilerServices;
 
 namespace Super.Model.Sequences
 {
-	public interface IIterator<T> : ISelect<IIteration<T>, T[]> {}
-
-	public readonly struct Session<T> : IDisposable
-	{
-		readonly ICommand<T[]> _command;
-
-		public Session(Store<T> store, ICommand<T[]> command)
-		{
-			Store    = store;
-			_command = command;
-		}
-
-		public Store<T> Store { get; }
-
-		public T[] Items => Store.Instance;
-
-		public void Dispose()
-		{
-			_command.Execute(Store.Instance);
-		}
-	}
-
-	static class Extensions
-	{
-		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T[] New<T>(this IArrays<T> @this, T[] reference)
-		{
-			var length = reference.Length;
-			var result = @this.Get(length);
-			Array.Copy(reference, 0, result, 0, length);
-			return result;
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T[] New<T>(this T[] @this) => Allocated<T>.Default.New(@this);
-
-		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Session<T> Session<T>(this IStores<T> @this, T[] reference) => @this.Session(@this.New(reference));*/
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Session<T> Session<T>(this IStores<T> @this, uint amount) => @this.Session(@this.Get(amount));
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Session<T> Session<T>(this IStores<T> @this, in Store<T> store) => new Session<T>(store, @this);
-	}
-
 	/*readonly ref struct ExpandingStore<T>
 	{
 		readonly static Allotted<T>        Stores     = Allotted<T>.Default;
@@ -128,7 +79,7 @@ namespace Super.Model.Sequences
 			var store = new DynamicStore<T>(_size);
 			using (var session = _stores.Session(_size))
 			{
-				Store<T>? next = new Store<T>(session.Items, 0);
+				Store<T>? next = new Store<T>(session.Array, 0);
 				while ((next = parameter.Get(next.Value)) != null)
 				{
 					store = store.Add(next.Value);

@@ -18,6 +18,8 @@ namespace Super
 		public static IStructure<T, T> Structure<T>() where T : struct => Model.Selection.Structure.Self<T>.Default;
 	}
 
+	
+
 	public static class In<T>
 	{
 		public static ISpecification<T> Is(Func<T, bool> specification) => new DelegatedSpecification<T>(specification);

@@ -2,105 +2,112 @@
 using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
-using Super.Model.Selection.Structure;
-using System;
-using System.Runtime.CompilerServices;
+using System.Buffers;
 
 namespace Super.Model.Sequences
 {
-	public interface IArrays<T> : ISelect<uint, T[]>, ICommand<T[]> {}
+	public interface IStores<T> : ISelect<uint, T[]>, ICommand<T[]> {}
 
-	sealed class Allocated<T> : IArrays<T>
+	sealed class Allocated<T> : IStores<T>
 	{
 		public static Allocated<T> Default { get; } = new Allocated<T>();
 
 		Allocated() {}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public T[] Get(uint parameter) => new T[parameter];
 
 		public void Execute(T[] parameter) {}
 	}
 
-	sealed class PartitionReference<T> : Structure<Partition<T>, ArrayView<T>, T[]>
+	sealed class Allotted<T> : IStores<T>
 	{
-		public static PartitionReference<T> Default { get; } = new PartitionReference<T>();
+		public static Allotted<T> Default { get; } = new Allotted<T>();
 
-		PartitionReference() : base(Segment<T>.Default.Get, References<T>.Default.Get) {}
+		Allotted() : this(ArrayPool<T>.Shared) {}
+
+		readonly ArrayPool<T> _pool;
+
+		public Allotted(ArrayPool<T> pool) => _pool = pool;
+
+		public T[] Get(uint parameter) => _pool.Rent((int)parameter);
+
+		public void Execute(T[] parameter)
+		{
+			_pool.Return(parameter);
+		}
 	}
 
-	sealed class ArrayPartitions<T> : IAlteration<T[]>
+	sealed class SegmentedArray<T> : IAlteration<T[]>
 	{
-		public static ArrayPartitions<T> Default { get; } = new ArrayPartitions<T>();
+		readonly ISegment<T> _segment;
+		readonly IStores<T>  _stores;
+		readonly IStorage<T> _storage;
 
-		ArrayPartitions() : this(Allocated<T>.Default.Get, PartitionReference<T>.Default.Get,
-		                         Collections.Selection.Default) {}
+		public SegmentedArray(ISegment<T> segment, Collections.Selection selection)
+			: this(segment, Allocated<T>.Default, selection) {}
 
-		readonly Func<uint, T[]>              _stores;
-		readonly Selection<Partition<T>, T[]> _reference;
-		readonly Collections.Selection        _selection;
+		public SegmentedArray(ISegment<T> segment, IStores<T> stores, Collections.Selection selection)
+			: this(segment, stores, new Storage<T>(selection)) {}
 
-		public ArrayPartitions(Func<uint, T[]> stores, Selection<Partition<T>, T[]> reference,
-		                       Collections.Selection selection)
+		public SegmentedArray(ISegment<T> segment, IStores<T> stores, IStorage<T> storage)
 		{
-			_stores    = stores;
-			_reference = reference;
+			_segment = segment;
+			_stores  = stores;
+			_storage = storage;
+		}
+
+		public T[] Get(T[] parameter)
+		{
+			var storage = _storage.Get(parameter);
+			using (var session = _stores.Session(storage.Instance))
+			{
+				var view   = _segment.Get(new ArrayView<T>(session.Array, 0, storage.Length));
+				var result = _stores.New(view.Array, new Collections.Selection(view.Start, view.Length));
+				return result;
+			}
+		}
+	}
+
+	public interface IStorage<T> : ISelect<T[], Store<T>> {}
+
+	sealed class Storage<T> : IStorage<T>
+	{
+		readonly IClone<T>             _clone;
+		readonly Collections.Selection _selection;
+
+		public Storage(Collections.Selection selection) : this(new Clone<T>(selection), selection) {}
+
+		public Storage(IClone<T> clone, Collections.Selection selection)
+		{
+			_clone     = clone;
 			_selection = selection;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public T[] Get(T[] parameter)
-		{
-			var length = _selection.Length ?? (uint)parameter.Length;
-
-			var view = new ArrayView<T>(_stores(length), _selection.Start, length);
-
-			Array.Copy(parameter, 0, view.Array, view.Start, view.Length);
-
-			return _reference(new Partition<T>(new Store<T>(parameter), view));
-		}
+		public Store<T> Get(T[] parameter) => new Store<T>(_clone.Get(parameter),
+		                                                   _selection.Length ?? (uint)parameter.Length);
 	}
 
-	public interface ISegment<T> : IStructure<Partition<T>, ArrayView<T>> {}
+	public interface IClone<T> : IAlteration<T[]> {}
 
-	sealed class Segment<T> : ISegment<T>
+	sealed class Clone<T> : IClone<T>
 	{
-		public static Segment<T> Default { get; } = new Segment<T>();
+		public static Clone<T> Default { get; } = new Clone<T>();
 
-		Segment() {}
+		Clone() : this(Collections.Selection.Default) {}
 
-		public ArrayView<T> Get(in Partition<T> parameter) => parameter.Destination;
-	}
-
-	/*sealed class SelectedSegment<T> : ISegment<T>
-	{
-		public static SelectedSegment<T> Default { get; } = new SelectedSegment<T>();
-
-		SelectedSegment() : this(Collections.Selection.Default) {}
-
+		readonly IStores<T>            _stores;
 		readonly Collections.Selection _selection;
 
-		public SelectedSegment(Collections.Selection selection) => _selection = selection;
+		public Clone(Collections.Selection selection) : this(Allotted<T>.Default, selection) {}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public ArrayView<T> Get(in Partition<T> parameter)
+		public Clone(IStores<T> stores) : this(stores, Collections.Selection.Default) {}
+
+		public Clone(IStores<T> stores, Collections.Selection selection)
 		{
-			var result = parameter.Destination.Resize(_selection.Start, _selection.Length ?? parameter.Source.Length);
-
-			return result;
-		}
-	}*/
-
-	public readonly struct Partition<T>
-	{
-		public Partition(Store<T> source, ArrayView<T> destination)
-		{
-			Source      = source;
-			Destination = destination;
+			_stores    = stores;
+			_selection = selection;
 		}
 
-		public Store<T> Source { get; }
-
-		public ArrayView<T> Destination { get; }
+		public T[] Get(T[] parameter) => _stores.New(parameter, _selection);
 	}
 }

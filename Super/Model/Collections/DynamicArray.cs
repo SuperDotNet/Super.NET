@@ -1,5 +1,4 @@
-﻿using Super.Model.Sequences;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Super.Model.Collections
@@ -25,7 +24,7 @@ namespace Super.Model.Collections
 		{
 			using (var session = _items.Session(32))
 			{
-				var  items  = session.Items;
+				var  items  = session.Array;
 				var  total  = _selection.Start;
 				var  pages  = 1u;
 				var  length = _selection.Length ?? int.MaxValue;
@@ -55,8 +54,8 @@ namespace Super.Model.Collections
 				{
 					using (var item = _item.Session(items[i]))
 					{
-						var amount = item.Store.Length;
-						Array.Copy(items[i].Instance, 0u, destination, offset, amount);
+						var amount = items[i].Length;
+						Array.Copy(item.Array, 0u, destination, offset, amount);
 						offset += amount;
 					}
 				}

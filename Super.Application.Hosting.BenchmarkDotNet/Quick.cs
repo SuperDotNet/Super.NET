@@ -9,6 +9,6 @@ namespace Super.Application.Hosting.BenchmarkDotNet
 	{
 		public static ISource<IConfig> Default { get; } = new Quick();
 
-		Quick() : base(DeployedConfiguration.Default, Job.ShortRun.With(InProcessToolchain.DontLogOutput)) {}
+		Quick() : base(QuickConfiguration.Default, Job.ShortRun.With(InProcessToolchain.DontLogOutput)) {}
 	}
 }

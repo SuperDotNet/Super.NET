@@ -12,7 +12,7 @@ namespace Super.Model.Collections
 {
 	public interface IStoreReferences<T> : IStructure<Store<T>, T[]> {}
 
-	sealed class StoreReferences<T> : IStoreReferences<T>
+	/*sealed class StoreReferences<T> : IStoreReferences<T>
 	{
 		public static StoreReferences<T> Default { get; } = new StoreReferences<T>();
 
@@ -26,8 +26,8 @@ namespace Super.Model.Collections
 		public T[] Get(in Store<T> parameter)
 			=> parameter.Length == parameter.Instance.Length
 				   ? parameter.Instance
-				   : parameter.CopyInto(_stores.Get(parameter.Length)).Instance;
-	}
+				   : parameter.CopyInto(_stores.Get(parameter.Length));
+	}*/
 
 	public interface IReferences<T> : IStructure<ArrayView<T>, T[]> {}
 
