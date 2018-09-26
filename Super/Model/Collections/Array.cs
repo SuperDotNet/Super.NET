@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Super.Model.Sequences;
 
 namespace Super.Model.Collections
 {
@@ -35,13 +36,7 @@ namespace Super.Model.Collections
 
 		public ref readonly T this[uint index] => ref _reference[index];
 
-		public T[] Copy()
-		{
-			var length = _reference.Length;
-			var result = new T[length];
-			Array.Copy(_reference, 0, result, 0, length);
-			return result;
-		}
+		public T[] Copy() => _reference.New();
 
 		public ImmutableArray<T> Get() => _array;
 

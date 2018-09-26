@@ -17,21 +17,4 @@ namespace Super.Model.Selection
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public TTo Get(TParameter parameter) => _select(_source(parameter));
 	}
-
-	class StructureSelection<TIn, TFrom, TTo> : ISelect<TIn, TTo> where TFrom : struct
-	{
-		readonly Func<TIn, TFrom>      _source;
-		readonly Selection<TFrom, TTo> _select;
-
-		public StructureSelection(Func<TIn, TFrom> source, Selection<TFrom, TTo> select)
-		{
-			_select = select;
-			_source = source;
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public TTo Get(TIn parameter) => _select(_source(parameter));
-	}
-
-	public delegate TOut Selection<TIn, out TOut>(in TIn parameter);
 }

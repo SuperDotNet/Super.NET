@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 
 // ReSharper disable TooManyArguments
 
@@ -17,15 +16,6 @@ namespace Super
 
 	public static partial class ExtensionMethods
 	{
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T[] New<T>(this T[] @this)
-		{
-			var length = @this.Length;
-			var result = new T[length];
-			System.Array.Copy(@this, 0, result, 0, length);
-			return result;
-		}
-
 		public static ISequence<T> ToSequence<T>(this IEnumerable<T> @this) => new Sequence<T>(@this);
 
 		public static ISequence<T> ToSequence<T>(this ISource<IEnumerable<T>> @this)

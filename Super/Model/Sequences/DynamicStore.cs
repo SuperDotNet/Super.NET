@@ -56,15 +56,10 @@ namespace Super.Model.Sequences
 			_index    = index;
 		}
 
-		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public DynamicStore<T> Add(in Store<T> page)
-			=> new DynamicStore<T>(_stores, page.CopyInto(Size(page), _selection)
-			                                      .Resize(page.Length));*/
-
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public T[] Get()
 		{
-			var allocated = Allocated<T>.Default.Get(_position.Length ?? 0);
+			var allocated = Collections.Allocated<T>.Default.Get(_position.Length ?? 0);
 			using (Items.Session(_stores))
 			{
 				var stores = _stores.Instance;

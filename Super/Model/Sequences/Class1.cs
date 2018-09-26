@@ -31,6 +31,21 @@ namespace Super.Model.Sequences
 
 	static class Extensions
 	{
+		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static T[] New<T>(this IArrays<T> @this, T[] reference)
+		{
+			var length = reference.Length;
+			var result = @this.Get(length);
+			Array.Copy(reference, 0, result, 0, length);
+			return result;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static T[] New<T>(this T[] @this) => Allocated<T>.Default.New(@this);
+
+		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Session<T> Session<T>(this IStores<T> @this, T[] reference) => @this.Session(@this.New(reference));*/
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Session<T> Session<T>(this IStores<T> @this, uint amount) => @this.Session(@this.Get(amount));
 

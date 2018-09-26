@@ -2,6 +2,7 @@ using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Selection.Structure;
 using System.Buffers;
+using System.Runtime.CompilerServices;
 
 namespace Super.Model.Collections
 {
@@ -32,6 +33,7 @@ namespace Super.Model.Collections
 
 		Allocated() {}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public Store<T> Get(uint parameter) => new Store<T>(new T[parameter]);
 
 		public void Execute(T[] parameter) {}

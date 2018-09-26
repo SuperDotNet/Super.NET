@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
+using Super.Model.Sequences;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ namespace Super.Testing.Application
 {
 	public class IterationBenchmarks
 	{
-		const uint Total = 1024;
+		const uint Total = 10_000u;
 
 		[Params(Total)]
 		/*[Params( /*1u, 2u, 3u, 4u, 5u, 8u, 16u,#1#32u, 64u, 128u, 256u, 512u, 1024u, 1025u, 2048u, 4096u, 8196u,
@@ -24,6 +25,7 @@ namespace Super.Testing.Application
 		}	uint _count = Total;
 
 		uint[] _source;
+		readonly static ArrayPartitions<uint> ArrayPartitions = ArrayPartitions<uint>.Default;
 
 		/*[Benchmark(Baseline = true)]
 		public Array Iterator() => Iterator<uint>.Default.Get(new Iteration<uint>(_source));*/
@@ -31,10 +33,13 @@ namespace Super.Testing.Application
 		/*[Benchmark]
 		public Array DynamicIterator() => DynamicIterator<int>.Default.Get(new Iteration<int>(_source));*/
 
-		/*[Benchmark]
-		public Array EnumerableToArray() => Numbers().ToArray();*/
+		[Benchmark(Baseline = true)]
+		public Array Partition() => ArrayPartitions.Get(_source);
 
 		[Benchmark]
+		public Array EnumerableToArray() => _source.ToArray();
+
+		/*[Benchmark]
 		public Array New() => _source.New();
 
 		[Benchmark]
@@ -44,7 +49,7 @@ namespace Super.Testing.Application
 			var result = new uint[length];
 			Array.Copy(_source, 0, result, 0, length);
 			return result;
-		}
+		}*/
 
 		/*[Benchmark]
 		public Array InstanceCopy()

@@ -48,7 +48,7 @@ namespace Super
 			=> @this.Select(SortAlteration<TOut>.Default);
 
 		public static ISource<TTo> Reduce<TFrom, TTo>(this ISelect<TFrom, TTo> @this)
-			=> Runtime.Activation.New<TFrom>.Default.Select(@this);
+			=> New<TFrom>.Default.Select(@this);
 
 		public static ISelect<TIn, Type> Type<TIn, TOut>(this ISelect<TIn, TOut> @this)
 			=> @this.Select(InstanceTypeSelector<TOut>.Default);
