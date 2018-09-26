@@ -36,7 +36,7 @@ namespace Super.Model.Sequences
 		}
 	}
 
-	class Query<_, T> : FixedDeferredSingleton<Definition<T>, ISelect<_, T[]>>
+	public class Query<_, T> : FixedDeferredSingleton<Definition<T>, ISelect<_, T[]>>
 	{
 		public Query(ISelect<Definition<T>, ISelect<_, T[]>> select) : this(@select, Definition<T>.Default) {}
 
@@ -52,7 +52,7 @@ namespace Super.Model.Sequences
 		public Definition<T> Definition { get; }
 	}
 
-	sealed class Definition<T>
+	public sealed class Definition<T>
 	{
 		public static Definition<T> Default { get; } = new Definition<T>();
 

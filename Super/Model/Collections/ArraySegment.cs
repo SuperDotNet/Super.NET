@@ -40,53 +40,18 @@ namespace Super.Model.Collections
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Session<T> Session<T>(this IStores<T> @this, in Store<T> store) => new Session<T>(store.Instance, @this);
 
-		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Store<T> Copy<T>(in this Store<T> @this, T[] into, uint start = 0)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static T[] Into<T>(in this ArrayView<T> @this, T[] into)
+			=> @this.Array.Copy(into, new Selection(@this.Start, @this.Length));
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		// ReSharper disable once TooManyArguments
+		public static T[] Copy<T>(this T[] @this, T[] result, Selection? selection = null, uint offset = 0)
 		{
-			System.Array.Copy(@this.Instance, 0, into, (int)start, (int)@this.Length);
-			return @this;
+			Array.Copy(@this, selection?.Start ?? 0,
+			           result, offset, selection?.Length ?? (uint)Math.Min(result.Length, @this.Length));
+			return result;
 		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T[] Copied<T>(in this ArrayView<T> @this, T[] into, uint start = 0)
-		{
-			System.Array.Copy(@this.Array, @this.Start, into, (int)start, (int)@this.Length);
-			return into;
-		}*/
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T[] Into<T>(in this ArrayView<T> @this, T[] into, uint start = 0)
-		{
-			Array.Copy(@this.Array, @this.Start, into, (int)start, (int)@this.Length);
-			return into;
-		}
-
-
-
-		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Store<T> Copy<T>(in this Store<T> @this, T[] into, uint start = 0)
-		{
-			System.Array.Copy(@this.Instance, 0, into, (int)start, (int)@this.Length);
-			return @this;
-		}*/
-
-		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T[] Into<T>(in this Store<T> @this, T[] into, uint start = 0)
-		{
-			System.Array.Copy(@this.Instance, 0, into, (int)start, (int)@this.Length);
-			return into;
-		}*/
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T[] CopyInto<T>(in this Store<T> @this, T[] into, Selection? selection = null)
-		{
-			var index = selection?.Start ?? 0;
-			Array.Copy(@this.Instance, 0, into, index, selection?.Length ?? @this.Length - index);
-			return into;
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Store<T> Resize<T>(in this Store<T> @this, uint size) => new Store<T>(@this.Instance, size);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static ArrayView<T> Resize<T>(in this ArrayView<T> @this, uint size) => @this.Resize(@this.Start, size);

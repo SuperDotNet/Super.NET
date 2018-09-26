@@ -1,44 +1,43 @@
-﻿using BenchmarkDotNet.Attributes;
-using Super.Model.Collections;
-using Super.Model.Selection;
-using Super.Model.Sequences;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Super.Testing.Application
+﻿namespace Super.Testing.Application
 {
-	public class IterationBenchmarks
+	/*public class IterationBenchmarks
 	{
 		const uint Total = 10_000u;
 
 		readonly ISelect<uint[], Array<uint>> _full;
-		readonly ISelect<uint[], uint[]> _selection;
-		readonly IEnumerable<uint> _enumerable;
+		readonly ISelect<uint[], uint[]>      _near, _far;
+
+		IEnumerable<uint> _nearSource, _farSource;
 
 		public IterationBenchmarks() : this(In<uint[]>.Start().Query().Result(),
+		                                    In<uint[]>.Start().Query().Skip(300).Take(100).Get(),
 		                                    In<uint[]>.Start().Query().Skip(5000).Take(300).Get()) {}
 
-		public IterationBenchmarks(ISelect<uint[], Array<uint>> full, ISelect<uint[], uint[]> selection)
+		public IterationBenchmarks(ISelect<uint[], Array<uint>> full,
+		                           ISelect<uint[], uint[]> near, ISelect<uint[], uint[]> far)
 		{
-			_full      = full;
-			_selection = selection;
-			_enumerable = Numbers().Skip(5000).Take(300);
+			_full = full;
+			_near = near;
+			_far  = far;
 		}
 
 		[Params(Total)]
-		/*[Params( /*1u, 2u, 3u, 4u, 5u, 8u, 16u,#1#32u, 64u, 128u, 256u, 512u, 1024u, 1025u, 2048u, 4096u, 8196u,
+		/*[Params( /*1u, 2u, 3u, 4u, 5u, 8u, 16u,#2#32u, 64u, 128u, 256u, 512u, 1024u, 1025u, 2048u, 4096u, 8196u,
 			10_000u,
-			100_000u, 1_000_000u, 10_000_000u, 100_000_000u)]*/
+			100_000u, 1_000_000u, 10_000_000u, 100_000_000u)]#1#
 		public uint Count
 		{
 			get => _count;
 			set
 			{
-				_count  = value;
-				_source = Numbers().ToArray();
+				_count      = value;
+				_source     = Numbers().ToArray();
+				_nearSource = Numbers().Skip(300).Take(100);
+				_farSource  = Numbers().Skip(5000).Take(300);
 			}
-		}	uint _count = Total;
+		}
+
+		uint _count = Total;
 
 		uint[] _source;
 
@@ -46,14 +45,19 @@ namespace Super.Testing.Application
 		public Array<uint> Full() => _full.Get(_source);
 
 		[Benchmark]
+		public Array Near() => _near.Get(_source);
+
+		[Benchmark]
+		public Array Far() => _far.Get(_source);
+
+		[Benchmark]
 		public Array ToArray() => _source.ToArray();
 
+		[Benchmark]
+		public Array NearEnumerable() => _nearSource.ToArray();
 
 		[Benchmark]
-		public Array Selection() => _selection.Get(_source);
-
-		[Benchmark]
-		public Array SelectionEnumerable() => _enumerable.ToArray();
+		public Array FarEnumerable() => _farSource.ToArray();
 
 		/*[Benchmark]
 		public Array New() => _source.New();
@@ -65,7 +69,7 @@ namespace Super.Testing.Application
 			var result = new uint[length];
 			Array.Copy(_source, 0, result, 0, length);
 			return result;
-		}*/
+		}#1#
 
 		/*[Benchmark]
 		public Array InstanceCopy()
@@ -87,7 +91,7 @@ namespace Super.Testing.Application
 			}
 
 			return null;
-		}*/
+		}#1#
 
 		IEnumerable<uint> Numbers()
 		{
@@ -96,5 +100,5 @@ namespace Super.Testing.Application
 				yield return i;
 			}
 		}
-	}
+	}*/
 }

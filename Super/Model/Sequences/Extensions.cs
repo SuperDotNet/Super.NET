@@ -8,6 +8,9 @@ namespace Super.Model.Sequences
 	{
 		public static Query<_, T> Query<_, T>(this ISelect<_, T[]> @this) => new ArrayQuery<_, T>(@this);
 
+		public static Query<_, T> Select<_, T>(this Query<_, T> @this, Collections.Selection selection)
+			=> @this.Skip(selection.Start).Take(selection.Length.GetValueOrDefault());
+
 		public static Query<_, T> Skip<_, T>(this Query<_, T> @this, uint skip)
 			=> new Query<_, T>(@this.Select,
 			                   new Definition<T>(@this.Definition.Segment,
@@ -19,16 +22,14 @@ namespace Super.Model.Sequences
 			                   new Definition<T>(@this.Definition.Segment,
 			                                     new Collections.Selection(@this.Definition.Selection.Start, take)));
 
-		/*public static ISelect<_, T[]> Reference<_, T>(this Query<_, T> @this) => @this.Get();*/
-
 		public static ISelect<_, Array<T>> Result<_, T>(this Query<_, T> @this) => @this.Get().Array();
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] New<T>(this IStores<T> @this, T[] reference)
 			=> @this.New(reference, 0, (uint)reference.Length);
 
-		public static T[] New<T>(this IStores<T> @this, in Store<T> store)
-			=> @this.New(store.Instance, 0, store.Length);
+		/*public static T[] New<T>(this IStores<T> @this, in Store<T> store)
+			=> @this.New(store.Instance, 0, store.Length);*/
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] New<T>(this IStores<T> @this, T[] reference, in Collections.Selection selection)
@@ -43,13 +44,10 @@ namespace Super.Model.Sequences
 			return result;
 		}
 
-		public static Store<T> Store<T>(this IStores<T> @this, uint length) => new Store<T>(@this.Get(length), length);
+		/*public static Store<T> Store<T>(this IStores<T> @this, uint length) => new Store<T>(@this.Get(length), length);*/
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] New<T>(this T[] @this) => Allocated<T>.Default.New(@this);
-
-		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Session<T> Session<T>(this IStores<T> @this, T[] reference) => @this.Session(@this.New(reference));*/
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Session<T> Session<T>(this IStores<T> @this, uint amount) => @this.Session(@this.Get(amount));

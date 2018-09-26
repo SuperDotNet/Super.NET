@@ -113,7 +113,7 @@ namespace Super.Model.Collections
 		public ArrayView<T> Get(in ArrayView<T> parameter) => parameter;
 	}
 
-	sealed class Copy<T> : ISelectView<T>
+	/*sealed class Copy<T> : ISelectView<T>
 	{
 		public static Copy<T> Default { get; } = new Copy<T>();
 
@@ -125,7 +125,7 @@ namespace Super.Model.Collections
 
 		public ArrayView<T> Get(in ArrayView<T> parameter)
 			=> new ArrayView<T>(parameter.Into(_stores.Get(parameter.Length).Instance), 0, parameter.Length);
-	}
+	}*/
 
 	public interface ISelectView<T> : IStructure<ArrayView<T>, ArrayView<T>> {}
 
@@ -371,12 +371,12 @@ namespace Super.Model.Collections
 		public WhereSelection(Func<T, bool> where) : base(new WhereSegment<T>(where)) {}
 	}
 
-	class AllottedContentAlteration<T> : ContentAlteration<T>
+	/*class AllottedContentAlteration<T> : ContentAlteration<T>
 	{
 		readonly static Complete<T> Complete = Allotted<T>.Default.Execute;
 
 		public AllottedContentAlteration(ISegment<T> segment) : base(segment, Copy<T>.Default, Complete) {}
-	}
+	}*/
 
 	public interface IContentAlteration<T> : IAlteration<Content<T>> {}
 
