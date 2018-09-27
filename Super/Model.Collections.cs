@@ -16,6 +16,15 @@ namespace Super
 
 	public static partial class ExtensionMethods
 	{
+		public static ISelect<_, Array<T>> Result<_, T>(this ISelect<_, IEnumerable<T>> @this)
+			=> @this.Select(Result<T>.Default);
+
+		public static ISelect<_, T[]> Capture<_, T>(this ISelect<_, IEnumerable<T>> @this)
+			=> @this.Select(x => x.ToArray());
+
+		public static ISelect<uint, IEnumerable<T>> Take<T>(this ISource<IEnumerable<T>> @this)
+			=> @this.Out(new ClassicTake<T>(@this.Get));
+
 		public static ISequence<T> ToSequence<T>(this IEnumerable<T> @this) => new Sequence<T>(@this);
 
 		public static ISequence<T> ToSequence<T>(this ISource<IEnumerable<T>> @this)

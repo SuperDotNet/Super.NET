@@ -20,7 +20,7 @@ namespace Super.Testing.Application.Model.Collections
 		[InlineData(1_000_000u)]
 		void Verify(uint count)
 		{
-			var source = Objects.Count.Default.Get(count);
+			var source = Objects.Numbers.Default.Get(count);
 			In<IEnumerable<int>>.Start().Iterate().Reference().Get(source).Should().Equal(source);
 		}
 

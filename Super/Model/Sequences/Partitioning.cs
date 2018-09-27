@@ -3,20 +3,20 @@ using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
 using System.Buffers;
+using System.Runtime.CompilerServices;
 
 namespace Super.Model.Sequences
 {
 	public interface IStores<T> : ISelect<uint, T[]>, ICommand<T[]> {}
 
-	sealed class Allocated<T> : IStores<T>
+	sealed class Allocated<T> : DelegatedCommand<T[]>, IStores<T>
 	{
 		public static Allocated<T> Default { get; } = new Allocated<T>();
 
-		Allocated() {}
+		Allocated() : base(Runtime.Delegates<T[]>.Empty) {}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public T[] Get(uint parameter) => new T[parameter];
-
-		public void Execute(T[] parameter) {}
 	}
 
 	sealed class Allotted<T> : IStores<T>
@@ -75,7 +75,10 @@ namespace Super.Model.Sequences
 		readonly IClone<T>             _clone;
 		readonly Collections.Selection _selection;
 
-		public Storage(Collections.Selection selection) : this(new Clone<T>(selection), selection) {}
+		public Storage(Collections.Selection selection) : this(Allotted<T>.Default, selection) {}
+
+		public Storage(IStores<T> stores, Collections.Selection selection)
+			: this(new Clone<T>(stores, selection), selection) {}
 
 		public Storage(IClone<T> clone, Collections.Selection selection)
 		{
@@ -83,22 +86,20 @@ namespace Super.Model.Sequences
 			_selection = selection;
 		}
 
-		public Store<T> Get(T[] parameter) => new Store<T>(_clone.Get(parameter),
-		                                                   _selection.Length ?? (uint)parameter.Length);
+		public Store<T> Get(T[] parameter)
+			=> new Store<T>(_clone.Get(parameter), _selection.Length ?? (uint)parameter.Length);
 	}
 
 	public interface IClone<T> : IAlteration<T[]> {}
 
-	sealed class Clone<T> : IClone<T>
+	public sealed class Clone<T> : IClone<T>
 	{
 		public static Clone<T> Default { get; } = new Clone<T>();
 
-		Clone() : this(Collections.Selection.Default) {}
+		Clone() : this(Allocated<T>.Default) {}
 
 		readonly IStores<T>            _stores;
 		readonly Collections.Selection _selection;
-
-		public Clone(Collections.Selection selection) : this(Allotted<T>.Default, selection) {}
 
 		public Clone(IStores<T> stores) : this(stores, Collections.Selection.Default) {}
 
@@ -108,6 +109,7 @@ namespace Super.Model.Sequences
 			_selection = selection;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public T[] Get(T[] parameter) => _stores.New(parameter, _selection);
 	}
 }

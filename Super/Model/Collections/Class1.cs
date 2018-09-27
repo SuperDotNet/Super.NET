@@ -63,6 +63,24 @@ namespace Super.Model.Collections
 		Access() : base(x => x.ToArray()) {}
 	}
 
+	sealed class Result<T> : ISelect<IEnumerable<T>, Array<T>>
+	{
+		public static Result<T> Default { get; } = new Result<T>();
+
+		Result() {}
+
+		public Array<T> Get(IEnumerable<T> parameter) => new Array<T>(parameter.ToArray());
+	}
+
+	sealed class ClassicTake<T> : ISelect<uint, IEnumerable<T>>
+	{
+		readonly Func<IEnumerable<T>> _source;
+
+		public ClassicTake(Func<IEnumerable<T>> source) => _source = source;
+
+		public IEnumerable<T> Get(uint parameter) => _source().Take((int)parameter);
+	}
+
 	/*class Decorate<T> : ISequencer<T>
 	{
 		readonly ISequencer<T> _sequencer;

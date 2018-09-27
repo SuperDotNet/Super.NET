@@ -51,7 +51,7 @@ namespace Super.Testing.Application.Model.Collections
 		void Verify()
 		{
 			const uint count = 10_000_000u;
-			var array = Objects.Count.Default
+			var array = Objects.Numbers.Default
 			                   .Iterate()
 			                   .Skip(count - 5)
 			                   .Take(5)
@@ -59,7 +59,7 @@ namespace Super.Testing.Application.Model.Collections
 			                   .Get(count);
 			array.Should().HaveCount(5);
 
-			Objects.Count.Default.Get(count).Skip((int)(count - 5)).Take(5).Sum().Should().Be(array.Sum());
+			Objects.Numbers.Default.Get(count).Skip((int)(count - 5)).Take(5).Sum().Should().Be(array.Sum());
 		}
 
 		[Fact]

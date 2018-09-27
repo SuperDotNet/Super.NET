@@ -31,21 +31,15 @@ namespace Super.Model.Collections
 
 	public static class Extensions
 	{
-		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Session<T> Session<T>(this IStores<T> @this, T[] reference) => @this.Session(@this.New(reference));*/
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Session<T> Session<T>(this IStores<T> @this, uint amount) => @this.Session(@this.Get(amount));
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Session<T> Session<T>(this IStores<T> @this, in Store<T> store) => new Session<T>(store.Instance, @this);
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] Into<T>(in this ArrayView<T> @this, T[] into)
 			=> @this.Array.Copy(into, new Selection(@this.Start, @this.Length));
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		// ReSharper disable once TooManyArguments
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] Copy<T>(this T[] @this, T[] result, Selection? selection = null, uint offset = 0)
 		{
 			Array.Copy(@this, selection?.Start ?? 0,
@@ -53,19 +47,14 @@ namespace Super.Model.Collections
 			return result;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static ArrayView<T> Resize<T>(in this ArrayView<T> @this, uint size) => @this.Resize(@this.Start, size);
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static ArrayView<T> Resize<T>(in this ArrayView<T> @this, uint start, uint size)
 		{
 			var index  = start;
 			var length = size;
 			return index != @this.Start || length != @this.Length ? new ArrayView<T>(@this.Array, index, length) : @this;
 		}
-
-		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Array<T> Result<T>(in this ArrayView<T> @this) => new Array<T>(Collections.Result<T>.Default.Get(@this));*/
 	}
 
 	public readonly struct ArrayView<T>
