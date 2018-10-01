@@ -85,6 +85,12 @@ namespace Super
 			where TFrom : struct
 			=> new Structure<TIn,TFrom,TTo>(@this.Get, select.Get);
 
+		/*public static IEphemeral<TIn, TTo> Select<TIn, TFrom, TTo>(this IEphemeral<TIn, TFrom> @this, IEphemeral<TFrom, TTo> select)
+			where TIn : struct
+			where TFrom : struct
+			where TTo : struct
+			=> new Ephemeral<TIn,TFrom,TTo>(@this.Get, select.Get);*/
+
 		public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this, Func<TFrom, TTo> select)
 			=> new Selection<TIn, TFrom, TTo>(@this.Get, select);
 	}

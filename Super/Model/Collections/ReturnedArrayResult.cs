@@ -60,7 +60,7 @@ namespace Super.Model.Collections
 
 		public ArrayView<T> Get(T[] parameter)
 			=> new ArrayView<T>(parameter, _selection.Start,
-			                    _selection.Length ?? (uint)parameter.Length - _selection.Start);
+			                    _selection.Length.IsAssigned ? _selection.Length.Instance : (uint)parameter.Length - _selection.Start);
 	}
 
 	sealed class RuntimeStores<T> : ISelect<IEnumerable<T>, ArrayView<T>>, IActivateMarker<Selection>
@@ -210,7 +210,7 @@ namespace Super.Model.Collections
 		public uint Length { get; }
 	}
 
-	public interface IStart<in _, T> : IStructure<Selection?, ISelect<_, ArrayView<T>>> {}
+	public interface IStart<in _, T> : ISelect<Selection?, ISelect<_, ArrayView<T>>> {}
 
 	sealed class ArrayDefinition<_, T> : Definition<_, T>
 	{
@@ -222,7 +222,7 @@ namespace Super.Model.Collections
 
 			public Entrance(ISelect<_, T[]> @select) => _select = @select;
 
-			public ISelect<_, ArrayView<T>> Get(in Selection? parameter)
+			public ISelect<_, ArrayView<T>> Get(Selection? parameter)
 				=> _select.Select(parameter.HasValue ? new ArrayStores<T>(parameter.Value) : ArrayStores<T>.Default);
 		}
 	}
@@ -238,7 +238,7 @@ namespace Super.Model.Collections
 
 			public Entrance(ISelect<_, IEnumerable<T>> @select) => _select = @select;
 
-			public ISelect<_, ArrayView<T>> Get(in Selection? parameter)
+			public ISelect<_, ArrayView<T>> Get(Selection? parameter)
 				=> _select.Select(parameter.HasValue
 					                  ? new EnumerableStores<T>(parameter.Value)
 					                  : EnumerableStores<T>.Default);
@@ -406,7 +406,7 @@ namespace Super.Model.Collections
 		public SelectionSegment(Selection selection) => _selection = selection;
 
 		public ArrayView<T> Get(in ArrayView<T> parameter)
-			=> parameter.Resize(_selection.Start, _selection.Length ?? parameter.Length - _selection.Start);
+			=> parameter.Resize(_selection.Start, _selection.Length.IsAssigned ? _selection.Length.Instance : parameter.Length - _selection.Start);
 	}
 
 	sealed class WhereSegment<T> : ISegment<T>

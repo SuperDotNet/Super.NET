@@ -27,7 +27,7 @@ namespace Super.Model.Collections
 				var  items  = session.Array;
 				var  total  = _selection.Start;
 				var  pages  = 1u;
-				var  length = _selection.Length ?? int.MaxValue;
+				var  length = _selection.Length.Or(int.MaxValue);
 				bool next;
 				items[0] = first;
 				do

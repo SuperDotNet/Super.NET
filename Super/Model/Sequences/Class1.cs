@@ -65,19 +65,19 @@ namespace Super.Model.Sequences
 
 		Iterator() : this(Allotted<T>.Default) {}
 
-		readonly IStores<T> _stores;
+		readonly IStore<T> _store;
 		readonly uint       _size;
 
-		public Iterator(IStores<T> stores, uint size = 4096)
+		public Iterator(IStore<T> store, uint size = 1024)
 		{
-			_stores = stores;
+			_store = store;
 			_size   = size;
 		}
 
 		public T[] Get(IIteration<T> parameter)
 		{
 			var store = new DynamicStore<T>(_size);
-			using (var session = _stores.Session(_size))
+			using (var session = _store.Session(_size))
 			{
 				Store<T>? next = new Store<T>(session.Array, 0);
 				while ((next = parameter.Get(next.Value)) != null)

@@ -1,9 +1,80 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 
 namespace Super.Model.Selection.Structure
 {
-	public interface IStructure<TIn, out TOut>
+	/*public interface IMutable<T> : ISource<T>, IEnhancedCommand<T> where T : struct {}
+
+	public class Variable<T> : IMutable<T> where T : struct
+	{
+		T _instance;
+
+		public Variable() : this(default) {}
+
+		public Variable(T instance) => _instance = instance;
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public T Get() => _instance;
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Execute(in T parameter)
+		{
+			_instance = parameter;
+		}
+	}*/
+
+	/*sealed class EphemeralSelf<T> : IEphemeral<T> where T : struct
+	{
+		public static EphemeralSelf<T> Default { get; } = new EphemeralSelf<T>();
+
+		EphemeralSelf() {}
+
+		public ref readonly T Get(in T parameter) => ref parameter;
+	}*/
+
+	public sealed class Local<T> : ILocal<T> where T : struct
+	{
+		T _instance;
+
+		public Local() : this(default) {}
+
+		public Local(T instance) => _instance = instance;
+
+		public ref readonly T Get() => ref _instance;
+
+		public void Execute(in T parameter)
+		{
+			_instance = parameter;
+		}
+	}
+
+	/*public interface IEphemeralSelect<T> : ISelect<ILocal<T>, ILocal<T>> where T : struct {}*/
+
+	public interface IEphemeralSelect<TIn, TOut> : ISelect<ILocal<TIn>, ILocal<TOut>> where TIn : struct
+	                                                                                  where TOut : struct {}
+
+	/*public interface ILocalCommand<T> where T : struct
+	{
+		void Execute(ref ref T parameter);
+	}*/
+
+	public interface ILocalCommand<T> where T : struct
+	{
+		void Execute(in T parameter);
+	}
+
+	public interface ILocal<T> : ILocalCommand<T> where T : struct
+	{
+		ref readonly T Get();
+	}
+
+	/*public interface IEphemeral<TIn, TOut> where TIn : struct where TOut : struct
+	{
+		ref readonly TOut Get(in TIn parameter);
+	}
+
+	public interface IEphemeral<T> : IEphemeral<T, T> where T : struct {}*/
+
+	public interface IStructure<TIn, out TOut> where TIn : struct
 	{
 		TOut Get(in TIn parameter);
 	}
@@ -21,7 +92,7 @@ namespace Super.Model.Selection.Structure
 
 	class Structure<TIn, TFrom, TTo> : IStructure<TIn, TTo> where TIn : struct where TFrom : struct
 	{
-		readonly Selection<TIn, TFrom>  _source;
+		readonly Selection<TIn, TFrom> _source;
 		readonly Selection<TFrom, TTo> _select;
 
 		public Structure(Selection<TIn, TFrom> source, Selection<TFrom, TTo> select)
@@ -30,9 +101,22 @@ namespace Super.Model.Selection.Structure
 			_source = source;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public TTo Get(in TIn parameter) => _select(_source(parameter));
 	}
+
+	/*class Ephemeral<TIn, TFrom, TTo> : IEphemeral<TIn, TTo> where TIn : struct where TFrom : struct where TTo : struct
+	{
+		readonly Reference<TIn, TFrom> _source;
+		readonly Reference<TFrom, TTo> _select;
+
+		public Ephemeral(Reference<TIn, TFrom> source, Reference<TFrom, TTo> select)
+		{
+			_select = select;
+			_source = source;
+		}
+
+		public ref readonly TTo Get(in TIn parameter) => ref _select(_source(in parameter));
+	}*/
 
 	class DelegatedStructure<TIn, TOut> : IStructure<TIn, TOut> where TIn : struct
 	{
@@ -42,7 +126,6 @@ namespace Super.Model.Selection.Structure
 
 		public TOut Get(in TIn parameter) => _select(in parameter);
 	}
-
 
 	class StructureSelection<TIn, TFrom, TTo> : ISelect<TIn, TTo> where TFrom : struct
 	{
@@ -55,9 +138,10 @@ namespace Super.Model.Selection.Structure
 			_source = source;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public TTo Get(TIn parameter) => _select(_source(parameter));
 	}
 
 	public delegate TOut Selection<TIn, out TOut>(in TIn parameter);
+
+	public delegate ref readonly TOut Reference<TIn, TOut>(in TIn parameter);
 }

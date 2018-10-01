@@ -74,8 +74,8 @@ namespace Super.Model.Collections
 
 			var five = parameter.Current;
 
-			var first = _item.Get(_target.Length.HasValue
-				                      ? Math.Min(_target.Start, _target.Length.Value)
+			var first = _item.Get(_target.Length.IsAssigned
+				                      ? Math.Min(_target.Start, _target.Length)
 				                      : _target.Start);
 			var items = first.Instance;
 			items[0] = one;

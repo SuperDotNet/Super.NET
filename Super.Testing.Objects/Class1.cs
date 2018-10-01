@@ -147,7 +147,7 @@ namespace Super.Testing.Objects
 		Sequencing() : this(In<T[]>.Start().Query(), Objects.Near.Default, Objects.Far.Default) {}
 
 		public Sequencing(Model.Sequences.IQuery<T[], T> query, Selection near, Selection far)
-			: this(Clone<T>.Default.Select(query.Get()), query.Select(near).Get(), query.Select(far).Get()) {}
+			: this(query.Get(), query.Select(near).Get(), query.Select(far).Get()) {}
 
 		public Sequencing(ISelect<T[], T[]> full, ISelect<T[], T[]> near, ISelect<T[], T[]> far)
 		{
@@ -202,15 +202,15 @@ namespace Super.Testing.Objects
 	// ReSharper disable all PossibleMultipleEnumeration
 	public class Enumerations<T>
 	{
-		public Enumerations(uint count) : this(FixtureInstance.Default.Get().CreateMany<T>((int)count)) {}
+		public Enumerations(uint count) : this(FixtureInstance.Default.Select(new Many<T>(count)).Get()) {}
 
 		public Enumerations(IEnumerable<T> source)
 			: this(source, Objects.Near.Default, Objects.Far.Default) {}
 
 		public Enumerations(IEnumerable<T> source, Selection near, Selection far)
 			: this(source,
-			       source.Skip((int)near.Start).Take((int)near.Length.GetValueOrDefault()),
-			       source.Skip((int)far.Start).Take((int)far.Length.GetValueOrDefault())) {}
+			       source.Skip((int)near.Start).Take((int)near.Length.Instance),
+			       source.Skip((int)far.Start).Take((int)far.Length.Instance)) {}
 
 		public Enumerations(IEnumerable<T> full, IEnumerable<T> near, IEnumerable<T> far)
 		{

@@ -1,4 +1,5 @@
 using Super.Model.Selection;
+using Super.Model.Sequences;
 using Super.Model.Sources;
 using Super.Reflection.Types;
 using Super.Runtime;
@@ -8,7 +9,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using Super.Model.Sequences;
 
 namespace Super.Model.Collections
 {
@@ -36,7 +36,7 @@ namespace Super.Model.Collections
 
 		public ref readonly T this[uint index] => ref _reference[index];
 
-		public T[] Copy() => _reference.New();
+		public T[] Copy() => DefaultArraySelection<T>.Default.Get(_reference);
 
 		public ImmutableArray<T> Get() => _array;
 

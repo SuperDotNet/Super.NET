@@ -3,7 +3,6 @@ using Super.Model.Selection;
 using Super.Model.Sequences;
 using Super.Runtime;
 using System;
-using System.Runtime.CompilerServices;
 
 namespace Super.Model.Collections
 {
@@ -13,17 +12,21 @@ namespace Super.Model.Collections
 	{
 		readonly ICommand<T[]> _command;
 
-		public Session(T[] store, ICommand<T[]> command)
+		public Session(T[] store, ICommand<T[]> command) : this(store, command, (uint)store.Length) {}
+
+		public Session(T[] store, ICommand<T[]> command, uint length)
 		{
 			Array    = store;
+			Length   = length;
 			_command = command;
 		}
 
 		public T[] Array { get; }
+		public uint Length { get; }
 
 		public void Dispose()
 		{
-			_command.Execute(Array);
+			_command?.Execute(Array);
 		}
 	}
 
@@ -33,17 +36,26 @@ namespace Super.Model.Collections
 	{
 		public static Session<T> Session<T>(this IStores<T> @this, uint amount) => @this.Session(@this.Get(amount));
 
-		public static Session<T> Session<T>(this IStores<T> @this, in Store<T> store) => new Session<T>(store.Instance, @this);
+		public static Session<T> Session<T>(this IStores<T> @this, in Store<T> store)
+			=> new Session<T>(store.Instance, @this);
 
 		public static T[] Into<T>(in this ArrayView<T> @this, T[] into)
-			=> @this.Array.Copy(into, new Selection(@this.Start, @this.Length));
+			=> @this.Array.CopyInto(into, @this.Start, @this.Length);
+
+		public static T[] CopyInto<T>(this T[] @this, T[] result, uint offset = 0)
+			=> @this.CopyInto(result, Selection.Default, offset);
 
 		// ReSharper disable once TooManyArguments
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T[] Copy<T>(this T[] @this, T[] result, Selection? selection = null, uint offset = 0)
+		public static T[] CopyInto<T>(this T[] @this, T[] result, in Selection selection, uint offset = 0)
+			=> @this.CopyInto(result, selection.Start, selection.Length.IsAssigned
+				                                       ? selection.Length.Instance
+				                                       : (uint)result.Length - offset, offset);
+
+		// ReSharper disable once TooManyArguments
+		public static T[] CopyInto<T>(this T[] @this, T[] result, uint start, uint length, uint offset = 0)
 		{
-			Array.Copy(@this, selection?.Start ?? 0,
-			           result, offset, selection?.Length ?? (uint)Math.Min(result.Length, @this.Length));
+			Array.Copy(@this, start,
+			           result, offset, length);
 			return result;
 		}
 
@@ -53,7 +65,9 @@ namespace Super.Model.Collections
 		{
 			var index  = start;
 			var length = size;
-			return index != @this.Start || length != @this.Length ? new ArrayView<T>(@this.Array, index, length) : @this;
+			return index != @this.Start || length != @this.Length
+				       ? new ArrayView<T>(@this.Array, index, length)
+				       : @this;
 		}
 	}
 

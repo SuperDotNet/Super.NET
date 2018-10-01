@@ -33,7 +33,7 @@ namespace Super.Model.Collections
 
 		Allocated() {}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		//[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public Store<T> Get(uint parameter) => new Store<T>(new T[parameter]);
 
 		public void Execute(T[] parameter) {}
@@ -61,7 +61,9 @@ namespace Super.Model.Collections
 	{
 		public static Selection Default { get; } = new Selection(0);
 
-		public Selection(uint start, uint? length = null)
+		public static implicit operator Selection(Model.Assigned<uint> length) => new Selection(0, length);
+
+		public Selection(uint start, Model.Assigned<uint> length = default)
 		{
 			Start  = start;
 			Length = length;
@@ -69,13 +71,16 @@ namespace Super.Model.Collections
 
 		public uint Start { get; }
 
-		public uint? Length { get; }
+		public Model.Assigned<uint> Length { get; }
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public Selection Resize(Model.Assigned<uint> size) => new Selection(Start, size);
 
 		public static bool operator ==(Selection left, Selection right) => left.Equals(right);
 
 		public static bool operator !=(Selection left, Selection right) => !left.Equals(right);
 
-		public bool Equals(Selection other) => Start == other.Start && Length == other.Length;
+		bool Equals(Selection other) => Start == other.Start && Length == other.Length;
 
 		public override bool Equals(object obj)
 			=> !ReferenceEquals(null, obj) && obj is Selection other && Equals(other);
