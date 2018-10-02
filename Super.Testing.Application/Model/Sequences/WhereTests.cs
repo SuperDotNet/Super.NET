@@ -1,7 +1,11 @@
 ﻿// ReSharper disable ComplexConditionExpression
 
+using BenchmarkDotNet.Attributes;
 using FluentAssertions;
+using Super.Model.Selection;
 using Super.Model.Sequences;
+using Super.Testing.Objects;
+using System;
 using System.Linq;
 using Xunit;
 
@@ -52,7 +56,7 @@ namespace Super.Testing.Application.Model.Sequences
 		void Verify()
 		{
 			const uint count = 10_000_000u;
-			var array = Objects.Numbers.Default
+			var array = Numbers.Default
 			                   .Query()
 			                   .Skip(count - 5)
 			                   .Take(5)
@@ -60,7 +64,7 @@ namespace Super.Testing.Application.Model.Sequences
 			                   .Get(count);
 			array.Should().HaveCount(5);
 
-			Objects.Numbers.Default.Get(count).Skip((int)(count - 5)).Take(5).Sum().Should().Be(array.Sum());
+			Numbers.Default.Get(count).Skip((int)(count - 5)).Take(5).Sum().Should().Be(array.Sum());
 		}
 
 		[Fact]
@@ -80,6 +84,46 @@ namespace Super.Testing.Application.Model.Sequences
 				                .Take(5)
 				                .Reference()
 				                .Get(source));
+		}
+
+		public class Benchmarks
+		{
+			const uint Total = 10_000u;
+
+			uint[] _source;
+
+
+			[Params(Total)]
+			public uint Count
+			{
+				get => _count;
+				set
+				{
+					_count   = value;
+					_source  = FixtureInstance.Default.Many<uint>(_count).Get().ToArray();
+				}
+			}
+
+			uint _count = Total;
+			readonly static ISelect<uint[], uint[]> Select = In<uint[]>.Start().Query().WhereBy(x => x > 1000).Get();
+
+			[Benchmark]
+			public Array Full() => Select.Get(_source);
+
+			[Benchmark]
+			public Array FullClassic() => _source.Where(x => x > 1000).ToArray();
+
+			/*[Benchmark]
+			public Array Near() => _subject.Near.Get(_source);
+
+			[Benchmark]
+			public Array NearClassic() => _classic.Near.ToArray();
+
+			[Benchmark]
+			public Array Far() => _subject.Far.Get(_source);
+
+			[Benchmark]
+			public Array FarClassic() => _classic.Far.ToArray();*/
 		}
 	}
 }

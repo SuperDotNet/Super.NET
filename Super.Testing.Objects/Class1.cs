@@ -97,7 +97,7 @@ namespace Super.Testing.Objects
 	{
 		public static Data Default { get; } = new Data();
 
-		Data() : base(FixtureInstance.Default.Select(new Many<string>(10_000))
+		Data() : base(FixtureInstance.Default.Many<string>(10_000)
 		                             .Out()
 		                             .AsSelect()
 		                             .Result()
@@ -108,7 +108,10 @@ namespace Super.Testing.Objects
 	{
 		public static Sequencing<T> Default { get; } = new Sequencing<T>();
 
-		Sequencing() : this(In<T[]>.Start().Query(), Objects.Near.Default, Objects.Far.Default) {}
+		Sequencing() : this(In<T[]>.Start().Query()) {}
+
+		public Sequencing(Model.Sequences.IQuery<T[], T> query)
+			: this(query, Objects.Near.Default, Objects.Far.Default) {}
 
 		public Sequencing(Model.Sequences.IQuery<T[], T> query, Selection near, Selection far)
 			: this(query.Get(), query.Select(near).Get(), query.Select(far).Get()) {}
@@ -123,6 +126,9 @@ namespace Super.Testing.Objects
 		public ISelect<T[], T[]> Full { get; }
 		public ISelect<T[], T[]> Near { get; }
 		public ISelect<T[], T[]> Far { get; }
+
+		public Sequencing<T> Get(ISelect<T[], T[]> select)
+			=> new Sequencing<T>(Full.Select(select), Near.Select(select), Far.Select(select));
 	}
 
 	sealed class Near : Source<Selection>
@@ -192,6 +198,9 @@ namespace Super.Testing.Objects
 		public IEnumerable<T> Full { get; }
 		public IEnumerable<T> Near { get; }
 		public IEnumerable<T> Far { get; }
+
+		public Enumerations<T> Get(Func<IEnumerable<T>, IEnumerable<T>> select)
+			=> new Enumerations<T>(select(Full), select(Near), select(Far));
 	}
 
 	sealed class Strings : Source<IEnumerable<string>>
