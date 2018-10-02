@@ -1,13 +1,8 @@
-﻿using FluentAssertions;
-using Super.Model.Sequences;
-using System.Linq;
-using Xunit;
-
-namespace Super.Testing.Application.Model.Sequences
+﻿namespace Super.Testing.Application.Model.Sequences
 {
 	public class DynamicStoreTests
 	{
-		[Theory]
+		/*[Theory]
 		[InlineData(1u)]
 		[InlineData(2u)]
 		[InlineData(3u)]
@@ -22,6 +17,6 @@ namespace Super.Testing.Application.Model.Sequences
 		{
 			var source = Enumerable.Range(0, (int)count).Select(x => (uint)x).ToArray();
 			DynamicIterator<uint>.Default.Get(new Iteration<uint>(source)).Should().Equal(source);
-		}
+		}*/
 	}
 }

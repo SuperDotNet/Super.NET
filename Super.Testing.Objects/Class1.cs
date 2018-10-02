@@ -72,42 +72,6 @@ namespace Super.Testing.Objects
 		public ReadOnlyMemory<int> Get() => _direct.Get(_view);
 	}
 
-	/*sealed class ExpressionCombo : IArray<int>
-	{
-		public static ExpressionCombo Default { get; } = new ExpressionCombo();
-
-		ExpressionCombo() : this(new SelectWhereDecorator<string, int>(new ExpressionSelection<string, int>(x => default), x => x > 0), View.Default) {}
-
-		readonly ISelect<ReadOnlyMemory<string>, ReadOnlyMemory<int>> _direct;
-		readonly ReadOnlyMemory<string>                               _view;
-
-		public ExpressionCombo(ISelect<ReadOnlyMemory<string>, ReadOnlyMemory<int>> direct, ReadOnlyMemory<string> view)
-		{
-			_direct = direct;
-			_view   = view;
-		}
-
-		public ReadOnlyMemory<int> Get() => _direct.Get(_view);
-	}*/
-
-	/*sealed class Expression : IArray<int>
-	{
-		public static Expression Default { get; } = new Expression();
-
-		Expression() : this(new ExpressionSelection<string, int>(x => default).Where(x => x > 0), View.Default) {}
-
-		readonly ISelect<ReadOnlyMemory<string>, ReadOnlyMemory<int>> _direct;
-		readonly ReadOnlyMemory<string>                               _view;
-
-		public Expression(ISelect<ReadOnlyMemory<string>, ReadOnlyMemory<int>> direct, ReadOnlyMemory<string> view)
-		{
-			_direct = direct;
-			_view   = view;
-		}
-
-		public ReadOnlyMemory<int> Get() => _direct.Get(_view);
-	}*/
-
 	sealed class View : Arrays<string>
 	{
 		public static View Default { get; } = new View();
@@ -173,6 +137,12 @@ namespace Super.Testing.Objects
 		public static Far Default { get; } = new Far();
 
 		Far() : base(new Selection(5000, 300)) {}
+	}
+
+	public static class Extensions
+	{
+		public static ISource<IEnumerable<T>> Many<T>(this ISource<IFixture> @this, uint count)
+			=> @this.Select(new Many<T>(count));
 	}
 
 	sealed class FixtureInstance : Source<IFixture>

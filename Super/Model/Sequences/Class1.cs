@@ -4,61 +4,6 @@ using System;
 
 namespace Super.Model.Sequences
 {
-	/*readonly ref struct ExpandingStore<T>
-	{
-		readonly static Allotted<T>        Stores     = Allotted<T>.Default;
-		readonly static StoreReferences<T> References = StoreReferences<T>.Default;
-
-		readonly Store<T>              _store;
-		readonly Collections.Selection _selection;
-
-		public ExpandingStore(uint size) : this(Stores, size) {}
-
-		public ExpandingStore(IStores<T> stores, uint size) : this(new Store<T>(stores.Get(size).Instance, 0)) {}
-
-		ExpandingStore(Store<T> store) : this(store, new Collections.Selection(store.Length)) {}
-
-		ExpandingStore(Store<T> store, Collections.Selection selection)
-		{
-			_store     = store;
-			_selection = selection;
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public ExpandingStore<T> Add(in Store<T> page)
-			=> new ExpandingStore<T>(page.CopyInto(Size(page), _selection).Resize(page.Length));
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public T[] Get()
-		{
-			using (Stores.Session(_store))
-			{
-				return References.Get(_store);
-			}
-		}
-
-		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public Session<T> Session() => _stores.Session(_store);#1#
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		Store<T> Size(in Store<T> page)
-		{
-			var actual = (uint)_store.Instance.Length;
-			var size   = page.Length;
-			if (size > actual)
-			{
-				using (var session = Stores.Session(_store))
-				{
-					return session.Store
-					              .CopyInto(Stores.Get(Math.Min(int.MaxValue - size, size * 2)),
-					                        new Collections.Selection(0, actual));
-				}
-			}
-
-			return _store;
-		}
-	}*/
-
 	sealed class Iterator<T> : IIterator<T>
 	{
 		public static Iterator<T> Default { get; } = new Iterator<T>();

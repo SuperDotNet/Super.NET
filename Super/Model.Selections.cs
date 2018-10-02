@@ -83,13 +83,12 @@ namespace Super
 		public static IStructure<TIn, TTo> Select<TIn, TFrom, TTo>(this IStructure<TIn, TFrom> @this, IStructure<TFrom, TTo> select)
 			where TIn : struct
 			where TFrom : struct
-			=> new Structure<TIn,TFrom,TTo>(@this.Get, select.Get);
+			=> @this.Select(select.Get);
 
-		/*public static IEphemeral<TIn, TTo> Select<TIn, TFrom, TTo>(this IEphemeral<TIn, TFrom> @this, IEphemeral<TFrom, TTo> select)
+		public static IStructure<TIn, TTo> Select<TIn, TFrom, TTo>(this IStructure<TIn, TFrom> @this, Selection<TFrom, TTo> select)
 			where TIn : struct
 			where TFrom : struct
-			where TTo : struct
-			=> new Ephemeral<TIn,TFrom,TTo>(@this.Get, select.Get);*/
+			=> new Structure<TIn,TFrom,TTo>(@this.Get, select);
 
 		public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this, Func<TFrom, TTo> select)
 			=> new Selection<TIn, TFrom, TTo>(@this.Get, select);

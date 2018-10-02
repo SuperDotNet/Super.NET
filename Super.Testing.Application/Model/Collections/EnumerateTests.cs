@@ -7,7 +7,7 @@ namespace Super.Testing.Application.Model.Collections
 {
 	public sealed class EnumerateTests
 	{
-		[Theory]
+		/*[Theory]
 		[InlineData(1u)]
 		[InlineData(2u)]
 		[InlineData(3u)]
@@ -22,7 +22,7 @@ namespace Super.Testing.Application.Model.Collections
 		{
 			var source = Objects.Numbers.Default.Get(count);
 			In<IEnumerable<int>>.Start().Iterate().Reference().Get(source).Should().Equal(source);
-		}
+		}*/
 
 		public uint Count { get; set; } = 10000;
 

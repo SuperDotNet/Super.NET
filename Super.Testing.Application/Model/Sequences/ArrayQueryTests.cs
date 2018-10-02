@@ -14,7 +14,6 @@ namespace Super.Testing.Application.Model.Sequences
 			var sut = In<int[]>.Start().Query().Get();
 			var array = sut.Get(expected);
 			array.Should().Equal(expected);
-			array.Should().BeSameAs(expected);
 		}
 
 		[Fact]

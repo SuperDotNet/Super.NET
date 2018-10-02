@@ -9,16 +9,15 @@ using Xunit;
 
 namespace Super.Testing.Application.Model.Sequences
 {
-	public class DefaultArraySelectionTests
+	public sealed class ArraySelectorTests
 	{
 		[Fact]
 		void Verify()
 		{
 			var expected = Enumerable.Range(0, 10_000).ToArray();
-			DefaultArraySelection<int>.Default
-			                          .Get(expected)
-			                          .Should()
-			                          .Equal(expected);
+			ArraySelector<int>.Default.Get(expected)
+			                  .Should()
+			                  .Equal(expected);
 		}
 
 		[Fact]
@@ -26,29 +25,28 @@ namespace Super.Testing.Application.Model.Sequences
 		{
 			var source   = Enumerable.Range(0, 10_000).ToArray();
 			var expected = source.Skip(1000).Take(250).ToArray();
-			DefaultArraySelection<int>.Default
-			                          .Get(expected)
-			                          .Should()
-			                          .Equal(expected);
+			ArraySelector<int>.Default.Get(expected)
+			                  .Should()
+			                  .Equal(expected);
 		}
 
 		public class Benchmarks
 		{
 			readonly IAlteration<uint[]> _sut;
-			readonly uint[] _source;
+			readonly uint[]              _source;
 
 			public Benchmarks() : this(Near.Default) {}
 
 			public Benchmarks(Super.Model.Collections.Selection selection)
-				: this(new DefaultArraySelection<uint>(selection),
+				: this(new ArraySelector<uint>(selection),
 				       FixtureInstance.Default
-				                      .Select(new Many<uint>(selection.Start + selection.Length))
+				                      .Many<uint>(selection.Start + selection.Length)
 				                      .Get()
 				                      .ToArray()) {}
 
 			public Benchmarks(IAlteration<uint[]> sut, uint[] source)
 			{
-				_sut = sut;
+				_sut    = sut;
 				_source = source;
 			}
 

@@ -1,10 +1,11 @@
 ﻿// ReSharper disable ComplexConditionExpression
 
 using FluentAssertions;
+using Super.Model.Sequences;
 using System.Linq;
 using Xunit;
 
-namespace Super.Testing.Application.Model.Collections
+namespace Super.Testing.Application.Model.Sequences
 {
 	public sealed class WhereTests
 	{
@@ -13,13 +14,13 @@ namespace Super.Testing.Application.Model.Collections
 		{
 			var numbers  = new[] {1, 2, 3, 4, 5};
 			var expected = numbers.Where(x => x > 3).ToArray();
-			var ints = In<int[]>.Start()
-			                    .Iterate()
-			                    .WhereBy(x => x > 3)
-			                    .Reference()
-			                    .Get(numbers);
-			ints.Should().Equal(expected);
-			ints.Should().NotBeSameAs(numbers);
+			In<int[]>.Start()
+			         .Query()
+			         .WhereBy(x => x > 3)
+			         .Get()
+			         .Get(numbers)
+			         .Should()
+			         .Equal(expected);
 		}
 
 		[Fact]
@@ -28,9 +29,9 @@ namespace Super.Testing.Application.Model.Collections
 			var source   = Enumerable.Range(0, 10_000).ToArray();
 			var expected = source.Where(x => x > 1000).ToArray();
 			var ints = In<int[]>.Start()
-			                    .Iterate()
+			                    .Query()
 			                    .WhereBy(x => x > 1000)
-			                    .Reference()
+			                    .Get()
 			                    .Get(source);
 			ints.Should().NotBeSameAs(source);
 			ints.Should().Equal(expected);
@@ -42,7 +43,7 @@ namespace Super.Testing.Application.Model.Collections
 		{
 			var numbers  = new[] {1, 2, 3, 4, 5};
 			var expected = numbers.Where(x => x > 3).Take(1).ToArray();
-			var actual   = In<int[]>.Start().Iterate().WhereBy(x => x > 3).Take(1).Reference().Get(numbers);
+			var actual   = In<int[]>.Start().Query().WhereBy(x => x > 3).Take(1).Get().Get(numbers);
 			actual.Should().Equal(expected);
 			actual.Should().NotBeSameAs(numbers);
 		}
@@ -52,10 +53,10 @@ namespace Super.Testing.Application.Model.Collections
 		{
 			const uint count = 10_000_000u;
 			var array = Objects.Numbers.Default
-			                   .Iterate()
+			                   .Query()
 			                   .Skip(count - 5)
 			                   .Take(5)
-			                   .Reference()
+			                   .Get()
 			                   .Get(count);
 			array.Should().HaveCount(5);
 
@@ -80,20 +81,5 @@ namespace Super.Testing.Application.Model.Collections
 				                .Reference()
 				                .Get(source));
 		}
-
-		/*[Fact]
-		void Temp()
-		{
-			throw new InvalidOperationException(Enumerable.Range(0, 10000).ToArray().Where(x => x > 1000).Skip(500).GetType().AssemblyQualifiedName);
-			//var array = Enumerable.Range(0, 10000).ToArray();
-			/*var result = In<int[]>.Start()
-			                      .Iterate()
-			                      .WhereBy(x => x > 1000)
-			                      .Skip(500)
-			                      .Take(100)
-			                      .Reference()
-			                      .Get(array);
-			Debugger.Break();#1#
-		}*/
 	}
 }
