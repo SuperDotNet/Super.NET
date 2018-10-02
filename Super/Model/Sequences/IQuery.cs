@@ -41,10 +41,10 @@ namespace Super.Model.Sequences
 
 		public ArrayView<T> Get(in ArrayView<T> parameter)
 		{
-			var used  = parameter.Length;
+			var used  = parameter.Start + parameter.Length;
 			var array = parameter.Array;
 			var count = 0u;
-			for (var i = 0; i < used; i++)
+			for (var i = parameter.Start; i < used; i++)
 			{
 				var item = array[i];
 				if (_where(item))
@@ -53,7 +53,7 @@ namespace Super.Model.Sequences
 				}
 			}
 
-			return parameter.Resize(count);
+			return parameter.Resize(0, count);
 		}
 	}
 

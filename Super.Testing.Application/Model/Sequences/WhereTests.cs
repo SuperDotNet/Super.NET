@@ -78,12 +78,30 @@ namespace Super.Testing.Application.Model.Sequences
 				.Take(5)
 				.Should()
 				.Equal(In<int[]>.Start()
-				                .Iterate()
+				                .Query()
 				                .WhereBy(x => x > 1000)
 				                .Skip((uint)count)
 				                .Take(5)
-				                .Reference()
+				                .Get()
 				                .Get(source));
+		}
+
+		[Fact]
+		void VerifyAdvanced()
+		{
+			var source = Enumerable.Range(0, 10_000).ToArray();
+			In<int[]>.Start()
+			         .Query()
+			         .Skip(3000)
+			         .Take(1000)
+			         .WhereBy(x => x > 1000)
+			         .Get()
+			         .Get(source)
+			         .Should()
+			         .Equal(source.Skip(3000)
+			                      .Take(1000)
+			                      .Where(x => x > 1000)
+			                      .ToArray());
 		}
 
 		public class Benchmarks
@@ -92,20 +110,20 @@ namespace Super.Testing.Application.Model.Sequences
 
 			uint[] _source;
 
-
 			[Params(Total)]
 			public uint Count
 			{
 				get => _count;
 				set
 				{
-					_count   = value;
-					_source  = FixtureInstance.Default.Many<uint>(_count).Get().ToArray();
+					_count  = value;
+					_source = FixtureInstance.Default.Many<uint>(_count).Get().ToArray();
 				}
 			}
 
 			uint _count = Total;
-			readonly static ISelect<uint[], uint[]> Select = In<uint[]>.Start().Query().WhereBy(x => x > 1000).Get();
+			readonly static ISelect<uint[], uint[]> Select =
+				In<uint[]>.Start().Query().WhereBy(x => x > 1000).Get();
 
 			[Benchmark]
 			public Array Full() => Select.Get(_source);
@@ -113,17 +131,7 @@ namespace Super.Testing.Application.Model.Sequences
 			[Benchmark]
 			public Array FullClassic() => _source.Where(x => x > 1000).ToArray();
 
-			/*[Benchmark]
-			public Array Near() => _subject.Near.Get(_source);
 
-			[Benchmark]
-			public Array NearClassic() => _classic.Near.ToArray();
-
-			[Benchmark]
-			public Array Far() => _subject.Far.Get(_source);
-
-			[Benchmark]
-			public Array FarClassic() => _classic.Far.ToArray();*/
 		}
 	}
 }
