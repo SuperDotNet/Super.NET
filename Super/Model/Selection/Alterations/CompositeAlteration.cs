@@ -11,6 +11,6 @@ namespace Super.Model.Selection.Alterations
 
 		public CompositeAlteration(ImmutableArray<IAlteration<T>> alterations) => _alterations = alterations;
 
-		public T Get(T parameter) => ImmutableArrayExtensions.ToArray(_alterations).Alter(parameter);
+		public T Get(T parameter) => _alterations.ToArray().Alter(parameter);
 	}
 }

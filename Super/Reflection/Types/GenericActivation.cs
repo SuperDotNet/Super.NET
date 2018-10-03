@@ -21,7 +21,7 @@ namespace Super.Reflection.Types
 		{
 			var constructor = parameter.GetTypeInfo().DeclaredConstructors.Only() ??
 			                  parameter.GetConstructors().Only() ??
-			                  parameter.GetConstructor(ImmutableArrayExtensions.ToArray(_types));
+			                  parameter.GetConstructor(_types.ToArray());
 			var types = constructor.GetParameters()
 			                       .Select(x => x.ParameterType);
 			var memory     = _expressions;

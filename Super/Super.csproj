@@ -11,10 +11,11 @@
 
   <ItemGroup>
     <PackageReference Include="ErrorProne.NET" Version="0.1.5898.41180" />
-    <PackageReference Include="ErrorProne.NET.Structs" Version="0.1.0" />
-    <PackageReference Include="Humanizer.Core" Version="2.4.2" />
+    <PackageReference Include="ErrorProne.NET.CoreAnalyzers" Version="0.1.1.10" />
+    <PackageReference Include="ErrorProne.NET.Structs" Version="0.1.1.10" />
+    <PackageReference Include="Humanizer.Core" Version="2.5.1" />
     <PackageReference Include="JetBrains.Annotations" Version="2018.2.1" />
-    <PackageReference Include="LightInject" Version="5.1.10" />
+    <PackageReference Include="LightInject" Version="5.2.0" />
     <PackageReference Include="Polly" Version="6.1.0" />
     <PackageReference Include="Serilog" Version="2.7.1" />
     <PackageReference Include="System.Buffers" Version="4.5.0" />
@@ -22,6 +23,6 @@
     <PackageReference Include="System.Collections.NonGeneric" Version="4.3.0" />
     <PackageReference Include="System.Interactive" Version="3.2.0" />
     <PackageReference Include="System.Memory" Version="4.5.1" />
-    <PackageReference Include="System.Reactive" Version="4.1.0" />
+    <PackageReference Include="System.Reactive" Version="4.1.1" />
   </ItemGroup>
 </Project>

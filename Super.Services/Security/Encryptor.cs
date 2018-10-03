@@ -26,7 +26,7 @@ namespace Super.Services.Security
 		public string Get(string parameter)
 		{
 			var key = _key;
-			using (var hmac = new HMACSHA512(ImmutableArrayExtensions.ToArray(key)))
+			using (var hmac = new HMACSHA512(key.ToArray()))
 			{
 				return BitConverter.ToString(hmac.ComputeHash(_encoding.GetBytes(parameter)))
 				                   .Replace("-", string.Empty);

@@ -12,7 +12,6 @@ namespace Super.Reflection.Types
 
 		public GenericTypeAlteration(Type definition) => _definition = definition;
 
-		public Type Get(ImmutableArray<Type> parameter)
-			=> _definition.MakeGenericType(ImmutableArrayExtensions.ToArray(parameter));
+		public Type Get(ImmutableArray<Type> parameter) => _definition.MakeGenericType(parameter.ToArray());
 	}
 }

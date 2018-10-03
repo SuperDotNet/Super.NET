@@ -22,7 +22,6 @@ namespace Super.Model.Collections
 			_factory = factory;
 		}
 
-		public override IEnumerator<IGroup<T>> GetEnumerator() => ImmutableArrayExtensions.Select(_phases, _factory)
-		                                                                                  .GetEnumerator();
+		public override IEnumerator<IGroup<T>> GetEnumerator() => _phases.Select(_factory).GetEnumerator();
 	}
 }

@@ -153,9 +153,9 @@ namespace Super.Application
 		}
 
 		public IServiceRegistry Get(IServiceRegistry parameter)
-			=> ImmutableArrayExtensions.Where(_candidates, _where(parameter))
-			                           .Aggregate(parameter, (repository, t) => repository.Register(t)
-			                                                                              .RegisterDependencies(t));
+			=> _candidates.Where(_where(parameter))
+			              .Aggregate(parameter, (repository, t) => repository.Register(t)
+			                                                                 .RegisterDependencies(t));
 	}
 
 	class ImplementationRegistration : IRegistration
@@ -197,7 +197,6 @@ namespace Super.Application
 
 		public CompositeRegistration(ImmutableArray<IRegistration> configurations) => _configurations = configurations;
 
-		public IServiceRegistry Get(IServiceRegistry parameter) => ImmutableArrayExtensions.ToArray(_configurations)
-		                                                                                   .Alter(parameter);
+		public IServiceRegistry Get(IServiceRegistry parameter) => _configurations.ToArray().Alter(parameter);
 	}
 }

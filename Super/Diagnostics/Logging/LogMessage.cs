@@ -20,7 +20,7 @@ namespace Super.Diagnostics.Logging
 
 		public void Execute(ImmutableArray<object> parameter)
 		{
-			_action(_messageTemplate, ImmutableArrayExtensions.ToArray(parameter));
+			_action(_messageTemplate, parameter.ToArray());
 		}
 	}
 
