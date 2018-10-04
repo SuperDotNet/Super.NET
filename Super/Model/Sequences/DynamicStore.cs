@@ -1,22 +1,21 @@
 ﻿using Super.Model.Collections;
 using System;
-using System.Runtime.CompilerServices;
 
 namespace Super.Model.Sequences
 {
-	sealed class DynamicIterator<T> : IIterator<T>
+	/*sealed class DynamicIterator<T> : IIterator<T>
 	{
 		public static DynamicIterator<T> Default { get; } = new DynamicIterator<T>();
 
 		DynamicIterator() : this(Allotted<T>.Default) {}
 
 		readonly IStore<T> _store;
-		readonly uint       _size;
+		readonly uint      _size;
 
 		public DynamicIterator(IStore<T> store, uint size = 1024)
 		{
 			_store = store;
-			_size   = size;
+			_size  = size;
 		}
 
 		public T[] Get(IIteration<T> parameter)
@@ -33,15 +32,14 @@ namespace Super.Model.Sequences
 
 			return store.Get();
 		}
-	}
-
+	}*/
 
 	readonly ref struct DynamicStore<T>
 	{
 		readonly static Allotted<T>        Item  = Allotted<T>.Default;
 		readonly static Allotted<Store<T>> Items = Allotted<Store<T>>.Default;
 
-		readonly Store<T>[] _stores;
+		readonly Store<T>[]            _stores;
 		readonly Collections.Selection _position;
 		readonly uint                  _index;
 
@@ -55,13 +53,13 @@ namespace Super.Model.Sequences
 			_index    = index;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public T[] Get()
 		{
-			var result = Item.Get(_position.Length.Or(0));
+			var allocated = Collections.Allocated<T>.Default.Get(_position.Length.Or(0));
+			var result    = allocated.Instance;
 			using (Items.Session(_stores))
 			{
-				var total  = _index + 1;
+				var total = _index + 1;
 				for (uint i = 0u, offset = 0u; i < total; i++)
 				{
 					var store = _stores[i];
@@ -77,7 +75,6 @@ namespace Super.Model.Sequences
 			return result;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public DynamicStore<T> Add(in Store<T> page)
 		{
 			var stores   = _stores;
@@ -92,21 +89,23 @@ namespace Super.Model.Sequences
 				stores[_index] =
 					new
 						Store<T>(page.Instance.CopyInto(current.Instance,
-						                            new Collections.Selection(0, capacity - current.Length), current.Length),
+						                                new Collections.Selection(0, capacity - current.Length),
+						                                current.Length),
 						         capacity);
 
 				var remainder = size - max;
 				stores[_index + 1] =
 					new Store<T>(page.Instance.CopyInto(Item.Get(Math.Min(int.MaxValue - size, size * 2)),
-													selection: new Collections.Selection(0, remainder)),
+					                                    selection: new Collections.Selection(0, remainder)),
 					             remainder);
 
 				return new DynamicStore<T>(_stores, new Collections.Selection(max, size), _index + 1);
 			}
 
 			stores[_index] =
-				new Store<T>(page.Instance.CopyInto(current.Instance, new Collections.Selection(0, filled), current.Length),
-				             current.Length + filled);
+				new
+					Store<T>(page.Instance.CopyInto(current.Instance, new Collections.Selection(0, filled), current.Length),
+					         current.Length + filled);
 			return new DynamicStore<T>(_stores, new Collections.Selection(_position.Start, size), _index);
 		}
 	}

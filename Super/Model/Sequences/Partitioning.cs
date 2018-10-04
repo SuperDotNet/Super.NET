@@ -1,7 +1,6 @@
 ﻿using Super.Model.Collections;
 using Super.Model.Commands;
 using Super.Model.Selection;
-using Super.Model.Selection.Alterations;
 using System;
 using System.Buffers;
 
@@ -36,22 +35,24 @@ namespace Super.Model.Sequences
 		}
 	}
 
-	public interface IArraySelector<T> : IAlteration<T[]> {}
+	public interface ISelector<T> : ISelector<T[], T> {}
 
-	sealed class ArraySelector<T> : IArraySelector<T>
+	public interface ISelector<in TIn, out T> : ISelect<TIn, T[]> {}
+
+	sealed class Selector<T> : ISelector<T>
 	{
-		public static ArraySelector<T> Default { get; } = new ArraySelector<T>();
+		public static Selector<T> Default { get; } = new Selector<T>();
 
-		ArraySelector() : this(Collections.Selection.Default) {}
+		Selector() : this(Collections.Selection.Default) {}
 
 		readonly Func<uint, T[]>       _source;
 		readonly Collections.Selection _selection;
 
-		public ArraySelector(Collections.Selection selection) : this(Allocated<T>.Default, selection) {}
+		public Selector(Collections.Selection selection) : this(Allocated<T>.Default, selection) {}
 
-		public ArraySelector(IStore<T> store, Collections.Selection selection) : this(store.Get, selection) {}
+		public Selector(IStore<T> store, Collections.Selection selection) : this(store.Get, selection) {}
 
-		public ArraySelector(Func<uint, T[]> source, Collections.Selection selection)
+		public Selector(Func<uint, T[]> source, Collections.Selection selection)
 		{
 			_source    = source;
 			_selection = selection;

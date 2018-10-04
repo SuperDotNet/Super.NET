@@ -108,13 +108,13 @@ namespace Super.Testing.Objects
 	{
 		public static Sequencing<T> Default { get; } = new Sequencing<T>();
 
-		Sequencing() : this(In<T[]>.Start().Query()) {}
+		Sequencing() : this(In<T[]>.Start().Sequence()) {}
 
-		public Sequencing(Model.Sequences.IQuery<T[], T> query)
-			: this(query, Objects.Near.Default, Objects.Far.Default) {}
+		public Sequencing(Model.Sequences.ISequence<T[], T> sequence)
+			: this(sequence, Objects.Near.Default, Objects.Far.Default) {}
 
-		public Sequencing(Model.Sequences.IQuery<T[], T> query, Selection near, Selection far)
-			: this(query.Get(), query.Select(near).Get(), query.Select(far).Get()) {}
+		public Sequencing(Model.Sequences.ISequence<T[], T> sequence, Selection near, Selection far)
+			: this(sequence.Get(), sequence.Select(near).Get(), sequence.Select(far).Get()) {}
 
 		public Sequencing(ISelect<T[], T[]> full, ISelect<T[], T[]> near, ISelect<T[], T[]> far)
 		{

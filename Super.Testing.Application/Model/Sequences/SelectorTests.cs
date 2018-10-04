@@ -1,6 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
 using FluentAssertions;
-using Super.Model.Selection.Alterations;
 using Super.Model.Sequences;
 using Super.Testing.Objects;
 using System;
@@ -9,13 +8,13 @@ using Xunit;
 
 namespace Super.Testing.Application.Model.Sequences
 {
-	public sealed class ArraySelectorTests
+	public sealed class SelectorTests
 	{
 		[Fact]
 		void Verify()
 		{
 			var expected = Enumerable.Range(0, 10_000).ToArray();
-			ArraySelector<int>.Default.Get(expected)
+			Selector<int>.Default.Get(expected)
 			                  .Should()
 			                  .Equal(expected);
 		}
@@ -25,26 +24,26 @@ namespace Super.Testing.Application.Model.Sequences
 		{
 			var source   = Enumerable.Range(0, 10_000).ToArray();
 			var expected = source.Skip(1000).Take(250).ToArray();
-			ArraySelector<int>.Default.Get(expected)
+			Selector<int>.Default.Get(expected)
 			                  .Should()
 			                  .Equal(expected);
 		}
 
 		public class Benchmarks
 		{
-			readonly IAlteration<uint[]> _sut;
+			readonly ISelector<uint> _sut;
 			readonly uint[]              _source;
 
 			public Benchmarks() : this(Near.Default) {}
 
 			public Benchmarks(Super.Model.Collections.Selection selection)
-				: this(new ArraySelector<uint>(selection),
+				: this(new Selector<uint>(selection),
 				       FixtureInstance.Default
 				                      .Many<uint>(selection.Start + selection.Length)
 				                      .Get()
 				                      .ToArray()) {}
 
-			public Benchmarks(IAlteration<uint[]> sut, uint[] source)
+			public Benchmarks(ISelector<uint> sut, uint[] source)
 			{
 				_sut    = sut;
 				_source = source;

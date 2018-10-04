@@ -5,15 +5,11 @@ using System;
 
 namespace Super.Model.Sequences
 {
-	public interface IQuery<in _, T> : ISource<ISelect<_, T[]>>,
-	                                   ISelect<IAlterState<Collections.Selection>, IQuery<_, T>>,
-	                                   ISelect<ISegment<T>, IQuery<_, T>> {}
+	public interface ISequence<in _, T> : ISource<ISelect<_, T[]>>,
+	                                      ISelect<IState<Collections.Selection>, ISequence<_, T>>,
+	                                      ISelect<ISegment<T>, ISequence<_, T>> {}
 
-	/*public interface ISelection<T> : IStructure<ArrayView<T>, Session<T>> {}*/
-
-	/*public interface IAlterSelection<T> : IAlteration<ISelection<T>> {}*/
-
-	sealed class Skip : IAlterState<Collections.Selection>
+	sealed class Skip : IState<Collections.Selection>
 	{
 		readonly uint _skip;
 
@@ -23,7 +19,7 @@ namespace Super.Model.Sequences
 			=> new Collections.Selection(parameter.Start + _skip, parameter.Length);
 	}
 
-	sealed class Take : IAlterState<Collections.Selection>
+	sealed class Take : IState<Collections.Selection>
 	{
 		readonly uint _take;
 
@@ -41,10 +37,10 @@ namespace Super.Model.Sequences
 
 		public ArrayView<T> Get(in ArrayView<T> parameter)
 		{
-			var used  = parameter.Start + parameter.Length;
+			var to    = parameter.Start + parameter.Length;
 			var array = parameter.Array;
 			var count = 0u;
-			for (var i = parameter.Start; i < used; i++)
+			for (var i = parameter.Start; i < to; i++)
 			{
 				var item = array[i];
 				if (_where(item))
@@ -56,5 +52,4 @@ namespace Super.Model.Sequences
 			return parameter.Resize(0, count);
 		}
 	}
-
 }

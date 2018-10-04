@@ -19,7 +19,7 @@ namespace Super.Testing.Application.Model.Sequences
 			var numbers  = new[] {1, 2, 3, 4, 5};
 			var expected = numbers.Where(x => x > 3).ToArray();
 			In<int[]>.Start()
-			         .Query()
+			         .Sequence()
 			         .WhereBy(x => x > 3)
 			         .Get()
 			         .Get(numbers)
@@ -33,7 +33,7 @@ namespace Super.Testing.Application.Model.Sequences
 			var source   = Enumerable.Range(0, 10_000).ToArray();
 			var expected = source.Where(x => x > 1000).ToArray();
 			var ints = In<int[]>.Start()
-			                    .Query()
+			                    .Sequence()
 			                    .WhereBy(x => x > 1000)
 			                    .Get()
 			                    .Get(source);
@@ -47,7 +47,7 @@ namespace Super.Testing.Application.Model.Sequences
 		{
 			var numbers  = new[] {1, 2, 3, 4, 5};
 			var expected = numbers.Where(x => x > 3).Take(1).ToArray();
-			var actual   = In<int[]>.Start().Query().WhereBy(x => x > 3).Take(1).Get().Get(numbers);
+			var actual   = In<int[]>.Start().Sequence().WhereBy(x => x > 3).Take(1).Get().Get(numbers);
 			actual.Should().Equal(expected);
 			actual.Should().NotBeSameAs(numbers);
 		}
@@ -57,7 +57,7 @@ namespace Super.Testing.Application.Model.Sequences
 		{
 			const uint count = 10_000_000u;
 			var array = Numbers.Default
-			                   .Query()
+			                   .Sequence()
 			                   .Skip(count - 5)
 			                   .Take(5)
 			                   .Get()
@@ -78,7 +78,7 @@ namespace Super.Testing.Application.Model.Sequences
 				.Take(5)
 				.Should()
 				.Equal(In<int[]>.Start()
-				                .Query()
+				                .Sequence()
 				                .WhereBy(x => x > 1000)
 				                .Skip((uint)count)
 				                .Take(5)
@@ -91,7 +91,7 @@ namespace Super.Testing.Application.Model.Sequences
 		{
 			var source = Enumerable.Range(0, 10_000).ToArray();
 			In<int[]>.Start()
-			         .Query()
+			         .Sequence()
 			         .Skip(3000)
 			         .Take(1000)
 			         .WhereBy(x => x > 1000)
@@ -123,7 +123,7 @@ namespace Super.Testing.Application.Model.Sequences
 
 			uint _count = Total;
 			readonly static ISelect<uint[], uint[]> Select =
-				In<uint[]>.Start().Query().WhereBy(x => x > 1000).Get();
+				In<uint[]>.Start().Sequence().WhereBy(x => x > 1000).Get();
 
 			[Benchmark]
 			public Array Full() => Select.Get(_source);

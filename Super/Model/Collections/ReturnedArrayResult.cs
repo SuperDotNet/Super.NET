@@ -285,10 +285,10 @@ namespace Super.Model.Collections
 
 	sealed class Returned<T> : IStructure<ArrayView<T>, ArrayView<T>>
 	{
-		readonly Selection<ArrayView<T>, ArrayView<T>> _reference;
+		readonly Result<ArrayView<T>, ArrayView<T>> _reference;
 		readonly Complete<T>                           _complete;
 
-		public Returned(Selection<ArrayView<T>, ArrayView<T>> reference, Complete<T> complete)
+		public Returned(Result<ArrayView<T>, ArrayView<T>> reference, Complete<T> complete)
 		{
 			_reference = reference;
 			_complete  = complete;

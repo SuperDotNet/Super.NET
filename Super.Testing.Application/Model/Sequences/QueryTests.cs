@@ -13,7 +13,7 @@ namespace Super.Testing.Application.Model.Sequences
 			var array = new[] {1, 2, 3};
 
 			In<int[]>.Start()
-			         .Query()
+			         .Sequence()
 			         .Get()
 			         .Get(array)
 			         .Should()
@@ -27,7 +27,7 @@ namespace Super.Testing.Application.Model.Sequences
 			var expected = array.Skip(1).ToArray();
 
 			In<int[]>.Start()
-			         .Query()
+			         .Sequence()
 			         .Skip(1)
 			         .Get()
 			         .Get(array)
@@ -42,7 +42,7 @@ namespace Super.Testing.Application.Model.Sequences
 			var expected = array.Take(2).ToArray();
 
 			In<int[]>.Start()
-			         .Query()
+			         .Sequence()
 			         .Take(2)
 			         .Get()
 			         .Get(array)
@@ -57,7 +57,7 @@ namespace Super.Testing.Application.Model.Sequences
 			var expected = array.Skip(3).Take(2).ToArray();
 
 			In<int[]>.Start()
-			         .Query()
+			         .Sequence()
 			         .Skip(3)
 			         .Take(2)
 			         .Get()

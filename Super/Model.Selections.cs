@@ -85,7 +85,7 @@ namespace Super
 			where TFrom : struct
 			=> @this.Select(select.Get);
 
-		public static IStructure<TIn, TTo> Select<TIn, TFrom, TTo>(this IStructure<TIn, TFrom> @this, Selection<TFrom, TTo> select)
+		public static IStructure<TIn, TTo> Select<TIn, TFrom, TTo>(this IStructure<TIn, TFrom> @this, Result<TFrom, TTo> select)
 			where TIn : struct
 			where TFrom : struct
 			=> new Structure<TIn,TFrom,TTo>(@this.Get, select);
