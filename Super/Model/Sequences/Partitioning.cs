@@ -48,9 +48,7 @@ namespace Super.Model.Sequences
 		readonly Func<uint, T[]>       _source;
 		readonly Collections.Selection _selection;
 
-		public Selector(Collections.Selection selection) : this(Allocated<T>.Default, selection) {}
-
-		public Selector(IStore<T> store, Collections.Selection selection) : this(store.Get, selection) {}
+		public Selector(Collections.Selection selection) : this(Allocated<T>.Default.Get, selection) {}
 
 		public Selector(Func<uint, T[]> source, Collections.Selection selection)
 		{

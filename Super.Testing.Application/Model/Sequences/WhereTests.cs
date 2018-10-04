@@ -104,6 +104,28 @@ namespace Super.Testing.Application.Model.Sequences
 			                      .ToArray());
 		}
 
+		[Fact]
+		void VerifyAdvancedBeforeAfter()
+		{
+			var source = Enumerable.Range(0, 10_000).ToArray();
+			In<int[]>.Start()
+			         .Sequence()
+			         .Skip(3000)
+			         .Take(2000)
+			         .WhereBy(x => x > 1000)
+			         .Skip(500)
+			         .Take(1000)
+			         .Get()
+			         .Get(source)
+			         .Should()
+			         .Equal(source.Skip(3000)
+			                      .Take(2000)
+			                      .Where(x => x > 1000)
+			                      .Skip(500)
+			                      .Take(1000)
+			                      .ToArray());
+		}
+
 		public class Benchmarks
 		{
 			const uint Total = 10_000u;

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace Super.Model.Selection
 {
-	public class Query<TParameter, TResult> : IQuery<TParameter, TResult>
+	public class Sequence<TParameter, TResult> : IQuery<TParameter, TResult>
 	{
 		readonly IEnumerable<TResult>         _items;
 		readonly ISelect<TParameter, TResult> _select;
 
-		public Query(ISelect<TParameter, TResult> @select, IEnumerable<TResult> items)
+		public Sequence(ISelect<TParameter, TResult> @select, IEnumerable<TResult> items)
 		{
 			_select = @select;
 			_items  = items;

@@ -8,11 +8,6 @@ namespace Super.Model.Sequences
 {
 	public static class Extensions
 	{
-		public static Alter<T> Current<T>(this IArraySelectors<T> @this, ISegment<T> segment)
-			=> segment.Select(@this.Get()).Get;
-
-		/**/
-
 		public static ISequence<_, T> Sequence<_, T>(this ISelect<_, T[]> @this) => new ArraySequence<_, T>(@this);
 
 		public static ISequence<_, T> Sequence<_, T>(this ISelect<_, ICollection<T>> @this) => new CollectionSequence<_, T>(@this);

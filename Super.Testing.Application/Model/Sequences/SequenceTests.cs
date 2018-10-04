@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Super.Testing.Application.Model.Sequences
 {
-	public sealed class QueryTests
+	public sealed class SequenceTests
 	{
 		[Fact]
 		void Verify()

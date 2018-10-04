@@ -4,7 +4,7 @@ using Super.Model.Specifications;
 
 namespace Super.Model.Selection.Stores
 {
-	public class TableValues<TParameter, TResult> : Query<TParameter, TResult>, ISpecification<TParameter, TResult>
+	public class TableValues<TParameter, TResult> : Sequence<TParameter, TResult>, ISpecification<TParameter, TResult>
 	{
 		readonly ISpecification<TParameter> _source;
 

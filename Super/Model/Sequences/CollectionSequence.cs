@@ -34,20 +34,19 @@ namespace Super.Model.Sequences
 
 		CollectionArrayBuilder() : this(ArraySelectors<T>.Default) {}
 
-		readonly IArraySelectors<T> _selectors;
+		readonly ISegmented<T> _selectors;
 
-		public CollectionArrayBuilder(IArraySelectors<T> selectors)
-			=> _selectors = selectors;
+		public CollectionArrayBuilder(IArraySelectors<T> selectors) : this(selectors as ISegmented<T> ?? new Segmented<T>(selectors)) {}
+
+		public CollectionArrayBuilder(ISegmented<T> selectors) => _selectors = selectors;
 
 		public IBuilder<ICollection<T>, T> Get(IState<Collections.Selection> parameter)
 			=> new CollectionArrayBuilder<T>(_selectors.Get(parameter));
 
 		public IBuilder<ICollection<T>, T> Get(ISegment<T> parameter)
-			=> new CollectionArrayBuilder<T>(new SegmentedArraySelectors<T>(_selectors, parameter));
+			=> new CollectionArrayBuilder<T>(_selectors.Get(parameter));
 
-		public ISelector<ICollection<T>, T> Get() => new CollectionArraySelector<T>(_selectors.Get()
-		                                                                                      .Select(Copy<T>.Default)
-		                                                                                      .Get);
+		public ISelector<ICollection<T>, T> Get() => new CollectionArraySelector<T>(_selectors.Get(Copy<T>.Default));
 	}
 
 	sealed class CollectionArraySelector<T> : ISelector<ICollection<T>, T>
