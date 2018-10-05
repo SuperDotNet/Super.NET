@@ -1,15 +1,17 @@
 ﻿using Super.Model.Collections;
 using Super.Model.Selection;
+using Super.Model.Selection.Structure;
 using System.Collections.Generic;
 
 namespace Super.Model.Sequences
 {
 	sealed class CollectionSequence<_, T> : ISequence<_, T>
 	{
-		readonly ISelect<_, ICollection<T>> _select;
+		readonly ISelect<_, ICollection<T>>  _select;
 		readonly IBuilder<ICollection<T>, T> _builder;
 
-		public CollectionSequence(ISelect<_, ICollection<T>> select) : this(select, CollectionArrayBuilder<T>.Default) {}
+		public CollectionSequence(ISelect<_, ICollection<T>> select) :
+			this(select, CollectionArrayBuilder<T>.Default) {}
 
 		public CollectionSequence(ISelect<_, ICollection<T>> select, IBuilder<ICollection<T>, T> builder)
 		{
@@ -36,7 +38,8 @@ namespace Super.Model.Sequences
 
 		readonly ISegmented<T> _selectors;
 
-		public CollectionArrayBuilder(IArraySelectors<T> selectors) : this(selectors as ISegmented<T> ?? new Segmented<T>(selectors)) {}
+		public CollectionArrayBuilder(IArraySelectors<T> selectors) : this(selectors as ISegmented<T> ??
+		                                                                   new Segmented<T>(selectors)) {}
 
 		public CollectionArrayBuilder(ISegmented<T> selectors) => _selectors = selectors;
 
@@ -46,17 +49,17 @@ namespace Super.Model.Sequences
 		public IBuilder<ICollection<T>, T> Get(ISegment<T> parameter)
 			=> new CollectionArrayBuilder<T>(_selectors.Get(parameter));
 
-		public ISelector<ICollection<T>, T> Get() => new CollectionArraySelector<T>(_selectors.Get(Copy<T>.Default));
+		public ISelector<ICollection<T>, T> Get() => new CollectionArraySelector<T>(_selectors.Get(Copy<T>.Default).Get);
 	}
 
 	sealed class CollectionArraySelector<T> : ISelector<ICollection<T>, T>
 	{
-		readonly IStore<T> _store;
-		readonly Result<T> _result;
+		readonly IStore<T>                 _store;
+		readonly Result<ArrayView<T>, T[]> _result;
 
-		public CollectionArraySelector(Result<T> result) : this(Allotted<T>.Default, result) {}
+		public CollectionArraySelector(Result<ArrayView<T>, T[]> result) : this(Allotted<T>.Default, result) {}
 
-		public CollectionArraySelector(IStore<T> store, Result<T> result)
+		public CollectionArraySelector(IStore<T> store, Result<ArrayView<T>, T[]> result)
 		{
 			_store  = store;
 			_result = result;

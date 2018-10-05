@@ -1,6 +1,4 @@
-﻿using Super.Model.Selection;
-using Super.Model.Selection.Structure;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 namespace Super.Model
 {
@@ -67,7 +65,7 @@ namespace Super.Model
 			=> @this.Get(StructurePool<TIn>.Default.Get(in parameter));
 	}*/
 
-	public static class Locals
+	/*public static class Locals
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static ILocal<T> For<T>(in T @this) where T : struct
@@ -119,5 +117,5 @@ namespace Super.Model
 
 			return result;
 		}
-	}
+	}*/
 }

@@ -105,7 +105,7 @@ namespace Super.Testing.Application.Model.Sequences
 		}
 
 		[Fact]
-		void VerifyAdvancedBeforeAfter()
+		void VerifyComprehensive()
 		{
 			var source = Enumerable.Range(0, 10_000).ToArray();
 			In<int[]>.Start()

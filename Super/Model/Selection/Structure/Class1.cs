@@ -31,7 +31,7 @@ namespace Super.Model.Selection.Structure
 		public ref readonly T Get(in T parameter) => ref parameter;
 	}*/
 
-	public sealed class Local<T> : ILocal<T> where T : struct
+	/*public sealed class Local<T> : ILocal<T> where T : struct
 	{
 		T _instance;
 
@@ -45,19 +45,19 @@ namespace Super.Model.Selection.Structure
 		{
 			_instance = parameter;
 		}
-	}
+	}*/
 
 	/*public interface IEphemeralSelect<T> : ISelect<ILocal<T>, ILocal<T>> where T : struct {}*/
 
-	public interface IEphemeralSelect<TIn, TOut> : ISelect<ILocal<TIn>, ILocal<TOut>> where TIn : struct
-	                                                                                  where TOut : struct {}
+	/*public interface IEphemeralSelect<TIn, TOut> : ISelect<ILocal<TIn>, ILocal<TOut>> where TIn : struct
+	                                                                                  where TOut : struct {}*/
 
 	/*public interface ILocalCommand<T> where T : struct
 	{
 		void Execute(ref ref T parameter);
 	}*/
 
-	public interface ILocalCommand<T> where T : struct
+	/*public interface ILocalCommand<T> where T : struct
 	{
 		void Execute(in T parameter);
 	}
@@ -65,7 +65,7 @@ namespace Super.Model.Selection.Structure
 	public interface ILocal<T> : ILocalCommand<T> where T : struct
 	{
 		ref readonly T Get();
-	}
+	}*/
 
 	/*public interface IEphemeral<TIn, TOut> where TIn : struct where TOut : struct
 	{
@@ -118,14 +118,14 @@ namespace Super.Model.Selection.Structure
 		public ref readonly TTo Get(in TIn parameter) => ref _select(_source(in parameter));
 	}*/
 
-	class DelegatedStructure<TIn, TOut> : IStructure<TIn, TOut> where TIn : struct
+/*	class DelegatedStructure<TIn, TOut> : IStructure<TIn, TOut> where TIn : struct
 	{
 		readonly Result<TIn, TOut> _select;
 
 		public DelegatedStructure(Result<TIn, TOut> select) => _select = select;
 
 		public TOut Get(in TIn parameter) => _select(in parameter);
-	}
+	}*/
 
 	class StructureSelection<TIn, TFrom, TTo> : ISelect<TIn, TTo> where TFrom : struct
 	{
@@ -143,5 +143,5 @@ namespace Super.Model.Selection.Structure
 
 	public delegate TOut Result<TIn, out TOut>(in TIn parameter);
 
-	public delegate ref readonly TOut Reference<TIn, TOut>(in TIn parameter);
+	/*public delegate ref readonly TOut Reference<TIn, TOut>(in TIn parameter);*/
 }
