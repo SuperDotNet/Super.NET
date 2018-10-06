@@ -24,7 +24,7 @@ namespace Super.Model.Sequences
 			var store = new DynamicStore<T>(_size);
 			using (var session = _store.Session(_size))
 			{
-				Store<T>? next = new Store<T>(session.Array, 0);
+				Store<T>? next = new Store<T>(session.Store.Instance, 0);
 				while ((next = parameter.Get(next.Value)) != null)
 				{
 					store = store.Add(next.Value);

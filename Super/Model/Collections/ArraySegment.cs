@@ -3,6 +3,7 @@ using Super.Model.Selection;
 using Super.Model.Sequences;
 using Super.Runtime;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Super.Model.Collections
 {
@@ -12,21 +13,17 @@ namespace Super.Model.Collections
 	{
 		readonly ICommand<T[]> _command;
 
-		public Session(T[] store, ICommand<T[]> command) : this(store, command, (uint)store.Length) {}
-
-		public Session(T[] store, ICommand<T[]> command, uint length)
+		public Session(Sequences.Store<T> store, ICommand<T[]> command)
 		{
-			Array    = store;
-			Length   = length;
+			Store = store;
 			_command = command;
 		}
 
-		public T[] Array { get; }
-		public uint Length { get; }
+		public Sequences.Store<T> Store { get; }
 
 		public void Dispose()
 		{
-			_command?.Execute(Array);
+			_command?.Execute(Store.Instance);
 		}
 	}
 
@@ -42,9 +39,6 @@ namespace Super.Model.Collections
 		public static T[] Into<T>(in this ArrayView<T> @this, T[] into)
 			=> @this.Array.CopyInto(into, @this.Start, @this.Length);
 
-		public static T[] CopyInto<T>(this T[] @this, T[] result, uint offset = 0)
-			=> @this.CopyInto(result, Selection.Default, offset);
-
 		// ReSharper disable once TooManyArguments
 		public static T[] CopyInto<T>(this T[] @this, T[] result, in Selection selection, uint offset = 0)
 			=> @this.CopyInto(result, selection.Start, selection.Length.IsAssigned
@@ -52,11 +46,20 @@ namespace Super.Model.Collections
 				                                       : (uint)result.Length - offset, offset);
 
 		// ReSharper disable once TooManyArguments
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] CopyInto<T>(this T[] @this, T[] result, uint start, uint length, uint offset = 0)
 		{
 			Array.Copy(@this, start,
 			           result, offset, length);
 			return result;
+		}
+
+		// ReSharper disable once TooManyArguments
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Sequences.Store<T> CopyInto<T>(this T[] @this, in Sequences.Store<T> store, uint start, uint offset = 0)
+		{
+			Array.Copy(@this, start, store.Instance, offset, store.Length - offset);
+			return store;
 		}
 
 		public static ArrayView<T> Resize<T>(in this ArrayView<T> @this, uint size) => @this.Resize(@this.Start, size);

@@ -7,13 +7,13 @@ using System.Linq;
 
 namespace Super.Model.Collections
 {
-	public sealed class Selector<TFrom, TTo> : ISelector<TFrom, TTo>
+	public sealed class ArraySelector<TFrom, TTo> : ISelector<TFrom, TTo>
 	{
 		readonly Func<TFrom, TTo> _select;
 
-		public Selector(ISelect<TFrom, TTo> select) : this(select.Get) {}
+		public ArraySelector(ISelect<TFrom, TTo> select) : this(select.Get) {}
 
-		public Selector(Func<TFrom, TTo> select) => _select = select;
+		public ArraySelector(Func<TFrom, TTo> select) => _select = select;
 
 		public ReadOnlyMemory<TTo> Get(ReadOnlyMemory<TFrom> parameter)
 		{

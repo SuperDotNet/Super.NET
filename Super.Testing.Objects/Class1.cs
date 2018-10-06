@@ -40,7 +40,7 @@ namespace Super.Testing.Objects
 	{
 		public static Chain Default { get; } = new Chain();
 
-		Chain() : this(new Selector<string, int>(Select.Default).Where(x => x > 0), View.Default) {}
+		Chain() : this(new ArraySelector<string, int>(Select.Default).Where(x => x > 0), View.Default) {}
 
 		readonly ISelect<ReadOnlyMemory<string>, ReadOnlyMemory<int>> _direct;
 		readonly ReadOnlyMemory<string>                               _view;

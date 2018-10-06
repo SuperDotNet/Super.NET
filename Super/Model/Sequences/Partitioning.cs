@@ -1,12 +1,13 @@
 ﻿using Super.Model.Collections;
 using Super.Model.Commands;
 using Super.Model.Selection;
-using System;
+using Super.Model.Selection.Structure;
+using Super.Runtime.Activation;
 using System.Buffers;
 
 namespace Super.Model.Sequences
 {
-	public interface IStore<T> : ISelect<uint, T[]>, ICommand<T[]> {}
+	public interface IStore<T> : ISelect<uint, Store<T>>, ICommand<T[]> {}
 
 	sealed class Allocated<T> : DelegatedCommand<T[]>, IStore<T>
 	{
@@ -14,7 +15,7 @@ namespace Super.Model.Sequences
 
 		Allocated() : base(Runtime.Delegates<T[]>.Empty) {}
 
-		public T[] Get(uint parameter) => new T[parameter];
+		public Store<T> Get(uint parameter) => new T[parameter];
 	}
 
 	sealed class Allotted<T> : IStore<T>
@@ -27,7 +28,7 @@ namespace Super.Model.Sequences
 
 		public Allotted(ArrayPool<T> pool) => _pool = pool;
 
-		public T[] Get(uint parameter) => _pool.Rent((int)parameter);
+		public Store<T> Get(uint parameter) => new Store<T>(_pool.Rent((int)parameter), parameter);
 
 		public void Execute(T[] parameter)
 		{
@@ -35,33 +36,65 @@ namespace Super.Model.Sequences
 		}
 	}
 
-	public interface ISelector<T> : ISelector<T[], T> {}
-
 	public interface ISelector<in TIn, out T> : ISelect<TIn, T[]> {}
 
-	sealed class Selector<T> : ISelector<T>
+	public interface IArraySelector<T> : IStructure<Store<T>, T[]> {}
+
+	sealed class ArraySelector<T> : IArraySelector<T>, IActivateMarker<Collections.Selection>
 	{
-		public static Selector<T> Default { get; } = new Selector<T>();
+		public static ArraySelector<T> Default { get; } = new ArraySelector<T>();
 
-		Selector() : this(Collections.Selection.Default) {}
+		ArraySelector() : this(Collections.Selection.Default) {}
 
-		readonly Func<uint, T[]>       _source;
-		readonly Collections.Selection _selection;
+		readonly uint                 _start;
+		readonly Assigned<uint>       _length;
 
-		public Selector(Collections.Selection selection) : this(Allocated<T>.Default.Get, selection) {}
+		public ArraySelector(Collections.Selection selection) : this(selection.Start, selection.Length) {}
 
-		public Selector(Func<uint, T[]> source, Collections.Selection selection)
+		public ArraySelector(uint start, Assigned<uint> length)
 		{
-			_source    = source;
-			_selection = selection;
+			_start  = start;
+			_length = length;
 		}
 
-		public T[] Get(T[] parameter)
+		public T[] Get(in Store<T> parameter)
 		{
-			var size = _selection.Length.IsAssigned
-				           ? _selection.Length.Instance
-				           : (uint)parameter.Length - _selection.Start;
-			return parameter.CopyInto(_source(size), _selection.Start, size);
+			var size   = _length.IsAssigned ? _length.Instance : parameter.Length - _start;
+			var result = parameter.Instance.CopyInto(new T[size], _start, size);
+			return result;
 		}
+	}
+
+	/*public readonly struct StoreView<T>
+	{
+		public StoreView(Store<T> store, uint start)
+		{
+			Store = store;
+			Start  = start;
+		}
+
+		public Store<T> Store { get; }
+
+		public uint Start { get; }
+	}*/
+
+	public readonly struct Store<T>
+	{
+		public static implicit operator Store<T>(T[] instance) => new Store<T>(instance, (uint)instance.Length);
+
+		public static implicit operator ArrayView<T>(Store<T> store)
+			=> new ArrayView<T>(store.Instance, 0, store.Length);
+
+		public Store(T[] instance) : this(instance, (uint)instance.Length) {}
+
+		public Store(T[] instance, uint length)
+		{
+			Instance = instance;
+			Length   = length;
+		}
+
+		public T[] Instance { get; }
+
+		public uint Length { get; }
 	}
 }

@@ -24,7 +24,7 @@ namespace Super.Model.Collections
 		{
 			using (var session = _items.Session(32))
 			{
-				var  items  = session.Array;
+				var  items  = session.Store.Instance;
 				var  total  = _selection.Start;
 				var  pages  = 1u;
 				var  length = _selection.Length.Or(int.MaxValue);
@@ -55,7 +55,7 @@ namespace Super.Model.Collections
 					using (var item = _item.Session(items[i]))
 					{
 						var amount = items[i].Length;
-						Array.Copy(item.Array, 0u, destination, offset, amount);
+						Array.Copy(item.Store.Instance, 0, destination, offset, amount);
 						offset += amount;
 					}
 				}

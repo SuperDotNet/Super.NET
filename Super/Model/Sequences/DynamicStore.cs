@@ -43,8 +43,9 @@ namespace Super.Model.Sequences
 		readonly Collections.Selection _position;
 		readonly uint                  _index;
 
-		public DynamicStore(uint size, uint length = 32) : this(Items.Get(length), Collections.Selection.Default)
-			=> _stores[0] = new Store<T>(Item.Get(size), 0);
+		public DynamicStore(uint size, uint length = 32) : this(Items.Get(length).Instance,
+		                                                        Collections.Selection.Default)
+			=> _stores[0] = new Store<T>(Item.Get(size).Instance, 0);
 
 		DynamicStore(Store<T>[] stores, Collections.Selection position, uint index = 0)
 		{
@@ -87,23 +88,21 @@ namespace Super.Model.Sequences
 			if (size > max)
 			{
 				stores[_index] =
-					new
-						Store<T>(page.Instance.CopyInto(current.Instance,
-						                                new Collections.Selection(0, capacity - current.Length),
-						                                current.Length),
-						         capacity);
-
+					new Store<T>(page.Instance.CopyInto(current.Instance,
+					                                    new Collections.Selection(0, capacity - current.Length),
+					                                    current.Length),
+					             capacity);
 				var remainder = size - max;
 				stores[_index + 1] =
-					new Store<T>(page.Instance.CopyInto(Item.Get(Math.Min(int.MaxValue - size, size * 2)),
-					                                    selection: new Collections.Selection(0, remainder)),
+					new Store<T>(page.Instance.CopyInto(Item.Get(Math.Min(int.MaxValue - size, size * 2)).Instance,
+					                                    new Collections.Selection(0, remainder)),
 					             remainder);
 
 				return new DynamicStore<T>(_stores, new Collections.Selection(max, size), _index + 1);
 			}
 
-			stores[_index] =
-				new
+			stores[_index]
+				= new
 					Store<T>(page.Instance.CopyInto(current.Instance, new Collections.Selection(0, filled), current.Length),
 					         current.Length + filled);
 			return new DynamicStore<T>(_stores, new Collections.Selection(_position.Start, size), _index);

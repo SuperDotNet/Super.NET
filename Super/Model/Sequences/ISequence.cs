@@ -6,10 +6,10 @@ using System;
 namespace Super.Model.Sequences
 {
 	public interface ISequence<in _, T> : ISource<ISelect<_, T[]>>,
-	                                      ISelect<IState<Collections.Selection>, ISequence<_, T>>,
+	                                      ISelect<IAlterSelection, ISequence<_, T>>,
 	                                      ISelect<ISegment<T>, ISequence<_, T>> {}
 
-	sealed class Skip : IState<Collections.Selection>
+	sealed class Skip : IAlterSelection
 	{
 		readonly uint _skip;
 
@@ -19,7 +19,7 @@ namespace Super.Model.Sequences
 			=> new Collections.Selection(parameter.Start + _skip, parameter.Length);
 	}
 
-	sealed class Take : IState<Collections.Selection>
+	sealed class Take : IAlterSelection
 	{
 		readonly uint _take;
 

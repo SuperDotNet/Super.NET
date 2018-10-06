@@ -104,35 +104,35 @@ namespace Super.Model.Selection.Structure
 		public TTo Get(in TIn parameter) => _select(_source(parameter));
 	}
 
-	/*class Ephemeral<TIn, TFrom, TTo> : IEphemeral<TIn, TTo> where TIn : struct where TFrom : struct where TTo : struct
+	class StructureSelection<TIn, TFrom, TTo> : IStructure<TIn, TTo> where TIn : struct
 	{
-		readonly Reference<TIn, TFrom> _source;
-		readonly Reference<TFrom, TTo> _select;
+		readonly Result<TIn, TFrom> _source;
+		readonly Func<TFrom, TTo> _select;
 
-		public Ephemeral(Reference<TIn, TFrom> source, Reference<TFrom, TTo> select)
+		public StructureSelection(Result<TIn, TFrom> source, Func<TFrom, TTo> select)
 		{
 			_select = select;
 			_source = source;
 		}
 
-		public ref readonly TTo Get(in TIn parameter) => ref _select(_source(in parameter));
-	}*/
+		public TTo Get(in TIn parameter) => _select(_source(parameter));
+	}
 
-/*	class DelegatedStructure<TIn, TOut> : IStructure<TIn, TOut> where TIn : struct
+	class DelegatedStructure<TIn, TOut> : IStructure<TIn, TOut> where TIn : struct
 	{
 		readonly Result<TIn, TOut> _select;
 
 		public DelegatedStructure(Result<TIn, TOut> select) => _select = select;
 
 		public TOut Get(in TIn parameter) => _select(in parameter);
-	}*/
+	}
 
-	class StructureSelection<TIn, TFrom, TTo> : ISelect<TIn, TTo> where TFrom : struct
+	class StructureInput<TIn, TFrom, TTo> : ISelect<TIn, TTo> where TFrom : struct
 	{
 		readonly Func<TIn, TFrom>      _source;
 		readonly Result<TFrom, TTo> _select;
 
-		public StructureSelection(Func<TIn, TFrom> source, Result<TFrom, TTo> select)
+		public StructureInput(Func<TIn, TFrom> source, Result<TFrom, TTo> select)
 		{
 			_select = select;
 			_source = source;

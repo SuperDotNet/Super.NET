@@ -78,7 +78,7 @@ namespace Super
 			=> @this.Select(select.Get);
 
 		public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this, IStructure<TFrom, TTo> select) where TFrom : struct
-			=> new StructureSelection<TIn,TFrom,TTo>(@this.Get, select.Get);
+			=> new StructureInput<TIn,TFrom,TTo>(@this.Get, select.Get);
 
 		public static IStructure<TIn, TTo> Select<TIn, TFrom, TTo>(this IStructure<TIn, TFrom> @this, IStructure<TFrom, TTo> select)
 			where TIn : struct
@@ -89,6 +89,10 @@ namespace Super
 			where TIn : struct
 			where TFrom : struct
 			=> new Structure<TIn,TFrom,TTo>(@this.Get, select);
+
+		public static IStructure<TIn, TTo> Select<TIn, TFrom, TTo>(this IStructure<TIn, TFrom> @this, Func<TFrom, TTo> select)
+			where TIn : struct
+			=> new StructureSelection<TIn,TFrom,TTo>(@this.Get, select);
 
 		public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this, Func<TFrom, TTo> select)
 			=> new Selection<TIn, TFrom, TTo>(@this.Get, select);

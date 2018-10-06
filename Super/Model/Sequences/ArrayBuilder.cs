@@ -1,45 +1,91 @@
-﻿using Super.Model.Collections;
+﻿using JetBrains.Annotations;
+using Super.Model.Collections;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
 using Super.Model.Selection.Structure;
 using Super.Model.Sources;
+using Super.Reflection;
+using Super.Runtime.Activation;
 
 namespace Super.Model.Sequences
 {
-	public interface IState<T> : IAlteration<T> {}
-
 	public interface IBuilder<in TIn, T> : ISource<ISelector<TIn, T>>,
-	                                       ISelect<IState<Collections.Selection>, IBuilder<TIn, T>>,
+	                                       ISelect<IAlterSelection, IBuilder<TIn, T>>,
 	                                       ISelect<ISegment<T>, IBuilder<TIn, T>> {}
 
-	public interface IBuilder<T> : IBuilder<T[], T> {}
+	public interface IBuilder<T> : ISource<IArraySelector<T>>,
+	                               ISelect<IAlterSelection, IBuilder<T>>,
+	                               ISelect<ISegment<T>, IBuilder<T>> {}
 
-	sealed class ArrayBuilder<T> : IBuilder<T>
+	public interface IAlterNode<T> : ISelect<IAlterSelection, IAlterNode<T>>,
+	                                 IAlteration<ISegment<T>>,
+	                                 ISource<IArraySelector<T>> {}
+
+	sealed class AlterNode<T> : Source<IArraySelector<T>>, IAlterNode<T>, IActivateMarker<INode<T>>
+	{
+		/*readonly static Func<IAlteration<Collections.Selection>, AlterNode<T>> Selectors
+			= Selections<T>.Default.Select(I<AlterNode<T>>.Default.From).Get;*/
+
+		public static AlterNode<T> Default { get; } = new AlterNode<T>();
+
+		AlterNode() : this(Node<T>.Default) {}
+
+		readonly INode<T> _node;
+
+		public AlterNode(INode<T> node) : base(node.Get()) => _node = node;
+
+		public IAlterNode<T> Get(IAlterSelection parameter) => new AlterNode<T>(_node.Get(parameter));
+
+		public ISegment<T> Get(ISegment<T> parameter) => _node.Get(parameter);
+	}
+
+	sealed class SegmentedArrayBuilder<T> : IBuilder<T>, IActivateMarker<ISegment<T>>
+	{
+		readonly IStructure<ArrayView<T>, Store<T>> _previous;
+		readonly IAlterNode<T>                      _alter;
+
+		[UsedImplicitly]
+		public SegmentedArrayBuilder(ISegment<T> segment) : this(segment.Store(), AlterNode<T>.Default) {}
+
+		public SegmentedArrayBuilder(IStructure<ArrayView<T>, Store<T>> previous, IAlterNode<T> alter)
+		{
+			_previous = previous;
+			_alter    = alter;
+		}
+
+		public IArraySelector<T> Get() => new DelegatedArraySelector<T>(_previous.Select(_alter.Get()));
+
+		public IBuilder<T> Get(IAlterSelection parameter)
+			=> new SegmentedArrayBuilder<T>(_previous, _alter.Get(parameter));
+
+		public IBuilder<T> Get(ISegment<T> parameter) => _alter.Get(parameter)
+		                                                       .To(I<SegmentedArrayBuilder<T>>.Default.From);
+	}
+
+	sealed class ArrayBuilder<T> : DecoratedSource<IArraySelector<T>>, IBuilder<T>, IActivateMarker<IAlterNode<T>>
 	{
 		public static ArrayBuilder<T> Default { get; } = new ArrayBuilder<T>();
 
-		ArrayBuilder() : this(ArraySelectors<T>.Default) {}
+		ArrayBuilder() : this(AlterNode<T>.Default) {}
 
-		readonly ISegmented<T> _segmented;
+		readonly IAlterNode<T> _alter;
 
-		public ArrayBuilder(IArraySelectors<T> selectors) : this(new Segmented<T>(selectors)) {}
+		public ArrayBuilder(IAlterNode<T> alter) : base(alter) => _alter = alter;
 
-		public ArrayBuilder(ISegmented<T> segmented) => _segmented = segmented;
+		public IBuilder<T> Get(ISegment<T> parameter) => _alter.Get(parameter)
+		                                                       .To(I<SegmentedArrayBuilder<T>>.Default.From);
 
-		public IBuilder<T[], T> Get(IState<Collections.Selection> parameter)
-			=> new ArrayBuilder<T>(_segmented.Get(parameter));
-
-		public IBuilder<T[], T> Get(ISegment<T> parameter) => new ArrayBuilder<T>(_segmented.Get(parameter));
-
-		public ISelector<T[], T> Get() => _segmented.Get();
+		public IBuilder<T> Get(IAlterSelection parameter) => _alter.Get(parameter).To(I<ArrayBuilder<T>>.Default.From);
 	}
 
-	public interface IArraySelectors<T> : ISelect<IState<Collections.Selection>, IArraySelectors<T>>,
-	                                      ISelect<ISessions<T>, IStructure<ArrayView<T>, Session<T>>>,
-	                                      ISelect<IResult<T>, IStructure<ArrayView<T>, T[]>>,
-	                                      ISource<ISelector<T>> {}
+	public interface IAlterSelection : IAlteration<Collections.Selection> {}
 
-	sealed class SegmentedArraySelectors<T> : ISegmented<T>
+	/*public interface IArraySelectors<T> : ISelect<IAlterSelection, IArraySelectors<T>>,
+	                                      ISelect<ISessions<T>, IStructure<ArrayView<T>, Session<T>>>,
+	                                      ISelect<ISession<T>, IStructure<ArrayView<T>, T[]>>,
+	                                      ISource<IArraySelector<T>> {}*/
+
+	/*sealed class SegmentedArraySelectors<T> : ISegmented<T>
 	{
 		readonly IStructure<ArrayView<T>, Session<T>> _previous;
 		readonly ISegment<T>                          _segment;
@@ -59,25 +105,25 @@ namespace Super.Model.Sequences
 			_selectors = selectors;
 		}
 
-		public IArraySelectors<T> Get(IState<Collections.Selection> parameter)
+		public IArraySelectors<T> Get(IAlterSelection parameter)
 			=> new SegmentedArraySelectors<T>(_previous, _selectors.Get(parameter), _segment);
 
 		public IArraySelectors<T> Get(ISegment<T> parameter)
 			=> new SegmentedArraySelectors<T>(_previous, _selectors.Get(parameter), _segment);
 
-		public ISelector<T> Get()
-			=> new LinkedSelector<T>(_previous.Get, _segment.Select(_selectors.Get(Copy<T>.Default)).Get);
+		public IArraySelector<T> Get()
+			=> new LinkedArraySelector<T>(_previous.Get, _segment.Select(_selectors.Get(Copy<T>.Default)).Get);
 
 		public IStructure<ArrayView<T>, Session<T>> Get(ISessions<T> parameter)
 			=> new LinkedSegment<T>(_previous.Get, _segment.Get).Select(parameter);
 
 		public IStructure<ArrayView<T>, T[]> Get(IResult<T> parameter)
 			=> new LinkedResult<T>(_previous.Get, _segment.Select(_selectors.Get(parameter)).Get);
-	}
+	}*/
 
-	public interface ISegmented<T> : IArraySelectors<T>, ISelect<ISegment<T>, IArraySelectors<T>> {}
+	/*public interface ISegmented<T> : IArraySelectors<T>, ISelect<ISegment<T>, IArraySelectors<T>> {}*/
 
-	sealed class Segmented<T> : ISegmented<T>
+	/*sealed class Segmented<T> : ISegmented<T>
 	{
 		public static Segmented<T> Default { get; } = new Segmented<T>();
 
@@ -90,16 +136,16 @@ namespace Super.Model.Sequences
 		public IArraySelectors<T> Get(ISegment<T> parameter)
 			=> new SegmentedArraySelectors<T>(_selectors.Get(Sessions<T>.Default), parameter);
 
-		public IArraySelectors<T> Get(IState<Collections.Selection> parameter) => _selectors.Get(parameter);
+		public IArraySelectors<T> Get(IAlterSelection parameter) => _selectors.Get(parameter);
 
 		public IStructure<ArrayView<T>, Session<T>> Get(ISessions<T> parameter) => _selectors.Get(parameter);
 
 		public IStructure<ArrayView<T>, T[]> Get(IResult<T> parameter) => _selectors.Get(parameter);
 
-		public ISelector<T> Get() => _selectors.Get();
-	}
+		public IArraySelector<T> Get() => _selectors.Get();
+	}*/
 
-	sealed class ArraySelectors<T> : Source<ISelector<T>>, IArraySelectors<T>
+	/*sealed class ArraySelectors<T> : Source<IArraySelector<T>>, IArraySelectors<T>
 	{
 		public static ArraySelectors<T> Default { get; } = new ArraySelectors<T>();
 
@@ -110,21 +156,21 @@ namespace Super.Model.Sequences
 
 		public ArraySelectors(Collections.Selection selection) : this(new SelectedSegment<T>(selection), selection) {}
 
-		public ArraySelectors(ISegment<T> segment, Collections.Selection selection) : base(new Selector<T>(selection))
+		public ArraySelectors(ISegment<T> segment, Collections.Selection selection) :
+			base(new ArraySelector<T>(selection))
 		{
 			_segment   = segment;
 			_selection = selection;
 		}
 
-		public IArraySelectors<T> Get(IState<Collections.Selection> parameter)
-			=> new ArraySelectors<T>(parameter.Get(_selection));
+		public IArraySelectors<T> Get(IAlterSelection parameter) => new ArraySelectors<T>(parameter.Get(_selection));
 
 		public IStructure<ArrayView<T>, Session<T>> Get(ISessions<T> parameter) => _segment.Select(parameter);
 
 		public IStructure<ArrayView<T>, T[]> Get(IResult<T> parameter) => _segment.Select(parameter);
-	}
+	}*/
 
-	sealed class LinkedSegment<T> : ISegment<T>
+	/*sealed class LinkedSegment<T> : ISegment<T>
 	{
 		readonly Result<ArrayView<T>, Session<T>>   _previous;
 		readonly Result<ArrayView<T>, ArrayView<T>> _select;
@@ -139,24 +185,32 @@ namespace Super.Model.Sequences
 		{
 			using (var session = _previous(in parameter))
 			{
-				var view = new ArrayView<T>(session.Array, 0, session.Length);
-				return _select(in view);
+				return _select(session.Store);
 			}
 		}
-	}
+	}*/
 
 	sealed class SelectedSegment<T> : ISegment<T>
 	{
-		readonly Collections.Selection _selection;
+		public static SelectedSegment<T> Default { get; } = new SelectedSegment<T>();
 
-		public SelectedSegment(Collections.Selection selection) => _selection = selection;
+		SelectedSegment() : this(Collections.Selection.Default) {}
+
+		readonly uint           _start;
+		readonly Assigned<uint> _length;
+
+		public SelectedSegment(Collections.Selection selection) : this(selection.Start, selection.Length) {}
+
+		public SelectedSegment(uint start, Assigned<uint> length)
+		{
+			_start  = start;
+			_length = length;
+		}
 
 		public ArrayView<T> Get(in ArrayView<T> parameter)
 		{
-			var size = _selection.Length.IsAssigned
-				           ? _selection.Length.Instance
-				           : parameter.Length - _selection.Start;
-			var result = new ArrayView<T>(parameter.Array, _selection.Start, size);
+			var size   = _length.IsAssigned ? _length.Instance : parameter.Length - _start;
+			var result = new ArrayView<T>(parameter.Array, _start, size);
 			return result;
 		}
 	}
@@ -169,24 +223,23 @@ namespace Super.Model.Sequences
 
 		Sessions() : this(Allotted<T>.Default) {}
 
-		readonly IStore<T>                 _store;
-		readonly Result<ArrayView<T>, T[]> _result;
+		readonly IStore<T>                      _store;
+		readonly Result<ArrayView<T>, Store<T>> _result;
 
 		public Sessions(IStore<T> store) : this(store, new Copy<T>(store).Get) {}
 
-		public Sessions(IStore<T> store, Result<ArrayView<T>, T[]> result)
+		public Sessions(IStore<T> store, Result<ArrayView<T>, Store<T>> result)
 		{
 			_store  = store;
 			_result = result;
 		}
 
-		public Session<T> Get(in ArrayView<T> parameter)
-			=> new Session<T>(_result(parameter), _store, parameter.Length);
+		public Session<T> Get(in ArrayView<T> parameter) => new Session<T>(_result(parameter), _store);
 	}
 
-	public interface IResult<T> : IStructure<ArrayView<T>, T[]> {}
+	public interface ISession<T> : IStructure<ArrayView<T>, Store<T>> {}
 
-	sealed class Copy<T> : IResult<T>
+	sealed class Copy<T> : ISession<T>
 	{
 		public static Copy<T> Default { get; } = new Copy<T>();
 
@@ -196,49 +249,43 @@ namespace Super.Model.Sequences
 
 		public Copy(IStore<T> store) => _store = store;
 
-		public T[] Get(in ArrayView<T> parameter)
-			=> parameter.Array.CopyInto(_store.Get(parameter.Length), parameter.Start, parameter.Length);
-	}
-
-	sealed class LinkedSelector<T> : ISelector<T>
-	{
-		readonly Result<ArrayView<T>, Session<T>> _previous;
-		readonly Result<ArrayView<T>, T[]>        _result;
-
-		public LinkedSelector(Result<ArrayView<T>, Session<T>> previous, Result<ArrayView<T>, T[]> result)
+		public Store<T> Get(in ArrayView<T> parameter)
 		{
-			_previous = previous;
-			_result   = result;
-		}
-
-		public T[] Get(T[] parameter)
-		{
-			var view = new ArrayView<T>(parameter);
-			using (var session = _previous(in view))
-			{
-				var selection = new ArrayView<T>(session.Array, 0, session.Length);
-				return _result(in selection);
-			}
+			var input = _store.Get(parameter.Length);
+			return parameter.Array.CopyInto(in input, parameter.Start);
 		}
 	}
 
-	sealed class LinkedResult<T> : IResult<T>
+	sealed class DelegatedArraySelector<T> : IArraySelector<T>, IActivateMarker<IStructure<ArrayView<T>, T[]>>
 	{
-		readonly Result<ArrayView<T>, Session<T>> _previous;
-		readonly Result<ArrayView<T>, T[]>        _result;
+		readonly Result<ArrayView<T>, T[]> _continue;
 
-		public LinkedResult(Result<ArrayView<T>, Session<T>> previous, Result<ArrayView<T>, T[]> result)
+		/*public DelegatedArraySelector(IStructure<ArrayView<T>, Store<T>> @continue)
+			: this(@continue.Select((in Store<T> x) => x.Instance).Get) {}*/
+
+		public DelegatedArraySelector(IStructure<ArrayView<T>, T[]> result) : this(result.Get) {}
+
+		public DelegatedArraySelector(Result<ArrayView<T>, T[]> result) => _continue = result;
+
+		public T[] Get(in Store<T> parameter) => _continue(parameter);
+	}
+
+	sealed class SessionSegment<T> : ISegment<T>
+	{
+		readonly Result<ArrayView<T>, Session<T>>   _previous;
+		readonly Result<ArrayView<T>, ArrayView<T>> _continue;
+
+		public SessionSegment(Result<ArrayView<T>, Session<T>> previous, Result<ArrayView<T>, ArrayView<T>> @continue)
 		{
 			_previous = previous;
-			_result   = result;
+			_continue = @continue;
 		}
 
-		public T[] Get(in ArrayView<T> parameter)
+		public ArrayView<T> Get(in ArrayView<T> parameter)
 		{
 			using (var session = _previous(in parameter))
 			{
-				var selection = new ArrayView<T>(session.Array, 0, session.Length);
-				return _result(in selection);
+				return _continue(session.Store);
 			}
 		}
 	}

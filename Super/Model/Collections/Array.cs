@@ -36,7 +36,7 @@ namespace Super.Model.Collections
 
 		public ref readonly T this[uint index] => ref _reference[index];
 
-		public T[] Copy() => Selector<T>.Default.Get(_reference);
+		public T[] Copy() => ArraySelector<T>.Default.Get(_reference);
 
 		public ImmutableArray<T> Get() => _array;
 
