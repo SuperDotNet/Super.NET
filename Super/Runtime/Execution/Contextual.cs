@@ -16,7 +16,7 @@ namespace Super.Runtime.Execution
 		                                                  .To(x => x.Cast(I<IDisposable>.Default)
 		                                                            .Configure(Implementations.Assign)
 		                                                            .Cast(I<T>.Default)
-		                                                            .Unless(IsType<T, IDisposable>.Default.Inverse(), x))
+		                                                            .UnlessResult(IsType<T, IDisposable>.Default.Inverse(), x))
 		                                                  .ToStore()) {}
 
 		public Contextual(ISelect<object, T> source) : base(source, ExecutionContext.Default) {}

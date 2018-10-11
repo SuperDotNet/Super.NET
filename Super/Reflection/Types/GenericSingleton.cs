@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Super.Runtime.Activation;
+using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Super.Runtime.Activation;
 
 namespace Super.Reflection.Types
 {
@@ -10,15 +10,15 @@ namespace Super.Reflection.Types
 	{
 		public static GenericSingleton Default { get; } = new GenericSingleton();
 
-		GenericSingleton() : this(Singletons.Default,
+		GenericSingleton() : this(Expression.Constant(Singletons.Default),
 		                          typeof(Singletons).GetRuntimeMethod(nameof(Singletons.Get),
 		                                                              typeof(Type).Yield().ToArray())) {}
 
 		readonly MethodInfo _method;
 
-		readonly ISingletons _singletons;
+		readonly Expression _singletons;
 
-		public GenericSingleton(ISingletons singletons, MethodInfo method)
+		public GenericSingleton(Expression singletons, MethodInfo method)
 		{
 			_singletons = singletons;
 			_method     = method;
@@ -26,8 +26,7 @@ namespace Super.Reflection.Types
 
 		public Expression Get(Type parameter)
 		{
-			var instance = Expression.Constant(_singletons);
-			var call     = Expression.Call(instance, _method, Expression.Constant(parameter));
+			var call     = Expression.Call(_singletons, _method, Expression.Constant(parameter));
 			var result   = Expression.Convert(call, parameter);
 			return result;
 		}

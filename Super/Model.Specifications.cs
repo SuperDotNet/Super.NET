@@ -1,4 +1,5 @@
-﻿using Super.Model.Specifications;
+﻿using Super.Model.Selection;
+using Super.Model.Specifications;
 using Super.Reflection;
 using System;
 using System.Reactive;
@@ -32,6 +33,13 @@ namespace Super
 
 		public static ISpecification<T> Equal<T>(this T @this) => EqualitySpecifications<T>.Default.Get(@this);
 
-		public static ISpecification<T> Not<T>(this T @this) => Inverse(@this.Equal());
+		public static ISpecification<T> Not<T>(this T @this) => @this.Equal().Inverse();
+
+		public static ISelect<T, bool> Out<T>(this ISpecification<T> @this) => new Select<T, bool>(@this.IsSatisfiedBy);
+
+		public static IAny Out<T>(this ISpecification<T> @this, T parameter) => @this.Out().Out(parameter);
+
+		public static ISpecification<T, TOut> Out<T, TOut>(this ISpecification<T> @this, ISelect<T, TOut> parameter)
+			=> new Specification<T, TOut>(@this, parameter);
 	}
 }

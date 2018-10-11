@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using BenchmarkDotNet.Attributes;
+using FluentAssertions;
 using Super.Runtime.Environment;
 using Super.Testing.Objects;
 using System;
@@ -32,5 +33,18 @@ namespace Super.Testing.Application.Runtime.Environment
 		}
 
 		interface IInvalid {}
+
+		public class Benchmarks
+		{
+			readonly static DefaultComponent<string> DefaultComponent = DefaultComponent<string>.Default;
+
+			public Benchmarks()
+			{
+				DefaultComponent.Get();
+			}
+
+			[Benchmark]
+			public string Measure() => DefaultComponent.Get();
+		}
 	}
 }

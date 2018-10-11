@@ -8,7 +8,8 @@ using Super.Reflection.Types;
 using Super.Runtime.Activation;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Immutable;
+using Implementations = Super.Reflection.Types.Implementations;
 
 namespace Super.Runtime.Environment
 {
@@ -26,10 +27,12 @@ namespace Super.Runtime.Environment
 		ComponentTypesDefinition() : this(Types.Default, ComponentTypesPredicate.Default, x => x.Sort().Access()) {}
 
 		public ComponentTypesDefinition(IArrays<Type> types, ISelectSequence<Type> where,
-		                                Func<ISelect<Type, IEnumerable<Type>>, ISelect<Type, ReadOnlyMemory<Type>>> select)
+		                                Func<ISelect<Type, IEnumerable<Type>>, ISelect<Type, ReadOnlyMemory<Type>>>
+			                                select)
 			: base(types.Select(x => x.AsEnumerable())
 			            .Select(where)
-			            .Select(I<ComponentTypesSelector>.Default.From)
+			            .Select(x => x.ToImmutableArray())
+			            .Select(I<ComponentTypesSelector>.Default)
 			            .Select(select)) {}
 	}
 
@@ -49,55 +52,102 @@ namespace Super.Runtime.Environment
 		public ComponentTypesPredicate(Func<Type, bool> @where) : base(@where) {}
 	}
 
-	sealed class SourceDefinition : GenericTypeAlteration
+	sealed class SourceDefinition : MakeGenericType
 	{
 		public static SourceDefinition Default { get; } = new SourceDefinition();
 
 		SourceDefinition() : base(typeof(ISource<>)) {}
 	}
 
-	sealed class Predicates : ISelect<Type, IEnumerable<Func<Type, bool>>>
+	sealed class Selections : ISelect<Type, ISelect<Type, Type>>
 	{
-		public static Predicates Default { get; } = new Predicates();
+		public static Selections Default { get; } = new Selections();
 
-		Predicates() : this(SourceDefinition.Default.Get,
-		                    TypeMetadataSelector.Default
-		                                        .Select(I<IsAssignableFrom>.Default.From)
-		                                        .Select(x => new Func<Type, bool>(x.IsSatisfiedBy))
-		                                        .Get) {}
+		Selections() : this(In<Type>.Start(Default<Type, Type>.Instance)
+		                            .Unless(IsDefinedGenericType.Default, Make.Instance)) {}
 
-		readonly Func<Type, Type>             _source;
-		readonly Func<Type, Func<Type, bool>> _selector;
+		readonly ISelect<Type, ISelect<Type, Type>> _default;
 
-		public Predicates(Func<Type, Type> source, Func<Type, Func<Type, bool>> selector)
+		public Selections(ISelect<Type, ISelect<Type, Type>> @default) => _default = @default;
+
+		public ISelect<Type, Type> Get(Type parameter)
+			=> _default.Get(parameter)
+			           .Unless(parameter.To(SourceDefinition.Default.Get)
+			                            .To(I<Specification>.Default))
+			           .Unless(parameter.To(I<Specification>.Default));
+
+		sealed class Make : ISelect<Type, ISelect<Type, Type>>, IActivateMarker<Type>
 		{
-			_source   = source;
-			_selector = selector;
+			public static Make Instance { get; } = new Make();
+
+			Make() : this(TypeMetadata.Default.Select(Implementations.GenericInterfaceImplementations)
+			                          .Select(x => new Any(x)),
+			              GenericArguments.Default.Select(I<GenericTypeBuilder>.Default)) {}
+
+			readonly ISelect<Type, ISpecification<Type>> _specification;
+			readonly ISelect<Type, ISelect<Type, Type>>  _source;
+
+			public Make(ISelect<Type, ISpecification<Type>> specification,
+			            ISelect<Type, ISelect<Type, Type>> source)
+			{
+				_specification = specification;
+				_source        = source;
+			}
+
+			public ISelect<Type, Type> Get(Type parameter)
+				=> IsGenericTypeDefinition.Default
+				                          .And(_specification.Get(parameter))
+				                          .Then(_source.Get(parameter));
 		}
 
-		public IEnumerable<Func<Type, bool>> Get(Type parameter) => parameter.Yield(_source(parameter))
-		                                                                     .Select(_selector);
+		sealed class Any : ISpecification<Type>, IActivateMarker<ISpecification<Type>>
+		{
+			readonly ISpecification<IEnumerable<Type>> _specification;
+
+			public Any(ISpecification<Type> specification) : this(new OneItemIs<Type>(specification.IsSatisfiedBy)) {}
+
+			Any(ISpecification<IEnumerable<Type>> specification) => _specification = specification;
+
+			public bool IsSatisfiedBy(Type parameter) => _specification.IsSatisfiedBy(Implementations.GenericInterfaces.Get(parameter).Reference());
+		}
+
+		sealed class Specification : Specification<Type, Type>, IActivateMarker<Type>
+		{
+			public Specification(Type type) : base(new IsAssignableFrom(type).IsSatisfiedBy, Delegates<Type>.Self) {}
+		}
 	}
 
-	sealed class ComponentTypesSelector : ISelect<Type, IEnumerable<Type>>, IActivateMarker<IEnumerable<Type>>
+	sealed class ComponentTypesSelector : ISelect<Type, IEnumerable<Type>>, IActivateMarker<ImmutableArray<Type>>
 	{
-		readonly static Func<Type, IEnumerable<Func<Type, bool>>> Predicates = Environment.Predicates.Default.Get;
-
-		readonly Func<Func<Type, bool>, IEnumerable<Type>> _predicate;
-		readonly Func<Type, IEnumerable<Func<Type, bool>>> _predicates;
+		readonly ImmutableArray<Type>            _types;
+		readonly ISpecification<Type>            _specification;
+		readonly Func<Type, ISelect<Type, Type>> _selections;
 
 		[UsedImplicitly]
-		public ComponentTypesSelector(IEnumerable<Type> types) : this(types.Where, Predicates) {}
+		public ComponentTypesSelector(ImmutableArray<Type> types)
+			: this(types, IsAssigned<Type>.Default, Selections.Default.Get) {}
 
-		public ComponentTypesSelector(Func<Func<Type, bool>, IEnumerable<Type>> predicate,
-		                              Func<Type, IEnumerable<Func<Type, bool>>> predicates)
+		public ComponentTypesSelector(ImmutableArray<Type> types,
+		                              ISpecification<Type> specification,
+		                              Func<Type, ISelect<Type, Type>> selections)
 		{
-			_predicate  = predicate;
-			_predicates = predicates;
+			_types         = types;
+			_specification = specification;
+			_selections    = selections;
 		}
 
-		public IEnumerable<Type> Get(Type parameter) => _predicates(parameter)
-		                                                .Select(_predicate)
-		                                                .Concat();
+		public IEnumerable<Type> Get(Type parameter)
+		{
+			var select = _selections(parameter);
+			var length = _types.Length;
+			for (var i = 0; i < length; i++)
+			{
+				var type = select.Get(_types[i]);
+				if (_specification.IsSatisfiedBy(type))
+				{
+					yield return type;
+				}
+			}
+		}
 	}
 }

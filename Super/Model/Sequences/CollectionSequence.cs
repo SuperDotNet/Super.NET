@@ -12,8 +12,7 @@ namespace Super.Model.Sequences
 		readonly ISelect<_, ICollection<T>> _select;
 		readonly IBuilder<T>                _builder;
 
-		public CollectionSequence(ISelect<_, ICollection<T>> select) :
-			this(select, ArrayBuilder<T>.Default) {}
+		public CollectionSequence(ISelect<_, ICollection<T>> select) : this(select, ArrayBuilder<T>.Default) {}
 
 		public CollectionSequence(ISelect<_, ICollection<T>> select, IBuilder<T> builder)
 		{
@@ -21,7 +20,9 @@ namespace Super.Model.Sequences
 			_builder = builder;
 		}
 
-		public ISelect<_, T[]> Get() => _select.Select(_builder.Get().To(I<CollectionArraySelector<T>>.Default));
+		public ISelect<_, T[]> Get() => _builder.Get()
+		                                        .To(I<CollectionArraySelector<T>>.Default)
+		                                        .To(_select.Select);
 
 		public ISequence<_, T> Get(IAlterSelection parameter)
 			=> new CollectionSequence<_, T>(_select, _builder.Get(parameter));

@@ -4,6 +4,7 @@ using Super.Model.Selection.Structure;
 using Super.Model.Sources;
 using Super.Model.Specifications;
 using Super.Reflection;
+using Super.Runtime.Activation;
 using System;
 using System.Reactive;
 using IAny = Super.Model.Specifications.IAny;
@@ -14,8 +15,6 @@ namespace Super
 
 	public static partial class ExtensionMethods
 	{
-		public static ISelect<T, bool> Out<T>(this ISpecification<T> @this) => new Select<T, bool>(@this.IsSatisfiedBy);
-
 		public static ISelect<T, Unit> Out<T>(this ICommand<T> @this) => new Configuration<T>(@this.Execute);
 
 		public static IAny<T> Out<T>(this ISource<T> @this) => new Any<T>(@this.Get);
@@ -57,6 +56,9 @@ namespace Super
 		                                                                      ISpecification<TTo, TResult> specification)
 			=> new Specification<TFrom, TResult>(@this.Out(specification.IsSatisfiedBy), @this.Select(specification.Get));
 
+		public static ISelect<_, TTo> Select<_, TFrom, TTo>(this ISelect<_, TFrom> @this, I<TTo> infer) where TTo : IActivateMarker<TFrom>
+			=> @this.Select(infer.From);
+
 		public static ISelect<T, TOut> Select<T, TOut>(this ISelect<Unit, TOut> @this, I<T> _)
 			=> In<T>.Start(Unit.Default).Select(@this);
 
@@ -76,6 +78,8 @@ namespace Super
 
 		public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this, ISelect<TFrom, TTo> select)
 			=> @this.Select(select.Get);
+
+		/**/
 
 		public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this, IStructure<TFrom, TTo> select) where TFrom : struct
 			=> new StructureInput<TIn,TFrom,TTo>(@this.Get, select.Get);

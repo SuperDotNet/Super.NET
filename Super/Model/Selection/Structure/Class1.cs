@@ -31,6 +31,31 @@ namespace Super.Model.Selection.Structure
 		public ref readonly T Get(in T parameter) => ref parameter;
 	}*/
 
+	public interface IReferences<T> : IReference<T, T> where T : struct {}
+
+	public interface IReference<TIn, TOut> where TIn : struct
+	{
+		ref readonly TOut Get(in TIn parameter);
+	}
+
+	public static class Reference
+	{
+		public static ref readonly T For<T>(in T @this) where T : struct => ref /*References<T>.Default.Get(@this)*/@this;
+	}
+
+	/*sealed class References<T> : IReference<T, T> where T : struct
+	{
+		public static References<T> Default { get; } = new References<T>();
+
+		References() : this(DefaultComponent<IReferences<T>>.Default.Get()) {}
+
+		readonly IReferences<T> _references;
+
+		public References(IReferences<T> references) => _references = references;
+
+		public ref readonly T Get(in T parameter) => ref _references.Get(parameter);
+	}*/
+
 	/*public sealed class Local<T> : ILocal<T> where T : struct
 	{
 		T _instance;
@@ -107,7 +132,7 @@ namespace Super.Model.Selection.Structure
 	class StructureSelection<TIn, TFrom, TTo> : IStructure<TIn, TTo> where TIn : struct
 	{
 		readonly Result<TIn, TFrom> _source;
-		readonly Func<TFrom, TTo> _select;
+		readonly Func<TFrom, TTo>   _select;
 
 		public StructureSelection(Result<TIn, TFrom> source, Func<TFrom, TTo> select)
 		{
@@ -129,7 +154,7 @@ namespace Super.Model.Selection.Structure
 
 	class StructureInput<TIn, TFrom, TTo> : ISelect<TIn, TTo> where TFrom : struct
 	{
-		readonly Func<TIn, TFrom>      _source;
+		readonly Func<TIn, TFrom>   _source;
 		readonly Result<TFrom, TTo> _select;
 
 		public StructureInput(Func<TIn, TFrom> source, Result<TFrom, TTo> select)

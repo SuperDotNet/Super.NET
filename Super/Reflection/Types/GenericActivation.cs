@@ -25,7 +25,7 @@ namespace Super.Reflection.Types
 			var types = constructor.GetParameters()
 			                       .Select(x => x.ParameterType);
 			var memory     = _expressions;
-			var parameters = memory.ToArray().Zip(types, Reflection.Defaults.ExpressionZip);
+			var parameters = memory.ToArray().Zip(types, Defaults.ExpressionZip);
 			var result     = Expression.New(constructor, parameters);
 			return result;
 		}

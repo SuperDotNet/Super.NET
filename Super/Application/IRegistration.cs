@@ -102,31 +102,24 @@ namespace Super.Application
 		RegisterDependencies() : base(new RegisterDependencies(typeof(T))) {}
 	}
 
-	sealed class GenericTypeDependencySelector : DecoratedAlteration<Type>, IActivateMarker<Type>
+	sealed class GenericTypeDependencySelector : ValidatedAlteration<Type>, IActivateMarker<Type>
 	{
 		public GenericTypeDependencySelector(Type type)
-			: base(IsGenericTypeDefinition.Default
-			                              .Out()
-			                              .Out(type)
-			                              .And(IsConstructedGenericType.Default,
-			                                   IsGenericTypeDefinition
-				                                   .Default.Inverse())
-			                              .Then(GenericTypeDefinitionAlteration.Default)) {}
+			: base(IsGenericTypeDefinition.Default.Out(type),
+			       IsDefinedGenericType.Default.Then(GenericTypeDefinition.Default)) {}
 	}
 
 	sealed class DependencyCandidates : DecoratedSelect<Type, ImmutableArray<Type>>, IActivateMarker<Type>
 	{
 		public DependencyCandidates(Type type)
-			: base(TypeMetadataSelector.Default
+			: base(TypeMetadata.Default
 			                           .Select(Constructors.Default)
 			                           .Select(Parameters.Default
 			                                             .Select(x => x.AsEnumerable())
 			                                             .SelectMany())
 			                           .Select(ParameterType.Default.Select())
-			                           .Select(type.To(I<GenericTypeDependencySelector>.Default)
-			                                       .Select())
-			                           .Select(x => x.Where(IsClass.Default.IsSatisfiedBy)
-			                                         .ToImmutableArray())) {}
+			                           .Select(type.To(I<GenericTypeDependencySelector>.Default).Select())
+			                           .Select(x => x.Where(IsClass.Default.IsSatisfiedBy).ToImmutableArray())) {}
 	}
 
 	sealed class ServiceTypeSelector : SelectSelector<LightInject.ServiceRegistration, Type>
@@ -143,8 +136,7 @@ namespace Super.Application
 		readonly ImmutableArray<Type>                     _candidates;
 		readonly Func<IServiceRegistry, Func<Type, bool>> _where;
 
-		public RegisterDependencies(Type type)
-			: this(type.To(I<DependencyCandidates>.Default).Get(type), Where) {}
+		public RegisterDependencies(Type type) : this(type.To(I<DependencyCandidates>.Default).Get(type), Where) {}
 
 		public RegisterDependencies(ImmutableArray<Type> candidates, Func<IServiceRegistry, Func<Type, bool>> where)
 		{

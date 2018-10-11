@@ -1,5 +1,6 @@
-using System.Collections.Generic;
 using Super.Reflection.Types;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Super.Reflection.Collections
 {
@@ -7,6 +8,6 @@ namespace Super.Reflection.Collections
 	{
 		public static ImplementsGenericEnumerable Default { get; } = new ImplementsGenericEnumerable();
 
-		ImplementsGenericEnumerable() : base(typeof(IEnumerable<>)) {}
+		ImplementsGenericEnumerable() : base(typeof(IEnumerable<>).GetTypeInfo()) {}
 	}
 }

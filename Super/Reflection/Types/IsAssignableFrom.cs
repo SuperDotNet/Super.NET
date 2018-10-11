@@ -1,6 +1,7 @@
-using System.Reflection;
 using Super.Model.Specifications;
 using Super.Runtime.Activation;
+using System;
+using System.Reflection;
 
 namespace Super.Reflection.Types
 {
@@ -11,8 +12,8 @@ namespace Super.Reflection.Types
 		IsAssignableFrom() : base(new IsAssignableFrom(Type<T>.Metadata)) {}
 	}
 
-	public sealed class IsAssignableFrom : DelegatedSpecification<TypeInfo>, IActivateMarker<TypeInfo>
+	public sealed class IsAssignableFrom : DelegatedSpecification<Type>, IActivateMarker<Type>
 	{
-		public IsAssignableFrom(TypeInfo type) : base(type.IsAssignableFrom) {}
+		public IsAssignableFrom(Type type) : base(type.IsAssignableFrom) {}
 	}
 }

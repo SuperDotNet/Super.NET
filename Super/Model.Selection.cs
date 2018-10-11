@@ -1,4 +1,5 @@
-﻿using Super.Model.Commands;
+﻿using Super.Model.Collections;
+using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Selection.Stores;
 using Super.Model.Specifications;
@@ -21,7 +22,8 @@ namespace Super
 
 		public static T Invoke<T>(this Func<uint, T> @this, int parameter) => @this((uint)parameter);
 
-		public static ISelect<TParameter, TResult> AsSelect<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
+		public static ISelect<TParameter, TResult> AsSelect<TParameter, TResult>(
+			this ISelect<TParameter, TResult> @this)
 			=> @this;
 
 		public static ISelect<Unit, T> AsSelect<T>(this IAny<T> @this) => @this;
@@ -46,7 +48,8 @@ namespace Super
 		                                                                      IMessage<TParameter> message)
 			=> new AssignedGuard<TParameter>(message).Then(@this);
 
-		public static ISelect<TParameter, TResult> Assigned<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
+		public static ISelect<TParameter, TResult> Assigned<TParameter, TResult>(
+			this ISelect<TParameter, TResult> @this)
 			=> IsAssigned<TParameter>.Default.Then(@this);
 
 		public static ISelect<TParameter, TResult> Unless<TParameter, TResult>(
@@ -58,15 +61,17 @@ namespace Super
 			=> @this.Unless(IsType<TParameter, TOther>.Default, In<TParameter>.Cast(then));
 
 		public static ISelect<TParameter, TResult> Unless<TParameter, TResult>(
-			this ISelect<TParameter, TResult> @this, ISpecification<TParameter> specification, ISelect<TParameter, TResult> then)
+			this ISelect<TParameter, TResult> @this, ISpecification<TParameter> specification,
+			ISelect<TParameter, TResult> then)
 			=> new Validated<TParameter, TResult>(specification, then, @this);
 
 		public static ISelect<TParameter, TResult> Unless<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, ISelect<TParameter, TResult> then)
-			=> @this.Unless(IsAssigned<TResult>.Default, then);
+			=> @this.UnlessResult(IsAssigned<TResult>.Default, then);
 
-		public static ISelect<TParameter, TResult> Unless<TParameter, TResult>(
-			this ISelect<TParameter, TResult> @this, ISpecification<TResult> specification, ISelect<TParameter, TResult> then)
+		public static ISelect<TParameter, TResult> UnlessResult<TParameter, TResult>(
+			this ISelect<TParameter, TResult> @this, ISpecification<TResult> specification,
+			ISelect<TParameter, TResult> then)
 			=> new ValidatedResult<TParameter, TResult>(specification, then, @this);
 
 		public static ISelect<TParameter, TResult> Try<TException, TParameter, TResult>(
@@ -101,5 +106,20 @@ namespace Super
 		public static TResult Get<TItem, TResult>(this ISelect<ImmutableArray<TItem>, TResult> @this,
 		                                          TItem parameter)
 			=> @this.Get(ImmutableArray.Create(parameter));
+
+		public static TResult Get<TItem, TResult>(this ISelect<Array<TItem>, TResult> @this,
+		                                          params TItem[] parameters) => @this.Get(parameters);
+
+		public static TResult Get<TItem, TResult>(this ISelect<Array<TItem>, TResult> @this,
+		                                          TItem parameter) => @this.Get(new[] {parameter});
+
+		/**/
+		public static ISpecification<TFrom, TOut> Select<TFrom, TTo, TOut>(this ISpecification<TTo, TOut> @this,
+		                                                                   ISelect<TFrom, TTo> select)
+			=> @this.Select<TFrom, TTo, TOut>(select.Get);
+
+		public static ISpecification<TFrom, TOut> Select<TFrom, TTo, TOut>(this ISpecification<TTo, TOut> @this,
+		                                                                   Func<TFrom, TTo> select)
+			=> new SelectedParameterSpecification<TFrom, TTo, TOut>(select, @this);
 	}
 }

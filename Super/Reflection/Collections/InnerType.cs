@@ -17,9 +17,9 @@ namespace Super.Reflection.Collections
 		readonly Func<Type[], TypeInfo>                   _select;
 		readonly ISpecification<TypeInfo>                 _specification;
 
-		public InnerType(ISpecification<TypeInfo> specification) : this(HasGenericArguments.Default.And(specification),
-		                                                                TypeHierarchy.Default.Get,
-		                                                                In<Type[]>.Start().Access().Only().Metadata().Get) {}
+		public InnerType(ISpecification<TypeInfo> specification)
+			: this(HasGenericArguments.Default.And(specification), TypeHierarchy.Default.Get,
+			       In<Type[]>.Start().Access().Only().Metadata().Get) {}
 
 		public InnerType(ISpecification<TypeInfo> specification, Func<TypeInfo, ImmutableArray<TypeInfo>> hierarchy,
 		                 Func<Type[], TypeInfo> select)

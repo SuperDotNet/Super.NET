@@ -1,5 +1,5 @@
 ﻿using Super.Application.Hosting.BenchmarkDotNet;
-using Super.Testing.Application.Model.Sequences;
+using Super.Testing.Application.Runtime.Environment;
 using System.Linq;
 
 namespace Super.Testing.Application
@@ -14,7 +14,7 @@ namespace Super.Testing.Application
 		}
 	}
 
-	sealed class Run : Run<ArraySelectorTests.Benchmarks>
+	sealed class Run : Run<DefaultComponentTests.Benchmarks>
 	{
 		public static Run Default { get; } = new Run();
 

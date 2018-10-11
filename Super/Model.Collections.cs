@@ -1,5 +1,6 @@
 ﻿using Super.Model.Collections;
 using Super.Model.Selection;
+using Super.Model.Sequences.Query;
 using Super.Model.Sources;
 using Super.Reflection;
 using System;
@@ -16,6 +17,18 @@ namespace Super
 
 	public static partial class ExtensionMethods
 	{
+		public static IReadOnlyDictionary<TKey, Array<TValue>>
+			ToDictionary<TKey, TValue>(this IEnumerable<IGrouping<TKey, TValue>> @this)
+			=> @this.ToDictionary(x => x.Key, x => new Array<TValue>(x.ToArray()));
+
+		public static ISelect<_, IReadOnlyDictionary<TKey, Array<T>>>
+			Grouping<_, T, TKey>(this ISelect<_, Array<T>> @this, ISelect<T, TKey> select)
+			=> @this.Grouping(select.Get);
+
+		public static ISelect<_, IReadOnlyDictionary<TKey, Array<T>>>
+			Grouping<_, T, TKey>(this ISelect<_, Array<T>> @this, Func<T, TKey> select)
+			=> @this.Select(new Grouping<T, TKey>(select));
+
 		public static ISelect<_, Array<T>> Result<_, T>(this ISelect<_, IEnumerable<T>> @this)
 			=> @this.Select(Result<T>.Default);
 
@@ -41,7 +54,7 @@ namespace Super
 		public static IArrays<T> ToStore<T>(this Func<ReadOnlyMemory<T>> @this)
 			=> new DelegatedArrays<T>(@this.Out().Singleton().Get);
 
-		public static IArray<TFrom, TTo> ToArray<TFrom, TTo>(this ISequence<TFrom, TTo> @this)
+		public static IArray<TFrom, TTo> ToArray<TFrom, TTo>(this ISelect<TFrom, IEnumerable<TTo>> @this)
 			=> @this.ToDelegate().ToArray();
 
 		public static IArray<TFrom, TTo> ToArray<TFrom, TTo>(this Func<TFrom, IEnumerable<TTo>> @this)

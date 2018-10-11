@@ -54,7 +54,7 @@ namespace Super
 			=> @this.Select(InstanceTypeSelector<TOut>.Default);
 
 		public static ISelect<T, TypeInfo> Metadata<T>(this ISelect<T, Type> @this)
-			=> @this.Select(TypeMetadataSelector.Default);
+			=> @this.Select(TypeMetadata.Default);
 
 		public static ISelect<TIn, TOut> OnceStriped<TIn, TOut>(this ISelect<TIn, TOut> @this)
 			=> OncePerParameter<TIn, TOut>.Default.Get(@this);

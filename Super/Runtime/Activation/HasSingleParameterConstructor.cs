@@ -17,7 +17,7 @@ namespace Super.Runtime.Activation
 			: base(parameters.Access()
 			                 .FirstAssigned()
 			                 .Out(ParameterType.Default
-			                                   .Select(TypeMetadataSelector.Default)
+			                                   .Select(TypeMetadata.Default)
 			                                   .Select(IsAssignableFrom<T>.Default)
 			                                   .Assigned())
 			                 .And(parameters.Out(RemainingParametersAreOptional.Default))) {}

@@ -16,9 +16,10 @@ namespace Super
 		public static ISource<T> New<T>(ISpecification<T> specification) => new Source<T>(default).Unless(specification);
 
 		public static IStructure<T, T> Structure<T>() where T : struct => Model.Selection.Structure.Self<T>.Default;
+
+		
 	}
 
-	
 
 	public static class In<T>
 	{

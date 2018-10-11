@@ -9,6 +9,12 @@ namespace Super
 
 	public static partial class ExtensionMethods
 	{
+		public static ISelect<TIn, TOut> Instance<T, TIn, TOut>(this I<T> _, Func<T, ISelect<TIn, TOut>> __)
+			where T : ISelect<TIn, TOut>
+			=> new DelegatedInstanceSelector<TIn, TOut>(Runtime.Activation.Singleton<T>.Default
+			                                                   .Select(x => x.ToDelegate())
+			                                                   .Get);
+
 		public static TTo To<TFrom, TTo>(this TFrom @this, I<TTo> select) where TTo : IActivateMarker<TFrom>
 			=> select.From(@this);
 

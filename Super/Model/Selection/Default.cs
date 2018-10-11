@@ -9,7 +9,7 @@
 
 	sealed class Default<TParameter, TResult> : FixedResult<TParameter, TResult>
 	{
-		public static Default<TParameter, TResult> Instance { get; } = new Default<TParameter, TResult>();
+		public static ISelect<TParameter, TResult> Instance { get; } = new Default<TParameter, TResult>();
 
 		Default() : base(default) {}
 	}

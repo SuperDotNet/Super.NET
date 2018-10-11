@@ -4,12 +4,17 @@ using System.Reactive;
 
 namespace Super.Model.Specifications
 {
-	public class DelegatedResultSpecification : ISpecification, IActivateMarker<Func<bool>>
+	public class DelegatedResultSpecification : DelegatedResultSpecification<Unit>, ISpecification
+	{
+		public DelegatedResultSpecification(Func<bool> @delegate) : base(@delegate) {}
+	}
+
+	public class DelegatedResultSpecification<T> : ISpecification<T>, IActivateMarker<Func<bool>>
 	{
 		readonly Func<bool> _delegate;
 
 		public DelegatedResultSpecification(Func<bool> @delegate) => _delegate = @delegate;
 
-		public bool IsSatisfiedBy(Unit parameter) => _delegate();
+		public bool IsSatisfiedBy(T _) => _delegate();
 	}
 }

@@ -4,11 +4,11 @@ using Super.Model.Selection;
 
 namespace Super.Reflection.Types
 {
-	public sealed class TypeMetadataSelector : ISelect<Type, TypeInfo>
+	public sealed class TypeMetadata : ISelect<Type, TypeInfo>
 	{
-		public static TypeMetadataSelector Default { get; } = new TypeMetadataSelector();
+		public static TypeMetadata Default { get; } = new TypeMetadata();
 
-		TypeMetadataSelector() {}
+		TypeMetadata() {}
 
 		public TypeInfo Get(Type parameter) => parameter.GetTypeInfo();
 	}

@@ -1,9 +1,33 @@
-﻿using Super.Model.Selection;
+﻿using Super.Model.Collections;
+using Super.Model.Selection;
 using System;
+using System.Linq;
 using System.Reflection;
 
 namespace Super.Reflection.Types
 {
+	public static class Implementations
+	{
+		public static ISelect<TypeInfo, Array<TypeInfo>> AllInterfaces { get; }
+			= Interfaces.Default
+			            .Select(x => x.Where(y => y.IsInterface).Distinct())
+			            .Result()
+			            .ToStore();
+
+		public static ISelect<TypeInfo, Array<TypeInfo>> GenericInterfaces { get; }
+			= AllInterfaces.Select(x => x.Where(y => y.IsGenericType))
+			               .Result()
+			               .ToStore();
+
+		public static ISelect<TypeInfo, ISpecification<Type, Array<TypeInfo>>> GenericInterfaceImplementations { get; }
+			= GenericInterfaces.Grouping(GenericTypeDefinition.Default)
+			                   .Select(I<Model.Sequences.Query.Lookup<Type, TypeInfo>>.Default)
+			                   .Select(x => x.Select(GenericTypeDefinition.Default
+			                                                              .Unless(IsGenericTypeDefinition.Default,
+			                                                                      Self<Type>.Default)))
+			                   .ToStore();
+	}
+
 	static class Implementations<T>
 	{
 		public static ISelect<TypeInfo, Func<T>> Activator { get; }

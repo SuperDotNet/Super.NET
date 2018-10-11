@@ -15,7 +15,7 @@ namespace Super.Reflection.Types
 		public GenericActivators(params Type[] types) : this(types.ToImmutableArray()) {}
 
 		public GenericActivators(ImmutableArray<Type> types)
-			: this(types, types.Select(Reflection.Defaults.Parameter).ToArray()) {}
+			: this(types, types.Select(Defaults.Parameter).ToArray()) {}
 
 		public GenericActivators(ImmutableArray<Type> types, params ParameterExpression[] expressions)
 			: this(new GenericActivation(types, expressions), expressions) {}

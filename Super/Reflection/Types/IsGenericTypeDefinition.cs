@@ -1,5 +1,5 @@
-using System;
 using Super.Model.Specifications;
+using System;
 
 namespace Super.Reflection.Types
 {

@@ -18,6 +18,8 @@ namespace Super.Model.Collections
 
 		public static implicit operator ImmutableArray<T>(Array<T> source) => source.Get();
 
+		public static implicit operator Array<T>(T[] source) => new Array<T>(source);
+
 		public static implicit operator T[](Array<T> source) => source.Copy();
 
 		readonly T[] _reference;
@@ -39,6 +41,8 @@ namespace Super.Model.Collections
 		public T[] Copy() => ArraySelector<T>.Default.Get(_reference);
 
 		public ImmutableArray<T> Get() => _array;
+
+		public IEnumerable<T> Reference() => _reference;
 
 		public IEnumerator<T> GetEnumerator() => _reference.Hide().GetEnumerator();
 

@@ -3,37 +3,6 @@ using System;
 
 namespace Super.Model.Sequences
 {
-	/*sealed class DynamicIterator<T> : IIterator<T>
-	{
-		public static DynamicIterator<T> Default { get; } = new DynamicIterator<T>();
-
-		DynamicIterator() : this(Allotted<T>.Default) {}
-
-		readonly IStore<T> _store;
-		readonly uint      _size;
-
-		public DynamicIterator(IStore<T> store, uint size = 1024)
-		{
-			_store = store;
-			_size  = size;
-		}
-
-		public T[] Get(IIteration<T> parameter)
-		{
-			var store = new DynamicStore<T>(_size);
-			using (var session = _store.Session(_size))
-			{
-				Store<T>? next = new Store<T>(session.Array, 0);
-				while ((next = parameter.Get(next.Value)) != null)
-				{
-					store = store.Add(next.Value);
-				}
-			}
-
-			return store.Get();
-		}
-	}*/
-
 	readonly ref struct DynamicStore<T>
 	{
 		readonly static Allotted<T>        Item  = Allotted<T>.Default;

@@ -7,7 +7,6 @@ using Super.Reflection.Types;
 using Super.Runtime.Activation;
 using Super.Runtime.Invocation;
 using System;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Reactive;
 using System.Reflection;
@@ -46,12 +45,12 @@ namespace Super.Runtime.Environment
 	{
 		public static SystemStores<T> Default { get; } = new SystemStores<T>();
 
-		SystemStores() : this(StorageTypeDefinition.Default.Select(I<GenericTypeAlteration>.Default)) {}
+		SystemStores() : this(StorageTypeDefinition.Default.Select(I<MakeGenericType>.Default)) {}
 
-		public SystemStores(ISource<ISelect<ImmutableArray<Type>, Type>> source)
+		public SystemStores(ISource<ISelect<Array<Type>, Type>> source)
 			: base(In<Type>.Start()
 			               .Yield()
-			               .Emit()
+			               .Result()
 			               .Select(source)
 			               .Activate(I<IMutable<T>>.Default)
 			               .Out(Type<T>.Instance)) {}
