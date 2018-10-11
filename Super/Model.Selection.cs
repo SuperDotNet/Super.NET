@@ -22,20 +22,15 @@ namespace Super
 
 		public static T Invoke<T>(this Func<uint, T> @this, int parameter) => @this((uint)parameter);
 
-		public static ISelect<TParameter, TResult> AsSelect<TParameter, TResult>(
-			this ISelect<TParameter, TResult> @this)
-			=> @this;
+		public static ISelect<TIn, TOut> AsSelect<TIn, TOut>(this ISelect<TIn, TOut> @this) => @this;
 
 		public static ISelect<Unit, T> AsSelect<T>(this IAny<T> @this) => @this;
 
 		public static ISelect<object, T> AsAny<T>(this IAny<T> @this) => @this;
 
-		public static ISelect<TParameter, TResult> Default<TParameter, TResult>(this ISelect<TParameter, TResult> @this)
-			=> Defaults<TParameter, TResult>.Default.Get(@this);
-
 		public static ISelect<TParameter, TResult> If<TParameter, TResult>(this ISelect<TParameter, TResult> @this,
 		                                                                   ISpecification<TParameter> @true)
-			=> @this.Default().Unless(@true, @this);
+			=> Default<TParameter, TResult>.Instance.Unless(@true, @this);
 
 		public static ISelect<TParameter, TResult> Then<TParameter, TResult>(this ISpecification<TParameter> @this,
 		                                                                     ISelect<TParameter, TResult> select)
@@ -76,7 +71,7 @@ namespace Super
 
 		public static ISelect<TParameter, TResult> Try<TException, TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, I<TException> _) where TException : Exception
-			=> new Try<TException, TParameter, TResult>(@this.ToDelegate(), @this.Default().ToDelegate());
+			=> new Try<TException, TParameter, TResult>(@this.ToDelegate());
 
 		public static ISelect<TParameter, TResult> Configure<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, IAssignable<TParameter, TResult> assignable)
@@ -114,6 +109,15 @@ namespace Super
 		                                          TItem parameter) => @this.Get(new[] {parameter});
 
 		/**/
+
+		public static ISelect<_, ISpecification<TFrom, __>> Select<_, __, TFrom, TTo>(
+			this ISelect<_, ISpecification<TTo, __>> @this, ISelect<TFrom, TTo> select)
+			=> @this.Select<_, __, TFrom, TTo>(select.Get);
+
+		public static ISelect<_, ISpecification<TFrom, __>> Select<_, __, TFrom, TTo>(
+			this ISelect<_, ISpecification<TTo, __>> @this, Func<TFrom, TTo> select)
+			=> @this.Select(new ParameterSelection<__, TFrom, TTo>(select));
+
 		public static ISpecification<TFrom, TOut> Select<TFrom, TTo, TOut>(this ISpecification<TTo, TOut> @this,
 		                                                                   ISelect<TFrom, TTo> select)
 			=> @this.Select<TFrom, TTo, TOut>(select.Get);
@@ -121,5 +125,8 @@ namespace Super
 		public static ISpecification<TFrom, TOut> Select<TFrom, TTo, TOut>(this ISpecification<TTo, TOut> @this,
 		                                                                   Func<TFrom, TTo> select)
 			=> new SelectedParameterSpecification<TFrom, TTo, TOut>(select, @this);
+
+		public static ISelect<_, Func<T, bool>> ToDelegate<_, T, __>(this ISelect<_, ISpecification<T, __>> @this)
+			=> @this.Select(x => x.AsSpecification().ToDelegate());
 	}
 }

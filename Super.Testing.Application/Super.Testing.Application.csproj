@@ -35,6 +35,6 @@
     <ProjectReference Include="..\Super\Super.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Model\Selection\Structure\" />
+    <Folder Include="Reflection\Members\" />
   </ItemGroup>
 </Project>

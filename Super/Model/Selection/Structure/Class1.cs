@@ -38,23 +38,10 @@ namespace Super.Model.Selection.Structure
 		ref readonly TOut Get(in TIn parameter);
 	}
 
-	public static class Reference
+	public static class References
 	{
-		public static ref readonly T For<T>(in T @this) where T : struct => ref /*References<T>.Default.Get(@this)*/@this;
+		public static ref readonly T For<T>(in T @this) where T : struct => ref @this;
 	}
-
-	/*sealed class References<T> : IReference<T, T> where T : struct
-	{
-		public static References<T> Default { get; } = new References<T>();
-
-		References() : this(DefaultComponent<IReferences<T>>.Default.Get()) {}
-
-		readonly IReferences<T> _references;
-
-		public References(IReferences<T> references) => _references = references;
-
-		public ref readonly T Get(in T parameter) => ref _references.Get(parameter);
-	}*/
 
 	/*public sealed class Local<T> : ILocal<T> where T : struct
 	{

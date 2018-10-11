@@ -42,7 +42,7 @@ namespace Super.Model.Collections
 		HasNone() : base(HasAny<T>.Default) {}
 	}
 
-	public sealed class AllItemsAre<T> : ISpecification<IEnumerable<T>>
+	public sealed class AllItemsAre<T> : ISpecification<IEnumerable<T>>, IActivateMarker<Func<T, bool>>
 	{
 		readonly Func<T, bool> _specification;
 
@@ -51,7 +51,7 @@ namespace Super.Model.Collections
 		public bool IsSatisfiedBy(IEnumerable<T> parameter) => parameter.All(_specification);
 	}
 
-	public sealed class OneItemIs<T> : ISpecification<IEnumerable<T>>
+	public sealed class OneItemIs<T> : ISpecification<IEnumerable<T>>, IActivateMarker<Func<T, bool>>
 	{
 		readonly Func<T, bool> _specification;
 

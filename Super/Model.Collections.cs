@@ -32,6 +32,9 @@ namespace Super
 		public static ISelect<_, Array<T>> Result<_, T>(this ISelect<_, IEnumerable<T>> @this)
 			=> @this.Select(Result<T>.Default);
 
+		public static ISelect<_, IEnumerable<T>> Reference<_, T>(this ISelect<_, Array<T>> @this)
+			=> @this.Select(x => x.Reference());
+
 		public static ISelect<_, T[]> Capture<_, T>(this ISelect<_, IEnumerable<T>> @this)
 			=> @this.Select(x => x.ToArray());
 

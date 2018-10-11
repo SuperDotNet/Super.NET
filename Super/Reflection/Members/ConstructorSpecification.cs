@@ -8,9 +8,8 @@ namespace Super.Reflection.Members
 	{
 		public static ConstructorSpecification Default { get; } = new ConstructorSpecification();
 
-		ConstructorSpecification() : base(Parameters.Default
-		                                            .To(x => x.HasNone()
-		                                                      .Or(x.AllAre(y => y.IsOptional ||
-		                                                                        y.Has<ParamArrayAttribute>())))) {}
+		ConstructorSpecification()
+			: base(Parameters.Default.To(x => x.HasNone()
+			                                   .Or(x.AllAre(y => y.IsOptional || y.Has<ParamArrayAttribute>())))) {}
 	}
 }

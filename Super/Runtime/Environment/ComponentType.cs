@@ -9,7 +9,6 @@ using Super.Runtime.Activation;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using Implementations = Super.Reflection.Types.Implementations;
 
 namespace Super.Runtime.Environment
 {
@@ -57,64 +56,6 @@ namespace Super.Runtime.Environment
 		public static SourceDefinition Default { get; } = new SourceDefinition();
 
 		SourceDefinition() : base(typeof(ISource<>)) {}
-	}
-
-	sealed class Selections : ISelect<Type, ISelect<Type, Type>>
-	{
-		public static Selections Default { get; } = new Selections();
-
-		Selections() : this(In<Type>.Start(Default<Type, Type>.Instance)
-		                            .Unless(IsDefinedGenericType.Default, Make.Instance)) {}
-
-		readonly ISelect<Type, ISelect<Type, Type>> _default;
-
-		public Selections(ISelect<Type, ISelect<Type, Type>> @default) => _default = @default;
-
-		public ISelect<Type, Type> Get(Type parameter)
-			=> _default.Get(parameter)
-			           .Unless(parameter.To(SourceDefinition.Default.Get)
-			                            .To(I<Specification>.Default))
-			           .Unless(parameter.To(I<Specification>.Default));
-
-		sealed class Make : ISelect<Type, ISelect<Type, Type>>, IActivateMarker<Type>
-		{
-			public static Make Instance { get; } = new Make();
-
-			Make() : this(TypeMetadata.Default.Select(Implementations.GenericInterfaceImplementations)
-			                          .Select(x => new Any(x)),
-			              GenericArguments.Default.Select(I<GenericTypeBuilder>.Default)) {}
-
-			readonly ISelect<Type, ISpecification<Type>> _specification;
-			readonly ISelect<Type, ISelect<Type, Type>>  _source;
-
-			public Make(ISelect<Type, ISpecification<Type>> specification,
-			            ISelect<Type, ISelect<Type, Type>> source)
-			{
-				_specification = specification;
-				_source        = source;
-			}
-
-			public ISelect<Type, Type> Get(Type parameter)
-				=> IsGenericTypeDefinition.Default
-				                          .And(_specification.Get(parameter))
-				                          .Then(_source.Get(parameter));
-		}
-
-		sealed class Any : ISpecification<Type>, IActivateMarker<ISpecification<Type>>
-		{
-			readonly ISpecification<IEnumerable<Type>> _specification;
-
-			public Any(ISpecification<Type> specification) : this(new OneItemIs<Type>(specification.IsSatisfiedBy)) {}
-
-			Any(ISpecification<IEnumerable<Type>> specification) => _specification = specification;
-
-			public bool IsSatisfiedBy(Type parameter) => _specification.IsSatisfiedBy(Implementations.GenericInterfaces.Get(parameter).Reference());
-		}
-
-		sealed class Specification : Specification<Type, Type>, IActivateMarker<Type>
-		{
-			public Specification(Type type) : base(new IsAssignableFrom(type).IsSatisfiedBy, Delegates<Type>.Self) {}
-		}
 	}
 
 	sealed class ComponentTypesSelector : ISelect<Type, IEnumerable<Type>>, IActivateMarker<ImmutableArray<Type>>

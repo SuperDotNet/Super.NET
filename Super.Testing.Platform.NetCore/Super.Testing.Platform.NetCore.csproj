@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Super.Testing.Objects\Super.Testing.Objects.csproj" />
     <ProjectReference Include="..\Super\Super.csproj" />
   </ItemGroup>
 

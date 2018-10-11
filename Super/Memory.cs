@@ -15,9 +15,9 @@ namespace Super
 		public static ArraySegment<T>? Segment<T>(in this ReadOnlyMemory<T> @this)
 			=> MemoryMarshal.TryGetArray(@this, out var result) ? result : (ArraySegment<T>?)null;
 
-		public static T[] Array<T>(this ReadOnlyMemory<T> @this)
+		public static T[] Array<T>(in this ReadOnlyMemory<T> @this)
 			=> @this.Segment()?.Array ?? throw new InvalidOperationException("Could not locate array from ReadOnlyMemory");
 
-		public static bool Any<T>(this ReadOnlyMemory<T> @this) => !@this.IsEmpty;
+		public static bool Any<T>(in this ReadOnlyMemory<T> @this) => !@this.IsEmpty;
 	}
 }

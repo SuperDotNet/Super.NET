@@ -7,6 +7,8 @@ namespace Super.Model.Selection
 		readonly Func<TParameter, TResult> _fallback;
 		readonly Func<TParameter, TResult> _source;
 
+		public Try(Func<TParameter, TResult> source) : this(source, Default<TParameter, TResult>.Instance.ToDelegate()) {}
+
 		public Try(Func<TParameter, TResult> source, Func<TParameter, TResult> fallback)
 		{
 			_source   = source;
