@@ -1,6 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using FluentAssertions;
-using Super.Model.Selection.Structure;
+using Super.Model.Selection;
 using Super.Model.Sequences;
 using Super.Testing.Objects;
 using System;
@@ -32,7 +32,7 @@ namespace Super.Testing.Application.Model.Sequences
 
 		public class Benchmarks
 		{
-			readonly IStructure<Store<uint>, uint[]> _sut;
+			readonly ISelect<Store<uint>, uint[]> _sut;
 			readonly uint[]                  _source;
 
 			public Benchmarks() : this(Near.Default) {}
@@ -44,7 +44,7 @@ namespace Super.Testing.Application.Model.Sequences
 				                      .Get()
 				                      .ToArray()) {}
 
-			public Benchmarks(IStructure<Store<uint>, uint[]> sut, uint[] source)
+			public Benchmarks(ISelect<Store<uint>, uint[]> sut, uint[] source)
 			{
 				_sut    = sut;
 				_source = source;

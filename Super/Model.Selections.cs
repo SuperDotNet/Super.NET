@@ -1,6 +1,5 @@
 ﻿using Super.Model.Commands;
 using Super.Model.Selection;
-using Super.Model.Selection.Structure;
 using Super.Model.Sources;
 using Super.Model.Specifications;
 using Super.Reflection;
@@ -26,7 +25,7 @@ namespace Super
 		public static ISpecification<TIn> Out<TIn, TOut>(this ISelect<TIn, TOut> @this, Func<TOut, bool> specification)
 			=> new SelectedParameterSpecification<TIn, TOut>(specification, @this.Get);
 
-		public static ISpecification<TIn> Out<TIn, TOut>(this ISelect<TIn, TOut> @this, 
+		public static ISpecification<TIn> Out<TIn, TOut>(this ISelect<TIn, TOut> @this,
 		                                                 ISpecification<TOut> specification)
 			=> @this.Out(specification.IsSatisfiedBy);
 
@@ -89,7 +88,7 @@ namespace Super
 
 		/**/
 
-		public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this,
+		/*public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this,
 		                                                        IStructure<TFrom, TTo> select) where TFrom : struct
 			=> new StructureInput<TIn, TFrom, TTo>(@this.Get, select.Get);
 
@@ -108,7 +107,7 @@ namespace Super
 		public static IStructure<TIn, TTo> Select<TIn, TFrom, TTo>(this IStructure<TIn, TFrom> @this,
 		                                                           Func<TFrom, TTo> select)
 			where TIn : struct
-			=> new StructureSelection<TIn, TFrom, TTo>(@this.Get, select);
+			=> new StructureSelection<TIn, TFrom, TTo>(@this.Get, select);*/
 
 		public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this, Func<TFrom, TTo> select)
 			=> new Selection<TIn, TFrom, TTo>(@this.Get, select);

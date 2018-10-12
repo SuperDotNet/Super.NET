@@ -2,10 +2,10 @@
 using Super.Model.Collections;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
-using Super.Model.Selection.Structure;
 using Super.Model.Sources;
 using Super.Reflection;
 using Super.Runtime.Activation;
+using System;
 
 namespace Super.Model.Sequences
 {
@@ -41,13 +41,13 @@ namespace Super.Model.Sequences
 
 	sealed class SegmentedArrayBuilder<T> : IBuilder<T>, IActivateMarker<ISegment<T>>
 	{
-		readonly IStructure<ArrayView<T>, Store<T>> _previous;
+		readonly ISelect<ArrayView<T>, Store<T>> _previous;
 		readonly IAlterNode<T>                      _alter;
 
 		[UsedImplicitly]
 		public SegmentedArrayBuilder(ISegment<T> segment) : this(segment.Store(), AlterNode<T>.Default) {}
 
-		public SegmentedArrayBuilder(IStructure<ArrayView<T>, Store<T>> previous, IAlterNode<T> alter)
+		public SegmentedArrayBuilder(ISelect<ArrayView<T>, Store<T>> previous, IAlterNode<T> alter)
 		{
 			_previous = previous;
 			_alter    = alter;
@@ -207,7 +207,7 @@ namespace Super.Model.Sequences
 			_length = length;
 		}
 
-		public ArrayView<T> Get(in ArrayView<T> parameter)
+		public ArrayView<T> Get(ArrayView<T> parameter)
 		{
 			var size   = _length.IsAssigned ? _length.Instance : parameter.Length - _start;
 			var result = new ArrayView<T>(parameter.Array, _start, size);
@@ -215,7 +215,7 @@ namespace Super.Model.Sequences
 		}
 	}
 
-	public interface ISessions<T> : IStructure<ArrayView<T>, Session<T>> {}
+	public interface ISessions<T> : ISelect<ArrayView<T>, Session<T>> {}
 
 	sealed class Sessions<T> : ISessions<T>
 	{
@@ -224,20 +224,20 @@ namespace Super.Model.Sequences
 		Sessions() : this(Allotted<T>.Default) {}
 
 		readonly IStore<T>                      _store;
-		readonly Result<ArrayView<T>, Store<T>> _result;
+		readonly Func<ArrayView<T>, Store<T>> _result;
 
 		public Sessions(IStore<T> store) : this(store, new Copy<T>(store).Get) {}
 
-		public Sessions(IStore<T> store, Result<ArrayView<T>, Store<T>> result)
+		public Sessions(IStore<T> store, Func<ArrayView<T>, Store<T>> result)
 		{
 			_store  = store;
 			_result = result;
 		}
 
-		public Session<T> Get(in ArrayView<T> parameter) => new Session<T>(_result(parameter), _store);
+		public Session<T> Get(ArrayView<T> parameter) => new Session<T>(_result(parameter), _store);
 	}
 
-	public interface ISession<T> : IStructure<ArrayView<T>, Store<T>> {}
+	public interface ISession<T> : ISelect<ArrayView<T>, Store<T>> {}
 
 	sealed class Copy<T> : ISession<T>
 	{
@@ -249,41 +249,41 @@ namespace Super.Model.Sequences
 
 		public Copy(IStore<T> store) => _store = store;
 
-		public Store<T> Get(in ArrayView<T> parameter)
+		public Store<T> Get(ArrayView<T> parameter)
 		{
 			var input = _store.Get(parameter.Length);
 			return parameter.Array.CopyInto(in input, parameter.Start);
 		}
 	}
 
-	sealed class DelegatedArraySelector<T> : IArraySelector<T>, IActivateMarker<IStructure<ArrayView<T>, T[]>>
+	sealed class DelegatedArraySelector<T> : IArraySelector<T>, IActivateMarker<ISelect<ArrayView<T>, T[]>>
 	{
-		readonly Result<ArrayView<T>, T[]> _continue;
+		readonly Func<ArrayView<T>, T[]> _continue;
 
 		/*public DelegatedArraySelector(IStructure<ArrayView<T>, Store<T>> @continue)
 			: this(@continue.Select((in Store<T> x) => x.Instance).Get) {}*/
 
-		public DelegatedArraySelector(IStructure<ArrayView<T>, T[]> result) : this(result.Get) {}
+		public DelegatedArraySelector(ISelect<ArrayView<T>, T[]> result) : this(result.Get) {}
 
-		public DelegatedArraySelector(Result<ArrayView<T>, T[]> result) => _continue = result;
+		public DelegatedArraySelector(Func<ArrayView<T>, T[]> result) => _continue = result;
 
-		public T[] Get(in Store<T> parameter) => _continue(parameter);
+		public T[] Get(Store<T> parameter) => _continue(parameter);
 	}
 
 	sealed class SessionSegment<T> : ISegment<T>
 	{
-		readonly Result<ArrayView<T>, Session<T>>   _previous;
-		readonly Result<ArrayView<T>, ArrayView<T>> _continue;
+		readonly Func<ArrayView<T>, Session<T>>   _previous;
+		readonly Func<ArrayView<T>, ArrayView<T>> _continue;
 
-		public SessionSegment(Result<ArrayView<T>, Session<T>> previous, Result<ArrayView<T>, ArrayView<T>> @continue)
+		public SessionSegment(Func<ArrayView<T>, Session<T>> previous, Func<ArrayView<T>, ArrayView<T>> @continue)
 		{
 			_previous = previous;
 			_continue = @continue;
 		}
 
-		public ArrayView<T> Get(in ArrayView<T> parameter)
+		public ArrayView<T> Get(ArrayView<T> parameter)
 		{
-			using (var session = _previous(in parameter))
+			using (var session = _previous(parameter))
 			{
 				return _continue(session.Store);
 			}

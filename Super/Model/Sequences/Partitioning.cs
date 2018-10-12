@@ -1,7 +1,6 @@
 ﻿using Super.Model.Collections;
 using Super.Model.Commands;
 using Super.Model.Selection;
-using Super.Model.Selection.Structure;
 using Super.Runtime.Activation;
 using System.Buffers;
 
@@ -38,7 +37,7 @@ namespace Super.Model.Sequences
 
 	public interface ISelector<in TIn, out T> : ISelect<TIn, T[]> {}
 
-	public interface IArraySelector<T> : IStructure<Store<T>, T[]> {}
+	public interface IArraySelector<T> : ISelect<Store<T>, T[]> {}
 
 	sealed class ArraySelector<T> : IArraySelector<T>, IActivateMarker<Collections.Selection>
 	{
@@ -57,7 +56,7 @@ namespace Super.Model.Sequences
 			_length = length;
 		}
 
-		public T[] Get(in Store<T> parameter)
+		public T[] Get(Store<T> parameter)
 		{
 			var size   = _length.IsAssigned ? _length.Instance : parameter.Length - _start;
 			var result = parameter.Instance.CopyInto(new T[size], _start, size);

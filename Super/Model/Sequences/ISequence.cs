@@ -35,7 +35,7 @@ namespace Super.Model.Sequences
 
 		public Where(Func<T, bool> where) => _where = @where;
 
-		public ArrayView<T> Get(in ArrayView<T> parameter)
+		public ArrayView<T> Get(ArrayView<T> parameter)
 		{
 			var to    = parameter.Start + parameter.Length;
 			var array = parameter.Array;

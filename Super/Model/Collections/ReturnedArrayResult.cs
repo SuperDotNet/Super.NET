@@ -1,7 +1,6 @@
 using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
-using Super.Model.Selection.Structure;
 using Super.Runtime;
 using Super.Runtime.Activation;
 using System;
@@ -10,7 +9,7 @@ using System.Runtime.CompilerServices;
 
 namespace Super.Model.Collections
 {
-	public interface IStoreReferences<T> : IStructure<Store<T>, T[]> {}
+	public interface IStoreReferences<T> : ISelect<Store<T>, T[]> {}
 
 	/*sealed class StoreReferences<T> : IStoreReferences<T>
 	{
@@ -29,7 +28,7 @@ namespace Super.Model.Collections
 				   : parameter.CopyInto(_stores.Get(parameter.Length));
 	}*/
 
-	public interface IReferences<T> : IStructure<ArrayView<T>, T[]> {}
+	public interface IReferences<T> : ISelect<ArrayView<T>, T[]> {}
 
 	sealed class References<T> : IReferences<T>
 	{
@@ -42,7 +41,7 @@ namespace Super.Model.Collections
 		public References(IStores<T> stores) => _stores = stores;
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public T[] Get(in ArrayView<T> parameter)
+		public T[] Get(ArrayView<T> parameter)
 			=> parameter.Start == 0 && parameter.Length == parameter.Array.Length
 				   ? parameter.Array
 				   : parameter.Into(_stores.Get(parameter.Length).Instance);
@@ -110,7 +109,7 @@ namespace Super.Model.Collections
 
 		SelectView() {}
 
-		public ArrayView<T> Get(in ArrayView<T> parameter) => parameter;
+		public ArrayView<T> Get(ArrayView<T> parameter) => parameter;
 	}
 
 	/*sealed class Copy<T> : ISelectView<T>
@@ -127,7 +126,7 @@ namespace Super.Model.Collections
 			=> new ArrayView<T>(parameter.Into(_stores.Get(parameter.Length).Instance), 0, parameter.Length);
 	}*/
 
-	public interface ISelectView<T> : IStructure<ArrayView<T>, ArrayView<T>> {}
+	public interface ISelectView<T> : ISelect<ArrayView<T>, ArrayView<T>> {}
 
 	public interface IBodyAlteration<T> : IAlteration<Body<T>> {}
 
@@ -161,9 +160,9 @@ namespace Super.Model.Collections
 	{
 		public static Content<T> Default { get; } = new Content<T>();
 
-		Content() : this(SelectView<T>.Default, Start.Structure<ArrayView<T>>()) {}
+		Content() : this(SelectView<T>.Default, In<ArrayView<T>>.Start()) {}
 
-		public Content(ISelectView<T> enter, IStructure<ArrayView<T>, ArrayView<T>> @select, Complete<T> exit = null)
+		public Content(ISelectView<T> enter, ISelect<ArrayView<T>, ArrayView<T>> @select, Complete<T> exit = null)
 		{
 			Enter  = enter;
 			Select = @select;
@@ -172,12 +171,12 @@ namespace Super.Model.Collections
 
 		public ISelectView<T> Enter { get; }
 
-		public IStructure<ArrayView<T>, ArrayView<T>> Select { get; }
+		public ISelect<ArrayView<T>, ArrayView<T>> Select { get; }
 
 		public Complete<T> Exit { get; }
 	}
 
-	public interface IContentComposer<T> : ISelect<Content<T>, IStructure<ArrayView<T>, ArrayView<T>>> {}
+	public interface IContentComposer<T> : ISelect<Content<T>, ISelect<ArrayView<T>, ArrayView<T>>> {}
 
 	sealed class ContentComposer<T> : IContentComposer<T>
 	{
@@ -185,7 +184,7 @@ namespace Super.Model.Collections
 
 		ContentComposer() {}
 
-		public IStructure<ArrayView<T>, ArrayView<T>> Get(Content<T> parameter)
+		public ISelect<ArrayView<T>, ArrayView<T>> Get(Content<T> parameter)
 		{
 			var select = parameter.Enter.Select(parameter.Select);
 			var result = parameter.Exit != null ? select.Select(new Completed<T>(parameter.Exit)) : select;
@@ -270,31 +269,31 @@ namespace Super.Model.Collections
 		public Complete<T> Complete { get; }
 	}
 
-	sealed class Completed<T> : IStructure<ArrayView<T>>
+	sealed class Completed<T> : IAlteration<ArrayView<T>>
 	{
 		readonly Complete<T> _complete;
 
 		public Completed(Complete<T> complete) => _complete = complete;
 
-		public ArrayView<T> Get(in ArrayView<T> parameter)
+		public ArrayView<T> Get(ArrayView<T> parameter)
 		{
 			_complete(parameter.Array);
 			return parameter;
 		}
 	}
 
-	sealed class Returned<T> : IStructure<ArrayView<T>, ArrayView<T>>
+	sealed class Returned<T> : ISelect<ArrayView<T>, ArrayView<T>>
 	{
-		readonly Result<ArrayView<T>, ArrayView<T>> _reference;
+		readonly Func<ArrayView<T>, ArrayView<T>> _reference;
 		readonly Complete<T>                           _complete;
 
-		public Returned(Result<ArrayView<T>, ArrayView<T>> reference, Complete<T> complete)
+		public Returned(Func<ArrayView<T>, ArrayView<T>> reference, Complete<T> complete)
 		{
 			_reference = reference;
 			_complete  = complete;
 		}
 
-		public ArrayView<T> Get(in ArrayView<T> parameter)
+		public ArrayView<T> Get(ArrayView<T> parameter)
 		{
 			var result = _reference(parameter);
 			_complete(parameter.Array);
@@ -382,11 +381,11 @@ namespace Super.Model.Collections
 
 	class ContentAlteration<T> : IContentAlteration<T>
 	{
-		readonly IStructure<ArrayView<T>, ArrayView<T>> _content;
+		readonly ISelect<ArrayView<T>, ArrayView<T>> _content;
 		readonly ISelectView<T>                         _enter;
 		readonly Complete<T>                            _exit;
 
-		public ContentAlteration(IStructure<ArrayView<T>, ArrayView<T>> content,
+		public ContentAlteration(ISelect<ArrayView<T>, ArrayView<T>> content,
 		                         ISelectView<T> enter = null,
 		                         Complete<T> exit = null)
 		{
@@ -405,7 +404,7 @@ namespace Super.Model.Collections
 
 		public SelectionSegment(Selection selection) => _selection = selection;
 
-		public ArrayView<T> Get(in ArrayView<T> parameter)
+		public ArrayView<T> Get(ArrayView<T> parameter)
 			=> parameter.Resize(_selection.Start, _selection.Length.IsAssigned ? _selection.Length.Instance : parameter.Length - _selection.Start);
 	}
 
@@ -415,7 +414,7 @@ namespace Super.Model.Collections
 
 		public WhereSegment(Func<T, bool> where) => _where = @where;
 
-		public ArrayView<T> Get(in ArrayView<T> parameter)
+		public ArrayView<T> Get(ArrayView<T> parameter)
 		{
 			var used  = parameter.Length;
 			var array = parameter.Array;

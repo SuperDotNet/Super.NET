@@ -1,6 +1,5 @@
 ﻿using Super.Model.Collections;
 using Super.Model.Selection;
-using Super.Model.Selection.Structure;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -40,11 +39,11 @@ namespace Super.Model.Sequences
 
 		/**/
 
-		public static IStructure<_, Store<T>> Store<_, T>(this IStructure<_, ArrayView<T>> @this) where _ : struct
-			=> @this.Select((in ArrayView<T> x) => new Store<T>(x.Array, x.Length));
+		public static ISelect<_, Store<T>> Store<_, T>(this ISelect<_, ArrayView<T>> @this)
+			=> @this.Select(x => new Store<T>(x.Array, x.Length));
 
-		public static ISegment<T> Continue<T>(this IStructure<ArrayView<T>, Session<T>> @this,
-		                                      IStructure<ArrayView<T>, ArrayView<T>> @continue)
+		public static ISegment<T> Continue<T>(this ISelect<ArrayView<T>, Session<T>> @this,
+		                                      ISelect<ArrayView<T>, ArrayView<T>> @continue)
 			=> new SessionSegment<T>(@this.Get, @continue.Get);
 
 		/*public static IStructure<ArrayView<T>, Session<T>> Result<T>(this IAlterNode<T> @this)

@@ -1,6 +1,5 @@
 using Super.Model.Commands;
 using Super.Model.Selection;
-using Super.Model.Selection.Structure;
 using System.Buffers;
 using System.Runtime.CompilerServices;
 
@@ -10,7 +9,7 @@ namespace Super.Model.Collections
 
 	/*public interface ISegmentSelect<TIn, TOut> : IStructure<Segue<TIn, TOut>, ArrayView<TOut>> {}*/
 
-	public interface ISegmentation<TIn, TOut> : IStructure<ArrayView<TIn>, ArrayView<TOut>> {}
+	public interface ISegmentation<TIn, TOut> : ISelect<ArrayView<TIn>, ArrayView<TOut>> {}
 
 	/*public readonly struct Segue<TFrom, TTo>
 	{

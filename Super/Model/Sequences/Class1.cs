@@ -1,5 +1,5 @@
 ﻿using Super.Model.Collections;
-using Super.Model.Selection.Structure;
+using Super.Model.Selection;
 using System;
 
 namespace Super.Model.Sequences
@@ -34,7 +34,7 @@ namespace Super.Model.Sequences
 		}
 	}
 
-	public interface IIteration<T> : IStructure<Store<T>, Store<T>?> {}
+	public interface IIteration<T> : ISelect<Store<T>, Store<T>?> {}
 
 	sealed class Iteration<T> : IIteration<T>
 	{
@@ -49,7 +49,7 @@ namespace Super.Model.Sequences
 			_length = length;
 		}
 
-		public Store<T>? Get(in Store<T> parameter)
+		public Store<T>? Get(Store<T> parameter)
 		{
 			var index = parameter.Length;
 			if (index < _length)
