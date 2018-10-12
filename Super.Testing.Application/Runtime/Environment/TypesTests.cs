@@ -16,10 +16,10 @@ namespace Super.Testing.Application.Runtime.Environment
 		{
 			Super.Runtime.Environment.Types.Default.Execute(GetType().Yield().ToArray());
 
-			Super.Runtime.Environment.Types.Default.AsEnumerable().Should().HaveCount(1);
+			Super.Runtime.Environment.Types.Default.Get().Should().HaveCount(1);
 			Super.Runtime.Environment.Types.Default.Execute(default);
 
-			Super.Runtime.Environment.Types.Default.AsEnumerable().Should().HaveCountGreaterThan(1);
+			Super.Runtime.Environment.Types.Default.Get().Should().HaveCountGreaterThan(1);
 		}
 
 		[Fact]
@@ -32,16 +32,16 @@ namespace Super.Testing.Application.Runtime.Environment
 			counter.Get().Should().Be(1);
 			Super.Runtime.Environment.Types.Default.Execute(types);
 			counter.Get().Should().Be(1);
-			Super.Runtime.Environment.Types.Default.AsEnumerable().Should().BeEquivalentTo(source);
+			Super.Runtime.Environment.Types.Default.Get().Should().BeEquivalentTo(source);
 			counter.Get().Should().Be(1);
-			Super.Runtime.Environment.Types.Default.AsEnumerable().Should().BeEquivalentTo(source);
+			Super.Runtime.Environment.Types.Default.Get().Should().BeEquivalentTo(source);
 
-			Super.Runtime.Environment.Types.Default.AsEnumerable().Should().Equal(Super.Runtime.Environment.Types.Default.AsEnumerable());
+			Super.Runtime.Environment.Types.Default.Get().Should().Equal(Super.Runtime.Environment.Types.Default.Get());
 			types.Get().Should().BeEquivalentTo(types.Get());
 			counter.Get().Should().Be(1);
 		}
 
-		sealed class Types : Arrays<Type>
+		sealed class Types : ArrayInstance<Type>
 		{
 			public Types(Counter counter, IEnumerable<Type> types) : base(types.Select(counter.ExecuteAndReturn)) {}
 		}

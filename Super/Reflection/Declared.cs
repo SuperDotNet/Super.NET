@@ -1,4 +1,5 @@
-﻿using Super.Reflection.Types;
+﻿using Super.Model.Collections;
+using Super.Reflection.Types;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -25,7 +26,7 @@ namespace Super.Reflection
 			_inherit = inherit;
 		}
 
-		public ReadOnlyMemory<T> Get(ICustomAttributeProvider parameter)
+		public Array<T> Get(ICustomAttributeProvider parameter)
 			=> parameter.GetCustomAttributes(_type, _inherit).Cast<T>().ToArray();
 	}
 }

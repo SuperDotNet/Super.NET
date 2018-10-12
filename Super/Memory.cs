@@ -1,6 +1,4 @@
-﻿using Super.Model.Collections;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Runtime.InteropServices;
 
 namespace Super
@@ -8,10 +6,6 @@ namespace Super
 	// ReSharper disable once MismatchedFileName
 	public static partial class ExtensionMethods
 	{
-		public static IEnumerable<T> AsEnumerable<T>(this IArrays<T> @this) => @this.Get().AsEnumerable();
-
-		public static IEnumerable<T> AsEnumerable<T>(in this ReadOnlyMemory<T> @this) => MemoryMarshal.ToEnumerable(@this);
-
 		public static ArraySegment<T>? Segment<T>(in this ReadOnlyMemory<T> @this)
 			=> MemoryMarshal.TryGetArray(@this, out var result) ? result : (ArraySegment<T>?)null;
 

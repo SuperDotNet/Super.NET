@@ -64,19 +64,6 @@ namespace Super.Model.Sequences
 		}
 	}
 
-	/*public readonly struct StoreView<T>
-	{
-		public StoreView(Store<T> store, uint start)
-		{
-			Store = store;
-			Start  = start;
-		}
-
-		public Store<T> Store { get; }
-
-		public uint Start { get; }
-	}*/
-
 	public readonly struct Store<T>
 	{
 		public static implicit operator Store<T>(T[] instance) => new Store<T>(instance, (uint)instance.Length);

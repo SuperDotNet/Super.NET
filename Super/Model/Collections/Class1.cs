@@ -7,30 +7,30 @@ using System.Linq;
 
 namespace Super.Model.Collections
 {
-	public interface IArrays<T> : ISource<ReadOnlyMemory<T>> {}
+	public interface IArray<T> : ISource<Array<T>> {}
 
-	public class Arrays<T> : Source<ReadOnlyMemory<T>>, IArrays<T>
+	public class ArrayInstance<T> : Source<Array<T>>, IArray<T>
 	{
-		public Arrays(IEnumerable<T> enumerable) : this(enumerable.ToArray()) {}
+		public ArrayInstance(IEnumerable<T> enumerable) : this(enumerable.ToArray()) {}
 
-		public Arrays(params T[] instance) : base(instance) {}
+		public ArrayInstance(params T[] instance) : base(instance) {}
 	}
 
-	public class DelegatedArrays<T> : DelegatedSource<ReadOnlyMemory<T>>, IArrays<T>
+	public class DelegatedArray<T> : DelegatedSource<Array<T>>, IArray<T>
 	{
-		public DelegatedArrays(Func<ReadOnlyMemory<T>> source) : base(source) {}
+		public DelegatedArray(Func<Array<T>> source) : base(source) {}
 	}
 
-	public class DecoratedArrays<T> : DecoratedSource<ReadOnlyMemory<T>>, IArrays<T>
+	public class DecoratedArray<T> : DecoratedSource<Array<T>>, IArray<T>
 	{
-		public DecoratedArrays(ISource<ReadOnlyMemory<T>> source) : base(source) {}
+		public DecoratedArray(ISource<Array<T>> source) : base(source) {}
 	}
 
-	public interface IArray<in TFrom, TItem> : ISelect<TFrom, ReadOnlyMemory<TItem>> {}
+	public interface IArray<in TFrom, TItem> : ISelect<TFrom, Array<TItem>> {}
 
-	public class ArrayStore<TFrom, TTo> : Store<TFrom, ReadOnlyMemory<TTo>>, IArray<TFrom, TTo>
+	public class ArrayStore<TFrom, TTo> : Store<TFrom, Array<TTo>>, IArray<TFrom, TTo>
 	{
-		public ArrayStore(Func<TFrom, ReadOnlyMemory<TTo>> source) : base(source) {}
+		public ArrayStore(Func<TFrom, Array<TTo>> source) : base(source) {}
 	}
 
 	public class Array<TFrom, TItem> : IArray<TFrom, TItem>
@@ -39,7 +39,7 @@ namespace Super.Model.Collections
 
 		public Array(Func<TFrom, IEnumerable<TItem>> selector) => _selector = selector;
 
-		public ReadOnlyMemory<TItem> Get(TFrom parameter) => _selector(parameter).ToArray();
+		public Array<TItem> Get(TFrom parameter) => _selector(parameter).ToArray();
 	}
 
 	public interface ISequence<out T> : ISource<IEnumerable<T>> {}
@@ -56,7 +56,7 @@ namespace Super.Model.Collections
 
 	public interface ISequence<in TFrom, out TItem> : ISelect<TFrom, IEnumerable<TItem>> {}
 
-	sealed class Access<T> : Select<IEnumerable<T>, ReadOnlyMemory<T>>
+	sealed class Access<T> : Select<IEnumerable<T>, Array<T>>
 	{
 		public static Access<T> Default { get; } = new Access<T>();
 

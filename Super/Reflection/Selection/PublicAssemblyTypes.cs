@@ -5,14 +5,14 @@ using System.Reflection;
 
 namespace Super.Reflection.Selection
 {
-	public sealed class PublicAssemblyTypes<T> : DecoratedArrays<Type>
+	public sealed class PublicAssemblyTypes<T> : DecoratedArray<Type>
 	{
 		public static PublicAssemblyTypes<T> Default { get; } = new PublicAssemblyTypes<T>();
 
 		PublicAssemblyTypes() : base(new PublicAssemblyTypes(typeof(T))) {}
 	}
 
-	public sealed class PublicAssemblyTypes : Arrays<Type>, IActivateMarker<Assembly>, IActivateMarker<Type>
+	public sealed class PublicAssemblyTypes : ArrayInstance<Type>, IActivateMarker<Assembly>, IActivateMarker<Type>
 	{
 		public PublicAssemblyTypes(Type referenceType) : this(referenceType.Assembly) {}
 

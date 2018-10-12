@@ -15,46 +15,44 @@ namespace Super.Model.Collections
 
 		public ArraySelector(Func<TFrom, TTo> select) => _select = select;
 
-		public ReadOnlyMemory<TTo> Get(ReadOnlyMemory<TFrom> parameter)
+		public Array<TTo> Get(Array<TFrom> parameter)
 		{
 			var length = parameter.Length;
 			var result = new TTo[length];
-			var span   = parameter.Span;
 
 			for (var i = 0; i < length; i++)
 			{
-				result[i] = _select(span[i]);
+				result[i] = _select(parameter[i]);
 			}
 
 			return result;
 		}
 	}
 
-	public class Where<TIn, TOut> : ISelect<TIn, ReadOnlyMemory<TOut>>
+	public class Where<TIn, TOut> : ISelect<TIn, Array<TOut>>
 	{
-		readonly ISelect<TIn, ReadOnlyMemory<TOut>> _select;
+		readonly ISelect<TIn, Array<TOut>> _select;
 		readonly Func<TOut, bool>                   _where;
 
-		public Where(ISelect<TIn, ReadOnlyMemory<TOut>> select, ISpecification<TOut> where)
+		public Where(ISelect<TIn, Array<TOut>> select, ISpecification<TOut> where)
 			: this(select, where.IsSatisfiedBy) {}
 
-		public Where(ISelect<TIn, ReadOnlyMemory<TOut>> select, Func<TOut, bool> where)
+		public Where(ISelect<TIn, Array<TOut>> select, Func<TOut, bool> where)
 		{
 			_select = @select;
 			_where  = @where;
 		}
 
-		public ReadOnlyMemory<TOut> Get(TIn parameter)
+		public Array<TOut> Get(TIn parameter)
 		{
 			var items  = _select.Get(parameter);
 			var length = items.Length;
 
-			Span<int> indexes = stackalloc int[length];
+			Span<uint> indexes = stackalloc uint[(int)length];
 			var       count   = 0;
-			var       source  = items.Span;
-			for (var i = 0; i < length; i++)
+			for (var i = 0u; i < length; i++)
 			{
-				var element = source[i];
+				var element = items[i];
 				if (_where(element))
 				{
 					indexes[count++] = i;
@@ -64,7 +62,7 @@ namespace Super.Model.Collections
 			var result = new TOut[count];
 			for (var i = 0; i < count; i++)
 			{
-				result[i] = source[indexes[i]];
+				result[i] = items[indexes[i]];
 			}
 
 			//ArrayPool<TOut>.Shared.Return(items.Array());
@@ -81,16 +79,15 @@ namespace Super.Model.Collections
 
 		public Where(Func<T, bool> where) => _where = where;
 
-		public ReadOnlyMemory<T> Get(ReadOnlyMemory<T> parameter)
+		public Array<T> Get(Array<T> parameter)
 		{
 			var length = parameter.Length;
 
-			Span<int> indexes = stackalloc int[length];
+			Span<int> indexes = stackalloc int[(int)length];
 			var       count   = 0;
-			var       source  = parameter.Span;
 			for (var i = 0; i < length; i++)
 			{
-				var element = source[i];
+				var element = parameter[i];
 				if (_where(element))
 				{
 					indexes[count++] = i;
@@ -100,7 +97,7 @@ namespace Super.Model.Collections
 			var result = new T[count];
 			for (var i = 0; i < count; i++)
 			{
-				result[i] = source[indexes[i]];
+				result[i] = parameter[indexes[i]];
 			}
 
 			return result;

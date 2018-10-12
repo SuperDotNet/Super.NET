@@ -18,7 +18,7 @@ namespace Super.Runtime.Activation
 
 		SingletonProperty() : this(SingletonCandidates.Default) {}
 
-		public SingletonProperty(ISource<ReadOnlyMemory<string>> candidates)
+		public SingletonProperty(ISource<Array<string>> candidates)
 			: base(In<Type>.Select(x => new ArraySelector<string, PropertyInfo>(x.GetProperty))
 			               .Select(candidates.Select)
 			               .Select(x => x.Select(SingletonPropertyPredicate.Default))

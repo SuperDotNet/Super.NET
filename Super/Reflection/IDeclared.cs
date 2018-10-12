@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Super.Model.Collections;
 
 namespace Super.Reflection
 {
-	public interface IDeclared<T> : IAttribute<ReadOnlyMemory<T>> {}
+	public interface IDeclared<T> : IAttribute<Array<T>> {}
 }

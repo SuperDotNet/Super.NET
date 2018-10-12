@@ -2,11 +2,12 @@
 using Super.Model.Selection;
 using Super.Model.Specifications;
 using System;
+using System.Linq;
 using System.Reflection;
 
 namespace Super.Reflection
 {
-	class Attributes<TAttribute, T> : Specification<ICustomAttributeProvider, ReadOnlyMemory<T>>, IAttributes<T>
+	class Attributes<TAttribute, T> : Specification<ICustomAttributeProvider, Array<T>>, IAttributes<T>
 		where TAttribute : Attribute
 	{
 		public Attributes(Func<TAttribute, T> select) : this(Declared<TAttribute>.Default, select) {}
@@ -15,8 +16,12 @@ namespace Super.Reflection
 			: this(IsDefined<TAttribute>.Default, attribute, select) {}
 
 		public Attributes(ISpecification<ICustomAttributeProvider> specification,
-		                  IDeclared<TAttribute> attribute, Func<TAttribute, T> select) // TODO: fix.
-			: base(specification, attribute.Select(x => select(x)).ToStore().If(specification)) {}
+		                  IDeclared<TAttribute> attribute, Func<TAttribute, T> select)
+			: base(specification, attribute.Reference()
+			                               .Select(x => x.Select(select)) // TODO: fix.
+			                               .ToStore()
+			                               .If(specification)
+			                               .Result()) {}
 	}
 
 	sealed class Attributes<T> : ArrayStore<ICustomAttributeProvider, T>, IAttributes<T>

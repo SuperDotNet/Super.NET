@@ -19,23 +19,23 @@ namespace Super.Runtime.Environment
 		ComponentType() : base(ComponentTypes.Default.FirstAssigned()) {}
 	}
 
-	sealed class ComponentTypesDefinition : DecoratedSource<ISelect<Type, ReadOnlyMemory<Type>>>
+	sealed class ComponentTypesDefinition : DecoratedSource<ISelect<Type, Array<Type>>>
 	{
 		public static ComponentTypesDefinition Default { get; } = new ComponentTypesDefinition();
 
-		ComponentTypesDefinition() : this(Types.Default, ComponentTypesPredicate.Default, x => x.Sort().Access()) {}
+		ComponentTypesDefinition() : this(Types.Default, ComponentTypesPredicate.Default, x => x.Sort().Result()) {}
 
-		public ComponentTypesDefinition(IArrays<Type> types, ISelectSequence<Type> where,
-		                                Func<ISelect<Type, IEnumerable<Type>>, ISelect<Type, ReadOnlyMemory<Type>>>
+		public ComponentTypesDefinition(IArray<Type> types, ISelectSequence<Type> where,
+		                                Func<ISelect<Type, IEnumerable<Type>>, ISelect<Type, Array<Type>>>
 			                                select)
-			: base(types.Select(x => x.AsEnumerable())
+			: base(types.Select(x => x.Reference())
 			            .Select(where)
 			            .Select(x => x.ToImmutableArray())
 			            .Select(I<ComponentTypesSelector>.Default)
 			            .Select(select)) {}
 	}
 
-	sealed class ComponentTypes : DelegatedInstanceSelector<Type, ReadOnlyMemory<Type>>
+	sealed class ComponentTypes : DelegatedInstanceSelector<Type, Array<Type>>
 	{
 		public static ComponentTypes Default { get; } = new ComponentTypes();
 

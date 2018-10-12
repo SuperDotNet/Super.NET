@@ -8,7 +8,7 @@ namespace Super.Model.Collections
 {
 	/*public interface ISelection<TFrom, TTo> : ISelect<View<TFrom>, View<TTo>> {}*/
 
-	public interface ISelector<TFrom, TTo> : ISelect<ReadOnlyMemory<TFrom>, ReadOnlyMemory<TTo>> {}
+	public interface ISelector<TFrom, TTo> : ISelect<Array<TFrom>, Array<TTo>> {}
 
 	public sealed class SelectWhere<TFrom, TTo> : ISelector<TFrom, TTo>
 	{
@@ -23,22 +23,20 @@ namespace Super.Model.Collections
 		public SelectWhere(ISelect<TFrom, TTo> select, ISpecification<TTo> where) :
 			this(select.Get, where.IsSatisfiedBy) {}
 
-
 		SelectWhere(Func<TFrom, TTo> select, Func<TTo, bool> where)
 		{
 			_select = select;
 			_where  = where;
 		}
 
-		public ReadOnlyMemory<TTo> Get(ReadOnlyMemory<TFrom> parameter)
+		public Array<TTo> Get(Array<TFrom> parameter)
 		{
 			var length = parameter.Length;
 
-			var list  = new List<TTo>();
-			var span  = parameter.Span;
+			var list = new List<TTo>();
 			for (var i = 0; i < length; i++)
 			{
-				var element = _select(span[i]);
+				var element = _select(parameter[i]);
 				if (_where(element))
 				{
 					list.Add(element);
@@ -52,27 +50,26 @@ namespace Super.Model.Collections
 
 	public sealed class SelectWhereDecorator<TFrom, TTo> : ISelector<TFrom, TTo>
 	{
-		readonly ISelect<ReadOnlyMemory<TFrom>, ReadOnlyMemory<TTo>> _select;
-		readonly Func<TTo, bool>  _where;
+		readonly ISelect<Array<TFrom>, Array<TTo>> _select;
+		readonly Func<TTo, bool>                   _where;
 
-		public SelectWhereDecorator(ISelect<ReadOnlyMemory<TFrom>, ReadOnlyMemory<TTo>> select, Expression<Func<TTo, bool>> where)
+		public SelectWhereDecorator(ISelect<Array<TFrom>, Array<TTo>> select, Expression<Func<TTo, bool>> where)
 			: this(@select, where.Compile()) {}
 
-		SelectWhereDecorator(ISelect<ReadOnlyMemory<TFrom>, ReadOnlyMemory<TTo>> select, Func<TTo, bool> where)
+		SelectWhereDecorator(ISelect<Array<TFrom>, Array<TTo>> select, Func<TTo, bool> where)
 		{
 			_select = select;
 			_where  = where;
 		}
 
-		public ReadOnlyMemory<TTo> Get(ReadOnlyMemory<TFrom> parameter)
+		public Array<TTo> Get(Array<TFrom> parameter)
 		{
-			var list = new List<TTo>();
-			var memory = _select.Get(parameter);
-			var span = memory.Span;
-			var length = span.Length;
+			var list   = new List<TTo>();
+			var array = _select.Get(parameter);
+			var length = array.Length;
 			for (var i = 0; i < length; i++)
 			{
-				var element = span[i];
+				var element = array[i];
 				if (_where(element))
 				{
 					list.Add(element);

@@ -18,7 +18,7 @@ namespace Super.Model.Collections
 		AssignedValue() : base(x => x != null) {}
 	}*/
 
-	public interface IReduce<T> : ISelect<ReadOnlyMemory<T>, T> {}
+	public interface IReduce<T> : ISelect<Array<T>, T> {}
 
 	public sealed class FirstOrDefault<T> : FirstWhere<T>
 	{
@@ -34,6 +34,7 @@ namespace Super.Model.Collections
 		FirstAssigned() : base(x => x != null) {}
 	}
 
+	// ReSharper disable once PossibleInfiniteInheritance
 	public sealed class FirstAssignedValue<T> : FirstWhere<T?> where T : struct
 	{
 		public static FirstAssignedValue<T> Default { get; } = new FirstAssignedValue<T>();
@@ -60,14 +61,13 @@ namespace Super.Model.Collections
 			_default = @default;
 		}
 
-		public T Get(ReadOnlyMemory<T> parameter)
+		public T Get(Array<T> parameter)
 		{
 			var length = parameter.Length;
-			var span   = parameter.Span;
 
 			for (var i = 0; i < length; i++)
 			{
-				var item = span[i];
+				var item = parameter[i];
 				if (_where(item))
 				{
 					return item;

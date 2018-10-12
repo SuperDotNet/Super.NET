@@ -13,25 +13,26 @@ using System.Reflection;
 
 namespace Super.Runtime.Environment
 {
-	public sealed class Types : SystemStore<ReadOnlyMemory<Type>>, IArrays<Type>
+	public sealed class Types : SystemStore<Array<Type>>, IArray<Type>
 	{
 		public static Types Default { get; } = new Types();
 
 		Types() : this(Types<PublicAssemblyTypes>.Default) {}
 
-		public Types(IArrays<Type> instance) : base(instance) {}
+		public Types(IArray<Type> instance) : base(instance) {}
 	}
 
-	public class Types<T> : DecoratedArrays<Type> where T : class, IActivateMarker<Assembly>, IArrays<Type>
+	public class Types<T> : DecoratedArray<Type> where T : class, IActivateMarker<Assembly>, IArray<Type>
 	{
 		public static Types<T> Default { get; } = new Types<T>();
 
 		Types() : this(Assemblies.Default) {}
 
-		public Types(ISequence<Assembly> assemblies) : base(assemblies.Select(y => y.Select(I<T>.Default.From)
-		                                                                            .SelectMany(x => x.AsEnumerable()))
-		                                                              .ToSequence()
-		                                                              .ToArray()) {}
+		public Types(ISequence<Assembly> assemblies)
+			: base(assemblies.Select(y => y.Select(I<T>.Default.From)
+			                               .SelectMany(x => x.Get().Reference()))
+			                 .ToSequence()
+			                 .ToArray()) {}
 	}
 
 	public sealed class StorageTypeDefinition : Variable<Type>
@@ -74,7 +75,8 @@ namespace Super.Runtime.Environment
 
 	static class Implementations<T>
 	{
-		public static ISource<IStore<T>> Store { get; } = SystemStores<T>.Default.Select(I<Model.Sources.Store<T>>.Default);
+		public static ISource<IStore<T>> Store { get; } =
+			SystemStores<T>.Default.Select(I<Model.Sources.Store<T>>.Default);
 	}
 
 	public class SystemStore<T> : Deferred<T>, IStore<T>

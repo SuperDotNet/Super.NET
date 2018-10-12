@@ -18,61 +18,61 @@ using System.Reactive;
 
 namespace Super.Testing.Objects
 {
-	sealed class NativeArrays : IArrays<int>
+	sealed class NativeArray : IArray<int>
 	{
-		public static NativeArrays Default { get; } = new NativeArrays();
+		public static NativeArray Default { get; } = new NativeArray();
 
-		NativeArrays() : this(Select.Default, Data.Default) {}
+		NativeArray() : this(Select.Default, Data.Default) {}
 
 		readonly Func<string, int> _select;
 		readonly string[]          _data;
 
-		public NativeArrays(Func<string, int> select, string[] data)
+		public NativeArray(Func<string, int> select, string[] data)
 		{
 			_select = select;
 			_data   = data;
 		}
 
-		public ReadOnlyMemory<int> Get() => _data.Select(_select).Where(x => x > 0).ToArray();
+		public Array<int> Get() => _data.Select(_select).Where(x => x > 0).ToArray();
 	}
 
-	sealed class Chain : IArrays<int>
+	sealed class Chain : IArray<int>
 	{
 		public static Chain Default { get; } = new Chain();
 
 		Chain() : this(new ArraySelector<string, int>(Select.Default).Where(x => x > 0), View.Default) {}
 
-		readonly ISelect<ReadOnlyMemory<string>, ReadOnlyMemory<int>> _direct;
-		readonly ReadOnlyMemory<string>                               _view;
+		readonly ISelect<Array<string>, Array<int>> _direct;
+		readonly Array<string>                      _view;
 
-		public Chain(ISelect<ReadOnlyMemory<string>, ReadOnlyMemory<int>> direct, ReadOnlyMemory<string> view)
+		public Chain(ISelect<Array<string>, Array<int>> direct, Array<string> view)
 		{
 			_direct = direct;
 			_view   = view;
 		}
 
-		public ReadOnlyMemory<int> Get() => _direct.Get(_view);
+		public Array<int> Get() => _direct.Get(_view);
 	}
 
-	sealed class Combo : IArrays<int>
+	sealed class Combo : IArray<int>
 	{
 		public static Combo Default { get; } = new Combo();
 
 		Combo() : this(new SelectWhere<string, int>(Select.Default, x => x > 0), View.Default) {}
 
-		readonly ISelect<ReadOnlyMemory<string>, ReadOnlyMemory<int>> _direct;
-		readonly ReadOnlyMemory<string>                               _view;
+		readonly ISelect<Array<string>, Array<int>> _direct;
+		readonly Array<string>                      _view;
 
-		public Combo(ISelect<ReadOnlyMemory<string>, ReadOnlyMemory<int>> direct, ReadOnlyMemory<string> view)
+		public Combo(ISelect<Array<string>, Array<int>> direct, Array<string> view)
 		{
 			_direct = direct;
 			_view   = view;
 		}
 
-		public ReadOnlyMemory<int> Get() => _direct.Get(_view);
+		public Array<int> Get() => _direct.Get(_view);
 	}
 
-	sealed class View : Arrays<string>
+	sealed class View : ArrayInstance<string>
 	{
 		public static View Default { get; } = new View();
 

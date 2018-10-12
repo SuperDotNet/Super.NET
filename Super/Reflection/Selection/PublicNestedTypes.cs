@@ -1,17 +1,17 @@
 ﻿using Super.Model.Collections;
+using Super.Reflection.Types;
 using System;
-using System.Collections.Generic;
 
 namespace Super.Reflection.Selection
 {
-	public sealed class PublicNestedTypes<T> : Arrays<Type>
+	public sealed class PublicNestedTypes<T> : DecoratedArray<Type>
 	{
-		public PublicNestedTypes() : this(new PublicNestedTypes(typeof(T)).Get().AsEnumerable()) {}
+		public static PublicNestedTypes<T> Default { get; } = new PublicNestedTypes<T>();
 
-		public PublicNestedTypes(IEnumerable<Type> items) : base(items) {}
+		PublicNestedTypes() : base(new PublicNestedTypes(Type<T>.Instance)) {}
 	}
 
-	public sealed class PublicNestedTypes : Arrays<Type>
+	public sealed class PublicNestedTypes : ArrayInstance<Type>
 	{
 		public PublicNestedTypes(Type referenceType) : base(referenceType.GetNestedTypes()) {}
 	}

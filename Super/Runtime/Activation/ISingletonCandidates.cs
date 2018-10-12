@@ -2,5 +2,5 @@
 
 namespace Super.Runtime.Activation
 {
-	public interface ISingletonCandidates : IArrays<string> {}
+	public interface ISingletonCandidates : IArray<string> {}
 }

@@ -1,28 +1,27 @@
 ﻿using JetBrains.Annotations;
 using Super.Model.Collections;
 using Super.Model.Selection;
+using Super.Model.Sources;
 using Super.Reflection;
 using Super.Runtime.Activation;
 using System.Collections.Generic;
 
 namespace Super.Model.Sequences
 {
-	sealed class CollectionSequence<_, T> : ISequence<_, T>
+	sealed class CollectionSequence<_, T> : DecoratedSource<ISelect<_, T[]>>, ISequence<_, T>
 	{
 		readonly ISelect<_, ICollection<T>> _select;
 		readonly IBuilder<T>                _builder;
 
 		public CollectionSequence(ISelect<_, ICollection<T>> select) : this(select, ArrayBuilder<T>.Default) {}
 
-		public CollectionSequence(ISelect<_, ICollection<T>> select, IBuilder<T> builder)
+		public CollectionSequence(ISelect<_, ICollection<T>> select,
+		                          IBuilder<T> builder) : base(builder.Select(I<CollectionArraySelector<T>>.Default)
+		                                                             .Select(select.Select))
 		{
 			_select  = @select;
 			_builder = builder;
 		}
-
-		public ISelect<_, T[]> Get() => _builder.Get()
-		                                        .To(I<CollectionArraySelector<T>>.Default)
-		                                        .To(_select.Select);
 
 		public ISequence<_, T> Get(IAlterSelection parameter)
 			=> new CollectionSequence<_, T>(_select, _builder.Get(parameter));

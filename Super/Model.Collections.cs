@@ -46,28 +46,20 @@ namespace Super
 		public static ISequence<T> ToSequence<T>(this ISource<IEnumerable<T>> @this)
 			=> @this as ISequence<T> ?? new DecoratedSequence<T>(@this);
 
-		public static IArrays<T> ToArray<T>(this ISequence<T> @this)
-			=> new DelegatedArrays<T>(Access<T>.Default.Out(@this).Get);
+		public static IArray<T> ToArray<T>(this ISequence<T> @this)
+			=> new DelegatedArray<T>(Access<T>.Default.Out(@this).Get);
 
-		public static IArrays<T> ToStore<T>(this ISequence<T> @this)
-			=> new DelegatedArrays<T>(Access<T>.Default.Out(@this).Singleton().Get);
+		public static IArray<T> ToStore<T>(this ISequence<T> @this)
+			=> new DelegatedArray<T>(Access<T>.Default.Out(@this).Singleton().Get);
 
-		public static IArrays<T> ToStore<T>(this IArrays<T> @this) => @this.ToDelegate().ToStore();
+		public static IArray<T> ToStore<T>(this IArray<T> @this) => @this.ToDelegate().ToStore();
 
-		public static IArrays<T> ToStore<T>(this Func<ReadOnlyMemory<T>> @this)
-			=> new DelegatedArrays<T>(@this.Out().Singleton().Get);
+		public static IArray<T> ToStore<T>(this Func<Array<T>> @this)
+			=> new DelegatedArray<T>(@this.Out().Singleton().Get);
 
-		public static IArray<TFrom, TTo> ToArray<TFrom, TTo>(this ISelect<TFrom, IEnumerable<TTo>> @this)
-			=> @this.ToDelegate().ToArray();
+		public static IArray<_, T> ToStore<_, T>(this ISelect<_, Array<T>> @this) => @this.ToDelegate().ToStore();
 
-		public static IArray<TFrom, TTo> ToArray<TFrom, TTo>(this Func<TFrom, IEnumerable<TTo>> @this)
-			=> new Array<TFrom, TTo>(@this);
-
-		public static IArray<TFrom, TTo> ToStore<TFrom, TTo>(this IArray<TFrom, TTo> @this)
-			=> @this.ToDelegate().ToStore();
-
-		public static IArray<TFrom, TTo> ToStore<TFrom, TTo>(this Func<TFrom, ReadOnlyMemory<TTo>> @this)
-			=> new ArrayStore<TFrom, TTo>(@this);
+		public static IArray<_, T> ToStore<_, T>(this Func<_, Array<T>> @this) => new ArrayStore<_, T>(@this);
 
 		public static ISelect<IEnumerable<TFrom>, IEnumerable<TTo>> Select<TFrom, TTo>(this ISelect<TFrom, TTo> @this)
 			=> @this.ToDelegate().To(I<SelectSelector<TFrom, TTo>>.Default);
@@ -142,35 +134,35 @@ namespace Super
 			=>        /*@this.Select(new ExpressionSelector<TFrom, TTo>(select))*/
 				null; // TODO: FIX!
 
-		public static ISelect<TIn, ReadOnlyMemory<TOut>> Where<TIn, TOut>(
-			this ISelect<TIn, ReadOnlyMemory<TOut>> @this, Expression<Func<TOut, bool>> specification)
+		public static ISelect<TIn, Array<TOut>> Where<TIn, TOut>(
+			this ISelect<TIn, Array<TOut>> @this, Expression<Func<TOut, bool>> specification)
 			=> new Where<TIn, TOut>(@this, specification.Compile());
 
-		public static ISelect<TIn, TOut> FirstAssigned<TIn, TOut>(this ISelect<TIn, ReadOnlyMemory<TOut>> @this)
+		public static ISelect<TIn, TOut> FirstAssigned<TIn, TOut>(this ISelect<TIn, Array<TOut>> @this)
 			where TOut : class => @this.Select(FirstAssigned<TOut>.Default);
 
-		public static ISelect<TIn, TOut?> FirstAssigned<TIn, TOut>(this ISelect<TIn, ReadOnlyMemory<TOut?>> @this)
+		public static ISelect<TIn, TOut?> FirstAssigned<TIn, TOut>(this ISelect<TIn, Array<TOut?>> @this)
 			where TOut : struct => @this.Select(FirstAssignedValue<TOut>.Default);
 
-		public static ISelect<TIn, TOut> Only<TIn, TOut>(this ISelect<TIn, ReadOnlyMemory<TOut>> @this)
+		public static ISelect<TIn, TOut> Only<TIn, TOut>(this ISelect<TIn, Array<TOut>> @this)
 			=> @this.Select(Model.Collections.Only<TOut>.Default);
 
-		public static ISelect<TIn, TOut> Only<TIn, TOut>(this ISelect<TIn, ReadOnlyMemory<TOut>> @this,
+		public static ISelect<TIn, TOut> Only<TIn, TOut>(this ISelect<TIn, Array<TOut>> @this,
 		                                                 Func<TOut, bool> where)
 			=> @this.Select(I<Only<TOut>>.Default.From(where));
 
-		public static ISelect<TIn, TOut> Single<TIn, TOut>(this ISelect<TIn, ReadOnlyMemory<TOut>> @this)
+		public static ISelect<TIn, TOut> Single<TIn, TOut>(this ISelect<TIn, Array<TOut>> @this)
 			=> @this.Select(Single<TOut>.Default);
 
-		public static ISelect<TIn, TOut> Single<TIn, TOut>(this ISelect<TIn, ReadOnlyMemory<TOut>> @this,
+		public static ISelect<TIn, TOut> Single<TIn, TOut>(this ISelect<TIn, Array<TOut>> @this,
 		                                                   Func<TOut, bool> where)
 			=> @this.Select(I<Single<TOut>>.Default.From(where));
 
 		public static ISelect<TIn, IEnumerable<TOut>> Yield<TIn, TOut>(this ISelect<TIn, TOut> @this)
 			=> @this.Select(YieldSelector<TOut>.Default);
 
-		public static ISelect<TIn, ReadOnlyMemory<TOut>> Access<TIn, TOut>(this ISelect<TIn, IEnumerable<TOut>> @this)
-			=> @this.Select(x => new ReadOnlyMemory<TOut>(x.ToArray()));
+		/*public static ISelect<TIn, ReadOnlyMemory<TOut>> Access<TIn, TOut>(this ISelect<TIn, IEnumerable<TOut>> @this)
+			=> @this.Select(x => new ReadOnlyMemory<TOut>(x.ToArray()));*/
 
 		/*public static ISelect<TIn, ReadOnlyMemory<TOut>> Access<TIn, TOut>(
 			this ISelect<TIn, ImmutableArray<TOut>> @this)
