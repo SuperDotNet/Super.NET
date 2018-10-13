@@ -1,6 +1,7 @@
 ﻿using JetBrains.Annotations;
 using Super.Model.Collections;
 using Super.Model.Selection;
+using Super.Model.Sequences;
 using Super.Model.Sources;
 using Super.Model.Specifications;
 using Super.Reflection;
@@ -23,16 +24,15 @@ namespace Super.Runtime.Environment
 	{
 		public static ComponentTypesDefinition Default { get; } = new ComponentTypesDefinition();
 
-		ComponentTypesDefinition() : this(Types.Default, ComponentTypesPredicate.Default, x => x.Sort().Result()) {}
+		ComponentTypesDefinition() : this(Types.Default, CanActivate.Default.IsSatisfiedBy) {}
 
-		public ComponentTypesDefinition(IArray<Type> types, ISelectSequence<Type> where,
-		                                Func<ISelect<Type, IEnumerable<Type>>, ISelect<Type, Array<Type>>>
-			                                select)
-			: base(types.Select(x => x.Reference())
-			            .Select(where)
-			            .Select(x => x.ToImmutableArray())
+		public ComponentTypesDefinition(IArray<Type> types, Func<Type, bool> where)
+			: base(types.Out(x => x.Sequence())
+			            .Where(where)
+			            .Result()
 			            .Select(I<ComponentTypesSelector>.Default)
-			            .Select(select)) {}
+			            .Select(x => x.Sort().Result())
+			            .Out()) {}
 	}
 
 	sealed class ComponentTypes : DelegatedInstanceSelector<Type, Array<Type>>
@@ -42,15 +42,6 @@ namespace Super.Runtime.Environment
 		ComponentTypes() : base(ComponentTypesDefinition.Default.Select(x => x.ToStore()).ToContextual()) {}
 	}
 
-	sealed class ComponentTypesPredicate : WhereSelector<Type>
-	{
-		public static ComponentTypesPredicate Default { get; } = new ComponentTypesPredicate();
-
-		ComponentTypesPredicate() : this(CanActivate.Default.IsSatisfiedBy) {}
-
-		public ComponentTypesPredicate(Func<Type, bool> @where) : base(@where) {}
-	}
-
 	sealed class SourceDefinition : MakeGenericType
 	{
 		public static SourceDefinition Default { get; } = new SourceDefinition();
@@ -58,14 +49,14 @@ namespace Super.Runtime.Environment
 		SourceDefinition() : base(typeof(ISource<>)) {}
 	}
 
-	sealed class ComponentTypesSelector : ISelect<Type, IEnumerable<Type>>, IActivateMarker<ImmutableArray<Type>>
+	sealed class ComponentTypesSelector : ISelect<Type, IEnumerable<Type>>, IActivateMarker<Array<Type>>
 	{
 		readonly ImmutableArray<Type>            _types;
 		readonly ISpecification<Type>            _specification;
 		readonly Func<Type, ISelect<Type, Type>> _selections;
 
 		[UsedImplicitly]
-		public ComponentTypesSelector(ImmutableArray<Type> types)
+		public ComponentTypesSelector(Array<Type> types)
 			: this(types, IsAssigned<Type>.Default, Selections.Default.Get) {}
 
 		public ComponentTypesSelector(ImmutableArray<Type> types,

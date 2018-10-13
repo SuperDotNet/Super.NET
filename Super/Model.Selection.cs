@@ -9,7 +9,6 @@ using Super.Runtime;
 using Super.Text;
 using System;
 using System.Collections.Immutable;
-using System.Reactive;
 
 namespace Super
 {
@@ -24,7 +23,7 @@ namespace Super
 
 		public static ISelect<TIn, TOut> AsSelect<TIn, TOut>(this ISelect<TIn, TOut> @this) => @this;
 
-		public static ISelect<Unit, T> AsSelect<T>(this IAny<T> @this) => @this;
+		//public static ISelect<Unit, T> AsSelect<T>(this IAny<T> @this) => @this;
 
 		public static ISelect<object, T> AsAny<T>(this IAny<T> @this) => @this;
 

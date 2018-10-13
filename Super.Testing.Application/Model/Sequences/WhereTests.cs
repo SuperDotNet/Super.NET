@@ -56,7 +56,7 @@ namespace Super.Testing.Application.Model.Sequences
 		void Verify()
 		{
 			const uint count = 10_000_000u;
-			var array = Numbers.Default
+			var array = Numbers.Default.Reference().Fixed()
 			                   .Sequence()
 			                   .Skip(count - 5)
 			                   .Take(5)

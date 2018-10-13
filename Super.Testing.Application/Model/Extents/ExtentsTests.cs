@@ -13,7 +13,10 @@ namespace Super.Testing.Application.Model.Extents
 		[Fact]
 		void VerifySourceDirect()
 		{
-			new Source<string>("Hello World!").Out().AsSelect().Type().Metadata().Out().Get().Should().Be(Type<string>.Metadata);
+			new Source<string>("Hello World!").Out(x => x.Type().Metadata().Out())
+			                                  .Get()
+			                                  .Should()
+			                                  .Be(Type<string>.Metadata);
 		}
 
 		[Fact]
@@ -32,7 +35,7 @@ namespace Super.Testing.Application.Model.Extents
 		[Fact]
 		void VerifyOnlyOnce()
 		{
-			var count = 0;
+			var count   = 0;
 			var counter = new Select<string, int>(x => count++).OnlyOnce();
 			count.Should().Be(0);
 			counter.Get("HelloWorld");

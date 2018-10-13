@@ -80,15 +80,4 @@ namespace Super.Model.Collections
 	}
 
 	public interface ISelectSequence<T> : IAlteration<IEnumerable<T>> {}
-
-	/*public class SelectSequence<T> : ISelectSequence<T>
-	{
-		readonly ReadOnlyMemory<IAlteration<IEnumerable<T>>> _alterations;
-
-		public SelectSequence(params IAlteration<IEnumerable<T>>[] alterations) => _alterations = alterations;
-
-		public IEnumerable<T> Get(IEnumerable<T> parameter)
-			=> _alterations.AsEnumerable()
-			               .Aggregate(parameter, (enumerable, alteration) => alteration.Get(enumerable));
-	}*/
 }

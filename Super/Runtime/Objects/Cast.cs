@@ -10,7 +10,8 @@ namespace Super.Runtime.Objects
 	{
 		public static Cast<TFrom, TTo> Default { get; } = new Cast<TFrom, TTo>();
 
-		Cast() : base(Default<TFrom, TTo>.Instance.Unless(CanCast<TFrom, TTo>.Default, CastSelector<TFrom, TTo>.Default)) {}
+		Cast() : base(Default<TFrom, TTo>.Instance.Unless(CanCast<TFrom, TTo>.Default,
+		                                                  CastSelector<TFrom, TTo>.Default)) {}
 	}
 
 	sealed class ValueAwareCast<TFrom, TTo> : DecoratedSelect<TFrom, TTo>
@@ -27,7 +28,8 @@ namespace Super.Runtime.Objects
 
 		OnlyOnceAlteration() {}
 
-		public ISelect<TIn, TOut> Get(ISelect<TIn, TOut> parameter) => new First().Out().Select(I<TIn>.Default).Out().Then(parameter);
+		public ISelect<TIn, TOut> Get(ISelect<TIn, TOut> parameter)
+			=> new First().Out().Accept(I<TIn>.Default).Out().Then(parameter);
 	}
 
 	sealed class OncePerParameter<TIn, TOut> : IAlteration<ISelect<TIn, TOut>>

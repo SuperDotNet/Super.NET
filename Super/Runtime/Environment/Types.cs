@@ -22,17 +22,15 @@ namespace Super.Runtime.Environment
 		public Types(IArray<Type> instance) : base(instance) {}
 	}
 
-	public class Types<T> : DecoratedArray<Type> where T : class, IActivateMarker<Assembly>, IArray<Type>
+	public class Types<T> : ArrayStore<Type> where T : class, IActivateMarker<Assembly>, IArray<Type>
 	{
 		public static Types<T> Default { get; } = new Types<T>();
 
-		Types() : this(Assemblies.Default) {}
+		Types() : this(Assemblies.Default.Select(y => y.Select(I<T>.Default.From)
+		                                               .SelectMany(x => x.Get().Reference()))
+		                         .Result()) {}
 
-		public Types(ISequence<Assembly> assemblies)
-			: base(assemblies.Select(y => y.Select(I<T>.Default.From)
-			                               .SelectMany(x => x.Get().Reference()))
-			                 .ToSequence()
-			                 .ToArray()) {}
+		public Types(ISource<Array<Type>> source) : base(source) {}
 	}
 
 	public sealed class StorageTypeDefinition : Variable<Type>

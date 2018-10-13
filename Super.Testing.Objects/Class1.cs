@@ -4,9 +4,9 @@ using Serilog;
 using Super.Diagnostics.Logging;
 using Super.Model.Collections;
 using Super.Model.Selection;
-using Super.Model.Selection.Stores;
 using Super.Model.Sequences;
 using Super.Model.Sources;
+using Super.Reflection;
 using Super.Runtime.Activation;
 using Super.Text;
 using Super.Text.Formatting;
@@ -14,7 +14,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reactive;
 
 namespace Super.Testing.Objects
 {
@@ -86,22 +85,27 @@ namespace Super.Testing.Objects
 		AllNumbers() : base(Enumerable.Range(0, int.MaxValue)) {}
 	}
 
-	sealed class Numbers : Store<uint, int[]>
+	sealed class Numbers : ArrayStore<uint, int>
 	{
 		public static Numbers Default { get; } = new Numbers();
 
-		Numbers() : base(AllNumbers.Default.Take().Capture().Get) {}
+		Numbers() : base(AllNumbers.Default.ToDelegate().To(I<ClassicTake<int>>.Default).Result().Get) {}
+	}
+
+	sealed class ClassicTake<T> : ISelect<uint, IEnumerable<T>>, IActivateMarker<Func<IEnumerable<T>>>
+	{
+		readonly Func<IEnumerable<T>> _source;
+
+		public ClassicTake(Func<IEnumerable<T>> source) => _source = source;
+
+		public IEnumerable<T> Get(uint parameter) => _source().Take((int)parameter);
 	}
 
 	sealed class Data : Source<string[]>
 	{
 		public static Data Default { get; } = new Data();
 
-		Data() : base(FixtureInstance.Default.Many<string>(10_000)
-		                             .Out()
-		                             .AsSelect()
-		                             .Result()
-		                             .Get(Unit.Default)) {}
+		Data() : base(FixtureInstance.Default.Many<string>(10_000).Out(x => x.Result().Out()).Get()) {}
 	}
 
 	public sealed class Sequencing<T>
@@ -110,10 +114,9 @@ namespace Super.Testing.Objects
 
 		Sequencing() : this(In<T[]>.Start().Sequence()) {}
 
-		public Sequencing(Model.Sequences.ISequence<T[], T> sequence)
-			: this(sequence, Objects.Near.Default, Objects.Far.Default) {}
+		public Sequencing(ISequence<T[], T> sequence) : this(sequence, Objects.Near.Default, Objects.Far.Default) {}
 
-		public Sequencing(Model.Sequences.ISequence<T[], T> sequence, Selection near, Selection far)
+		public Sequencing(ISequence<T[], T> sequence, Selection near, Selection far)
 			: this(sequence.Get(), sequence.Select(near).Get(), sequence.Select(far).Get()) {}
 
 		public Sequencing(ISelect<T[], T[]> full, ISelect<T[], T[]> near, ISelect<T[], T[]> far)

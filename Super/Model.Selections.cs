@@ -64,7 +64,7 @@ namespace Super
 			where TTo : IActivateMarker<TFrom>
 			=> @this.Select(infer.From);
 
-		public static ISelect<T, TOut> Select<T, TOut>(this ISelect<Unit, TOut> @this, I<T> _)
+		public static ISelect<T, TOut> Accept<T, TOut>(this ISelect<Unit, TOut> @this, I<T> _)
 			=> In<T>.Start(Unit.Default).Select(@this);
 
 		public static ISelect<TParameter, TResult> Select<TParameter, TResult>(

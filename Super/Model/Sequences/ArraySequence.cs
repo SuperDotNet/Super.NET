@@ -1,10 +1,11 @@
 ﻿using Super.Model.Collections;
 using Super.Model.Selection;
 using Super.Model.Sources;
+using Super.Runtime.Activation;
 
 namespace Super.Model.Sequences
 {
-	sealed class ArraySequence<_, T> : DecoratedSource<ISelect<_, T[]>>, ISequence<_, T>
+	sealed class ArraySequence<_, T> : DecoratedSource<ISelect<_, T[]>>, ISequence<_, T>, IActivateMarker<ISelect<_, Store<T>>>
 	{
 		readonly ISelect<_, Store<T>> _select;
 		readonly IBuilder<T>          _builder;

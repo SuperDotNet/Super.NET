@@ -1,4 +1,5 @@
-﻿using Super.Model.Commands;
+﻿using Super.Model.Collections;
+using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
 using Super.Model.Sources;
@@ -9,6 +10,7 @@ using Super.Runtime.Activation;
 using Super.Runtime.Execution;
 using Super.Text;
 using System;
+using System.Collections.Generic;
 using System.Reactive;
 using IAny = Super.Model.Specifications.IAny;
 
@@ -21,19 +23,22 @@ namespace Super
 
 		public static ISource<T> Default<T>(this ISource<T> _) => Model.Sources.Default<T>.Instance;
 
-		public static ISelect<TParameter, TResult> Out<TParameter, TResult>(this ISource<TResult> @this, I<TParameter> _)
+		public static ISelect<TParameter, TResult> Out<TParameter, TResult>(
+			this ISource<TResult> @this, I<TParameter> _)
 			=> new DelegatedResult<TParameter, TResult>(@this.Get);
 
 		public static IAny Out<T>(this ISource<T> @this, ISpecification<T> specification)
 			=> @this.Out(specification.IsSatisfiedBy);
 
-		public static IAny Out<T>(this ISource<T> @this, ISelect<T, bool> specification) => @this.Out(specification.Get);
+		public static IAny Out<T>(this ISource<T> @this, ISelect<T, bool> specification)
+			=> @this.Out(specification.Get);
 
 		public static ISelect<TFrom, TTo> Out<TFrom, TTo>(this ISource<TTo> @this, ISelect<TFrom, TTo> select)
 			=> @this.Out(I<TFrom>.Default).Unless(select);
 
 		public static IAny Out<T>(this ISource<T> @this, Func<T, bool> specification)
-			=> new DelegatedResultSpecification(new DelegatedSelection<T, bool>(specification, @this.ToDelegate()).Get).Any();
+			=> new DelegatedResultSpecification(new DelegatedSelection<T, bool>(specification, @this.ToDelegate()).Get)
+				.Any();
 
 		public static Model.Commands.IAny Out<T>(this ISource<T> @this, ISelect<T, Unit> select)
 			=> @this.Out(select.Out());
@@ -43,6 +48,9 @@ namespace Super
 
 		public static ISelect<TIn, TOut> Emit<TIn, TOut>(this ISource<ISelect<TIn, TOut>> @this)
 			=> new DelegatedInstanceSelector<TIn, TOut>(@this);
+
+		public static TTo Out<TFrom, TTo>(this ISource<TFrom> @this, Func<ISelect<Unit, TFrom>, TTo> select)
+			=> select(@this.Out());
 
 		/*public static ISource<ISelect<TIn, TTo>> Select<TIn, TFrom, TTo>(this ISource<ISelect<TIn, TFrom>> source, Func<TFrom, TTo> select)
 			=> @this.Select(source.Emit());*/
@@ -61,7 +69,8 @@ namespace Super
 		public static ISource<T> Select<T>(this ISource<T> @this, IMessage<T> message)
 			=> @this.Select(Model.Selection.Self<T>.Default.Guard(message));
 
-		public static ISource<TTo> Select<TFrom, TTo>(this ISource<TFrom> @this, I<TTo> _) where TTo : IActivateMarker<TFrom>
+		public static ISource<TTo> Select<TFrom, TTo>(this ISource<TFrom> @this, I<TTo> _)
+			where TTo : IActivateMarker<TFrom>
 			=> @this.Select(MarkedActivations<TFrom, TTo>.Default);
 
 		public static ISource<TTo> Select<TFrom, TTo>(this ISource<TFrom> @this, ISelect<TFrom, TTo> select)
@@ -83,6 +92,17 @@ namespace Super
 
 		public static Func<T> ToDelegate<T>(this ISource<T> @this) => @this.Get;
 
-		public static Func<T> ToDelegateReference<T>(this ISource<T> @this) => Model.Sources.Delegates<T>.Default.Get(@this);
+		public static Func<T> ToDelegateReference<T>(this ISource<T> @this)
+			=> Model.Sources.Delegates<T>.Default.Get(@this);
+
+		/**/
+
+		public static IArray<T> ToStore<T>(this ISource<Array<T>> @this) => @this.ToDelegate().ToStore();
+
+		public static IArray<T> ToStore<T>(this Func<Array<T>> @this) => @this.To(I<ArrayStore<T>>.Default);
+
+		public static IArray<T> Result<T>(this ISource<IEnumerable<T>> @this)
+			=> @this.Select(Model.Collections.Result<T>.Default)
+			        .To(I<DecoratedArray<T>>.Default);
 	}
 }

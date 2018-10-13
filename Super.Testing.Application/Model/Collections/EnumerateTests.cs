@@ -1,7 +1,4 @@
-﻿using FluentAssertions;
-using System.Collections.Generic;
-using System.Linq;
-using Xunit;
+﻿using Xunit;
 
 namespace Super.Testing.Application.Model.Collections
 {
@@ -29,22 +26,22 @@ namespace Super.Testing.Application.Model.Collections
 		[Fact]
 		void VerifyBasic()
 		{
-			In<IEnumerable<uint>>.Start()
+			/*In<IEnumerable<uint>>.Start()
 			                     .Iterate()
 			                     .Skip(500)
 			                     .Take(100)
 			                     .Reference()
 			                     .Get(Numbers())
 			                     .Should()
-			                     .Equal(Numbers().Skip(500).Take(100));
+			                     .Equal(Numbers().Skip(500).Take(100));*/
 		}
 
-		IEnumerable<uint> Numbers()
+		/*IEnumerable<uint> Numbers()
 		{
 			for (var i = 0u; i < Count; i++)
 			{
 				yield return i;
 			}
-		}
+		}*/
 	}
 }

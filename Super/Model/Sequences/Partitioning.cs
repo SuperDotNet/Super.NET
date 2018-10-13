@@ -64,7 +64,7 @@ namespace Super.Model.Sequences
 		}
 	}
 
-	public readonly struct Store<T>
+	public readonly struct Store<T> : IActivateMarker<T[]>
 	{
 		public static implicit operator Store<T>(T[] instance) => new Store<T>(instance, (uint)instance.Length);
 

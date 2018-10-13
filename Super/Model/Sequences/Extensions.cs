@@ -1,5 +1,6 @@
 ﻿using Super.Model.Collections;
 using Super.Model.Selection;
+using Super.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -8,8 +9,11 @@ namespace Super.Model.Sequences
 {
 	public static class Extensions
 	{
+		public static ISequence<_, T> Sequence<_, T>(this ISelect<_, Array<T>> @this)
+			=> @this.Reference().Fixed().Sequence();
+
 		public static ISequence<_, T> Sequence<_, T>(this ISelect<_, T[]> @this)
-			=> new ArraySequence<_, T>(@this.Select(x => new Store<T>(x)));
+			=> @this.Select(I<Store<T>>.Default).To(I<ArraySequence<_, T>>.Default);
 
 		public static ISequence<_, T> Sequence<_, T>(this ISelect<_, ICollection<T>> @this)
 			=> new CollectionSequence<_, T>(@this);
@@ -28,7 +32,7 @@ namespace Super.Model.Sequences
 		public static ISequence<_, T> Where<_, T>(this ISequence<_, T> @this, Func<T, bool> where)
 			=> @this.Get(new Where<T>(where));
 
-		public static ISelect<_, Array<T>> Result<_, T>(this ISequence<_, T> @this) => @this.Get().Array();
+		public static ISelect<_, Array<T>> Result<_, T>(this ISequence<_, T> @this) => @this.Get().Result();
 
 		/**/
 
