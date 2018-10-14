@@ -1,7 +1,7 @@
-﻿using Super.Model.Collections;
-using Super.Model.Commands;
+﻿using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Selection.Stores;
+using Super.Model.Sequences;
 using Super.Model.Specifications;
 using Super.Reflection;
 using Super.Reflection.Types;

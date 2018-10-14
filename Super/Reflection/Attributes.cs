@@ -1,5 +1,5 @@
-﻿using Super.Model.Collections;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
+using Super.Model.Sequences;
 using Super.Model.Specifications;
 using System;
 using System.Linq;
@@ -17,11 +17,10 @@ namespace Super.Reflection
 
 		public Attributes(ISpecification<ICustomAttributeProvider> specification,
 		                  IDeclared<TAttribute> attribute, Func<TAttribute, T> select)
-			: base(specification, attribute.Reference()
-			                               .Select(x => x.Select(select)) // TODO: fix.
+			: base(specification, attribute.Select(x => x.Reference().Select(select)) // TODO: fix.
+			                               .Result()
 			                               .ToStore()
-			                               .If(specification)
-			                               .Result()) {}
+			                               .If(specification)) {}
 	}
 
 	sealed class Attributes<T> : ArrayStore<ICustomAttributeProvider, T>, IAttributes<T>

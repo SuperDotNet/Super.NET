@@ -1,7 +1,7 @@
-﻿using Super.Model.Collections;
-using Super.Model.Commands;
+﻿using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
+using Super.Model.Sequences;
 using Super.Model.Sources;
 using Super.Model.Specifications;
 using Super.Reflection;
@@ -102,7 +102,7 @@ namespace Super
 		public static IArray<T> ToStore<T>(this Func<Array<T>> @this) => @this.To(I<ArrayStore<T>>.Default);
 
 		public static IArray<T> Result<T>(this ISource<IEnumerable<T>> @this)
-			=> @this.Select(Model.Collections.Result<T>.Default)
+			=> @this.Select(Model.Sequences.Result<T>.Default)
 			        .To(I<DecoratedArray<T>>.Default);
 	}
 }

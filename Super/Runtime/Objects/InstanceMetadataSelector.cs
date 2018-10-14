@@ -8,6 +8,6 @@ namespace Super.Runtime.Objects
 	{
 		public static InstanceMetadataSelector<T> Default { get; } = new InstanceMetadataSelector<T>();
 
-		InstanceMetadataSelector() : base(InstanceTypeSelector<T>.Default.Select(TypeMetadata.Default)) {}
+		InstanceMetadataSelector() : base(InstanceType<T>.Default.Select(TypeMetadata.Default)) {}
 	}
 }

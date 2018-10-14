@@ -1,5 +1,6 @@
-﻿using Super.Model.Collections;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
+using Super.Model.Sequences;
+using Super.Model.Sequences.Query;
 using Super.Model.Sources;
 using System;
 using System.Reflection;

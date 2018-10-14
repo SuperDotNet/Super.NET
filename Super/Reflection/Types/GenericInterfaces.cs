@@ -1,5 +1,5 @@
-﻿using Super.Model.Collections;
-using Super.Model.Selection.Stores;
+﻿using Super.Model.Selection.Stores;
+using Super.Model.Sequences;
 using System.Linq;
 using System.Reflection;
 

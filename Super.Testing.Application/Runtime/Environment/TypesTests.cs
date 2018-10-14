@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Super.Model.Collections;
+using Super.Model.Sequences;
 using Super.Runtime.Execution;
 using System;
 using System.Collections.Generic;

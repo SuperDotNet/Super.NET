@@ -51,7 +51,7 @@ namespace Super
 			=> New<TFrom>.Default.Select(@this);
 
 		public static ISelect<TIn, Type> Type<TIn, TOut>(this ISelect<TIn, TOut> @this)
-			=> @this.Select(InstanceTypeSelector<TOut>.Default);
+			=> @this.Select(InstanceType<TOut>.Default);
 
 		public static ISelect<T, TypeInfo> Metadata<T>(this ISelect<T, Type> @this)
 			=> @this.Select(TypeMetadata.Default);

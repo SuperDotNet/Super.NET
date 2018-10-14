@@ -1,9 +1,9 @@
 ﻿using JetBrains.Annotations;
 using LightInject;
-using Super.Model.Collections;
 using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
+using Super.Model.Sequences.Query;
 using Super.Model.Sources;
 using Super.Reflection;
 using Super.Reflection.Members;

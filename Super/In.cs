@@ -45,6 +45,6 @@ namespace Super
 		public static ISelect<T, TResult> Select<TResult>(Func<T, TResult> @this)
 			=> Selections<T, TResult>.Default.Get(@this);
 
-		public static ISelect<T, Type> Type() => InstanceTypeSelector<T>.Default;
+		public static ISelect<T, Type> Type() => InstanceType<T>.Default;
 	}
 }

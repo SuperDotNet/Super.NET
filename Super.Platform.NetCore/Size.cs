@@ -1,5 +1,5 @@
 ﻿using JetBrains.Annotations;
-using Super.Model.Collections;
+using Super.Model.Sequences;
 using Super.Model.Sources;
 using Super.Reflection.Types;
 using System;

@@ -13,7 +13,7 @@ namespace Super.Model.Collections
 	{
 		public KeyedByTypeCollection() : this(Empty<T>.Enumerable) {}
 
-		public KeyedByTypeCollection(IEnumerable<T> items) : base(InstanceTypeSelector<T>.Default.Get)
+		public KeyedByTypeCollection(IEnumerable<T> items) : base(InstanceType<T>.Default.Get)
 		{
 			foreach (var obj in items)
 			{

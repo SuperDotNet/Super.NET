@@ -1,5 +1,4 @@
-﻿using Super.Model.Collections;
-using Super.Model.Commands;
+﻿using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Runtime.Activation;
 using System.Buffers;
@@ -39,16 +38,16 @@ namespace Super.Model.Sequences
 
 	public interface IArraySelector<T> : ISelect<Store<T>, T[]> {}
 
-	sealed class ArraySelector<T> : IArraySelector<T>, IActivateMarker<Collections.Selection>
+	sealed class ArraySelector<T> : IArraySelector<T>, IActivateMarker<Selection>
 	{
 		public static ArraySelector<T> Default { get; } = new ArraySelector<T>();
 
-		ArraySelector() : this(Collections.Selection.Default) {}
+		ArraySelector() : this(Selection.Default) {}
 
 		readonly uint                 _start;
 		readonly Assigned<uint>       _length;
 
-		public ArraySelector(Collections.Selection selection) : this(selection.Start, selection.Length) {}
+		public ArraySelector(Selection selection) : this(selection.Start, selection.Length) {}
 
 		public ArraySelector(uint start, Assigned<uint> length)
 		{

@@ -1,5 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
-using Super.Model.Collections;
+using Super.Model.Sequences;
 using System.Collections.Immutable;
 
 namespace Super.Testing.Application

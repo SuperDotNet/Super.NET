@@ -1,5 +1,5 @@
-﻿using Super.Model.Collections;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
+using Super.Model.Sequences;
 using System;
 using System.Collections.Immutable;
 using System.Linq;
@@ -11,9 +11,8 @@ namespace Super.Reflection.Types
 	{
 		protected GenericAdapterBase(Type definition, ISelect<TypeInfo, T> select)
 			: base(new Select<ImmutableArray<Type>, Array<Type>>(x => new Array<Type>(x.ToArray()))
-			                               // TODO: Fix.
-			                               .Select(new MakeGenericType(definition))
-			                               .Select(TypeMetadata.Default)
-			                               .Select(select)) {}
+			       .Select(new MakeGenericType(definition))
+			       .Select(TypeMetadata.Default)
+			       .Select(select)) {}
 	}
 }

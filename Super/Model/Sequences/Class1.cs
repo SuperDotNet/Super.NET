@@ -1,68 +1,59 @@
-﻿using Super.Model.Collections;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
+using Super.Model.Selection.Stores;
+using Super.Model.Sources;
+using Super.Runtime.Activation;
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Super.Model.Sequences
 {
-	sealed class Iterator<T> : IIterator<T>
+	public interface IArray<T> : ISource<Array<T>> {}
+
+	public class ArrayInstance<T> : Source<Array<T>>, IArray<T>
 	{
-		public static Iterator<T> Default { get; } = new Iterator<T>();
+		public ArrayInstance(IEnumerable<T> enumerable) : this(enumerable.Fixed()) {}
 
-		Iterator() : this(Allotted<T>.Default) {}
-
-		readonly IStore<T> _store;
-		readonly uint       _size;
-
-		public Iterator(IStore<T> store, uint size = 1024)
-		{
-			_store = store;
-			_size   = size;
-		}
-
-		public T[] Get(IIteration<T> parameter)
-		{
-			var store = new DynamicStore<T>(_size);
-			using (var session = _store.Session(_size))
-			{
-				Store<T>? next = new Store<T>(session.Store.Instance, 0);
-				while ((next = parameter.Get(next.Value)) != null)
-				{
-					store = store.Add(next.Value);
-				}
-			}
-			return store.Get();
-		}
+		public ArrayInstance(params T[] instance) : base(instance) {}
 	}
 
-	public interface IIteration<T> : ISelect<Store<T>, Store<T>?> {}
-
-	sealed class Iteration<T> : IIteration<T>
+	public class ArrayStore<T> : DeferredSingleton<Array<T>>, IArray<T>, IActivateMarker<ISource<Array<Type>>>, IActivateMarker<Func<Array<T>>>
 	{
-		readonly T[]  _source;
-		readonly uint _length;
+		public ArrayStore(ISource<Array<T>> source) : this(source.Get) {}
 
-		public Iteration(T[] source) : this(source, (uint)source.Length) {}
+		public ArrayStore(Func<Array<T>> source) : base(source) {}
+	}
 
-		public Iteration(T[] source, uint length)
-		{
-			_source = source;
-			_length = length;
-		}
+	public class DelegatedArray<T> : DelegatedSource<Array<T>>, IArray<T>
+	{
+		public DelegatedArray(Func<Array<T>> source) : base(source) {}
+	}
 
-		public Store<T>? Get(Store<T> parameter)
-		{
-			var index = parameter.Length;
-			if (index < _length)
-			{
-				var array   = parameter.Instance;
-				var advance = (uint)Math.Min(index + array.Length, _length) - index;
-				Array.Copy(_source, index,
-				           array, 0, advance);
+	public class DecoratedArray<T> : DecoratedSource<Array<T>>, IArray<T>
+	{
+		public DecoratedArray(ISource<Array<T>> source) : base(source) {}
+	}
 
-				return new Store<T>(array, index + advance);
-			}
+	public interface IArray<in TFrom, TItem> : ISelect<TFrom, Array<TItem>> {}
 
-			return null;
-		}
+	public class ArrayStore<TFrom, TTo> : Store<TFrom, Array<TTo>>, IArray<TFrom, TTo>
+	{
+		public ArrayStore(Func<TFrom, Array<TTo>> source) : base(source) {}
+	}
+
+	sealed class Result<T> : ISelect<IEnumerable<T>, Array<T>>
+	{
+		public static Result<T> Default { get; } = new Result<T>();
+
+		Result() {}
+
+		public Array<T> Get(IEnumerable<T> parameter) => new Array<T>(parameter.Fixed());
+	}
+
+	sealed class Immutable<T>  : Select<IEnumerable<T>, ImmutableArray<T>>
+	{
+		public static Immutable<T> Default { get; } = new Immutable<T>();
+
+		Immutable() : base(x => x.ToImmutableArray()) {}
 	}
 }

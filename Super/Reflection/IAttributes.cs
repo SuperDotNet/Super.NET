@@ -1,4 +1,4 @@
-﻿using Super.Model.Collections;
+﻿using Super.Model.Sequences;
 using System.Reflection;
 
 namespace Super.Reflection

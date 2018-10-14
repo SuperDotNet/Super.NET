@@ -1,0 +1,7 @@
+using System.Collections.Generic;
+using Super.Model.Selection;
+
+namespace Super.Model.Collections.Groups
+{
+	public interface IGroupCollection<T> : IEnumerable<T>, ISelect<GroupName, IList<T>> {}
+}

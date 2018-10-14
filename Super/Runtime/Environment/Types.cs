@@ -1,4 +1,3 @@
-using Super.Model.Collections;
 using Super.Model.Selection;
 using Super.Model.Sources;
 using Super.Reflection;
@@ -13,16 +12,16 @@ using System.Reflection;
 
 namespace Super.Runtime.Environment
 {
-	public sealed class Types : SystemStore<Array<Type>>, IArray<Type>
+	public sealed class Types : SystemStore<Model.Sequences.Array<Type>>, Model.Sequences.IArray<Type>
 	{
 		public static Types Default { get; } = new Types();
 
 		Types() : this(Types<PublicAssemblyTypes>.Default) {}
 
-		public Types(IArray<Type> instance) : base(instance) {}
+		public Types(Model.Sequences.IArray<Type> instance) : base(instance) {}
 	}
 
-	public class Types<T> : ArrayStore<Type> where T : class, IActivateMarker<Assembly>, IArray<Type>
+	public class Types<T> : Model.Sequences.ArrayStore<Type> where T : class, IActivateMarker<Assembly>, Model.Sequences.IArray<Type>
 	{
 		public static Types<T> Default { get; } = new Types<T>();
 
@@ -30,7 +29,7 @@ namespace Super.Runtime.Environment
 		                                               .SelectMany(x => x.Get().Reference()))
 		                         .Result()) {}
 
-		public Types(ISource<Array<Type>> source) : base(source) {}
+		public Types(ISource<Model.Sequences.Array<Type>> source) : base(source) {}
 	}
 
 	public sealed class StorageTypeDefinition : Variable<Type>
@@ -46,7 +45,7 @@ namespace Super.Runtime.Environment
 
 		SystemStores() : this(StorageTypeDefinition.Default.Select(I<MakeGenericType>.Default)) {}
 
-		public SystemStores(ISource<ISelect<Array<Type>, Type>> source)
+		public SystemStores(ISource<ISelect<Model.Sequences.Array<Type>, Type>> source)
 			: base(In<Type>.Start()
 			               .Yield()
 			               .Result()
@@ -74,7 +73,7 @@ namespace Super.Runtime.Environment
 	static class Implementations<T>
 	{
 		public static ISource<IStore<T>> Store { get; } =
-			SystemStores<T>.Default.Select(I<Model.Sources.Store<T>>.Default);
+			SystemStores<T>.Default.Select(I<Store<T>>.Default);
 	}
 
 	public class SystemStore<T> : Deferred<T>, IStore<T>

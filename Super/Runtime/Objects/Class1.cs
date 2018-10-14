@@ -1,6 +1,7 @@
 ﻿using JetBrains.Annotations;
 using Super.Model.Collections;
 using Super.Model.Selection;
+using Super.Model.Sequences;
 using Super.Reflection;
 using Super.Runtime.Activation;
 using Super.Runtime.Invocation;

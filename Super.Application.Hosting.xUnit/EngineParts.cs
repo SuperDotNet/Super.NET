@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
 using AutoFixture.Kernel;
 using JetBrains.Annotations;
-using Super.Model.Collections;
+using Super.Model.Sequences;
 using System.Collections.Generic;
 
 namespace Super.Application.Hosting.xUnit

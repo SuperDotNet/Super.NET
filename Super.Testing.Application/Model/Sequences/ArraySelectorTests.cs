@@ -37,7 +37,7 @@ namespace Super.Testing.Application.Model.Sequences
 
 			public Benchmarks() : this(Near.Default) {}
 
-			public Benchmarks(Super.Model.Collections.Selection selection)
+			public Benchmarks(Super.Model.Sequences.Selection selection)
 				: this(new ArraySelector<uint>(selection),
 				       FixtureInstance.Default
 				                      .Many<uint>(10_000)

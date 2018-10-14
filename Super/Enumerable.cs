@@ -1,4 +1,5 @@
 ﻿using Super.Model.Collections;
+using Super.Model.Sequences.Query;
 using Super.Reflection;
 using Super.Runtime;
 using System;

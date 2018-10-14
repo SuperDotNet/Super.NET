@@ -1,5 +1,6 @@
 ﻿using Super.Model.Collections;
 using Super.Model.Selection;
+using Super.Model.Sequences;
 using Super.Model.Sequences.Query;
 using Super.Reflection;
 using System;
@@ -32,7 +33,7 @@ namespace Super
 			=> @this.Select(x => x.Fixed());
 
 		public static ISelect<_, Array<T>> Result<_, T>(this ISelect<_, IEnumerable<T>> @this)
-			=> @this.Select(Model.Collections.Result<T>.Default);
+			=> @this.Select(Model.Sequences.Result<T>.Default);
 
 		public static ISelect<_, IEnumerable<T>> Reference<_, T>(this ISelect<_, Array<T>> @this)
 			=> @this.Select(x => x.Reference());
@@ -106,7 +107,7 @@ namespace Super
 			where TOut : struct => @this.Select(FirstAssignedValue<TOut>.Default);
 
 		public static ISelect<TIn, TOut> Only<TIn, TOut>(this ISelect<TIn, Array<TOut>> @this)
-			=> @this.Select(Model.Collections.Only<TOut>.Default);
+			=> @this.Select(Model.Sequences.Query.Only<TOut>.Default);
 
 		public static ISelect<TIn, TOut> Only<TIn, TOut>(this ISelect<TIn, Array<TOut>> @this,
 		                                                 Func<TOut, bool> where)

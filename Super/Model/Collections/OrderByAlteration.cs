@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Super.Model.Selection.Alterations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Super.Model.Collections
 {
-	class OrderByAlteration<T, TMember> : ISelectSequence<T>
+	class OrderByAlteration<T, TMember> : IAlteration<IEnumerable<T>>
 	{
 		readonly IComparer<TMember> _comparer;
 		readonly Func<T, TMember>   _select;

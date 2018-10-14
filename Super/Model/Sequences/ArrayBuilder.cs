@@ -1,5 +1,4 @@
 ﻿using JetBrains.Annotations;
-using Super.Model.Collections;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
 using Super.Model.Sources;
@@ -9,10 +8,6 @@ using System;
 
 namespace Super.Model.Sequences
 {
-	public interface IBuilder<in TIn, T> : ISource<ISelector<TIn, T>>,
-	                                       ISelect<IAlterSelection, IBuilder<TIn, T>>,
-	                                       ISelect<ISegment<T>, IBuilder<TIn, T>> {}
-
 	public interface IBuilder<T> : ISource<IArraySelector<T>>,
 	                               ISelect<IAlterSelection, IBuilder<T>>,
 	                               ISelect<ISegment<T>, IBuilder<T>> {}
@@ -23,9 +18,6 @@ namespace Super.Model.Sequences
 
 	sealed class AlterNode<T> : Source<IArraySelector<T>>, IAlterNode<T>, IActivateMarker<INode<T>>
 	{
-		/*readonly static Func<IAlteration<Collections.Selection>, AlterNode<T>> Selectors
-			= Selections<T>.Default.Select(I<AlterNode<T>>.Default.From).Get;*/
-
 		public static AlterNode<T> Default { get; } = new AlterNode<T>();
 
 		AlterNode() : this(Node<T>.Default) {}
@@ -78,7 +70,7 @@ namespace Super.Model.Sequences
 		public IBuilder<T> Get(IAlterSelection parameter) => _alter.Get(parameter).To(I<ArrayBuilder<T>>.Default.From);
 	}
 
-	public interface IAlterSelection : IAlteration<Collections.Selection> {}
+	public interface IAlterSelection : IAlteration<Selection> {}
 
 	/*public interface IArraySelectors<T> : ISelect<IAlterSelection, IArraySelectors<T>>,
 	                                      ISelect<ISessions<T>, IStructure<ArrayView<T>, Session<T>>>,
@@ -194,12 +186,12 @@ namespace Super.Model.Sequences
 	{
 		public static SelectedSegment<T> Default { get; } = new SelectedSegment<T>();
 
-		SelectedSegment() : this(Collections.Selection.Default) {}
+		SelectedSegment() : this(Selection.Default) {}
 
 		readonly uint           _start;
 		readonly Assigned<uint> _length;
 
-		public SelectedSegment(Collections.Selection selection) : this(selection.Start, selection.Length) {}
+		public SelectedSegment(Selection selection) : this(selection.Start, selection.Length) {}
 
 		public SelectedSegment(uint start, Assigned<uint> length)
 		{

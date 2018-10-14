@@ -2,9 +2,9 @@
 using JetBrains.Annotations;
 using Serilog;
 using Super.Diagnostics.Logging;
-using Super.Model.Collections;
 using Super.Model.Selection;
 using Super.Model.Sequences;
+using Super.Model.Sequences.Query;
 using Super.Model.Sources;
 using Super.Reflection;
 using Super.Runtime.Activation;
