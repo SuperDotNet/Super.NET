@@ -1,5 +1,5 @@
-﻿using Super.Model.Collections;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
+using Super.Model.Sequences.Query;
 using Super.Model.Sources;
 using Super.Model.Specifications;
 using Super.Reflection;
@@ -37,7 +37,7 @@ namespace Super.Runtime.Environment
 				: base(metadata.Select(GenericInterfaceImplementations.Default)
 				               .ToDelegate()
 				               .Select(I<OneItemIs<Type>>.Default)
-				               .Select(metadata.Select(GenericInterfaces.Default).Reference().Out)) {}
+				               .Select(metadata.Select(GenericInterfaces.Default).Instance().Out)) {}
 		}
 
 		sealed class Make : ISelect<Type, ISelect<Type, Type>>, IActivateMarker<Type>

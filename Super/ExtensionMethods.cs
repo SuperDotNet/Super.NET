@@ -1,6 +1,7 @@
 ﻿using Super.Model.Collections;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
+using Super.Model.Sequences.Query;
 using Super.Model.Sources;
 using Super.Model.Specifications;
 using Super.Reflection;
@@ -68,7 +69,7 @@ namespace Super
 		public static ISpecification<TIn> HasNone<TIn, TOut>(this ISelect<TIn, ICollection<TOut>> @this)
 			=> @this.Out(HasNone<TOut>.Default);
 
-		public static ISpecification<TIn> AllAre<TIn, TOut>(this ISelect<TIn, ICollection<TOut>> @this,
+		public static ISpecification<TIn> AllAre<TIn, TOut>(this ISelect<TIn, TOut[]> @this,
 		                                                    Func<TOut, bool> condition)
 			=> @this.Out(new AllItemsAre<TOut>(condition));
 
@@ -77,9 +78,6 @@ namespace Super
 
 		public static ISelect<TIn, TOut> Invoke<TIn, TOut>(this ISelect<TIn, Func<TOut>> @this)
 			=> @this.Select(Call<TOut>.Default);
-
-		public static ISelect<TIn, ISource<TOut>> Singleton<TIn, TOut>(this ISelect<TIn, ISource<TOut>> @this)
-			=> @this.Select(x => SingletonDelegateSelector<TOut>.Default.Get(x.ToDelegate()).Out());
 
 		public static ISelect<TIn, Func<TOut>> Singleton<TIn, TOut>(this ISelect<TIn, Func<TOut>> @this)
 			=> @this.Select(SingletonDelegateSelector<TOut>.Default);

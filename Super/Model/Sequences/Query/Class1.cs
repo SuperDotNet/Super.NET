@@ -1,6 +1,7 @@
 ﻿using Super.Model.Selection;
 using Super.Model.Specifications;
 using Super.Runtime.Activation;
+using Super.Runtime.Invocation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,22 @@ using System.Linq.Expressions;
 namespace Super.Model.Sequences.Query
 {
 	// TODO: Cull
+
+	public sealed class AllItemsAre<T> : DelegatedSpecification<T[]>, IActivateMarker<Func<T, bool>>
+	{
+		public AllItemsAre(Func<T, bool> specification) : this(new Predicate<T>(specification)) {}
+
+		public AllItemsAre(Predicate<T> specification)
+			: base(new Invocation0<T[], Predicate<T>, bool>(Array.TrueForAll, specification).Get) {}
+	}
+
+	public sealed class OneItemIs<T> : DelegatedSpecification<T[]>, IActivateMarker<Func<T, bool>>
+	{
+		public OneItemIs(Func<T, bool> specification) : this(new Predicate<T>(specification)) {}
+
+		public OneItemIs(Predicate<T> specification)
+			: base(new Invocation0<T[], Predicate<T>, bool>(Array.Exists, specification).Get) {}
+	}
 
 	public sealed class ArraySelector<TFrom, TTo> : ISelector<TFrom, TTo>
 	{

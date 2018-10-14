@@ -1,6 +1,5 @@
 ﻿using Super.Model.Specifications;
 using Super.Runtime.Activation;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,23 +39,5 @@ namespace Super.Model.Collections
 		public static HasNone<T> Default { get; } = new HasNone<T>();
 
 		HasNone() : base(HasAny<T>.Default) {}
-	}
-
-	public sealed class AllItemsAre<T> : ISpecification<IEnumerable<T>>, IActivateMarker<Func<T, bool>>
-	{
-		readonly Func<T, bool> _specification;
-
-		public AllItemsAre(Func<T, bool> specification) => _specification = specification;
-
-		public bool IsSatisfiedBy(IEnumerable<T> parameter) => parameter.All(_specification);
-	}
-
-	public sealed class OneItemIs<T> : ISpecification<IEnumerable<T>>, IActivateMarker<Func<T, bool>>
-	{
-		readonly Func<T, bool> _specification;
-
-		public OneItemIs(Func<T, bool> specification) => _specification = specification;
-
-		public bool IsSatisfiedBy(IEnumerable<T> parameter) => parameter.Any(_specification);
 	}
 }
