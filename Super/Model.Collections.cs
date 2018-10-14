@@ -48,6 +48,8 @@ namespace Super
 
 		/**/
 
+		// TODO: remove.
+
 		public static ISelect<IEnumerable<TFrom>, IEnumerable<TTo>> Select<TFrom, TTo>(this ISelect<TFrom, TTo> @this)
 			=> @this.ToDelegate().To(I<SelectSelector<TFrom, TTo>>.Default);
 

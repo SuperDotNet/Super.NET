@@ -3,7 +3,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics;
 using System.Linq;
 
 // ReSharper disable ComplexConditionExpression
@@ -13,8 +12,6 @@ namespace Super.Model.Collections
 	/// <summary>
 	/// ATTRIBUTION: https://github.com/mattmc3/dotmore
 	/// </summary>
-	[DebuggerDisplay("Count = {Count}")]
-	[DebuggerTypeProxy(typeof(OrderedDictionaryDebugView))]
 	public class OrderedDictionary<TKey, TValue> : IOrderedDictionary<TKey, TValue>
 	{
 		DelegatedKeyedCollection<TKey, KeyValuePair<TKey, TValue>> _delegatedKeyedCollection;
@@ -98,18 +95,12 @@ namespace Super.Model.Collections
 		/// <summary>
 		/// Gets all the keys in the ordered dictionary in their proper order.
 		/// </summary>
-		public ICollection<TKey> Keys
-		{
-			get { return _delegatedKeyedCollection.Select(x => x.Key).ToList(); }
-		}
+		public ICollection<TKey> Keys => _delegatedKeyedCollection.Select(x => x.Key).ToList();
 
 		/// <summary>
 		/// Gets all the values in the ordered dictionary in their proper order.
 		/// </summary>
-		public ICollection<TValue> Values
-		{
-			get { return _delegatedKeyedCollection.Select(x => x.Value).ToList(); }
-		}
+		public ICollection<TValue> Values => _delegatedKeyedCollection.Select(x => x.Value).ToList();
 
 		/// <summary>
 		/// Adds the specified key and value to the dictionary.

@@ -30,7 +30,7 @@ namespace Super.Runtime.Environment
 			            .Where(where)
 			            .Result()
 			            .Select(I<ComponentTypesSelector>.Default)
-			            .Select(x => x.Sort().Result())
+			            .Select(x => x.Fixed().Sort().Result())
 			            .Out()) {}
 	}
 

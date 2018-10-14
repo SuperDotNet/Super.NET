@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Super.Model.Collections
+namespace Super.Model.Sequences.Query
 {
 	sealed class InlineSelections<TFrom, TTo>
 		: ISelect<Expression<Func<TFrom, TTo>>, Expression<Action<TFrom[], TTo[], uint, uint>>>

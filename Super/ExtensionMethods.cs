@@ -45,7 +45,7 @@ namespace Super
 		public static ISelect<TIn, TNew> Activate<TIn, TNew>(this ISelect<TIn, Type> @this, I<TNew> infer)
 			=> @this.Select(Activator.Default).Cast(infer);
 
-		public static ISelect<TIn, IEnumerable<TOut>> Sort<TIn, TOut>(this ISelect<TIn, IEnumerable<TOut>> @this)
+		public static ISelect<TIn, TOut[]> Sort<TIn, TOut>(this ISelect<TIn, TOut[]> @this)
 			=> @this.Select(SortAlteration<TOut>.Default);
 
 		public static ISource<TTo> Reduce<TFrom, TTo>(this ISelect<TFrom, TTo> @this)

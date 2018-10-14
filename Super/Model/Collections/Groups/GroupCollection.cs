@@ -1,34 +1,30 @@
-using System;
-using System.Collections;
+using Super.Model.Selection;
+using Super.Model.Sequences;
+using Super.Reflection;
 using System.Collections.Generic;
 using System.Linq;
-using Super.Model.Selection;
 
 namespace Super.Model.Collections.Groups
 {
 	public class GroupCollection<T> : Select<GroupName, IList<T>>, IGroupCollection<T>
 	{
-		readonly Func<IEnumerable<T>, IEnumerable<T>>    _select;
-		readonly IOrderedDictionary<GroupName, IList<T>> _store;
+		readonly IArray<T> _values;
 
-		public GroupCollection(IEnumerable<IGroup<T>> groups)
-			: this(groups, GroupPairs<T>.Default) {}
+		public GroupCollection(IEnumerable<IGroup<T>> groups) : this(groups, GroupPairs<T>.Default) {}
 
 		public GroupCollection(IEnumerable<IGroup<T>> groups, IGroupPairs<T> pairs)
-			: this(new OrderedDictionary<GroupName, IList<T>>(groups.Select(pairs.Get)), SortAlteration<T>.Default.Get) {}
+			: this(new OrderedDictionary<GroupName, IList<T>>(groups.Select(pairs.Get))) {}
 
-		public GroupCollection(IOrderedDictionary<GroupName, IList<T>> store, Func<IEnumerable<T>, IEnumerable<T>> select) :
-			base(store.GetValue)
-		{
-			_store  = store;
-			_select = select;
-		}
+		public GroupCollection(IOrderedDictionary<GroupName, IList<T>> store)
+			: this(store,
+			       store.Select(x => x.Value.ToArray())
+			            .Select(SortAlteration<T>.Default.Get)
+			            .Concat()
+			            .To(I<DeferredArray<T>>.Default)) {}
 
-		public IEnumerator<T> GetEnumerator() => _store.Select(x => x.Value)
-		                                               .Select(_select)
-		                                               .Concat()
-		                                               .GetEnumerator();
+		public GroupCollection(IOrderedDictionary<GroupName, IList<T>> store, IArray<T> values)
+			: base(store.GetValue) => _values = values;
 
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+		public Array<T> Get() => _values.Get();
 	}
 }

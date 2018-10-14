@@ -9,7 +9,7 @@ using System.Linq.Expressions;
 
 namespace Super.Model.Sequences.Query
 {
-	// TODO: Cull
+	// TODO: Reconcile.
 
 	public sealed class AllItemsAre<T> : DelegatedSpecification<T[]>, IActivateMarker<Func<T, bool>>
 	{

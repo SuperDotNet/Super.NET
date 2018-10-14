@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace Super.Model.Collections
+namespace Super.Model.Sequences.Query
 {
 	sealed class InlineVisitor : ExpressionVisitor
 	{

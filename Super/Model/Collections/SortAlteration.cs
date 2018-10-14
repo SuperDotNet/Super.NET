@@ -1,11 +1,23 @@
-using Super.Model.Selection;
+﻿using Super.Model.Selection.Alterations;
+using System;
+using System.Collections.Generic;
 
 namespace Super.Model.Collections
 {
-	sealed class SortAlteration<T> : OrderByAlteration<T, T>
+	class SortAlteration<T> : IAlteration<T[]>
 	{
 		public static SortAlteration<T> Default { get; } = new SortAlteration<T>();
 
-		SortAlteration() : base(Self<T>.Default.Get, SortComparer<T>.Default) {}
+		SortAlteration() : this(SortComparer<T>.Default) {}
+
+		readonly IComparer<T> _comparer;
+
+		public SortAlteration(IComparer<T> comparer) => _comparer = comparer;
+
+		public T[] Get(T[] parameter)
+		{
+			Array.Sort(parameter, _comparer);
+			return parameter;
+		}
 	}
 }
