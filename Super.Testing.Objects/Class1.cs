@@ -35,24 +35,6 @@ namespace Super.Testing.Objects
 		public Array<int> Get() => _data.Select(_select).Where(x => x > 0).ToArray();
 	}
 
-	sealed class Chain : IArray<int>
-	{
-		public static Chain Default { get; } = new Chain();
-
-		Chain() : this(new ArraySelector<string, int>(Select.Default).Where(x => x > 0), View.Default) {}
-
-		readonly ISelect<Array<string>, Array<int>> _direct;
-		readonly Array<string>                      _view;
-
-		public Chain(ISelect<Array<string>, Array<int>> direct, Array<string> view)
-		{
-			_direct = direct;
-			_view   = view;
-		}
-
-		public Array<int> Get() => _direct.Get(_view);
-	}
-
 	sealed class Combo : IArray<int>
 	{
 		public static Combo Default { get; } = new Combo();

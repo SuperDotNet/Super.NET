@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Linq.Expressions;
 
 // ReSharper disable TooManyArguments
 
@@ -58,10 +57,6 @@ namespace Super
 			=> @this.ToDelegate().To(I<SelectManySelector<TFrom, TTo>>.Default);
 
 		/**/
-
-		public static ISelect<TIn, Array<TOut>> Where<TIn, TOut>(
-			this ISelect<TIn, Array<TOut>> @this, Expression<Func<TOut, bool>> specification)
-			=> new Where<TIn, TOut>(@this, specification.Compile());
 
 		public static ISelect<TIn, TOut> FirstAssigned<TIn, TOut>(this ISelect<TIn, Array<TOut>> @this)
 			where TOut : class => @this.Select(FirstAssigned<TOut>.Default);
