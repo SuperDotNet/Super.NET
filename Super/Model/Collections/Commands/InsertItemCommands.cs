@@ -1,11 +1,11 @@
+using Super.Model.Collections.Groups;
 using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Specifications;
 using System;
 using System.Collections.Generic;
-using Super.Model.Collections.Groups;
 
-namespace Super.Model.Collections
+namespace Super.Model.Collections.Commands
 {
 	sealed class InsertItemCommands<T> : IDecoration<IList<T>, ICommand<T>>
 	{

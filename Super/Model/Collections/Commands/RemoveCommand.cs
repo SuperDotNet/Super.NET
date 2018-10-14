@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Super.Model.Commands;
 
-namespace Super.Model.Collections
+namespace Super.Model.Collections.Commands
 {
 	class RemoveCommand<T> : ICommand<T>
 	{

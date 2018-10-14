@@ -1,8 +1,7 @@
-﻿using Super.Model.Sequences;
-using Super.Runtime.Activation;
+﻿using Super.Runtime.Activation;
 using System;
 
-namespace Super.Model.Collections
+namespace Super.Model.Sequences
 {
 	sealed class Repeat<T> : IArray<uint, T>
 	{

@@ -1,8 +1,9 @@
-﻿using Super.Model.Selection.Alterations;
+﻿using Super.Model.Collections;
+using Super.Model.Selection.Alterations;
 using System;
 using System.Collections.Generic;
 
-namespace Super.Model.Collections
+namespace Super.Model.Sequences.Query
 {
 	class SortAlteration<T> : IAlteration<T[]>
 	{

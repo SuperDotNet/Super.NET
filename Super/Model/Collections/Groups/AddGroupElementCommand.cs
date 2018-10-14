@@ -1,6 +1,7 @@
 using Super.Model.Commands;
 using Super.Model.Selection;
 using System;
+using Super.Model.Collections.Commands;
 
 namespace Super.Model.Collections.Groups
 {

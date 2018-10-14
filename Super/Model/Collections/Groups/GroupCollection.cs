@@ -3,6 +3,7 @@ using Super.Model.Sequences;
 using Super.Reflection;
 using System.Collections.Generic;
 using System.Linq;
+using Super.Model.Sequences.Query;
 
 namespace Super.Model.Collections.Groups
 {

@@ -1,7 +1,7 @@
-using System.Collections.Generic;
 using Super.Model.Commands;
+using System.Collections.Generic;
 
-namespace Super.Model.Collections
+namespace Super.Model.Collections.Commands
 {
 	class AddCommand<T> : DelegatedCommand<T>
 	{

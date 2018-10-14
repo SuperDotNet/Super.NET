@@ -1,8 +1,8 @@
-using Super.Model.Commands;
 using System;
 using System.Collections.Generic;
+using Super.Model.Commands;
 
-namespace Super.Model.Collections
+namespace Super.Model.Collections.Commands
 {
 	public class InsertItemCommand<T> : ICommand<T>
 	{

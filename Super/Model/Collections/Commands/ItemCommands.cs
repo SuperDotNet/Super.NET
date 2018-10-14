@@ -1,8 +1,8 @@
+using System.Collections.Generic;
 using Super.Model.Commands;
 using Super.Model.Selection.Stores;
-using System.Collections.Generic;
 
-namespace Super.Model.Collections
+namespace Super.Model.Collections.Commands
 {
 	sealed class ItemCommands<T> : Store<IList<T>, ICommand<T>>
 	{
