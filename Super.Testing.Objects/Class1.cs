@@ -4,7 +4,6 @@ using Serilog;
 using Super.Diagnostics.Logging;
 using Super.Model.Selection;
 using Super.Model.Sequences;
-using Super.Model.Sequences.Query;
 using Super.Model.Sources;
 using Super.Reflection;
 using Super.Runtime.Activation;
@@ -33,24 +32,6 @@ namespace Super.Testing.Objects
 		}
 
 		public Array<int> Get() => _data.Select(_select).Where(x => x > 0).ToArray();
-	}
-
-	sealed class Combo : IArray<int>
-	{
-		public static Combo Default { get; } = new Combo();
-
-		Combo() : this(new SelectWhere<string, int>(Select.Default, x => x > 0), View.Default) {}
-
-		readonly ISelect<Array<string>, Array<int>> _direct;
-		readonly Array<string>                      _view;
-
-		public Combo(ISelect<Array<string>, Array<int>> direct, Array<string> view)
-		{
-			_direct = direct;
-			_view   = view;
-		}
-
-		public Array<int> Get() => _direct.Get(_view);
 	}
 
 	sealed class View : ArrayInstance<string>

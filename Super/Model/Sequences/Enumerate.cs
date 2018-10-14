@@ -18,8 +18,8 @@ namespace Super.Model.Sequences
 		readonly DynamicArray<T> _array;
 
 		public Enumerate(Selection selection, uint size = 1024)
-			: this(Allotted<T>.Default, selection.Start == 0 ? (uint?)null : selection.Start,
-			       new Selection(size, selection.Length)) {}
+			: this(Allocated<T>.Default, selection.Start == 0 ? (uint?)null : selection.Start,
+			       new Selection(size, selection.Length.Or(int.MaxValue))) {}
 
 		public Enumerate(IStore<T> item, uint? skip, Selection target)
 			: this(item, skip, target, new DynamicArray<T>(item, target)) {}
@@ -90,7 +90,8 @@ namespace Super.Model.Sequences
 				items[count++] = parameter.Current;
 			}
 
-			return count < size ? new ArrayView<T>(items, 0, count) : _array.Get(parameter, first);
+			var arrayView = count < size ? new ArrayView<T>(items, 0, count) : _array.Get(parameter, first);
+			return arrayView;
 		}
 	}
 }

@@ -18,19 +18,8 @@ namespace Super
 	{
 		public static T FirstOf<T>(this IEnumerable @this) => @this.OfType<T>().FirstOrDefault();
 
-		/*public static IEnumerable<T> Assigned<T>(this IEnumerable<T> @this) where T : class => Model.Collections.Assigned<T>.Default.Get(@this);
-
-		public static IEnumerable<T> Assigned<T>(this IEnumerable<T?> @this) where T : struct
-			=> AssignedValue<T>.Default.Get(@this).Select(x => x.Value);*/
-
 		public static T[] Fixed<T>(this IEnumerable<T> @this)
-		{
-			var array  = @this as T[] ?? @this.ToArray();
-			var result = array.Length > 0 ? array : Empty<T>.Array;
-			return result;
-		}
-
-		//public static T[] Fixed<T>(this IEnumerable<T> @this, params T[] items) => @this.Append(items).Fixed();
+			=> @this is T[] array ? array : Enumerate<T>.Default.Get(@this.GetEnumerator()).ToArray();
 
 		public static Array<T> Result<T>(this IEnumerable<T> @this) => Model.Sequences.Result<T>.Default.Get(@this);
 

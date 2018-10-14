@@ -1,5 +1,4 @@
-﻿using Super.Model.Commands;
-using Super.Model.Sources;
+﻿using Super.Model.Sources;
 using Super.Reflection;
 using Super.Runtime.Environment;
 
@@ -12,17 +11,12 @@ namespace Super.Runtime.Execution
 		ExecutionContext() : base(ExecutionContextStore.Default) {}
 	}
 
-	public interface IConfiguration : ICommand<object>
-	{
-
-	}
-
 	sealed class ExecutionContextLocator : DecoratedSource<IExecutionContext>
 	{
 		public static ExecutionContextLocator Default { get; } = new ExecutionContextLocator();
 
 		ExecutionContextLocator() : base(ComponentTypesDefinition.Default
-		                                                         .Select(x => x.FirstAssigned())
+		                                                         .Select(x => x.Sequence().FirstAssigned())
 		                                                         .Emit()
 		                                                         .To(I<ComponentLocator<IExecutionContext>>.Default)) {}
 	}

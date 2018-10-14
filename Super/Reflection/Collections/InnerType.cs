@@ -19,7 +19,7 @@ namespace Super.Reflection.Collections
 
 		public InnerType(ISpecification<TypeInfo> specification)
 			: this(HasGenericArguments.Default.And(specification), TypeHierarchy.Default.Get,
-			       In<Type[]>.Start().Result().Only().Metadata().Get) {}
+			       In<Type[]>.Start().Sequence().Only().Metadata().Get) {}
 
 		public InnerType(ISpecification<TypeInfo> specification, Func<TypeInfo, Array<TypeInfo>> hierarchy,
 		                 Func<Type[], TypeInfo> select)

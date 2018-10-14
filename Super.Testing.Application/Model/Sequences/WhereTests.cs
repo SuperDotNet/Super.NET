@@ -3,7 +3,6 @@
 using BenchmarkDotNet.Attributes;
 using FluentAssertions;
 using Super.Model.Selection;
-using Super.Model.Sequences;
 using Super.Testing.Objects;
 using System;
 using System.Linq;

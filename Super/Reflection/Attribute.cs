@@ -25,6 +25,6 @@ namespace Super.Reflection
 
 		Attribute() : this(Declared<T>.Default) {}
 
-		public Attribute(IDeclared<T> declared) : base(declared.Only()) {}
+		public Attribute(IDeclared<T> declared) : base(declared.Sequence().Only()) {}
 	}
 }

@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using Super.Model.Sequences;
 using System.Linq;
 using Xunit;
 

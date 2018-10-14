@@ -39,30 +39,30 @@ namespace Super.Model.Sequences
 
 	public interface INode<T> : ISource<IArraySelector<T>>,
 	                            IActivateMarker<IState<Selection>>,
-	                            IAlteration<ISegment<T>>, ISelect<IAlterSelection, INode<T>> {}
+	                            IAlteration<ISelectView<T>>, ISelect<IAlterSelection, INode<T>> {}
 
 	sealed class Node<T> : Source<IArraySelector<T>>, INode<T>
 	{
 		public static Node<T> Default { get; } = new Node<T>();
 
-		Node() : this(SelectionState.Default, SelectedSegment<T>.Default, ArraySelector<T>.Default) {}
+		Node() : this(SelectionState.Default, Selection<T>.Default, ArraySelector<T>.Default) {}
 
 		readonly IState<Selection> _state;
-		readonly ISegment<T> _segment;
+		readonly ISelectView<T> _segment;
 
 		[UsedImplicitly]
 		public Node(IState<Selection> state) : this(state, state.Get()) {}
 
 		public Node(IState<Selection> state, Selection selection)
-			: this(state, new SelectedSegment<T>(selection), new ArraySelector<T>(selection)) {}
+			: this(state, new Selection<T>(selection), new ArraySelector<T>(selection)) {}
 
-		public Node(IState<Selection> state, ISegment<T> segment, IArraySelector<T> instance) : base(instance)
+		public Node(IState<Selection> state, ISelectView<T> segment, IArraySelector<T> instance) : base(instance)
 		{
 			_state = state;
 			_segment = segment;
 		}
 
-		public ISegment<T> Get(ISegment<T> parameter) => _segment.Select(Sessions<T>.Default).Continue(parameter);
+		public ISelectView<T> Get(ISelectView<T> parameter) => _segment.Select(Sessions<T>.Default).Continue(parameter);
 
 		public INode<T> Get(IAlterSelection parameter) => _state.Get(parameter).To(I<Node<T>>.Default.From);
 	}

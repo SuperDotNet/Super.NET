@@ -2,9 +2,9 @@
 
 namespace Super.Model.Sequences
 {
-	public interface ISegment<T> : ISegmentation<T, T> {}
+	public interface ISelectView<T> : ISelectView<T, T> {}
 
-	public interface ISegmentation<TIn, TOut> : ISelect<ArrayView<TIn>, ArrayView<TOut>> {}
+	public interface ISelectView<TIn, TOut> : ISelect<ArrayView<TIn>, ArrayView<TOut>> {}
 
 	public readonly struct Selection
 	{

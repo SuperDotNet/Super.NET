@@ -1,4 +1,5 @@
 ﻿using Super.Model.Selection;
+using Super.Model.Sequences.Query;
 using Super.Model.Sources;
 using Super.Runtime.Activation;
 
@@ -19,6 +20,8 @@ namespace Super.Model.Sequences
 
 		public ISequence<_, T> Get(IAlterSelection parameter) => new ArraySequence<_, T>(_select, _builder.Get(parameter));
 
-		public ISequence<_, T> Get(ISegment<T> parameter) => new ArraySequence<_, T>(_select, _builder.Get(parameter));
+		public ISequence<_, T> Get(ISelectView<T> parameter) => new ArraySequence<_, T>(_select, _builder.Get(parameter));
+
+		public ISelect<_, T> Get(IElement<T> parameter) => _builder.Get(parameter).To(_select.Select);
 	}
 }

@@ -37,7 +37,7 @@ namespace Super.Runtime.Environment
 				: base(metadata.Select(GenericInterfaceImplementations.Default)
 				               .ToDelegate()
 				               .Select(I<OneItemIs<Type>>.Default)
-				               .Select(metadata.Select(GenericInterfaces.Default).Instance().Out)) {}
+				               .Select(metadata.Select(GenericInterfaces.Default).Fixed().Out)) {}
 		}
 
 		sealed class Make : ISelect<Type, ISelect<Type, Type>>, IActivateMarker<Type>

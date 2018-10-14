@@ -1,27 +1,24 @@
-﻿using Super.Model.Selection;
-using System;
+﻿using System;
 
 namespace Super.Model.Sequences.Query
 {
-	public sealed class ArraySelector<TFrom, TTo> : ISelector<TFrom, TTo>
+	public sealed class ArraySelector<TFrom, TTo> : ISelectView<TFrom, TTo>
 	{
 		readonly Func<TFrom, TTo> _select;
 
-		public ArraySelector(ISelect<TFrom, TTo> select) : this(select.Get) {}
-
 		public ArraySelector(Func<TFrom, TTo> select) => _select = select;
 
-		public Array<TTo> Get(Array<TFrom> parameter)
+		public ArrayView<TTo> Get(ArrayView<TFrom> parameter)
 		{
 			var length = parameter.Length;
 			var result = new TTo[length];
 
-			for (var i = 0; i < length; i++)
+			for (var i = parameter.Start; i < length; i++)
 			{
-				result[i] = _select(parameter[i]);
+				result[i] = _select(parameter.Array[i]);
 			}
 
-			return result;
+			return new ArrayView<TTo>(result, 0, length);
 		}
 	}
 }

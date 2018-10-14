@@ -14,7 +14,8 @@ namespace Super.Runtime.Activation
 		HasSingleParameterConstructor() : this(Parameters.Default) {}
 
 		public HasSingleParameterConstructor(ISelect<ConstructorInfo, IEnumerable<ParameterInfo>> parameters)
-			: base(parameters.Result()
+			: base(parameters.Fixed()
+			                 .Sequence()
 			                 .FirstAssigned()
 			                 .Out(ParameterType.Default
 			                                   .Select(TypeMetadata.Default)

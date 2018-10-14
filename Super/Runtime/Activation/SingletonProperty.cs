@@ -2,6 +2,7 @@
 using Super.Model.Sequences;
 using Super.Model.Sequences.Query;
 using Super.Model.Sources;
+using Super.Model.Specifications;
 using System;
 using System.Reflection;
 
@@ -17,22 +18,23 @@ namespace Super.Runtime.Activation
 	{
 		public static SingletonProperty Default { get; } = new SingletonProperty();
 
-		SingletonProperty() : this(SingletonCandidates.Default) {}
+		SingletonProperty() : this(SingletonCandidates.Default.Out(x => x.Reference().Fixed().View()).Out()) {}
 
-		public SingletonProperty(ISource<Array<string>> candidates)
+		public SingletonProperty(ISource<ArrayView<string>> candidates)
 			: base(In<Type>.Select(x => new ArraySelector<string, PropertyInfo>(x.GetProperty))
 			               .Select(candidates.Select)
-			               .Select(x => x.Select(SingletonPropertyPredicate.Default))
 			               .Value()
+			               .Select(x => x.ToArray())
+			               .Sequence()
+			               .Where(IsSingletonProperty.Default.IsSatisfiedBy)
 			               .FirstAssigned()) {}
 	}
 
-	sealed class SingletonPropertyPredicate : Where<PropertyInfo>
+	sealed class IsSingletonProperty : AllSpecification<PropertyInfo>
 	{
-		public static SingletonPropertyPredicate Default { get; } = new SingletonPropertyPredicate();
+		public static IsSingletonProperty Default { get; } = new IsSingletonProperty();
 
-		SingletonPropertyPredicate() : base(IsAssigned.Default
-		                                              .And(In<PropertyInfo>.Is(y => y.CanRead && y.GetMethod.IsStatic))
-		                                              .IsSatisfiedBy) {}
+		IsSingletonProperty() : base(IsAssigned.Default,
+		                             In<PropertyInfo>.Is(y => y.CanRead && y.GetMethod.IsStatic)) {}
 	}
 }

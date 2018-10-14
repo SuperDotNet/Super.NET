@@ -16,7 +16,7 @@ namespace Super.Runtime.Environment
 	{
 		public static ComponentType Default { get; } = new ComponentType();
 
-		ComponentType() : base(ComponentTypes.Default.FirstAssigned()) {}
+		ComponentType() : base(ComponentTypes.Default.Sequence().FirstAssigned()) {}
 	}
 
 	sealed class ComponentTypesDefinition : DecoratedSource<ISelect<Type, Array<Type>>>

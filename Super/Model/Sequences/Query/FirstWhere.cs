@@ -1,8 +1,9 @@
-﻿using System;
-using Super.Model.Specifications;
+﻿using Super.Model.Specifications;
+using System;
 
-namespace Super.Model.Sequences.Query {
-	public class FirstWhere<T> : IReduce<T>
+namespace Super.Model.Sequences.Query
+{
+	public class FirstWhere<T> : IElement<T>
 	{
 		readonly Func<T, bool> _where;
 		readonly Func<T>       _default;
@@ -17,13 +18,13 @@ namespace Super.Model.Sequences.Query {
 			_default = @default;
 		}
 
-		public T Get(Array<T> parameter)
+		public T Get(ArrayView<T> parameter)
 		{
 			var length = parameter.Length;
 
-			for (var i = 0; i < length; i++)
+			for (var i = parameter.Start; i < length; i++)
 			{
-				var item = parameter[i];
+				var item = parameter.Array[i];
 				if (_where(item))
 				{
 					return item;

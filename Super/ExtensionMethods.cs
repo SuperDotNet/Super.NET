@@ -11,6 +11,7 @@ using Super.Runtime.Invocation;
 using Super.Runtime.Objects;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq.Expressions;
 using System.Reflection;
 using Activator = Super.Runtime.Activation.Activator;
@@ -30,7 +31,7 @@ namespace Super
 			=> @this.Select(Runtime.Invocation.Expressions.Compiler<T>.Default);
 
 		public static ISelect<TIn, TResult> Out<TIn, TResult>(this ISelect<TIn, Type> @this, IGeneric<TResult> generic)
-			=> @this.Yield().Emit().Select(generic).Invoke();
+			=> @this.Select(ImmutableArray.Create).Select(generic).Invoke();
 
 		public static ISelect<TIn, TTo> CastForValue<TIn, TOut, TTo>(this ISelect<TIn, TOut> @this, I<TTo> _)
 			=> @this.Select(ValueAwareCast<TOut, TTo>.Default);

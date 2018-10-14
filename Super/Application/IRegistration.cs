@@ -3,6 +3,7 @@ using LightInject;
 using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
+using Super.Model.Sequences;
 using Super.Model.Sequences.Query;
 using Super.Model.Sources;
 using Super.Reflection;
@@ -109,17 +110,16 @@ namespace Super.Application
 			       IsDefinedGenericType.Default.Then(GenericTypeDefinition.Default)) {}
 	}
 
-	sealed class DependencyCandidates : DecoratedSelect<Type, ImmutableArray<Type>>, IActivateMarker<Type>
+	sealed class DependencyCandidates : ArrayStore<Type, Type>, IActivateMarker<Type>
 	{
 		public DependencyCandidates(Type type)
 			: base(TypeMetadata.Default
-			                           .Select(Constructors.Default)
-			                           .Select(Parameters.Default
-			                                             .Select(x => x.AsEnumerable())
-			                                             .SelectMany())
-			                           .Select(ParameterType.Default.Select())
-			                           .Select(type.To(I<GenericTypeDependencySelector>.Default).Select())
-			                           .Select(x => x.Where(IsClass.Default.IsSatisfiedBy).ToImmutableArray())) {}
+			                   .Select(Constructors.Default)
+			                   .Select(Parameters.Default.SelectMany())
+			                   .Select(ParameterType.Default.Select())
+			                   .Select(type.To(I<GenericTypeDependencySelector>.Default)
+			                               .Select())
+			                   .Select(x => x.Where(IsClass.Default.IsSatisfiedBy))) {}
 	}
 
 	sealed class ServiceTypeSelector : SelectSelector<LightInject.ServiceRegistration, Type>

@@ -4,7 +4,6 @@ using Super.Model.Sources;
 using Super.Runtime.Activation;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 
 namespace Super.Model.Sequences
 {
@@ -24,10 +23,10 @@ namespace Super.Model.Sequences
 		public ArrayStore(Func<Array<T>> source) : base(source) {}
 	}
 
-	public class DelegatedArray<T> : DelegatedSource<Array<T>>, IArray<T>
+	/*public class DelegatedArray<T> : DelegatedSource<Array<T>>, IArray<T>
 	{
 		public DelegatedArray(Func<Array<T>> source) : base(source) {}
-	}
+	}*/
 
 	public class DecoratedArray<T> : DecoratedSource<Array<T>>, IArray<T>
 	{
@@ -38,6 +37,10 @@ namespace Super.Model.Sequences
 
 	public class ArrayStore<_, T> : Store<_, Array<T>>, IArray<_, T>
 	{
+		public ArrayStore(ISelect<_, IEnumerable<T>> source) : this(source.Result().Get) {}
+
+		public ArrayStore(ISelect<_, Array<T>> source) : this(source.Get) {}
+
 		public ArrayStore(Func<_, Array<T>> source) : base(source) {}
 	}
 
@@ -48,10 +51,10 @@ namespace Super.Model.Sequences
 		Result() : base(x => new Array<T>(x.Fixed())) {}
 	}
 
-	sealed class Immutable<T>  : Select<IEnumerable<T>, ImmutableArray<T>>
+	sealed class View<T> : Select<T[], ArrayView<T>>
 	{
-		public static Immutable<T> Default { get; } = new Immutable<T>();
+		public static View<T> Default { get; } = new View<T>();
 
-		Immutable() : base(x => x.ToImmutableArray()) {}
+		View() : base(x => new ArrayView<T>(x)) {}
 	}
 }

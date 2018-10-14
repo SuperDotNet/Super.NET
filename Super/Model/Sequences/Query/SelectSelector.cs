@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Super.Model.Selection;
+using Super.Runtime.Activation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Super.Model.Selection;
-using Super.Runtime.Activation;
 
-namespace Super.Model.Sequences.Query {
+namespace Super.Model.Sequences.Query
+{
 	class SelectSelector<TFrom, TTo> : ISelect<IEnumerable<TFrom>, IEnumerable<TTo>>, IActivateMarker<Func<TFrom, TTo>>
 	{
 		readonly Func<TFrom, TTo> _select;

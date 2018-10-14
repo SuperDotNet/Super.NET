@@ -19,13 +19,11 @@ namespace Super
 	// ReSharper disable once MismatchedFileName
 	public static partial class ExtensionMethods
 	{
-		public static ISource<T> AsSource<T>(this ISource<T> @this) => @this;
-
 		public static ISource<T> Default<T>(this ISource<T> _) => Model.Sources.Default<T>.Instance;
 
 		public static ISelect<TParameter, TResult> Out<TParameter, TResult>(
 			this ISource<TResult> @this, I<TParameter> _)
-			=> new DelegatedResult<TParameter, TResult>(@this.Get);
+			=> new Model.Selection.DelegatedResult<TParameter, TResult>(@this.Get);
 
 		public static IAny Out<T>(this ISource<T> @this, ISpecification<T> specification)
 			=> @this.Out(specification.IsSatisfiedBy);
@@ -51,9 +49,6 @@ namespace Super
 
 		public static TTo Out<TFrom, TTo>(this ISource<TFrom> @this, Func<ISelect<Unit, TFrom>, TTo> select)
 			=> select(@this.Out());
-
-		/*public static ISource<ISelect<TIn, TTo>> Select<TIn, TFrom, TTo>(this ISource<ISelect<TIn, TFrom>> source, Func<TFrom, TTo> select)
-			=> @this.Select(source.Emit());*/
 
 		public static ISource<T> Out<T>(this Func<T> @this) => I<DelegatedSource<T>>.Default.From(@this);
 

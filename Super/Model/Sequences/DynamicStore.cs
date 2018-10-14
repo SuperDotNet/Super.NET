@@ -7,9 +7,9 @@ namespace Super.Model.Sequences
 		readonly static Allotted<T>        Item  = Allotted<T>.Default;
 		readonly static Allotted<Store<T>> Items = Allotted<Store<T>>.Default;
 
-		readonly Store<T>[]            _stores;
-		readonly Selection _position;
-		readonly uint                  _index;
+		readonly Store<T>[] _stores;
+		readonly Selection  _position;
+		readonly uint       _index;
 
 		public DynamicStore(uint size, uint length = 32) : this(Items.Get(length).Instance,
 		                                                        Selection.Default)

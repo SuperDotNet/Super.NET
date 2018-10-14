@@ -1,8 +1,13 @@
-﻿namespace Super.Testing.Application.Model.Sequences
+﻿using FluentAssertions;
+using Super.Model.Sequences;
+using System.Linq;
+using Xunit;
+
+namespace Super.Testing.Application.Model.Sequences
 {
 	public class IteratorTests
 	{
-		/*[Theory]
+		[Theory]
 		[InlineData(1u)]
 		[InlineData(2u)]
 		[InlineData(3u)]
@@ -17,6 +22,6 @@
 		{
 			var source = Enumerable.Range(0, (int)count).Select(x => (uint)x).ToArray();
 			Iterator<uint>.Default.Get(new Iteration<uint>(source)).Should().Equal(source);
-		}*/
+		}
 	}
 }
