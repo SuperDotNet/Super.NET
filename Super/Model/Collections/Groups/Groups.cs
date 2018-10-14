@@ -1,3 +1,4 @@
+using Super.Model.Sequences;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -6,7 +7,7 @@ using System.Linq;
 namespace Super.Model.Collections.Groups
 {
 	// ReSharper disable once PossibleInfiniteInheritance
-	class Groups<T> : Enumerable<IGroup<T>>
+	class Groups<T> : IArray<IGroup<T>>
 	{
 		readonly Func<GroupName, IGroup<T>> _factory;
 		readonly ImmutableArray<GroupName>  _phases;
@@ -22,6 +23,6 @@ namespace Super.Model.Collections.Groups
 			_factory = factory;
 		}
 
-		public override IEnumerator<IGroup<T>> GetEnumerator() => _phases.Select(_factory).GetEnumerator();
+		public Array<IGroup<T>> Get() => _phases.Select(_factory).ToArray();
 	}
 }

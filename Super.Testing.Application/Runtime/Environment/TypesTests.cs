@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using Super.Model.Collections;
 using Super.Model.Sequences;
 using Super.Runtime.Execution;
 using System;
@@ -27,7 +26,7 @@ namespace Super.Testing.Application.Runtime.Environment
 		void Count()
 		{
 			var counter = new Counter();
-			var source = new TypeSource();
+			var source = typeof(object).Yield();
 			counter.Get().Should().Be(0);
 			var types = new Types(counter, source);
 			counter.Get().Should().Be(1);
@@ -45,15 +44,6 @@ namespace Super.Testing.Application.Runtime.Environment
 		sealed class Types : ArrayInstance<Type>
 		{
 			public Types(Counter counter, IEnumerable<Type> types) : base(types.Select(counter.ExecuteAndReturn)) {}
-		}
-
-		sealed class TypeSource : Enumerable<Type>
-		{
-			public override IEnumerator<Type> GetEnumerator()
-			{
-				yield return typeof(object);
-//				yield return typeof(int);
-			}
 		}
 	}
 }

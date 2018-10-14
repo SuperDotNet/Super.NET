@@ -83,14 +83,6 @@ namespace Super.Testing.Application.Runtime
 		}
 
 		[Fact]
-		public void Fixed()
-		{
-			var sut = new[] {2, 3, 5}.Hide().Fixed(4, 15);
-			Assert.Contains(3, sut);
-			Assert.Contains(15, sut);
-		}
-
-		[Fact]
 		public void Introduce()
 		{
 			var sut = new[] {new Func<int, bool>(i => i == 7)};

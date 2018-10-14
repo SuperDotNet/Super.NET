@@ -1,29 +1,26 @@
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Reflection;
-using Super.Model.Collections;
 using Super.Model.Selection;
+using Super.Model.Sequences;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Super.Reflection.Types
 {
-	public sealed class TypeHierarchy : ISelect<TypeInfo, ImmutableArray<TypeInfo>>
+	public sealed class TypeHierarchy : ArrayStore<TypeInfo, TypeInfo>
 	{
 		public static TypeHierarchy Default { get; } = new TypeHierarchy();
 
-		TypeHierarchy() {}
+		TypeHierarchy() : base(Hierarchy.Instance.Result().Get) {}
 
-		public ImmutableArray<TypeInfo> Get(TypeInfo parameter) => new Hierarchy(parameter).ToImmutableArray();
-
-		sealed class Hierarchy : Enumerable<TypeInfo>
+		sealed class Hierarchy : ISelect<TypeInfo, IEnumerable<TypeInfo>>
 		{
-			readonly TypeInfo _type;
+			public static Hierarchy Instance { get; } = new Hierarchy();
 
-			public Hierarchy(TypeInfo type) => _type = type;
+			Hierarchy() {}
 
-			public override IEnumerator<TypeInfo> GetEnumerator()
+			public IEnumerable<TypeInfo> Get(TypeInfo parameter)
 			{
-				yield return _type;
-				var current = _type.BaseType;
+				yield return parameter;
+				var current = parameter.BaseType;
 				while (current != null)
 				{
 					var info = current.GetTypeInfo();

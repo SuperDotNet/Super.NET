@@ -34,7 +34,7 @@ namespace Super.Model.Sequences
 		}
 	}
 
-	public interface ISelector<in TIn, out T> : ISelect<TIn, T[]> {}
+	/*public interface ISelector<in TIn, out T> : ISelect<TIn, T[]> {}*/
 
 	public interface IArraySelector<T> : ISelect<Store<T>, T[]> {}
 

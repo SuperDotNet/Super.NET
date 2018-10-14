@@ -34,20 +34,18 @@ namespace Super.Model.Sequences
 		public DecoratedArray(ISource<Array<T>> source) : base(source) {}
 	}
 
-	public interface IArray<in TFrom, TItem> : ISelect<TFrom, Array<TItem>> {}
+	public interface IArray<in _, T> : ISelect<_, Array<T>> {}
 
-	public class ArrayStore<TFrom, TTo> : Store<TFrom, Array<TTo>>, IArray<TFrom, TTo>
+	public class ArrayStore<_, T> : Store<_, Array<T>>, IArray<_, T>
 	{
-		public ArrayStore(Func<TFrom, Array<TTo>> source) : base(source) {}
+		public ArrayStore(Func<_, Array<T>> source) : base(source) {}
 	}
 
-	sealed class Result<T> : ISelect<IEnumerable<T>, Array<T>>
+	sealed class Result<T> : Select<IEnumerable<T>, Array<T>>
 	{
 		public static Result<T> Default { get; } = new Result<T>();
 
-		Result() {}
-
-		public Array<T> Get(IEnumerable<T> parameter) => new Array<T>(parameter.Fixed());
+		Result() : base(x => new Array<T>(x.Fixed())) {}
 	}
 
 	sealed class Immutable<T>  : Select<IEnumerable<T>, ImmutableArray<T>>

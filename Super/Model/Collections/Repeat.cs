@@ -1,29 +1,35 @@
-﻿using Super.Runtime.Activation;
+﻿using Super.Model.Sequences;
+using Super.Runtime.Activation;
 using System;
-using System.Collections.Generic;
 
 namespace Super.Model.Collections
 {
-	sealed class Repeat<T> : Enumerable<T>
+	sealed class Repeat<T> : IArray<uint, T>
 	{
-		readonly static Func<T> Create = New<T>.Default.ToDelegateReference();
+		public static Repeat<T> Default { get; } = new Repeat<T>();
 
-		readonly int     _times;
-		readonly Func<T> _create;
+		Repeat() : this(New<T>.Default.ToDelegateReference()) {}
 
-		public Repeat(int times) : this(times, Create) {}
+		readonly IStore<T> _store;
+		readonly Func<T>   _create;
 
-		public Repeat(int times, Func<T> create)
+		public Repeat(Func<T> create) : this(Allocated<T>.Default, create) {}
+
+		public Repeat(IStore<T> store, Func<T> create)
 		{
-			_times  = times;
+			_store  = store;
 			_create = create;
 		}
 
-		public override IEnumerator<T> GetEnumerator()
+		public Array<T> Get(uint parameter)
 		{
-			for (var i = 0; i < _times; i++)
+			var result = _store.Get(parameter).Instance;
+			for (var i = 0; i < parameter; i++)
 			{
-				yield return _create();
+				result[i] = _create();
 			}
+
+			return result;
 		}
-	}}
+	}
+}

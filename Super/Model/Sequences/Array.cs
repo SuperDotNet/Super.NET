@@ -22,14 +22,12 @@ namespace Super.Model.Sequences
 		public static implicit operator T[](Array<T> source) => source.Copy();
 
 		readonly T[] _reference;
-		readonly ImmutableArray<T> _array;
 
-		public Array(T[] reference) : this(reference, ImmutableArray.Create(reference), (uint)reference.Length) {}
+		public Array(T[] reference) : this(reference, (uint)reference.Length) {}
 
-		public Array(T[] reference, ImmutableArray<T> array, uint length)
+		public Array(T[] reference, uint length)
 		{
 			_reference = reference;
-			_array = array;
 			Length  = length;
 		}
 
@@ -39,7 +37,7 @@ namespace Super.Model.Sequences
 
 		public T[] Copy() => ArraySelector<T>.Default.Get(_reference);
 
-		public ImmutableArray<T> Get() => _array;
+		public ImmutableArray<T> Get() => ImmutableArray.Create(_reference);
 
 		public IEnumerable<T> Reference() => _reference;
 

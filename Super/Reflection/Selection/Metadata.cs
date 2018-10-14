@@ -1,31 +1,19 @@
-﻿using System;
+﻿using Super.Model.Sequences;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Super.Model.Collections;
 
 namespace Super.Reflection.Selection
 {
-	public sealed class Metadata : Enumerable<MemberInfo>
+	public sealed class Metadata : DeferredArray<MemberInfo>
 	{
-		readonly Func<TypeInfo, IEnumerable<MemberInfo>> _select;
-		readonly IEnumerable<TypeInfo>                   _types;
-
-		public Metadata(IEnumerable<Type> types) : this(types, PublicMembers.Default.Get) {}
-
-		public Metadata(IEnumerable<Type> types, Func<TypeInfo, IEnumerable<MemberInfo>> select) :
-			this(types.YieldMetadata(), select) {}
-
-		public Metadata(IEnumerable<TypeInfo> types) : this(types, PublicMembers.Default.Get) {}
+		public Metadata(IEnumerable<Type> types) : this(types.YieldMetadata(), PublicMembers.Default.Get) {}
 
 		public Metadata(IEnumerable<TypeInfo> types, Func<TypeInfo, IEnumerable<MemberInfo>> select)
-		{
-			_types  = types;
-			_select = select;
-		}
+			: this(types.Fixed(), select) {}
 
-		public override IEnumerator<MemberInfo> GetEnumerator() => _types.Concat(_types.SelectMany(_select))
-		                                                                 .Distinct()
-		                                                                 .GetEnumerator();
+		public Metadata(TypeInfo[] types, Func<TypeInfo, IEnumerable<MemberInfo>> select)
+			: base(types.Concat(types.SelectMany(select)).Distinct()) {}
 	}
 }

@@ -1,8 +1,8 @@
 using Super.Model.Selection.Alterations;
+using Super.Model.Sequences;
 using Super.Model.Specifications;
 using Super.Reflection.Types;
 using System;
-using System.Collections.Immutable;
 using System.Reflection;
 
 namespace Super.Reflection.Collections
@@ -13,15 +13,15 @@ namespace Super.Reflection.Collections
 
 		InnerType() : this(Always<TypeInfo>.Default) {}
 
-		readonly Func<TypeInfo, ImmutableArray<TypeInfo>> _hierarchy;
-		readonly Func<Type[], TypeInfo>                   _select;
-		readonly ISpecification<TypeInfo>                 _specification;
+		readonly Func<TypeInfo, Array<TypeInfo>> _hierarchy;
+		readonly Func<Type[], TypeInfo>          _select;
+		readonly ISpecification<TypeInfo>        _specification;
 
 		public InnerType(ISpecification<TypeInfo> specification)
 			: this(HasGenericArguments.Default.And(specification), TypeHierarchy.Default.Get,
 			       In<Type[]>.Start().Result().Only().Metadata().Get) {}
 
-		public InnerType(ISpecification<TypeInfo> specification, Func<TypeInfo, ImmutableArray<TypeInfo>> hierarchy,
+		public InnerType(ISpecification<TypeInfo> specification, Func<TypeInfo, Array<TypeInfo>> hierarchy,
 		                 Func<Type[], TypeInfo> select)
 		{
 			_specification = specification;

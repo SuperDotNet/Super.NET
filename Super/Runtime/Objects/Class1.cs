@@ -1,5 +1,4 @@
 ﻿using JetBrains.Annotations;
-using Super.Model.Collections;
 using Super.Model.Selection;
 using Super.Model.Sequences;
 using Super.Reflection;
@@ -10,7 +9,6 @@ using Super.Text;
 using Super.Text.Formatting;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
@@ -26,8 +24,8 @@ namespace Super.Runtime.Objects
 	{
 		readonly string _text;
 
-		public Projection(string text, Type instanceType, IEnumerable<KeyValuePair<string, object>> properties)
-			: this(text, instanceType, properties.ToOrderedDictionary()) {}
+		/*public Projection(string text, Type instanceType, IEnumerable<KeyValuePair<string, object>> properties)
+			: this(text, instanceType, properties.ToOrderedDictionary()) {}*/
 
 		public Projection(string text, Type instanceType, IDictionary<string, object> properties) : base(properties)
 		{
@@ -46,7 +44,8 @@ namespace Super.Runtime.Objects
 
 		KnownProjectors() : this(ApplicationDomainProjection.Default.Entry()) {}
 
-		public KnownProjectors(params KeyValuePair<Type, Func<string, Func<object, IProjection>>>[] items) : base(items) {}
+		public KnownProjectors(params KeyValuePair<Type, Func<string, Func<object, IProjection>>>[] items) :
+			base(items) {}
 	}
 
 	static class Implementations
@@ -86,40 +85,42 @@ namespace Super.Runtime.Objects
 
 	public class Projection<T> : ISelect<T, IProjection>
 	{
-		readonly Func<T, string>              _formatter;
-		readonly ImmutableArray<IProperty<T>> _properties;
+		readonly Func<T, string>                      _formatter;
+		readonly Func<T, IDictionary<string, object>> _properties;
 
 		public Projection(ISelect<T, string> formatter, params Expression<Func<T, object>>[] expressions)
 			: this(formatter.ToDelegate(), expressions) {}
 
 		public Projection(Func<T, string> formatter, params Expression<Func<T, object>>[] expressions)
-			: this(formatter, expressions.Select(I<Property<T>>.Default.From).ToImmutableArray<IProperty<T>>()) {}
+			: this(formatter,
+			       expressions.Select(I<Property<T>>.Default.From)
+			                  .Result<IProperty<T>>()
+			                  .To(I<Values>.Default)
+			                  .Select(x => x.ToOrderedDictionary())
+			                  .Get) {}
 
-		public Projection(Func<T, string> formatter, ImmutableArray<IProperty<T>> expressions)
+		public Projection(Func<T, string> formatter, Func<T, IDictionary<string, object>> properties)
 		{
 			_formatter  = formatter;
-			_properties = expressions;
+			_properties = properties;
 		}
 
 		public IProjection Get(T parameter)
-			=> new Projection(_formatter(parameter), parameter.GetType(), new Values(parameter, _properties));
+			=> new Projection(_formatter(parameter), parameter.GetType(), _properties(parameter));
 
-		sealed class Values : Enumerable<KeyValuePair<string, object>>
+		// ReSharper disable once PossibleInfiniteInheritance
+		sealed class Values : ISelect<T, IEnumerable<KeyValuePair<string, object>>>,
+		                      IActivateMarker<Array<IProperty<T>>>
 		{
-			readonly T                            _subject;
-			readonly ImmutableArray<IProperty<T>> _properties;
+			readonly Array<IProperty<T>> _properties;
 
-			public Values(T subject, ImmutableArray<IProperty<T>> properties)
-			{
-				_subject    = subject;
-				_properties = properties;
-			}
+			public Values(Array<IProperty<T>> properties) => _properties = properties;
 
-			public override IEnumerator<KeyValuePair<string, object>> GetEnumerator()
+			public IEnumerable<KeyValuePair<string, object>> Get(T parameter)
 			{
 				foreach (var property in _properties)
 				{
-					yield return property.Get(_subject);
+					yield return property.Get(parameter);
 				}
 			}
 		}

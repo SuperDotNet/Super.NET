@@ -1,5 +1,4 @@
-﻿using Super.Model.Collections;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
 using Super.Model.Sequences;
 using Super.Model.Sequences.Query;
 using Super.Reflection;
@@ -34,6 +33,9 @@ namespace Super
 
 		public static ISelect<_, Array<T>> Result<_, T>(this ISelect<_, IEnumerable<T>> @this)
 			=> @this.Select(Model.Sequences.Result<T>.Default);
+
+		/*public static ISelect<_, Array<T>> Result<_, T>(this ISelect<_, T[]> @this)
+			=> @this.Select(Model.Sequences.Result<T>.Default);*/
 
 		public static ISelect<_, IEnumerable<T>> Reference<_, T>(this ISelect<_, Array<T>> @this)
 			=> @this.Select(x => x.Reference());
@@ -79,8 +81,8 @@ namespace Super
 		                                                   Func<TOut, bool> where)
 			=> where.To(I<Single<TOut>>.Default).To(@this.Select);
 
-		public static ISelect<TIn, IEnumerable<TOut>> Yield<TIn, TOut>(this ISelect<TIn, TOut> @this)
-			=> @this.Select(YieldSelector<TOut>.Default);
+		public static ISelect<TIn, TOut[]> Yield<TIn, TOut>(this ISelect<TIn, TOut> @this)
+			=> @this.Select(Model.Sequences.Query.Yield<TOut>.Default);
 
 		public static ISelect<_, ImmutableArray<T>> Emit<_, T>(this ISelect<_, IEnumerable<T>> @this)
 			=> @this.Select(Immutable<T>.Default);

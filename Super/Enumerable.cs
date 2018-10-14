@@ -1,4 +1,5 @@
 ﻿using Super.Model.Collections;
+using Super.Model.Sequences;
 using Super.Model.Sequences.Query;
 using Super.Reflection;
 using Super.Runtime;
@@ -29,8 +30,9 @@ namespace Super
 			return result;
 		}
 
-		public static T[] Fixed<T>(this IEnumerable<T> @this, params T[] items) => @this.Append(items)
-		                                                                                .Fixed();
+		//public static T[] Fixed<T>(this IEnumerable<T> @this, params T[] items) => @this.Append(items).Fixed();
+
+		public static Array<T> Result<T>(this IEnumerable<T> @this) => Model.Sequences.Result<T>.Default.Get(@this);
 
 		public static IEnumerable<T1> Introduce<T1, T2>(this IEnumerable<Func<T2, T1>> @this, T2 instance)
 			=> @this.Introduce(instance, tuple => tuple.Item1(tuple.Item2));

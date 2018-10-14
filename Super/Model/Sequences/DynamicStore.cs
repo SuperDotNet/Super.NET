@@ -44,7 +44,7 @@ namespace Super.Model.Sequences
 			return result;
 		}
 
-		public DynamicStore<T> Add(in Store<T> page)
+		public DynamicStore<T> Add(Store<T> page)
 		{
 			var stores   = _stores;
 			var current  = stores[_index];
