@@ -4,7 +4,6 @@ using Super.Model.Sources;
 using Super.Model.Specifications;
 using Super.Reflection;
 using Super.Runtime.Activation;
-using Super.Runtime.Objects;
 using System;
 using System.Reactive;
 using IAny = Super.Model.Specifications.IAny;
@@ -15,16 +14,11 @@ namespace Super
 
 	public static partial class ExtensionMethods
 	{
-		public static ISelect<object, TOut> Out<TIn, TOut>(this ISelect<TIn, TOut> @this)
-			=> @this.Out(I<object>.Default);
+		public static ISelect<TAllow, TOut> Out<TAllow, TOut>(this ISelect<Unit, TOut> @this, I<TAllow> allow)
+			=> @this.Out().Out(allow);
 
-		public static ISelect<TAllow, TOut> Out<TAllow, TIn, TOut>(this ISelect<TIn, TOut> @this, I<TAllow> allow)
-			=> @this.ToDelegate().Out(allow);
-
-		public static ISelect<TAllow, TOut> Out<TAllow, TIn, TOut>(this Func<TIn, TOut> @this, I<TAllow> allow)
-			=> @this.Out(default)
-			        .Out(allow)
-			        .Unless(CanCast<TAllow, TIn>.Default, CastSelector<TAllow, TIn>.Default.Select(@this));
+		public static T Out<TFrom, TTo, T>(this ISpecification<TFrom, TTo> @this, Func<ISelect<TFrom, TTo>, T> select)
+			=> select(@this);
 
 		/**/
 

@@ -9,7 +9,9 @@ namespace Super.Application.Hosting.Console
 	{
 		public static ApplicationContexts<T> Default { get; } = new ApplicationContexts<T>();
 
-		ApplicationContexts() : base(In<ImmutableArray<string>>.Activate<ConsoleApplicationArgument>()
-		                                                       .Select(Services<ConsoleApplicationArgument>.Default)) {}
+		ApplicationContexts() : base(Start.From<string>()
+		                                  .AsImmutable()
+		                                  .Activate<ConsoleApplicationArgument>()
+		                                  .Select(Services<ConsoleApplicationArgument>.Default)) {}
 	}
 }

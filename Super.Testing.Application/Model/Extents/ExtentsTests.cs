@@ -22,14 +22,14 @@ namespace Super.Testing.Application.Model.Extents
 		[Fact]
 		void VerifySourceDelegated()
 		{
-			new Source<int>(6776).Select(x => x.GetType().GetTypeInfo()).Get().Should().Be(Type<int>.Metadata);
+			6776.Start().Select(x => x.GetType().GetTypeInfo()).Get().Should().Be(Type<int>.Metadata);
 		}
 
 		[Fact]
 		void VerifyGuard()
 		{
-			In<string>.Start().Guard().Invoking(x => x.Get(null)).Should().Throw<InvalidOperationException>();
-			In<string>.Start().Invoking(x => x.Get(null)).Should().NotThrow();
+			Start.From<string>().Self().Guard().Invoking(x => x.Get(null)).Should().Throw<InvalidOperationException>();
+			Start.From<string>().Self().Invoking(x => x.Get(null)).Should().NotThrow();
 		}
 
 		[Fact]

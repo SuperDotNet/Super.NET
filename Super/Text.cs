@@ -12,7 +12,10 @@ namespace Super
 	public static partial class ExtensionMethods
 	{
 		public static ISpecification<object, IFormattable> Register<T>(this ISelectFormatter<T> @this)
-			=> @this.To(I<Formatters<T>>.Default).Out().To(IsType<T>.Default.Out);
+			=> Super.Start.From<object>()
+			        .Cast<T>()
+			        .Select(@this.To(I<Formatters<T>>.Default))
+			        .To(IsType<T>.Default.Out);
 
 		public static string OrNone<T>(this T @this) => @this?.ToString() ?? None.Default;
 

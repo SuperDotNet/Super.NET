@@ -11,9 +11,10 @@ namespace Super.Application
 	{
 		public static NotRegistered Default { get; } = new NotRegistered();
 
-		NotRegistered() : base(In<IServiceRegistry>.Select(x => x.AvailableServices)
-		                                           .Select(ServiceTypeSelector.Default)
-		                                           .Activate(I<NotHave<Type>>.Default)
-		                                           .Select(DelegateSelector<Type>.Default)) {}
+		NotRegistered() : base(Start.From<IServiceRegistry>()
+		                            .Select(x => x.AvailableServices)
+		                            .Select(ServiceTypeSelector.Default)
+		                            .Activate(I<NotHave<Type>>.Default)
+		                            .Select(DelegateSelector<Type>.Default)) {}
 	}
 }

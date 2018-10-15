@@ -8,6 +8,6 @@ namespace Super.Reflection.Assemblies
 	{
 		public static Load Default { get; } = new Load();
 
-		Load() : base(In<AssemblyName>.Select(Assembly.Load).Try(I<FileNotFoundException>.Default)) {}
+		Load() : base(Start.From<AssemblyName>().Select(Assembly.Load).Try(I<FileNotFoundException>.Default)) {}
 	}
 }

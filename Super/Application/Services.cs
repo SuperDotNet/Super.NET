@@ -58,7 +58,8 @@ namespace Super.Application
 		Services() : this(ServiceRegistration.Default) {}
 
 		public Services(ISource<IRegistration> registration)
-			: base(In<T>.Activate<InstanceRegistration<T>>()
+			: base(Start.From<T>()
+			            .Activate<InstanceRegistration<T>>()
 			            .Yield()
 			            .Select(new AppendDelegatedValue<IRegistration>(registration))
 			            .Activate(I<CompositeRegistration>.Default)

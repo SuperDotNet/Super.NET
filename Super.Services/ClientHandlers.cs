@@ -7,6 +7,6 @@ namespace Super.Services
 	{
 		public static ClientHandlers Default { get; } = new ClientHandlers();
 
-		ClientHandlers() : base(In<Uri>.New<HttpClientHandler>(), RegisteredClientHandlers.Default) {}
+		ClientHandlers() : base(Start.From<Uri>().New<HttpClientHandler>(), RegisteredClientHandlers.Default) {}
 	}
 }

@@ -29,12 +29,12 @@ namespace Super.Runtime.Execution
 
 	sealed class Counter<T> : DecoratedSelect<T, int>
 	{
-		public Counter() : base(In<T>.New<Counter>().ToTable().Select(x => x.Count())) {}
+		public Counter() : base(Start.From<T>().New<Counter>().ToTable().Select(x => x.Count())) {}
 	}
 
 	sealed class First<T> : DecoratedSpecification<T>
 	{
-		public First() : base(In<T>.New<First>().ToTable().Select(ConditionSelector.Default).Out()) {}
+		public First() : base(Start.From<T>().New<First>().ToTable().Select(ConditionSelector.Default).Out()) {}
 	}
 
 	public sealed class First : ISpecification

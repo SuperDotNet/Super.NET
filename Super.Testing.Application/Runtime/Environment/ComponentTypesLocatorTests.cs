@@ -1,11 +1,13 @@
 ﻿using FluentAssertions;
 using Super.Model.Collections;
+using Super.Reflection;
 using Super.Reflection.Selection;
 using Super.Runtime.Environment;
 using Super.Runtime.Execution;
 using System;
 using System.Linq;
 using Xunit;
+
 // ReSharper disable All
 
 namespace Super.Testing.Application.Runtime.Environment
@@ -33,14 +35,15 @@ namespace Super.Testing.Application.Runtime.Environment
 			var callAfter  = new Counter();
 
 			var before = new Counter();
-			var after = new Counter();
-			var sut = Start.With(() => In<Type>.Select(x => new object()))
-			                                  .Select(x => x.Select(callBefore.ExecuteAndReturn)
-			                                                .ToStore()
-			                                                .Select(callAfter.ExecuteAndReturn))
-			                                  .Select(before.ExecuteAndReturn)
-			                                  .ToContextual()
-			                                  .Select(after.ExecuteAndReturn);
+			var after  = new Counter();
+			var sut = Start.With(() => Start.With(() => new object())
+			                                .Out(I<Type>.Default))
+			               .Select(x => x.Select(callBefore.ExecuteAndReturn)
+			                             .ToStore()
+			                             .Select(callAfter.ExecuteAndReturn))
+			               .Select(before.ExecuteAndReturn)
+			               .ToContextual()
+			               .Select(after.ExecuteAndReturn);
 
 			callBefore.Get().Should().Be(0);
 			callAfter.Get().Should().Be(0);
@@ -94,9 +97,10 @@ namespace Super.Testing.Application.Runtime.Environment
 		sealed class NotSubject {}
 
 		[Sort(-10)]
-		sealed class First : IComponent{}
+		sealed class First : IComponent {}
 
-		sealed class Last : IComponent, ISortAware {
+		sealed class Last : IComponent, ISortAware
+		{
 			public int Get()
 			{
 				return 100;

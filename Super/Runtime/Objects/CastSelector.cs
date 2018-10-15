@@ -1,5 +1,5 @@
-﻿using System;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
+using System;
 
 namespace Super.Runtime.Objects
 {
@@ -9,9 +9,10 @@ namespace Super.Runtime.Objects
 
 		CastSelector() {}
 
-		public TTo Get(TFrom parameter) => parameter is TTo to
-			                                   ? to
-			                                   : throw new
-				                                     InvalidOperationException($"Could not cast {typeof(TFrom)} to {typeof(TTo)}");
+		public TTo Get(TFrom parameter)
+			=> parameter is TTo to
+				   ? to
+				   : throw new
+					     InvalidOperationException($"Could not cast {parameter?.GetType() ?? typeof(TFrom)} to {typeof(TTo)}");
 	}
 }

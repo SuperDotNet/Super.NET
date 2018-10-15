@@ -1,5 +1,4 @@
 ﻿using Super.Model.Selection;
-using Super.Reflection;
 using Super.Runtime;
 using Super.Runtime.Objects;
 using Super.Text;
@@ -16,8 +15,12 @@ namespace Super
 	{
 		public static KeyValuePair<Type, Func<string, Func<object, IProjection>>> Entry<T>(
 			this IFormattedProjection<T> @this)
-			=> Pairs.Create(Reflection.Types.Type<T>.Instance,
-			                @this.Select(x => x.Out(I<object>.Default).ToDelegate()).ToDelegate());
+		{
+			return Pairs.Create(Reflection.Types.Type<T>.Instance,
+			                    @this.Select(Super.Start.From<object>().Cast<T>().Select)
+			                         .Select(x => x.ToDelegate())
+			                         .ToDelegate());
+		}
 
 		public static IProjection Get<T>(this IFormattedProjection<T> @this, T parameter) => @this.Get(null)(parameter);
 

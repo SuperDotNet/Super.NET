@@ -30,6 +30,12 @@ namespace Super.Testing.Application.Runtime.Execution
 			}
 		}
 
+		[Fact]
+		void VerifyBasic()
+		{
+			Start.From<int>().New<Counter>().Get(1);
+		}
+
 		[Theory, AutoData]
 		void VerifyEquality(Counter<int> sut, int first, int second)
 		{

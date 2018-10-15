@@ -23,11 +23,8 @@ namespace Super
 
 		public static ISelect<TIn, TOut> AsSelect<TIn, TOut>(this ISelect<TIn, TOut> @this) => @this;
 
-		//public static ISelect<Unit, T> AsSelect<T>(this IAny<T> @this) => @this;
-
-		public static ISelect<TParameter, TResult> If<TParameter, TResult>(this ISelect<TParameter, TResult> @this,
-		                                                                   ISpecification<TParameter> @true)
-			=> Default<TParameter, TResult>.Instance.Unless(@true, @this);
+		public static ISelect<TIn, TOut> If<TIn, TOut>(this ISelect<TIn, TOut> @this, ISpecification<TIn> @true)
+			=> Super.Start.From<TIn>().Default<TOut>().Unless(@true, @this);
 
 		public static ISelect<TParameter, TResult> Then<TParameter, TResult>(this ISpecification<TParameter> @this,
 		                                                                     ISelect<TParameter, TResult> select)

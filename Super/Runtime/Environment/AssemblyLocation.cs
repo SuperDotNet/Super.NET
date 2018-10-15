@@ -1,7 +1,7 @@
-﻿using System;
-using System.Reflection;
-using Super.Model.Selection.Stores;
+﻿using Super.Model.Selection.Stores;
 using Super.Reflection;
+using System;
+using System.Reflection;
 
 namespace Super.Runtime.Environment
 {
@@ -9,6 +9,6 @@ namespace Super.Runtime.Environment
 	{
 		public static AssemblyLocation Default { get; } = new AssemblyLocation();
 
-		AssemblyLocation() : base(In<Assembly>.Select(x => x.CodeBase).Select(I<Uri>.Default.New).Get) {}
+		AssemblyLocation() : base(Start.From<Assembly>().Select(x => x.CodeBase).Select(I<Uri>.Default.New).Get) {}
 	}
 }

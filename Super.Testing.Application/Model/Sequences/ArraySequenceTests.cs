@@ -10,12 +10,11 @@ namespace Super.Testing.Application.Model.Sequences
 		void Verify()
 		{
 			var expected = Enumerable.Range(0, 10_000).ToArray();
-			In<int[]>.Start()
-			         .Sequence()
-			         .Get()
-			         .Get(expected)
-			         .Should()
-			         .Equal(expected);
+			Start.Sequence<int>()
+			     .Get()
+			     .Get(expected)
+			     .Should()
+			     .Equal(expected);
 		}
 
 		[Fact]
@@ -23,14 +22,13 @@ namespace Super.Testing.Application.Model.Sequences
 		{
 			var source   = Enumerable.Range(0, 10_000).ToArray();
 			var expected = source.Skip(5000).Take(300).ToArray();
-			In<int[]>.Start()
-			         .Sequence()
-			         .Skip(5000)
-			         .Take(300)
-			         .Get()
-			         .Get(source)
-			         .Should()
-			         .Equal(expected);
+			Start.Sequence<int>()
+			     .Skip(5000)
+			     .Take(300)
+			     .Get()
+			     .Get(source)
+			     .Should()
+			     .Equal(expected);
 		}
 	}
 }

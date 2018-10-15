@@ -46,7 +46,8 @@ namespace Super.Runtime
 			                      .Get(Type<T>.Instance)().IsSatisfiedBy
 			                    : IsAssignableStructure.Default.IsSatisfiedBy(Type<T>.Instance)
 				                    ? new Generic<ISpecification<T>>(typeof(HasValue<>))
-				                      .Get(AccountForUnassignedAlteration.Default.Get(Type<T>.Instance))().IsSatisfiedBy
+				                      .Get(AccountForUnassignedAlteration.Default.Get(Type<T>.Instance))()
+				                      .IsSatisfiedBy
 				                    : Value) {}
 	}
 

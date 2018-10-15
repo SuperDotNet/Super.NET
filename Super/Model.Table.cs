@@ -65,7 +65,7 @@ namespace Super
 
 		public static ITable<TParameter, TResult> ToStandardTable<TParameter, TResult>(this Func<TParameter, TResult> @this,
 		                                                                               IDictionary<TParameter, TResult> table)
-			=> I<StandardTables<TParameter, TResult>>.Default.From(@this).Get(table);
+			=> @this.To(I<StandardTables<TParameter, TResult>>.Default).Get(table);
 
 		public static ITable<TParameter, TResult> ToConcurrentTable<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this) => @this.ToDelegateReference().ToConcurrentTable();
@@ -79,6 +79,6 @@ namespace Super
 
 		public static ITable<TParameter, TResult> ToConcurrentTable<TParameter, TResult>(
 			this Func<TParameter, TResult> @this, ConcurrentDictionary<TParameter, TResult> table)
-			=> I<ConcurrentTables<TParameter, TResult>>.Default.From(@this).Get(table);
+			=> @this.To(I<ConcurrentTables<TParameter, TResult>>.Default).Get(table);
 	}
 }

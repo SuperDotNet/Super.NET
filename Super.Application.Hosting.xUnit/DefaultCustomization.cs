@@ -2,7 +2,6 @@
 using AutoFixture.Kernel;
 using Super.Model.Sources;
 using Super.Model.Specifications;
-using Super.Reflection;
 using Super.Reflection.Types;
 using System;
 using System.Linq;
@@ -26,7 +25,8 @@ namespace Super.Application.Hosting.xUnit
 
 		ManualPropertyTypesCustomization() : this(typeof(Thread)) {}
 
-		public ManualPropertyTypesCustomization(params Type[] types) : base(types.Select(x => new NoAutoPropertiesCustomization(x))) {}
+		public ManualPropertyTypesCustomization(params Type[] types) :
+			base(types.Select(x => new NoAutoPropertiesCustomization(x))) {}
 	}
 
 	sealed class NoSpecimenResult : Source<NoSpecimen>
@@ -40,7 +40,10 @@ namespace Super.Application.Hosting.xUnit
 	{
 		public static Epoch Default { get; } = new Epoch();
 
-		Epoch() : base(new DateTimeOffset(1976, 6, 7, 11, 18, 24, TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time").BaseUtcOffset)) {}
+		Epoch() : base(new DateTimeOffset(1976, 6, 7, 11, 18, 24,
+		                                  TimeZoneInfo
+			                                  .FindSystemTimeZoneById("Eastern Standard Time")
+			                                  .BaseUtcOffset)) {}
 	}
 
 	sealed class EpochSpecimen : Specimen<DateTimeOffset>
@@ -52,21 +55,25 @@ namespace Super.Application.Hosting.xUnit
 
 	public class Specimen<T> : ISpecimenBuilder
 	{
-		readonly static ISpecification<object> Specification = Type<T>.Instance.Equal()
-		                                                              .Out(x => x.Out(I<object>.Default))
-		                                                              .Out();
+		readonly static ISpecification<object> Specification = Start.From<object>()
+		                                                            .Cast<Type>()
+		                                                            .Select(Type<T>.Instance.Equal())
+		                                                            .Out()
+		                                                            .Yield()
+		                                                            .ToArray()
+		                                                            .To(IsType<Type>.Default.And);
 
 		readonly ISpecification<object> _specification;
-		readonly Func<T> _specimen;
-		readonly NoSpecimen _none;
+		readonly Func<T>                _specimen;
+		readonly NoSpecimen             _none;
 
 		public Specimen(Func<T> specimen) : this(Specification, specimen, NoSpecimenResult.Default) {}
 
 		public Specimen(ISpecification<object> specification, Func<T> specimen, NoSpecimen none)
 		{
 			_specification = specification;
-			_specimen = specimen;
-			_none = none;
+			_specimen      = specimen;
+			_none          = none;
 		}
 
 		public object Create(object request, ISpecimenContext context)

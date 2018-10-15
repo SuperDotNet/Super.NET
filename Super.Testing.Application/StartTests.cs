@@ -9,7 +9,7 @@ namespace Super.Testing.Application
 		[Fact]
 		void Verify()
 		{
-			Start.With<object>().Select(x => x.ToString());
+			Start.From<object>().Self().Select(x => x.ToString());
 		}
 	}
 }

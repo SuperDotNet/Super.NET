@@ -7,6 +7,6 @@ namespace Super.Runtime.Activation
 	{
 		public static HasSingletonProperty Default { get; } = new HasSingletonProperty();
 
-		HasSingletonProperty() : base(Implementations.SingletonProperty.Get) {}
+		HasSingletonProperty() : base(SingletonProperty.Default.Get) {}
 	}
 }

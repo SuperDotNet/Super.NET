@@ -8,7 +8,8 @@ namespace Super.Runtime.Invocation
 	class Deferred<TParameter, TResult> : DecoratedSelect<TParameter, TResult>,
 	                                      IActivateMarker<ISelect<TParameter, TResult>>
 	{
-		public Deferred(ISelect<TParameter, TResult> select) : this(select, In<TParameter>.Default<TResult>().ToTable()) {}
+		public Deferred(ISelect<TParameter, TResult> select)
+			: this(select, Start.From<TParameter>().Table<TResult>()) {}
 
 		public Deferred(ISelect<TParameter, TResult> select, IMutable<TParameter, TResult> mutable)
 			: base(new Configuration<TParameter, TResult>(select, mutable).Unless(mutable)) {}

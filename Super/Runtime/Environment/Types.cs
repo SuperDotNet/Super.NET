@@ -21,7 +21,8 @@ namespace Super.Runtime.Environment
 		public Types(Model.Sequences.IArray<Type> instance) : base(instance) {}
 	}
 
-	public class Types<T> : Model.Sequences.ArrayStore<Type> where T : class, IActivateMarker<Assembly>, Model.Sequences.IArray<Type>
+	public class Types<T> : Model.Sequences.ArrayStore<Type>
+		where T : class, IActivateMarker<Assembly>, Model.Sequences.IArray<Type>
 	{
 		public static Types<T> Default { get; } = new Types<T>();
 
@@ -46,12 +47,11 @@ namespace Super.Runtime.Environment
 		SystemStores() : this(StorageTypeDefinition.Default.Select(I<MakeGenericType>.Default)) {}
 
 		public SystemStores(ISource<ISelect<Model.Sequences.Array<Type>, Type>> source)
-			: base(In<Type>.Start()
-			               .Yield()
-			               .Result()
-			               .Select(source)
-			               .Activate(I<IMutable<T>>.Default)
-			               .Out(Type<T>.Instance)) {}
+			: base(Start.From<Type>()
+			            .Result()
+			            .Select(source)
+			            .Activate(I<IMutable<T>>.Default)
+			            .Out(Type<T>.Instance)) {}
 	}
 
 	/*public interface IInitialize : ICommand<ImmutableArray<Type>> {}

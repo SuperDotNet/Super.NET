@@ -14,7 +14,7 @@ namespace Super.Runtime.Invocation.Operations
 	class EventSubscriber : EventSubscriber<EventArgs>
 	{
 		public EventSubscriber(ICommand<EventHandler> add, ICommand<EventHandler> remove)
-			: this(In<EventHandler<EventArgs>>.New<EventHandler>(), add, remove) {}
+			: this(Start.From<EventHandler<EventArgs>>().New<EventHandler>(), add, remove) {}
 
 		public EventSubscriber(ISelect<EventHandler<EventArgs>, EventHandler> select, ICommand<EventHandler> add,
 		                       ICommand<EventHandler> remove)

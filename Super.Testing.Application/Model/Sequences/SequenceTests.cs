@@ -11,12 +11,11 @@ namespace Super.Testing.Application.Model.Sequences
 		{
 			var array = new[] {1, 2, 3};
 
-			In<int[]>.Start()
-			         .Sequence()
-			         .Get()
-			         .Get(array)
-			         .Should()
-			         .Equal(array);
+			Start.Sequence<int>()
+			     .Get()
+			     .Get(array)
+			     .Should()
+			     .Equal(array);
 		}
 
 		[Fact]
@@ -25,13 +24,12 @@ namespace Super.Testing.Application.Model.Sequences
 			var array    = new[] {1, 2, 3};
 			var expected = array.Skip(1).ToArray();
 
-			In<int[]>.Start()
-			         .Sequence()
-			         .Skip(1)
-			         .Get()
-			         .Get(array)
-			         .Should()
-			         .Equal(expected);
+			Start.Sequence<int>()
+			     .Skip(1)
+			     .Get()
+			     .Get(array)
+			     .Should()
+			     .Equal(expected);
 		}
 
 		[Fact]
@@ -40,13 +38,12 @@ namespace Super.Testing.Application.Model.Sequences
 			var array    = new[] {1, 2, 3};
 			var expected = array.Take(2).ToArray();
 
-			In<int[]>.Start()
-			         .Sequence()
-			         .Take(2)
-			         .Get()
-			         .Get(array)
-			         .Should()
-			         .Equal(expected);
+			Start.Sequence<int>()
+			     .Take(2)
+			     .Get()
+			     .Get(array)
+			     .Should()
+			     .Equal(expected);
 		}
 
 		[Fact]
@@ -55,14 +52,13 @@ namespace Super.Testing.Application.Model.Sequences
 			var array    = new[] {1, 2, 3, 4, 5};
 			var expected = array.Skip(3).Take(2).ToArray();
 
-			In<int[]>.Start()
-			         .Sequence()
-			         .Skip(3)
-			         .Take(2)
-			         .Get()
-			         .Get(array)
-			         .Should()
-			         .Equal(expected);
+			Start.Sequence<int>()
+			     .Skip(3)
+			     .Take(2)
+			     .Get()
+			     .Get(array)
+			     .Should()
+			     .Equal(expected);
 		}
 	}
 }

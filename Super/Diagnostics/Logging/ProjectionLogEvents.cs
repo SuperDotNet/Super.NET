@@ -12,7 +12,7 @@ namespace Super.Diagnostics.Logging
 	{
 		public static ProjectionLogEvents Default { get; } = new ProjectionLogEvents();
 
-		ProjectionLogEvents() : this(Implementations.Scalars, PropertyFactories.Default.AsSelect().Get) {}
+		ProjectionLogEvents() : this(Implementations.Scalars, PropertyFactories.Default.Get) {}
 
 		readonly Func<LogEvent, ILogEventPropertyFactory> _factories;
 

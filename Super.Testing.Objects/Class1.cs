@@ -75,7 +75,7 @@ namespace Super.Testing.Objects
 	{
 		public static Sequencing<T> Default { get; } = new Sequencing<T>();
 
-		Sequencing() : this(In<T[]>.Start().Sequence()) {}
+		Sequencing() : this(Start.Sequence<T>()) {}
 
 		public Sequencing(ISequence<T[], T> sequence) : this(sequence, Objects.Near.Default, Objects.Far.Default) {}
 
