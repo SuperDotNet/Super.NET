@@ -1,4 +1,5 @@
 ﻿using Super.Model.Selection;
+using Super.Reflection;
 using Super.Runtime;
 using Super.Runtime.Objects;
 using Super.Text;
@@ -16,7 +17,7 @@ namespace Super
 		public static KeyValuePair<Type, Func<string, Func<object, IProjection>>> Entry<T>(
 			this IFormattedProjection<T> @this)
 			=> Pairs.Create(Reflection.Types.Type<T>.Instance,
-			                @this.Select(x => In<object>.Cast(x).ToDelegate()).ToDelegate());
+			                @this.Select(x => x.Out(I<object>.Default).ToDelegate()).ToDelegate());
 
 		public static IProjection Get<T>(this IFormattedProjection<T> @this, T parameter) => @this.Get(null)(parameter);
 
@@ -24,15 +25,16 @@ namespace Super
 		                                                 params Expression<Func<T, object>>[] expressions)
 			=> new Projection<T>(@this, expressions);
 
-		public static KeyValuePair<string, Func<T, IProjection>> Entry<T>(this IFormatEntry<T> @this,
-		                                                                  params Expression<Func<T, object>>[] expressions)
+		public static KeyValuePair<string, Func<T, IProjection>> Entry<T>(
+			this IFormatEntry<T> @this, params Expression<Func<T, object>>[] expressions)
 		{
 			var pair = @this.Get();
 			return pair.Entry(expressions);
 		}
 
-		public static KeyValuePair<string, Func<T, IProjection>> Entry<T>(ref this KeyValuePair<string, Func<T, string>> @this,
-		                                                                  params Expression<Func<T, object>>[] expressions)
+		public static KeyValuePair<string, Func<T, IProjection>> Entry<T>(
+			ref this KeyValuePair<string, Func<T, string>> @this,
+			params Expression<Func<T, object>>[] expressions)
 			=> Pairs.Create(@this.Key, new Projection<T>(@this.Value, expressions).ToDelegate());
 	}
 }

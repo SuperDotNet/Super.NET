@@ -7,9 +7,7 @@ namespace Super.Runtime.Objects
 	{
 		public static CanCast<TFrom, TTo> Default { get; } = new CanCast<TFrom, TTo>();
 
-		CanCast() : base(IsAssigned<TFrom>.Default,
-		                 In<TFrom>.Type()
-		                          .Metadata()
-		                          .Out(IsAssignableFrom<TTo>.Default)) {}
+		CanCast() : base(Start.Assigned<TFrom>(),
+		                 Start.Metadata<TFrom>().Out(IsAssignableFrom<TTo>.Default)) {}
 	}
 }

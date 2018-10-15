@@ -25,8 +25,6 @@ namespace Super
 
 		//public static ISelect<Unit, T> AsSelect<T>(this IAny<T> @this) => @this;
 
-		public static ISelect<object, T> AsAny<T>(this IAny<T> @this) => @this;
-
 		public static ISelect<TParameter, TResult> If<TParameter, TResult>(this ISelect<TParameter, TResult> @this,
 		                                                                   ISpecification<TParameter> @true)
 			=> Default<TParameter, TResult>.Instance.Unless(@true, @this);
@@ -52,7 +50,8 @@ namespace Super
 
 		public static ISelect<TParameter, TResult> UnlessCast<TParameter, TResult, TOther>(
 			this ISelect<TParameter, TResult> @this, ISelect<TOther, TResult> then)
-			=> @this.Unless(IsType<TParameter, TOther>.Default, In<TParameter>.Cast(then));
+			=> @this.Unless(IsType<TParameter, TOther>.Default,
+			                Runtime.Objects.Cast<TParameter, TOther>.Default.Select(then));
 
 		public static ISelect<TParameter, TResult> Unless<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, ISpecification<TParameter> specification,

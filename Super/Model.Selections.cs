@@ -4,6 +4,7 @@ using Super.Model.Sources;
 using Super.Model.Specifications;
 using Super.Reflection;
 using Super.Runtime.Activation;
+using Super.Runtime.Objects;
 using System;
 using System.Reactive;
 using IAny = Super.Model.Specifications.IAny;
@@ -14,9 +15,47 @@ namespace Super
 
 	public static partial class ExtensionMethods
 	{
-		public static ISelect<T, Unit> Out<T>(this ICommand<T> @this) => new Configuration<T>(@this.Execute);
+		public static ISelect<object, TOut> Out<TIn, TOut>(this ISelect<TIn, TOut> @this)
+			=> @this.Out(I<object>.Default);
 
-		public static IAny<T> Out<T>(this ISource<T> @this) => new Any<T>(@this.Get);
+		public static ISelect<TAllow, TOut> Out<TAllow, TIn, TOut>(this ISelect<TIn, TOut> @this, I<TAllow> allow)
+			=> @this.ToDelegate().Out(allow);
+
+		public static ISelect<TAllow, TOut> Out<TAllow, TIn, TOut>(this Func<TIn, TOut> @this, I<TAllow> allow)
+			=> @this.Out(default)
+			        .Out(allow)
+			        .Unless(CanCast<TAllow, TIn>.Default, CastSelector<TAllow, TIn>.Default.Select(@this));
+
+		/**/
+
+		public static ISelect<_, TTo> Select<_, TFrom, TTo>(this ISelect<_, TFrom> @this, I<TTo> infer)
+			where TTo : IActivateMarker<TFrom> => @this.Select(infer.From);
+
+		public static ISelect<TParameter, TResult> Select<TParameter, TResult>(
+			this ISelect<TParameter, TResult> @this, ISelect<Decoration<TParameter, TResult>, TResult> other)
+			=> new Decorator<TParameter, TResult>(other, @this);
+
+		public static ISelect<Unit, TOut> Select<TIn, TOut>(this ISelect<TIn, TOut> @this, TIn parameter)
+			=> new FixedSelection<TIn, TOut>(@this, parameter).Out();
+
+		public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this,
+		                                                        ISource<ISelect<TFrom, TTo>> source)
+			=> @this.Select(new DelegatedInstanceSelector<TFrom, TTo>(source).Get);
+
+		public static ISelect<TIn, bool> Select<TIn, TFrom>(this ISelect<TIn, TFrom> @this,
+		                                                    ISpecification<TFrom> select)
+			=> @this.Select(select.IsSatisfiedBy);
+
+		public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this,
+		                                                        ISelect<TFrom, TTo> select)
+			=> @this.Select(select.Get);
+
+		public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this, Func<TFrom, TTo> select)
+			=> new Selection<TIn, TFrom, TTo>(@this.Get, select);
+
+		/**/
+
+		public static ISelect<T, Unit> Out<T>(this ICommand<T> @this) => new Configuration<T>(@this.Execute);
 
 		public static ISpecification<TIn> Out<TIn, TOut>(this ISelect<TIn, TOut> @this,
 		                                                 ISelect<TOut, bool> specification)
@@ -49,67 +88,17 @@ namespace Super
 			=> new FixedParameterCommand<TIn>(@this.Out().Execute, parameter).Any();
 
 		public static ISource<TOut> Out<TIn, TOut>(this ISelect<TIn, TOut> @this, TIn parameter)
+			=> @this.ToDelegate().Out(parameter);
+
+		public static ISource<TOut> Out<TIn, TOut>(this Func<TIn, TOut> @this, TIn parameter)
 			=> new FixedSelection<TIn, TOut>(@this, parameter);
 
 		public static ISource<TOut> Out<TIn, TOut>(this ISelect<TIn, TOut> @this, ISource<TIn> parameter)
 			=> new DelegatedSelection<TIn, TOut>(@this, parameter);
 
-		public static ISpecification<TFrom, TResult> Out<TFrom, TTo, TResult>(this ISelect<TFrom, TTo> @this,
-		                                                                      ISpecification<TTo, TResult>
-			                                                                      specification)
+		public static ISpecification<TFrom, TResult> Out<TFrom, TTo, TResult>(
+			this ISelect<TFrom, TTo> @this, ISpecification<TTo, TResult> specification)
 			=> new Specification<TFrom, TResult>(@this.Out(specification.IsSatisfiedBy),
 			                                     @this.Select(specification.Get));
-
-		public static ISelect<_, TTo> Select<_, TFrom, TTo>(this ISelect<_, TFrom> @this, I<TTo> infer)
-			where TTo : IActivateMarker<TFrom>
-			=> @this.Select(infer.From);
-
-		public static ISelect<T, TOut> Accept<T, TOut>(this ISelect<Unit, TOut> @this, I<T> _)
-			=> In<T>.Start(Unit.Default).Select(@this);
-
-		public static ISelect<TParameter, TResult> Select<TParameter, TResult>(
-			this ISelect<TParameter, TResult> @this, ISelect<Decoration<TParameter, TResult>, TResult> other)
-			=> new Decorator<TParameter, TResult>(other, @this);
-
-		public static ISelect<Unit, TOut> Select<TIn, TOut>(this ISelect<TIn, TOut> @this, TIn parameter)
-			=> new FixedSelection<TIn, TOut>(@this, parameter).Out();
-
-		public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this,
-		                                                        ISource<ISelect<TFrom, TTo>> source)
-			=> @this.Select(new DelegatedInstanceSelector<TFrom, TTo>(source).Get);
-
-		public static ISelect<TIn, bool> Select<TIn, TFrom>(this ISelect<TIn, TFrom> @this,
-		                                                    ISpecification<TFrom> select)
-			=> @this.Select(select.IsSatisfiedBy);
-
-		public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this,
-		                                                        ISelect<TFrom, TTo> select)
-			=> @this.Select(select.Get);
-
-		/**/
-
-		/*public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this,
-		                                                        IStructure<TFrom, TTo> select) where TFrom : struct
-			=> new StructureInput<TIn, TFrom, TTo>(@this.Get, select.Get);
-
-		public static IStructure<TIn, TTo> Select<TIn, TFrom, TTo>(this IStructure<TIn, TFrom> @this,
-		                                                           IStructure<TFrom, TTo> select)
-			where TIn : struct
-			where TFrom : struct
-			=> @this.Select(select.Get);
-
-		public static IStructure<TIn, TTo> Select<TIn, TFrom, TTo>(this IStructure<TIn, TFrom> @this,
-		                                                           Result<TFrom, TTo> select)
-			where TIn : struct
-			where TFrom : struct
-			=> new Structure<TIn, TFrom, TTo>(@this.Get, select);
-
-		public static IStructure<TIn, TTo> Select<TIn, TFrom, TTo>(this IStructure<TIn, TFrom> @this,
-		                                                           Func<TFrom, TTo> select)
-			where TIn : struct
-			=> new StructureSelection<TIn, TFrom, TTo>(@this.Get, select);*/
-
-		public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this, Func<TFrom, TTo> select)
-			=> new Selection<TIn, TFrom, TTo>(@this.Get, select);
 	}
 }

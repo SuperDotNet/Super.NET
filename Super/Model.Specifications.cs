@@ -41,5 +41,8 @@ namespace Super
 
 		public static ISpecification<T, TOut> Out<T, TOut>(this ISpecification<T> @this, ISelect<T, TOut> parameter)
 			=> new Specification<T, TOut>(@this, parameter);
+
+		public static TTo Out<TFrom, TTo>(this ISpecification<TFrom> @this, Func<ISelect<TFrom, bool>, TTo> select)
+			=> select(@this.Out());
 	}
 }

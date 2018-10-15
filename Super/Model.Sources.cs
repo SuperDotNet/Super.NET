@@ -19,44 +19,13 @@ namespace Super
 	// ReSharper disable once MismatchedFileName
 	public static partial class ExtensionMethods
 	{
-		public static ISource<T> Default<T>(this ISource<T> _) => Model.Sources.Default<T>.Instance;
-
-		public static ISelect<TParameter, TResult> Out<TParameter, TResult>(
-			this ISource<TResult> @this, I<TParameter> _)
-			=> new Model.Selection.DelegatedResult<TParameter, TResult>(@this.Get);
-
-		public static IAny Out<T>(this ISource<T> @this, ISpecification<T> specification)
-			=> @this.Out(specification.IsSatisfiedBy);
-
-		public static IAny Out<T>(this ISource<T> @this, ISelect<T, bool> specification)
-			=> @this.Out(specification.Get);
-
-		public static ISelect<TFrom, TTo> Out<TFrom, TTo>(this ISource<TTo> @this, ISelect<TFrom, TTo> select)
-			=> @this.Out(I<TFrom>.Default).Unless(select);
-
-		public static IAny Out<T>(this ISource<T> @this, Func<T, bool> specification)
-			=> new DelegatedResultSpecification(new DelegatedSelection<T, bool>(specification, @this.ToDelegate()).Get)
-				.Any();
-
-		public static Model.Commands.IAny Out<T>(this ISource<T> @this, ISelect<T, Unit> select)
-			=> @this.Out(select.Out());
-
-		public static Model.Commands.IAny Out<T>(this ISource<T> @this, ICommand<T> select)
-			=> new DelegatedParameterCommand<T>(select.Execute, @this.Get).Any();
-
-		public static ISelect<TIn, TOut> Emit<TIn, TOut>(this ISource<ISelect<TIn, TOut>> @this)
-			=> new DelegatedInstanceSelector<TIn, TOut>(@this);
-
-		public static TTo Out<TFrom, TTo>(this ISource<TFrom> @this, Func<ISelect<Unit, TFrom>, TTo> select)
-			=> select(@this.Out());
-
-		public static ISource<T> Out<T>(this Func<T> @this) => I<DelegatedSource<T>>.Default.From(@this);
+		/*public static ISource<T> Default<T>(this ISource<T> _) => Model.Sources.Default<T>.Instance;*/
 
 		public static ISource<T> Unless<T>(this ISource<T> @this, ISource<T> then)
 			=> @this.Unless(IsAssigned<T>.Default, then);
 
 		public static ISource<T> Unless<T>(this ISource<T> @this, ISpecification<T> specification)
-			=> @this.Default().Unless(specification, @this);
+			=> Super.Start.Default<T>().Unless(specification, @this);
 
 		public static ISource<T> Unless<T>(this ISource<T> @this, ISpecification<T> specification, ISource<T> then)
 			=> new ValidatedSource<T>(specification, then, @this);
@@ -81,7 +50,9 @@ namespace Super
 		public static ISource<T> Singleton<T>(this ISource<T> @this)
 			=> @this.ToDelegate().To(SingletonDelegateSelector<T>.Default).Out();
 
-		public static ISource<T> ToSource<T>(this T @this) => Sources<T>.Default.Get(@this);
+		public static ISource<T> ToSource<T>(this T @this) => /*Sources<T>.Default.Get(@this)*/Super.Start.With(@this);
+
+		public static ISource<T> Start<T>(this T @this) => /*Sources<T>.Default.Get(@this)*/Super.Start.With(@this);
 
 		public static ISource<T> ToContextual<T>(this ISource<T> @this) => @this.To(I<Contextual<T>>.Default);
 
@@ -89,6 +60,42 @@ namespace Super
 
 		public static Func<T> ToDelegateReference<T>(this ISource<T> @this)
 			=> Model.Sources.Delegates<T>.Default.Get(@this);
+
+		/**/
+
+		public static ISelect<TIn, TOut> Emit<TIn, TOut>(this ISource<ISelect<TIn, TOut>> @this)
+			=> new DelegatedInstanceSelector<TIn, TOut>(@this);
+
+		public static ISelect<Unit, T> Out<T>(this ISource<T> @this) => new Model.Selection.DelegatedResult<Unit, T>(@this.Get);
+
+		public static ISelect<TIn, T> Out<TIn, T>(this ISource<T> @this, I<TIn> infer) => @this.ToDelegate().Out(infer);
+
+		public static ISelect<TIn, T> Out<TIn, T>(this Func<T> @this, I<TIn> _)
+			=> new Model.Selection.DelegatedResult<TIn, T>(@this);
+
+		public static IAny Out<T>(this ISource<T> @this, ISpecification<T> specification)
+			=> @this.Out(specification.IsSatisfiedBy);
+
+		public static IAny Out<T>(this ISource<T> @this, ISelect<T, bool> specification)
+			=> @this.Out(specification.Get);
+
+		public static ISelect<TFrom, TTo> Out<TFrom, TTo>(this ISource<TTo> @this, ISelect<TFrom, TTo> select)
+			=> @this.Out(I<TFrom>.Default).Unless(select);
+
+		public static IAny Out<T>(this ISource<T> @this, Func<T, bool> specification)
+			=> new DelegatedResultSpecification(new DelegatedSelection<T, bool>(specification, @this.ToDelegate()).Get)
+				.Any();
+
+		public static Model.Commands.IAny Out<T>(this ISource<T> @this, ISelect<T, Unit> select)
+			=> @this.Out(select.Out());
+
+		public static Model.Commands.IAny Out<T>(this ISource<T> @this, ICommand<T> select)
+			=> new DelegatedParameterCommand<T>(select.Execute, @this.Get).Any();
+
+		public static ISource<T> Out<T>(this Func<T> @this) => I<DelegatedSource<T>>.Default.From(@this);
+
+		public static TTo Out<TFrom, TTo>(this ISource<TFrom> @this, Func<ISelect<Unit, TFrom>, TTo> select)
+			=> select(@this.Out());
 
 		/**/
 

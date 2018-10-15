@@ -14,6 +14,6 @@ namespace Super.Reflection.Types
 
 	public sealed class IsAssignableFrom : DelegatedSpecification<Type>, IActivateMarker<Type>
 	{
-		public IsAssignableFrom(Type type) : base(type.IsAssignableFrom) {}
+		public IsAssignableFrom(Type type) : base(x => type.IsAssignableFrom(x)) {}
 	}
 }

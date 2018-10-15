@@ -1,5 +1,5 @@
-﻿using System;
-using Super.Model.Specifications;
+﻿using Super.Model.Specifications;
+using System;
 
 namespace Super.Model.Sources
 {
@@ -9,7 +9,7 @@ namespace Super.Model.Sources
 		readonly Func<T, bool> _specification;
 
 		public ValidatedSource(ISpecification<T> specification, ISource<T> instance)
-			: this(specification, instance, instance.Default()) {}
+			: this(specification, instance, Start.Default<T>()) {}
 
 		public ValidatedSource(ISpecification<T> specification, ISource<T> instance, ISource<T> fallback)
 			: this(specification.IsSatisfiedBy, instance.Get, fallback.Get) {}

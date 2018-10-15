@@ -2,7 +2,6 @@
 using Super.Model.Sources;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Super.Runtime
 {
@@ -11,8 +10,8 @@ namespace Super.Runtime
 		public static KeyValuePair<TKey, TValue> Create<TKey, TValue>(TKey key, TValue value)
 			 => new KeyValuePair<TKey, TValue>(key, value);
 
-		public static ISpecification<TParameter, TResult> Select<TParameter, TResult>(
-			params ISource<KeyValuePair<TParameter, TResult>>[] pairs) => pairs.Select(x => x.Get()).ToStore();
+		/*public static ISpecification<TParameter, TResult> Select<TParameter, TResult>(
+			params ISource<KeyValuePair<TParameter, TResult>>[] pairs) => pairs.Select(x => x.Get()).ToStore();*/
 
 		public static ISelect<TParameter, TIn, TOut> Select<TParameter, TIn, TOut>(
 			params KeyValuePair<TParameter, Func<TIn, TOut>>[] pairs) => pairs.ToSelect();

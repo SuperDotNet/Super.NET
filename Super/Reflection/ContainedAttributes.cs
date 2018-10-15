@@ -1,4 +1,5 @@
 ﻿using Super.Model.Specifications;
+using Super.Runtime.Objects;
 using System;
 using System.Reflection;
 
@@ -6,7 +7,7 @@ namespace Super.Reflection
 {
 	sealed class ContainedAttributes<TAttribute, T> : Attributes<TAttribute, T> where TAttribute : Attribute
 	{
-		readonly static Func<TAttribute, T> Select = In<TAttribute>.CastForValue<T>().Get;
+		readonly static Func<TAttribute, T> Select = ValueAwareCast<TAttribute, T>.Default.Get;
 
 		public static ContainedAttributes<TAttribute, T> Default { get; } = new ContainedAttributes<TAttribute, T>();
 

@@ -2,6 +2,7 @@
 using AutoFixture.Kernel;
 using Super.Model.Sources;
 using Super.Model.Specifications;
+using Super.Reflection;
 using Super.Reflection.Types;
 using System;
 using System.Linq;
@@ -51,8 +52,9 @@ namespace Super.Application.Hosting.xUnit
 
 	public class Specimen<T> : ISpecimenBuilder
 	{
-		readonly static ISpecification<object> Specification = In<object>.Cast<Type>()
-		                                                                 .Out(Type<T>.Instance.Equal());
+		readonly static ISpecification<object> Specification = Type<T>.Instance.Equal()
+		                                                              .Out(x => x.Out(I<object>.Default))
+		                                                              .Out();
 
 		readonly ISpecification<object> _specification;
 		readonly Func<T> _specimen;

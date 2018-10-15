@@ -11,7 +11,7 @@ namespace Super.Testing.Application.Runtime.Environment
 		[Fact]
 		void Verify()
 		{
-			Start.New<Assembly>(() => null)
+			Start.With<Assembly>(() => null)
 			     .Invoking(x => x.Get())
 			     .Should()
 			     .NotThrow();
@@ -20,7 +20,7 @@ namespace Super.Testing.Application.Runtime.Environment
 		[Fact]
 		void VerifyGuard()
 		{
-			Start.New<Assembly>(() => null)
+			Start.With<Assembly>(() => null)
 			     .Select(PrimaryAssemblyMessage.Default)
 			     .Invoking(x => x.Get())
 			     .Should()
@@ -30,7 +30,7 @@ namespace Super.Testing.Application.Runtime.Environment
 		[Fact]
 		void VerifyAssigned()
 		{
-			Start.New(() => GetType().Assembly)
+			Start.With(() => GetType().Assembly)
 			     .Select(PrimaryAssemblyMessage.Default)
 			     .Invoking(x => x.Get())
 			     .Should()

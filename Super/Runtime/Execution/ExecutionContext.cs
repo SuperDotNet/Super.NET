@@ -28,7 +28,7 @@ namespace Super.Runtime.Execution
 		ExecutionContextStore() : this(ExecutionContextLocator.Default) {}
 
 		public ExecutionContextStore(ISource<ISource<object>> source)
-			: base(Start.New(() => new ContextDetails("Default Execution Context"))
+			: base(Start.With(() => new ContextDetails("Default Execution Context"))
 			            .ToSource()
 			            .Unless(source)
 			            .AsSelect(x => x.Value())) {}

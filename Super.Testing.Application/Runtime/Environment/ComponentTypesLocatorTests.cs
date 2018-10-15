@@ -34,7 +34,7 @@ namespace Super.Testing.Application.Runtime.Environment
 
 			var before = new Counter();
 			var after = new Counter();
-			var sut = Start.New(() => In<Type>.Select(x => new object()))
+			var sut = Start.With(() => In<Type>.Select(x => new object()))
 			                                  .Select(x => x.Select(callBefore.ExecuteAndReturn)
 			                                                .ToStore()
 			                                                .Select(callAfter.ExecuteAndReturn))

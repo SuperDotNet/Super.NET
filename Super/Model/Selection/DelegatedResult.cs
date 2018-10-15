@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reactive;
 
 namespace Super.Model.Selection
 {
@@ -12,7 +11,7 @@ namespace Super.Model.Selection
 		public TResult Get(TParameter _) => _result();
 	}
 
-	class Any<T> : IAny<T>
+	/*class Any<T> : IAny<T>
 	{
 		readonly ISelect<Unit, T> _select;
 
@@ -25,5 +24,5 @@ namespace Super.Model.Selection
 		public T Get(object parameter) => Get(Unit.Default);
 	}
 
-	public interface IAny<out T> : ISelect<object, T>, ISelect<Unit, T> {}
+	public interface IAny<out T> : /*ISelect<object, T>,#1# ISelect<Unit, T> {}*/
 }

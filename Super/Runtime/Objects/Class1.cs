@@ -24,9 +24,6 @@ namespace Super.Runtime.Objects
 	{
 		readonly string _text;
 
-		/*public Projection(string text, Type instanceType, IEnumerable<KeyValuePair<string, object>> properties)
-			: this(text, instanceType, properties.ToOrderedDictionary()) {}*/
-
 		public Projection(string text, Type instanceType, IDictionary<string, object> properties) : base(properties)
 		{
 			_text        = text;
@@ -44,14 +41,14 @@ namespace Super.Runtime.Objects
 
 		KnownProjectors() : this(ApplicationDomainProjection.Default.Entry()) {}
 
-		public KnownProjectors(params KeyValuePair<Type, Func<string, Func<object, IProjection>>>[] items) :
-			base(items) {}
+		public KnownProjectors(params KeyValuePair<Type, Func<string, Func<object, IProjection>>>[] items)
+			: base(items) {}
 	}
 
 	static class Implementations
 	{
 		public static Func<Type, Func<string, Func<object, IProjection>>> KnownProjectors { get; }
-			= Objects.KnownProjectors.Default.Select(x => x.AsEnumerable().ToStore().AsSelect()).Emit().Get;
+			= Objects.KnownProjectors.Default.Select(x => x.Reference().ToStore()).Emit().Get;
 	}
 
 	public interface IProjectors : ISelect<Type, string, Func<object, IProjection>> {}

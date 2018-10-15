@@ -1,5 +1,5 @@
-﻿using System;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
+using System;
 
 namespace Super.Text.Formatting
 {
@@ -7,7 +7,7 @@ namespace Super.Text.Formatting
 	{
 		public static CustomFormatter Default { get; } = new CustomFormatter();
 
-		CustomFormatter() : this(Formatters.Default) {}
+		CustomFormatter() : this(KnownFormatters.Default) {}
 
 		readonly ISelect<object, IFormattable> _select;
 
