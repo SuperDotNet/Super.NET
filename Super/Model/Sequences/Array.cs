@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using Super.Model.Selection;
 using Super.Model.Sources;
 using Super.Reflection.Types;
@@ -37,8 +38,10 @@ namespace Super.Model.Sequences
 
 		public T[] Copy() => ArraySelector<T>.Default.Get(_reference);
 
+		[Pure]
 		public ImmutableArray<T> Get() => ImmutableArray.Create(_reference);
 
+		[Pure]
 		public IEnumerable<T> Reference() => _reference;
 
 		public IEnumerator<T> GetEnumerator() => _reference.Hide().GetEnumerator();

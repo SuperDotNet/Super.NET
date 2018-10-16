@@ -31,7 +31,7 @@ namespace Super.Runtime.Activation
 	{
 		public static IsSingletonProperty Default { get; } = new IsSingletonProperty();
 
-		IsSingletonProperty() : base(IsAssigned.Default, Start.When<PropertyInfo>()
-		                                                      .Is(y => y.CanRead && y.GetMethod.IsStatic)) {}
+		IsSingletonProperty() : base(IsAssigned.Default,
+		                             Start.When<PropertyInfo>().Is(y => y.CanRead && y.GetMethod.IsStatic)) {}
 	}
 }

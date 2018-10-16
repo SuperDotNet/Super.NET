@@ -14,22 +14,6 @@ using System.Reflection;
 
 namespace Super
 {
-	/*public sealed class When<T>
-	{
-		public static When<T> Default { get; } = new When<T>();
-
-		When() {}
-
-		public ISpecification<T> Assigned() => IsAssigned<T>.Default;
-
-		public ISpecification<T> Is(Func<T, bool> specification) => new DelegatedSpecification<T>(specification);
-	}*/
-
-	/*public sealed class A<T>
-	{
-
-	}*/
-
 	public static class Start
 	{
 		public static When<T> When<T>() => Super.When<T>.Default;
@@ -51,8 +35,6 @@ namespace Super
 		public static ISource<T> With<T>(T instance) => new Source<T>(instance);
 
 		public static ISource<T> With<T>(Func<T> select) => new DelegatedSource<T>(select);
-
-		/*public static ISource<T> Default<T>() => Model.Sources.Default<T>.Instance;*/
 
 		/**/
 

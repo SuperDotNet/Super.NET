@@ -13,9 +13,9 @@ namespace Super.Platform
 
 		Size() : this(new Generic<uint>(typeof(SizeOf<>))) {}
 
-		readonly IGeneric<uint> _generic;
+		readonly IGeneric<Func<uint>> _generic;
 
-		public Size(IGeneric<uint> generic) => _generic = generic;
+		public Size(IGeneric<Func<uint>> generic) => _generic = generic;
 
 		public uint Get(Type type) => _generic.Get(type).Invoke();
 

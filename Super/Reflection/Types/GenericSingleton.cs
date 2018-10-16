@@ -1,4 +1,5 @@
-﻿using Super.Runtime.Activation;
+﻿using Super.Model.Sequences;
+using Super.Runtime.Activation;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -6,7 +7,7 @@ using System.Reflection;
 
 namespace Super.Reflection.Types
 {
-	sealed class GenericSingleton : IGenericActivation
+	sealed class GenericSingleton : ArrayInstance<ParameterExpression>, IGenericActivation
 	{
 		public static GenericSingleton Default { get; } = new GenericSingleton();
 
@@ -15,7 +16,7 @@ namespace Super.Reflection.Types
 
 		readonly MethodInfo _method;
 
-		public GenericSingleton(MethodInfo method) => _method = method;
+		public GenericSingleton(MethodInfo method) : base(Array<ParameterExpression>.Empty) => _method = method;
 
 		public Expression Get(Type parameter)
 		{

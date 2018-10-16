@@ -15,7 +15,6 @@ namespace Super.Runtime.Activation
 		                        .Value()
 		                        .To(Start.From<Type>()
 		                                 .Result()
-		                                 .Select(x => x.Get())
 		                                 .Select)) {}
 	}
 

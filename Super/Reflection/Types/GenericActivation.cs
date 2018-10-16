@@ -1,17 +1,20 @@
-﻿using System;
-using System.Collections.Immutable;
+﻿using Super.Model.Sequences;
+using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Super.Reflection.Types
 {
-	sealed class GenericActivation : IGenericActivation
+	sealed class GenericActivation : ArrayInstance<ParameterExpression>, IGenericActivation
 	{
-		readonly ReadOnlyMemory<ParameterExpression> _expressions;
-		readonly ImmutableArray<Type>                _types;
+		readonly Array<ParameterExpression> _expressions;
+		readonly Array<Type>                _types;
 
-		public GenericActivation(ImmutableArray<Type> types, params ParameterExpression[] expressions)
+		public GenericActivation(Array<Type> types)
+			: this(types, types.Reference().Select(Defaults.Parameter).ToArray()) {}
+
+		public GenericActivation(Array<Type> types, params ParameterExpression[] expressions) : base(expressions)
 		{
 			_types       = types;
 			_expressions = expressions;
@@ -21,11 +24,9 @@ namespace Super.Reflection.Types
 		{
 			var constructor = parameter.GetTypeInfo().DeclaredConstructors.Only() ??
 			                  parameter.GetConstructors().Only() ??
-			                  parameter.GetConstructor(_types.ToArray());
-			var types = constructor.GetParameters()
-			                       .Select(x => x.ParameterType);
-			var memory     = _expressions;
-			var parameters = memory.ToArray().Zip(types, Defaults.ExpressionZip);
+			                  parameter.GetConstructor(_types);
+			var types      = constructor.GetParameters().Select(x => x.ParameterType);
+			var parameters = _expressions.Reference().Zip(types, Defaults.ExpressionZip);
 			var result     = Expression.New(constructor, parameters);
 			return result;
 		}

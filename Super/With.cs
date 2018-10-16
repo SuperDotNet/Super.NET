@@ -28,6 +28,6 @@ namespace Super
 
 		For() {}
 
-		public IGeneric<T> A(Type definition) => new Generic<T>(definition);
+		public IGeneric<Func<T>> A(Type definition) => new Generic<T>(definition);
 	}
 }
