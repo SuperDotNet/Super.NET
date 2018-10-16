@@ -50,14 +50,14 @@ namespace Super.Testing.Application.Runtime.Activation
 		[Fact]
 		public void VerifyReferences()
 		{
-			var source = StartReferences.Default.Activate(I<References>.Default);
+			var source = StartReferences.Default.Select(I<References>.Default);
 			source.Get(123).Should().BeSameAs(source.Get(123));
 		}
 
 		[Fact]
 		public void VerifyValues()
 		{
-			var          source    = StartValues.Default.Activate(I<Values>.Default);
+			var          source    = StartValues.Default.Select(I<Values>.Default);
 			const string parameter = "First";
 			source.Get(parameter).Should().NotBeSameAs(source.Get(parameter));
 		}

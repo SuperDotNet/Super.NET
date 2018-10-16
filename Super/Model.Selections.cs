@@ -22,8 +22,8 @@ namespace Super
 
 		/**/
 
-		public static ISelect<_, TTo> Select<_, TFrom, TTo>(this ISelect<_, TFrom> @this, I<TTo> infer)
-			where TTo : IActivateMarker<TFrom> => @this.Select(infer.From);
+		public static ISelect<_, TTo> Select<_, TFrom, TTo>(this ISelect<_, TFrom> @this, I<TTo> __)
+			where TTo : IActivateMarker<TFrom> => @this.Select(MarkedActivations<TFrom, TTo>.Default.Get);
 
 		public static ISelect<TParameter, TResult> Select<TParameter, TResult>(
 			this ISelect<TParameter, TResult> @this, ISelect<Decoration<TParameter, TResult>, TResult> other)

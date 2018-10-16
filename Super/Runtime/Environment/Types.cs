@@ -9,6 +9,7 @@ using System;
 using System.Linq;
 using System.Reactive;
 using System.Reflection;
+using Activator = Super.Runtime.Activation.Activator;
 
 namespace Super.Runtime.Environment
 {
@@ -50,7 +51,8 @@ namespace Super.Runtime.Environment
 			: base(Start.From<Type>()
 			            .Result()
 			            .Select(source)
-			            .Activate(I<IMutable<T>>.Default)
+			            .Select(Activator.Default)
+			            .Cast(I<IMutable<T>>.Default)
 			            .Out(Type<T>.Instance)) {}
 	}
 

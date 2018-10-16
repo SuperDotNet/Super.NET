@@ -9,9 +9,14 @@ namespace Super.Runtime.Activation
 	{
 		public static Activator Default { get; } = new Activator();
 
-		Activator() : base(Self<Type>.Default
-		                             .Out(new Generic<ISource<object>>(typeof(ReferenceActivator<>)))
-		                             .Value()) {}
+		Activator() : base(Start.For<ISource<object>>()
+		                        .A(typeof(ReferenceActivator<>))
+		                        .Invoke()
+		                        .Value()
+		                        .To(Start.From<Type>()
+		                                 .Result()
+		                                 .Select(x => x.Get())
+		                                 .Select)) {}
 	}
 
 	public sealed class Activator<T> : DecoratedSource<T>, IActivator<T>

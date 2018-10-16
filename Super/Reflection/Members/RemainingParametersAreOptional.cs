@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Super.Model.Sequences;
+using Super.Model.Specifications;
+using System;
 using System.Linq;
 using System.Reflection;
-using Super.Model.Specifications;
 
 namespace Super.Reflection.Members
 {
-	sealed class RemainingParametersAreOptional : ISpecification<IEnumerable<ParameterInfo>>
+	sealed class RemainingParametersAreOptional : ISpecification<Array<ParameterInfo>>
 	{
 		public static RemainingParametersAreOptional Default { get; } =
 			new RemainingParametersAreOptional();
 
 		RemainingParametersAreOptional() {}
 
-		public bool IsSatisfiedBy(IEnumerable<ParameterInfo> parameter)
-			=> parameter.Skip(1).All(x => x.IsOptional || x.Has<ParamArrayAttribute>());
+		public bool IsSatisfiedBy(Array<ParameterInfo> parameter)
+			=> parameter.Reference().Skip(1).All(x => x.IsOptional || x.Has<ParamArrayAttribute>());
 	}
 }

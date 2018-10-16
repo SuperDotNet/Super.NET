@@ -1,8 +1,8 @@
 ﻿using Super.Model.Selection;
+using Super.Model.Sequences;
 using Super.Model.Specifications;
 using Super.Reflection.Members;
 using Super.Reflection.Types;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace Super.Runtime.Activation
@@ -13,14 +13,13 @@ namespace Super.Runtime.Activation
 
 		HasSingleParameterConstructor() : this(Parameters.Default) {}
 
-		public HasSingleParameterConstructor(ISelect<ConstructorInfo, IEnumerable<ParameterInfo>> parameters)
-			: base(parameters.Fixed()
-			                 .Sequence()
+		public HasSingleParameterConstructor(ISelect<ConstructorInfo, Array<ParameterInfo>> parameters)
+			: base(parameters.Sequence()
 			                 .FirstAssigned()
 			                 .Out(ParameterType.Default
 			                                   .Select(TypeMetadata.Default)
 			                                   .Select(IsAssignableFrom<T>.Default)
-			                                   .Assigned())
+			                                   .If(IsAssigned.Default))
 			                 .And(parameters.Out(RemainingParametersAreOptional.Default))) {}
 	}
 }

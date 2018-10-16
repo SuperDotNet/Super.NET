@@ -9,7 +9,7 @@ namespace Super.Model.Sources
 		readonly Func<T, bool> _specification;
 
 		public ValidatedSource(ISpecification<T> specification, ISource<T> instance)
-			: this(specification, instance, Start.Default<T>()) {}
+			: this(specification, instance, Start.With<T>().Default()) {}
 
 		public ValidatedSource(ISpecification<T> specification, ISource<T> instance, ISource<T> fallback)
 			: this(specification.IsSatisfiedBy, instance.Get, fallback.Get) {}

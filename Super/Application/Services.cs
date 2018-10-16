@@ -62,7 +62,7 @@ namespace Super.Application
 			            .Activate<InstanceRegistration<T>>()
 			            .Yield()
 			            .Select(new AppendDelegatedValue<IRegistration>(registration))
-			            .Activate(I<CompositeRegistration>.Default)
+			            .Select(I<CompositeRegistration>.Default)
 			            .Select(ServiceOptions.Default.Select(I<Services>.Default).Select)
 			            .Cast(I<IServices>.Default)
 			            .Select(ServiceConfiguration.Default.Select(x => x.ToConfiguration()))) {}

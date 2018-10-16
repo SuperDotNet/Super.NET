@@ -41,14 +41,17 @@ namespace Super.Runtime
 
 		public static IsAssigned<T> Default { get; } = new IsAssigned<T>();
 
-		IsAssigned() : base(IsReference.Default.IsSatisfiedBy(Type<T>.Instance)
-			                    ? new Generic<ISpecification<T>>(typeof(HasAssignment<>))
-			                      .Get(Type<T>.Instance)().IsSatisfiedBy
-			                    : IsAssignableStructure.Default.IsSatisfiedBy(Type<T>.Instance)
-				                    ? new Generic<ISpecification<T>>(typeof(HasValue<>))
-				                      .Get(AccountForUnassignedAlteration.Default.Get(Type<T>.Instance))()
-				                      .IsSatisfiedBy
-				                    : Value) {}
+		IsAssigned()
+			: base(IsReference.Default.IsSatisfiedBy(Type<T>.Instance)
+				       ? new Generic<ISpecification<T>>(typeof(HasAssignment<>)).Get(Type<T>.Instance)
+				                                                                .Invoke()
+				                                                                .IsSatisfiedBy
+				       : IsAssignableStructure.Default.IsSatisfiedBy(Type<T>.Instance)
+					       ? new Generic<ISpecification<T>>(typeof(HasValue<>))
+					         .Get(AccountForUnassignedAlteration.Default.Get(Type<T>.Instance))
+					         .Invoke()
+					         .IsSatisfiedBy
+					       : Value) {}
 	}
 
 	sealed class IsNullReference : DelegatedSpecification<object>

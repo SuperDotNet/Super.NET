@@ -26,6 +26,9 @@ namespace Super.Runtime
 	class Guard<T> : GuardedSpecification<T, InvalidOperationException>, IActivateMarker<ISelect<T, string>>
 	{
 		public Guard(ISpecification<T> specification, ISelect<T, string> message)
-			: base(specification, message.New(I<InvalidOperationException>.Default).Get) {}
+			: base(specification, Start.From<string>()
+			                           .New<InvalidOperationException>()
+			                           .To(message.Select)
+			                           .Get) {}
 	}
 }

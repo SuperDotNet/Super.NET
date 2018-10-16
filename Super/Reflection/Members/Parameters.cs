@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Super.Model.Selection;
+using Super.Model.Sequences;
 using System.Reflection;
-using Super.Model.Selection;
 
 namespace Super.Reflection.Members
 {
-	sealed class Parameters : Select<ConstructorInfo, ICollection<ParameterInfo>>
+	sealed class Parameters : Select<ConstructorInfo, Array<ParameterInfo>>
 	{
 		public static Parameters Default { get; } = new Parameters();
 

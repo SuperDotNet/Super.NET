@@ -1,6 +1,6 @@
-﻿using System.Reflection;
-using Super.Model.Specifications;
+﻿using Super.Model.Specifications;
 using Super.Reflection;
+using System.Reflection;
 
 namespace Super.Runtime.Environment
 {
@@ -11,6 +11,9 @@ namespace Super.Runtime.Environment
 		IsAssemblyDeployed() : this(I<AssemblyFileExists>.Default) {}
 
 		public IsAssemblyDeployed(I<AssemblyFileExists> infer)
-			: base(infer.From(ExecutableRuntimeFile.Default), infer.Activate(DevelopmentRuntimeFile.Default).Inverse()) {}
+			: base(infer.From(ExecutableRuntimeFile.Default),
+			       DevelopmentRuntimeFile.Default
+			                             .To(I<AssemblyFileExists>.Default)
+			                             .Inverse()) {}
 	}
 }

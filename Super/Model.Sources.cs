@@ -19,19 +19,17 @@ namespace Super
 	// ReSharper disable once MismatchedFileName
 	public static partial class ExtensionMethods
 	{
-		/*public static ISource<T> Default<T>(this ISource<T> _) => Model.Sources.Default<T>.Instance;*/
-
 		public static ISource<T> Unless<T>(this ISource<T> @this, ISource<T> then)
 			=> @this.Unless(IsAssigned<T>.Default, then);
 
 		public static ISource<T> Unless<T>(this ISource<T> @this, ISpecification<T> specification)
-			=> Super.Start.Default<T>().Unless(specification, @this);
+			=> Super.Start.With<T>().Default().Unless(specification, @this);
 
 		public static ISource<T> Unless<T>(this ISource<T> @this, ISpecification<T> specification, ISource<T> then)
 			=> new ValidatedSource<T>(specification, then, @this);
 
 		public static ISource<T> Select<T>(this ISource<T> @this, IMessage<T> message)
-			=> @this.Select(Model.Selection.Self<T>.Default.Guard(message));
+			=> @this.Select(Super.Start.From<T>().Self().Guard(message));
 
 		public static ISource<TTo> Select<TFrom, TTo>(this ISource<TFrom> @this, I<TTo> _)
 			where TTo : IActivateMarker<TFrom>

@@ -115,7 +115,7 @@ namespace Super.Application
 		public DependencyCandidates(Type type)
 			: base(TypeMetadata.Default
 			                   .Select(Constructors.Default)
-			                   .Select(Parameters.Default.SelectMany())
+			                   .Select(Parameters.Default.Fixed().SelectMany())
 			                   .Select(ParameterType.Default.Select())
 			                   .Select(type.To(I<GenericTypeDependencySelector>.Default)
 			                               .Select())
@@ -131,7 +131,7 @@ namespace Super.Application
 
 	sealed class RegisterDependencies : IRegistration
 	{
-		readonly static Func<IServiceRegistry, Func<Type, bool>> Where = NotRegistered.Default.Get;
+		readonly static Func<IServiceRegistry, Func<Type, bool>> Where = CanRegister.Default.Get;
 
 		readonly ImmutableArray<Type>                     _candidates;
 		readonly Func<IServiceRegistry, Func<Type, bool>> _where;

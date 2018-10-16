@@ -1,4 +1,5 @@
 ﻿using Super.Model.Selection;
+using Super.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -21,7 +22,7 @@ namespace Super.Reflection.Types
 			: this(new GenericActivation(types, expressions), expressions) {}
 
 		public GenericActivators(IGenericActivation activation)
-			: this(activation, Enumerable.Empty<ParameterExpression>()) {}
+			: this(activation, Empty<ParameterExpression>.Enumerable) {}
 
 		public GenericActivators(IGenericActivation activation, IEnumerable<ParameterExpression> expressions)
 		{

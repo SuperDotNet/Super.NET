@@ -21,8 +21,8 @@ namespace Super
 		public static TTo New<TFrom, TTo>(this I<TTo> _, TFrom parameter)
 			=> Runtime.Activation.New<TFrom, TTo>.Default.Get(parameter);
 
-		public static TTo Activate<TFrom, TTo>(this I<TTo> _, TFrom parameter)
-			=> Activations<TFrom, TTo>.Default.Get(parameter);
+		/*public static TTo Activate<TFrom, TTo>(this I<TTo> _, TFrom parameter)
+			=> Activations<TFrom, TTo>.Default.Get(parameter);*/
 
 		public static T From<TParameter, T>(this I<T> _, TParameter parameter) where T : IActivateMarker<TParameter>
 			=> MarkedActivations<TParameter, T>.Default.Get(parameter);

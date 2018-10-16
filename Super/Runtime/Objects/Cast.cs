@@ -10,7 +10,8 @@ namespace Super.Runtime.Objects
 	{
 		public static Cast<TFrom, TTo> Default { get; } = new Cast<TFrom, TTo>();
 
-		Cast() : base(Start.Default<TTo>()
+		Cast() : base(Start.With<TTo>()
+		                   .Default()
 		                   .Out(I<TFrom>.Default)
 		                   .Unless(CanCast<TFrom, TTo>.Default, CastSelector<TFrom, TTo>.Default)) {}
 	}

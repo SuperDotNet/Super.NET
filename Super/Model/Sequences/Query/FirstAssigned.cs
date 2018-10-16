@@ -1,4 +1,5 @@
-﻿namespace Super.Model.Sequences.Query {
+﻿namespace Super.Model.Sequences.Query
+{
 	public sealed class FirstAssigned<T> : FirstWhere<T> where T : class
 	{
 		public static FirstAssigned<T> Default { get; } = new FirstAssigned<T>();
