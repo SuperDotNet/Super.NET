@@ -2,18 +2,18 @@ using System;
 
 namespace Super.Model.Selection.Stores
 {
-	public sealed class TableAccessAdapter<TParameter, TResult> : ISelect<TParameter, TResult>
+	public sealed class TableAccessAdapter<TIn, TOut> : ISelect<TIn, TOut>
 	{
-		readonly Func<TParameter, TResult>                            _create;
-		readonly Func<TParameter, Func<TParameter, TResult>, TResult> _factory;
+		readonly Func<TIn, TOut>                            _create;
+		readonly Func<TIn, Func<TIn, TOut>, TOut> _factory;
 
-		public TableAccessAdapter(Func<TParameter, Func<TParameter, TResult>, TResult> factory,
-		                          Func<TParameter, TResult> create)
+		public TableAccessAdapter(Func<TIn, Func<TIn, TOut>, TOut> factory,
+		                          Func<TIn, TOut> create)
 		{
 			_factory = factory;
 			_create  = create;
 		}
 
-		public TResult Get(TParameter parameter) => _factory(parameter, _create);
+		public TOut Get(TIn parameter) => _factory(parameter, _create);
 	}
 }

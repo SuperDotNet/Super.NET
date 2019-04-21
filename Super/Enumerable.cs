@@ -1,7 +1,9 @@
 ﻿using Super.Model.Collections;
+using Super.Model.Sequences;
+using Super.Model.Sequences.Query;
+using Super.Reflection;
 using Super.Runtime;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,22 +15,9 @@ namespace Super
 {
 	public static partial class ExtensionMethods
 	{
-		public static T FirstOf<T>(this IEnumerable @this) => @this.OfType<T>().FirstOrDefault();
+		public static T[] Open<T>(this IEnumerable<T> @this) => @this is T[] array ? array : @this.ToArray();
 
-		/*public static IEnumerable<T> Assigned<T>(this IEnumerable<T> @this) where T : class => Model.Collections.Assigned<T>.Default.Get(@this);
-
-		public static IEnumerable<T> Assigned<T>(this IEnumerable<T?> @this) where T : struct
-			=> AssignedValue<T>.Default.Get(@this).Select(x => x.Value);*/
-
-		public static T[] Fixed<T>(this IEnumerable<T> @this)
-		{
-			var array  = @this as T[] ?? @this.ToArray();
-			var result = array.Length > 0 ? array : Empty<T>.Array;
-			return result;
-		}
-
-		public static T[] Fixed<T>(this IEnumerable<T> @this, params T[] items) => @this.Append(items)
-		                                                                                .Fixed();
+		public static Array<T> Result<T>(this IEnumerable<T> @this) => @this.Open();
 
 		public static IEnumerable<T1> Introduce<T1, T2>(this IEnumerable<Func<T2, T1>> @this, T2 instance)
 			=> @this.Introduce(instance, tuple => tuple.Item1(tuple.Item2));
@@ -40,13 +29,13 @@ namespace Super
 		                                                Func<(T1, T2), bool> where)
 			=> @this.Introduce(instance, where, tuple => tuple.Item1);
 
-		public static IEnumerable<TResult> Introduce<T1, T2, TResult>(this IEnumerable<T1> @this, T2 instance,
-		                                                              Func<(T1, T2), TResult> select)
+		public static IEnumerable<TOut> Introduce<T1, T2, TOut>(this IEnumerable<T1> @this, T2 instance,
+		                                                        Func<(T1, T2), TOut> select)
 			=> @this.Introduce(instance, x => true, select);
 
-		public static IEnumerable<TResult> Introduce<T1, T2, TResult>(this IEnumerable<T1> @this, T2 instance,
-		                                                              Func<(T1, T2), bool> where,
-		                                                              Func<(T1, T2), TResult> select)
+		public static IEnumerable<TOut> Introduce<T1, T2, TOut>(this IEnumerable<T1> @this, T2 instance,
+		                                                        Func<(T1, T2), bool> where,
+		                                                        Func<(T1, T2), TOut> select)
 		{
 			foreach (var item in @this)
 			{
@@ -97,15 +86,35 @@ namespace Super
 			return true;
 		}
 
-		public static T Only<T>(this IEnumerable<T> @this) => OnlySelector<T>.Default.Get(@this);
+		public static T Only<T>(this IEnumerable<T> @this) => OnlyElement<T>.Default.Get(@this);
 
-		public static T Only<T>(this IEnumerable<T> @this, Func<T, bool> where) => new OnlySelector<T>(where).Get(@this);
+		public static T Only<T>(this IEnumerable<T> @this, Func<T, bool> where) => I<OnlyElement<T>>.Default.From(where)
+		                                                                                            .Get(@this);
 
 		public static void ForEach<TIn, TOut>(this IEnumerable<TIn> @this, Func<TIn, TOut> select)
 		{
 			foreach (var @in in @this)
 			{
 				select(@in);
+			}
+		}
+
+		public static void ForEach<T>(this IEnumerable<T> @this, Action<T> select)
+		{
+			foreach (var @in in @this)
+			{
+				select(@in);
+			}
+		}
+
+		public static IEnumerable<T> Hide<T>(this IEnumerable<T> @this)
+		{
+			using (var enumerator = @this.GetEnumerator())
+			{
+				while (enumerator.MoveNext())
+				{
+					yield return enumerator.Current;
+				}
 			}
 		}
 
@@ -127,7 +136,8 @@ namespace Super
 
 		public static OrderedDictionary<TKey, TElement> ToOrderedDictionary<TSource, TKey, TElement>(
 			this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector,
-			IEqualityComparer<TKey> comparer) => GetOrderedDictionaryImpl(source, keySelector, elementSelector, comparer);
+			IEqualityComparer<TKey> comparer)
+			=> GetOrderedDictionaryImpl(source, keySelector, elementSelector, comparer);
 
 		static OrderedDictionary<TKey, TElement> GetOrderedDictionaryImpl<TSource, TKey, TElement>(
 			IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector,

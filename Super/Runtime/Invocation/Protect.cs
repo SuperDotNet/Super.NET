@@ -4,15 +4,15 @@ using System;
 
 namespace Super.Runtime.Invocation
 {
-	sealed class Protect<TParameter, TResult> : ISelect<TParameter, TResult>, IActivateMarker<ISelect<TParameter, TResult>>
+	sealed class Protect<TIn, TOut> : ISelect<TIn, TOut>, IActivateUsing<ISelect<TIn, TOut>>
 	{
-		readonly Func<TParameter, TResult> _source;
+		readonly Func<TIn, TOut> _source;
 
-		public Protect(ISelect<TParameter, TResult> @select) : this(@select.Get) {}
+		public Protect(ISelect<TIn, TOut> @select) : this(@select.Get) {}
 
-		public Protect(Func<TParameter, TResult> source) => _source = source;
+		public Protect(Func<TIn, TOut> source) => _source = source;
 
-		public TResult Get(TParameter parameter)
+		public TOut Get(TIn parameter)
 		{
 			lock (_source)
 			{

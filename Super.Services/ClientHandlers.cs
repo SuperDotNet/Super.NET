@@ -1,4 +1,5 @@
-﻿using Super.Model.Selection.Stores;
+﻿using Super.Compose;
+using Super.Model.Selection.Stores;
 using System;
 
 namespace Super.Services
@@ -7,6 +8,7 @@ namespace Super.Services
 	{
 		public static ClientHandlers Default { get; } = new ClientHandlers();
 
-		ClientHandlers() : base(In<Uri>.New<HttpClientHandler>(), RegisteredClientHandlers.Default) {}
+		ClientHandlers() : base(Start.A.Selection<Uri>().AndOf<HttpClientHandler>().By.Instantiation,
+		                        Start.An.Instance<RegisteredClientHandlers>()) {}
 	}
 }

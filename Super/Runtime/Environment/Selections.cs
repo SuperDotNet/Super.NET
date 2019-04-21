@@ -1,0 +1,80 @@
+﻿using Super.Model.Results;
+using Super.Model.Selection;
+using Super.Model.Selection.Conditions;
+using Super.Model.Sequences.Query;
+using Super.Reflection;
+using Super.Reflection.Types;
+using Super.Runtime.Activation;
+using System;
+using System.Reflection;
+
+namespace Super.Runtime.Environment
+{
+	sealed class Selections : ISelect<Type, ISelect<Type, Type>>
+	{
+		public static Selections Default { get; } = new Selections();
+
+		Selections() : this(Compose.Start.A.Selection.Of.System.Type.By.Returning(Default<Type, Type>.Instance)
+		                           .Unless(IsDefinedGenericType.Default, Make.Instance)) {}
+
+		readonly ISelect<Type, ISelect<Type, Type>> _default;
+
+		public Selections(ISelect<Type, ISelect<Type, Type>> @default) => _default = @default;
+
+		public ISelect<Type, Type> Get(Type parameter)
+			=> _default.Get(parameter)
+			           .Unless(parameter.To(SourceDefinition.Default.Get)
+			                            .To(I<Specification>.Default))
+			           .Unless(parameter.To(I<Specification>.Default));
+
+		sealed class Specifications : Instance<ISelect<Type, ICondition<Type>>>
+		{
+			public static Specifications Instance { get; } = new Specifications();
+
+			Specifications() : this(TypeMetadata.Default) {}
+
+			public Specifications(ISelect<Type, TypeInfo> metadata)
+				: base(metadata.Select(GenericInterfaceImplementations.Default)
+				               .Select(x => x.Condition.ToDelegate())
+				               .Then()
+				               .Activate<OneItemIs<Type>>()
+				               .Select(metadata.Select(GenericInterfaces.Default)
+				                               .Open()
+				                               .Select)
+				               .Select(x => x.ToCondition())
+				               .Get()) {}
+		}
+
+		sealed class Make : ISelect<Type, ISelect<Type, Type>>, IActivateUsing<Type>
+		{
+			public static Make Instance { get; } = new Make();
+
+			Make() : this(Specifications.Instance.Get(),
+			              source: GenericArguments.Default.Then().Activate<GenericTypeBuilder>().Get(),
+			              IsGenericTypeDefinition.Default) {}
+
+			readonly ISelect<Type, ICondition<Type>>    _specification;
+			readonly ISelect<Type, ISelect<Type, Type>> _source;
+			readonly ICondition<Type>                   _valid;
+
+			public Make(ISelect<Type, ICondition<Type>> specification,
+			            ISelect<Type, ISelect<Type, Type>> source, ICondition<Type> valid)
+			{
+				_specification = specification;
+				_source        = source;
+				_valid         = valid;
+			}
+
+			public ISelect<Type, Type> Get(Type parameter) => _valid.Then()
+			                                                        .And(_specification.Get(parameter))
+			                                                        .Get()
+			                                                        .To(_source.Get(parameter)
+			                                                                   .If);
+		}
+
+		sealed class Specification : Conditional<Type, Type>, IActivateUsing<Type>
+		{
+			public Specification(Type type) : base(new IsAssignableFrom(type).Get, Delegates<Type>.Self) {}
+		}
+	}
+}

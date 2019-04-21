@@ -1,14 +1,8 @@
-﻿using Serilog;
-using Super.Diagnostics.Logging;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Super.Services
+﻿namespace Super.Services
 {
 	class HttpClientHandler : System.Net.Http.HttpClientHandler
 	{
-		readonly ILogger _logger;
+		/*readonly ILogger _logger;
 
 		public HttpClientHandler() : this(Log<HttpClientHandler>.Default) {}
 
@@ -19,6 +13,6 @@ namespace Super.Services
 		{
 			_logger.Debug("Resource request made for {Uri}.", request.RequestUri);
 			return base.SendAsync(request, cancellationToken);
-		}
+		}*/
 	}
 }

@@ -2,9 +2,9 @@
 
 namespace Super.Reflection.Assemblies
 {
-	sealed class AssemblyCopyright : Attribute<AssemblyCopyrightAttribute, string>
+	sealed class AssemblyCopyright : Declared<AssemblyCopyrightAttribute, string>
 	{
-		public static IAttribute<string> Default { get; } = new AssemblyCopyright();
+		public static AssemblyCopyright Default { get; } = new AssemblyCopyright();
 
 		AssemblyCopyright() : base(x => x.Copyright) {}
 	}

@@ -12,7 +12,7 @@ namespace Super.Testing.Application.Expressions
 		[Fact]
 		void Verify()
 		{
-			Lambda<Func<object>>.Default.Get(Instances.Default.Get(Type<object>.Instance.GetConstructor(Empty<Type>.Array)))
+			Lambda<Func<object>>.Default.Get(ConstructorExpressions.Default.Get(Type<object>.Instance.GetConstructor(Empty<Type>.Array)))
 			                    .Compile()()
 			                    .Should()
 			                    .NotBeNull();

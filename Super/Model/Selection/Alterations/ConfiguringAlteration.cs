@@ -3,7 +3,7 @@ using Super.Runtime.Activation;
 
 namespace Super.Model.Selection.Alterations
 {
-	public class ConfiguringAlteration<T> : IAlteration<T>, IActivateMarker<ICommand<T>>
+	public class ConfiguringAlteration<T> : IAlteration<T>, IActivateUsing<ICommand<T>>
 	{
 		readonly ICommand<T> _configuration;
 

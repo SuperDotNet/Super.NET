@@ -1,5 +1,6 @@
-﻿using Super.Model.Selection;
-using Super.Model.Specifications;
+﻿using Super.Compose;
+using Super.Model.Selection;
+using Super.Model.Selection.Conditions;
 using Super.Reflection;
 using Super.Reflection.Types;
 using Super.Runtime.Activation;
@@ -11,21 +12,22 @@ namespace Super.Runtime
 	{
 		public static DefaultGuard<T> Default { get; } = new DefaultGuard<T>();
 
-		DefaultGuard() : base(DefaultMessage.Default) {}
+		DefaultGuard() : base(DefaultMessage.Default.Get) {}
 	}
 
-	class AssignedGuard<T> : Guard<T>
+	class AssignedGuard<T> : Guard<T>, IActivateUsing<ISelect<T, string>>
 	{
-		public AssignedGuard(Func<Type, string> message) : this(message.Out()) {}
-
-		public AssignedGuard(ISelect<Type, string> message) : this(message.Out(Type<T>.Instance).Out(I<T>.Default)) {}
+		public AssignedGuard(Func<Type, string> message) : this(message.ToSelect().In(Type<T>.Instance).ToSelect(I.A<T>())) {}
 
 		public AssignedGuard(ISelect<T, string> message) : base(IsAssigned<T>.Default, message) {}
 	}
 
-	class Guard<T> : GuardedSpecification<T, InvalidOperationException>, IActivateMarker<ISelect<T, string>>
+	class Guard<T> : GuardedCondition<T, InvalidOperationException>
 	{
-		public Guard(ISpecification<T> specification, ISelect<T, string> message)
-			: base(specification, message.New(I<InvalidOperationException>.Default).Get) {}
+		public Guard(ICondition<T> condition, ISelect<T, string> message)
+			: base(condition, Start.A.Selection<string>()
+			                       .AndOf<InvalidOperationException>()
+			                       .By.Instantiation.To(message.Select)
+			                       .Get) {}
 	}
 }

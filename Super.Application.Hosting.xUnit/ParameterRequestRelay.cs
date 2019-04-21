@@ -20,7 +20,7 @@ namespace Super.Application.Hosting.xUnit
 		}
 
 		static bool ShouldDefault(ParameterInfo info) => info.IsOptional
-		//&& !CurrentMethod.Default.Get().GetParameterTypes().Any(info.ParameterType.IsAssignableFrom)
+		//&& !CurrentMethod.Default.Get().GeTInTypes().Any(info.ParameterType.IsAssignableFrom)
 		;
 	}
 }

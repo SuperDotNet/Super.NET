@@ -2,12 +2,12 @@
 
 namespace Super.Model.Selection
 {
-	public class FixedResult<TParameter, TResult> : ISelect<TParameter, TResult>, IActivateMarker<TResult>
+	public class FixedResult<TIn, TOut> : ISelect<TIn, TOut>, IActivateUsing<TOut>
 	{
-		readonly TResult _instance;
+		readonly TOut _instance;
 
-		public FixedResult(TResult instance) => _instance = instance;
+		public FixedResult(TOut instance) => _instance = instance;
 
-		public TResult Get(TParameter parameter) => _instance;
+		public TOut Get(TIn _) => _instance;
 	}
 }

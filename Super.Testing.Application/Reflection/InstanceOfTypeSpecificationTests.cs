@@ -1,6 +1,6 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Super.Reflection.Types;
+using System;
 using Xunit;
 
 namespace Super.Testing.Application.Reflection
@@ -10,11 +10,11 @@ namespace Super.Testing.Application.Reflection
 		[Fact]
 		public void Verify()
 		{
-			IsType<int>.Default.IsSatisfiedBy(6776)
+			IsOf<int>.Default.Get(6776)
 			                        .Should()
 			                        .BeTrue();
 
-			IsType<int>.Default.IsSatisfiedBy(DateTime.Now)
+			IsOf<int>.Default.Get(DateTime.Now)
 			                        .Should()
 			                        .BeFalse();
 		}

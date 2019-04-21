@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using JetBrains.Annotations;
-using Super.Model.Sources;
+using Super.Model.Results;
 using Super.Runtime.Activation;
 using Xunit;
 
@@ -8,7 +8,7 @@ namespace Super.Testing.Application.Runtime.Activation
 {
 	public class SingletonsTests
 	{
-		sealed class Subject : ISource<int>
+		sealed class Subject : IResult<int>
 		{
 			public static Subject Default { get; } = new Subject();
 

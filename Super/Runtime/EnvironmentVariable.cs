@@ -1,8 +1,8 @@
-﻿using Super.Model.Sources;
+﻿using Super.Model.Results;
 
 namespace Super.Runtime
 {
-	public class EnvironmentVariable : FixedDeferredSingleton<string, string>
+	public class EnvironmentVariable : FixedSelectedSingleton<string, string>
 	{
 		public EnvironmentVariable(string name) : base(EnvironmentSetting.Default, name) {}
 	}

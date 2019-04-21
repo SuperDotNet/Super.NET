@@ -1,4 +1,5 @@
-﻿using Super.Model.Selection;
+﻿using Super.Compose;
+using Super.Model.Selection;
 using System.IO;
 using System.Reflection;
 
@@ -8,6 +9,10 @@ namespace Super.Reflection.Assemblies
 	{
 		public static Load Default { get; } = new Load();
 
-		Load() : base(In<AssemblyName>.Select(Assembly.Load).Try(I<FileNotFoundException>.Default)) {}
+		Load() : base(Start.A.Selection<AssemblyName>()
+		                   .By.Calling(Assembly.Load)
+		                   .Then()
+		                   .Try<FileNotFoundException>()
+		                   .Get()) {}
 	}
 }

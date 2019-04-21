@@ -13,9 +13,7 @@ namespace Super.Testing.Application.Model.Specifications
 			var item = new object();
 			var items = item.Yield()
 			                .ToList();
-			new Has<object>(items).IsSatisfiedBy(item)
-			                                        .Should()
-			                                        .BeTrue();
+			new Has<object>(items).Get(item).Should().BeTrue();
 		}
 	}
 }

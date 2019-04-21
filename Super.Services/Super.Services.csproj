@@ -9,14 +9,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Retry.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Super\Super.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Flurl" Version="2.8.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.1.1" />
-    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="3.19.8" />
-    <PackageReference Include="Refit" Version="4.6.30" />
+    <PackageReference Include="Flurl" Version="2.8.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="4.5.1" />
+    <PackageReference Include="Refit" Version="4.6.107" />
   </ItemGroup>
 
 </Project>

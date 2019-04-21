@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Moq;
-using Super.Model.Specifications;
+using Super.Model.Selection.Conditions;
 using Xunit;
 
 namespace Super.Testing.Application.Model.Specifications
@@ -10,9 +10,9 @@ namespace Super.Testing.Application.Model.Specifications
 		[Fact]
 		public void Coverage()
 		{
-			Never.Default.IsSatisfiedBy(It.IsAny<object>())
-			                  .Should()
-			                  .BeFalse();
+			Never.Default.Get(It.IsAny<object>())
+			     .Should()
+			     .BeFalse();
 		}
 	}
 }

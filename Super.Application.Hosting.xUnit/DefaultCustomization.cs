@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
 using AutoFixture.Kernel;
-using Super.Model.Sources;
-using Super.Model.Specifications;
+using Super.Compose;
+using Super.Model.Results;
 using Super.Reflection.Types;
 using System;
 using System.Linq;
@@ -25,21 +25,24 @@ namespace Super.Application.Hosting.xUnit
 
 		ManualPropertyTypesCustomization() : this(typeof(Thread)) {}
 
-		public ManualPropertyTypesCustomization(params Type[] types) : base(types.Select(x => new NoAutoPropertiesCustomization(x))) {}
+		public ManualPropertyTypesCustomization(params Type[] types) :
+			base(types.Select(x => new NoAutoPropertiesCustomization(x))) {}
 	}
 
-	sealed class NoSpecimenResult : Source<NoSpecimen>
+	sealed class NoSpecimenInstance : Instance<NoSpecimen>
 	{
-		public static NoSpecimenResult Default { get; } = new NoSpecimenResult();
+		public static NoSpecimenInstance Default { get; } = new NoSpecimenInstance();
 
-		NoSpecimenResult() : base(new NoSpecimen()) {}
+		NoSpecimenInstance() : base(new NoSpecimen()) {}
 	}
 
-	public sealed class Epoch : Source<DateTimeOffset>
+	public sealed class Epoch : Instance<DateTimeOffset>
 	{
 		public static Epoch Default { get; } = new Epoch();
 
-		Epoch() : base(new DateTimeOffset(1976, 6, 7, 11, 18, 24, TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time").BaseUtcOffset)) {}
+		Epoch() : base(new DateTimeOffset(1976, 6, 7, 11, 18, 24,
+		                                  TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time")
+		                                              .BaseUtcOffset)) {}
 	}
 
 	sealed class EpochSpecimen : Specimen<DateTimeOffset>
@@ -51,23 +54,27 @@ namespace Super.Application.Hosting.xUnit
 
 	public class Specimen<T> : ISpecimenBuilder
 	{
-		readonly static ISpecification<object> Specification = In<object>.Cast<Type>()
-		                                                                 .Out(Type<T>.Instance.Equal());
+		readonly static Func<object, bool> Condition = A.This(IsOf<Type>.Default)
+		                                                .Then()
+		                                                .And(Start.A.Selection.Of.Any.AndOf<Type>()
+		                                                          .By.Cast.Or.Throw.Then()
+		                                                          .Select(Type<T>.Instance.Equal())
+		                                                          .Selector());
 
-		readonly ISpecification<object> _specification;
-		readonly Func<T> _specimen;
-		readonly NoSpecimen _none;
+		readonly Func<object, bool> _condition;
+		readonly Func<T>            _specimen;
+		readonly NoSpecimen         _none;
 
-		public Specimen(Func<T> specimen) : this(Specification, specimen, NoSpecimenResult.Default) {}
+		public Specimen(Func<T> specimen) : this(Condition, specimen, NoSpecimenInstance.Default) {}
 
-		public Specimen(ISpecification<object> specification, Func<T> specimen, NoSpecimen none)
+		public Specimen(Func<object, bool> condition, Func<T> specimen, NoSpecimen none)
 		{
-			_specification = specification;
-			_specimen = specimen;
-			_none = none;
+			_condition = condition;
+			_specimen  = specimen;
+			_none      = none;
 		}
 
 		public object Create(object request, ISpecimenContext context)
-			=> _specification.IsSatisfiedBy(request) ? (object)_specimen() : _none;
+			=> _condition(request) ? (object)_specimen() : _none;
 	}
 }

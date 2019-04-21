@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Super.Application.Hosting.xUnit;
+using Super.Compose;
 using Super.Runtime.Execution;
 using Xunit;
 
@@ -12,7 +13,7 @@ namespace Super.Testing.Application.Runtime.Execution
 		{
 			for (var i = 0; i < 100; i++)
 			{
-				sut.Count().Should().Be(i+1);
+				sut.Count().Should().Be(i + 1);
 			}
 		}
 
@@ -21,13 +22,19 @@ namespace Super.Testing.Application.Runtime.Execution
 		{
 			for (var i = 0; i < 100; i++)
 			{
-				sut.Get(first).Should().Be(i+1);
+				sut.Get(first).Should().Be(i + 1);
 			}
 
 			for (var i = 0; i < 100; i++)
 			{
-				sut.Get(second).Should().Be(i+1);
+				sut.Get(second).Should().Be(i + 1);
 			}
+		}
+
+		[Fact]
+		void VerifyBasic()
+		{
+			Start.A.Selection<int>().AndOf<Counter>().By.Instantiation.Get(1);
 		}
 
 		[Theory, AutoData]
@@ -35,12 +42,12 @@ namespace Super.Testing.Application.Runtime.Execution
 		{
 			for (var i = 0; i < 100; i++)
 			{
-				sut.Get(first).Should().Be(i+1);
+				sut.Get(first).Should().Be(i + 1);
 			}
 
 			for (var i = 0; i < 100; i++)
 			{
-				sut.Get(second).Should().Be(i+1);
+				sut.Get(second).Should().Be(i + 1);
 			}
 		}
 	}

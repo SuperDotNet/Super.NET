@@ -1,9 +1,8 @@
 ﻿using Serilog;
 using Serilog.Configuration;
 using Super.Model.Selection;
+using Super.Model.Sequences;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Super.Diagnostics.Logging.Configuration
 {
@@ -17,12 +16,13 @@ namespace Super.Diagnostics.Logging.Configuration
 
 	sealed class ScalarConfiguration : ILoggingDestructureConfiguration
 	{
-		readonly IEnumerable<Type> _types;
+		readonly Array<Type> _types;
 
-		public ScalarConfiguration(params Type[] types) : this(types.Hide()) {}
+		public ScalarConfiguration(params Type[] types) : this(types.Result()) {}
 
-		public ScalarConfiguration(IEnumerable<Type> types) => _types = types;
+		public ScalarConfiguration(Array<Type> types) => _types = types;
 
-		public LoggerConfiguration Get(LoggerDestructuringConfiguration parameter) => _types.Alter(parameter.AsScalar);
+		public LoggerConfiguration Get(LoggerDestructuringConfiguration parameter) => _types.Reference()
+		                                                                                    .Alter(parameter.AsScalar);
 	}
 }

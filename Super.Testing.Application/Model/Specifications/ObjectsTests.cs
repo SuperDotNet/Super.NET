@@ -1,7 +1,7 @@
-﻿using System;
+﻿using FluentAssertions;
+using System;
 using System.Reflection;
-using FluentAssertions;
-using Super.Model.Specifications;
+using Super.Model.Selection.Conditions;
 using Xunit;
 
 namespace Super.Testing.Application.Model.Specifications
@@ -12,7 +12,7 @@ namespace Super.Testing.Application.Model.Specifications
 		public void Coverage()
 		{
 			var typeInfo = GetType().GetTypeInfo();
-			Always<Type>.Default.IsSatisfiedBy(typeInfo).Should().BeTrue();
+			Always<Type>.Default.Get(typeInfo).Should().BeTrue();
 		}
 	}
 }

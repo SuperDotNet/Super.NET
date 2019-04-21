@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Super.Model.Commands;
+using Super.Runtime;
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 
 namespace Super.Services
 {
-	class ResponseStateAssignment : IAssignable<HttpRequest, HttpClient>
+	class ResponseStateAssignment : IAssign<HttpRequest, HttpClient>
 	{
 		readonly static Func<HttpClient, System.Net.Http.HttpClientHandler> Handler = AssociatedHandlers.Default.Get;
 
@@ -23,7 +23,7 @@ namespace Super.Services
 			_state   = state;
 		}
 
-		public void Execute(KeyValuePair<HttpRequest, HttpClient> parameter)
+		public void Execute(Pair<HttpRequest, HttpClient> parameter)
 		{
 			_handler(parameter.Value)
 				.CookieContainer

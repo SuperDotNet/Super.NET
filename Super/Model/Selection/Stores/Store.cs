@@ -3,12 +3,13 @@ using System;
 
 namespace Super.Model.Selection.Stores
 {
-	public class Store<TParameter, TResult> : DecoratedSelect<TParameter, TResult>
+	public class ActivatedStore<TIn, TOut> : Store<TIn, TOut>
 	{
-		readonly static Func<TParameter, TResult> Source = New<TParameter, TResult>.Default.ToDelegateReference();
+		protected ActivatedStore() : base(New<TIn, TOut>.Default.ToDelegateReference()) {}
+	}
 
-		public Store() : this(Source) {}
-
-		public Store(Func<TParameter, TResult> source) : base(Stores<TParameter, TResult>.Default.Get(source)) {}
+	public class Store<TIn, TOut> : DecoratedSelect<TIn, TOut>
+	{
+		protected Store(Func<TIn, TOut> source) : base(Stores<TIn, TOut>.Default.Get(source)) {}
 	}
 }

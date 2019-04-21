@@ -3,7 +3,7 @@ using System;
 
 namespace Super.Model.Selection.Alterations
 {
-	sealed class Alterations<T> : ReferenceStore<Func<T, T>, IAlteration<T>>
+	sealed class Alterations<T> : ReferenceValueStore<Func<T, T>, IAlteration<T>>
 	{
 		public static Alterations<T> Default { get; } = new Alterations<T>();
 

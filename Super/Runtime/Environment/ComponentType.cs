@@ -1,14 +1,14 @@
 ﻿using JetBrains.Annotations;
-using Super.Model.Collections;
+using Super.Compose;
+using Super.Model.Results;
 using Super.Model.Selection;
-using Super.Model.Sources;
-using Super.Model.Specifications;
-using Super.Reflection;
+using Super.Model.Selection.Conditions;
+using Super.Model.Sequences;
 using Super.Reflection.Types;
 using Super.Runtime.Activation;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Immutable;
 
 namespace Super.Runtime.Environment
 {
@@ -16,88 +16,77 @@ namespace Super.Runtime.Environment
 	{
 		public static ComponentType Default { get; } = new ComponentType();
 
-		ComponentType() : base(ComponentTypes.Default.FirstAssigned()) {}
+		ComponentType() : base(ComponentTypes.Default.Query().FirstAssigned()) {}
 	}
 
-	sealed class ComponentTypesDefinition : DecoratedSource<ISelect<Type, ReadOnlyMemory<Type>>>
+	sealed class ComponentTypesDefinition : DelegatedResult<ISelect<Type, Array<Type>>>
 	{
 		public static ComponentTypesDefinition Default { get; } = new ComponentTypesDefinition();
 
-		ComponentTypesDefinition() : this(Types.Default, ComponentTypesPredicate.Default, x => x.Sort().Materialize()) {}
+		ComponentTypesDefinition() : this(Types.Default, CanActivate.Default.Get) {}
 
-		public ComponentTypesDefinition(IArray<Type> types, IEnumerableAlteration<Type> where,
-		                                Func<ISelect<Type, IEnumerable<Type>>, ISelect<Type, ReadOnlyMemory<Type>>> select)
-			: base(types.Select(x => x.AsEnumerable())
-			            .Select(where)
-			            .Select(I<ComponentTypesSelector>.Default.From)
-			            .Select(select)) {}
+		public ComponentTypesDefinition(IArray<Type> types, Func<Type, bool> where)
+			: base(types.ToSelect()
+			            .Query()
+			            .Where(where)
+			            .Get()
+			            .Then()
+			            .Activate<ComponentTypesSelector>()
+			            .Select(x => x.Open().Then().Sort().Out())
+			            .Out()) {}
 	}
 
-	sealed class ComponentTypes : DelegatedInstanceSelector<Type, ReadOnlyMemory<Type>>
+	sealed class ComponentTypes : DelegatedInstanceSelector<Type, Array<Type>>
 	{
 		public static ComponentTypes Default { get; } = new ComponentTypes();
 
-		ComponentTypes() : base(ComponentTypesDefinition.Default.Select(x => x.ToStore()).ToContextual()) {}
+		ComponentTypes() : base(A.This(ComponentTypesDefinition.Default)
+		                         .Select(x => x.ToStore())
+		                         .ToContextual()
+		                         .AsDefined()
+		                         .Then()
+		                         .Delegate()
+		                         .Out()) {}
 	}
 
-	sealed class ComponentTypesPredicate : WhereSelector<Type>
-	{
-		public static ComponentTypesPredicate Default { get; } = new ComponentTypesPredicate();
-
-		ComponentTypesPredicate() : this(CanActivate.Default.IsSatisfiedBy) {}
-
-		public ComponentTypesPredicate(Func<Type, bool> @where) : base(@where) {}
-	}
-
-	sealed class SourceDefinition : GenericTypeAlteration
+	sealed class SourceDefinition : MakeGenericType
 	{
 		public static SourceDefinition Default { get; } = new SourceDefinition();
 
-		SourceDefinition() : base(typeof(ISource<>)) {}
+		SourceDefinition() : base(typeof(IResult<>)) {}
 	}
 
-	sealed class Predicates : ISelect<Type, IEnumerable<Func<Type, bool>>>
+	sealed class ComponentTypesSelector : ISelect<Type, IEnumerable<Type>>, IActivateUsing<Array<Type>>
 	{
-		public static Predicates Default { get; } = new Predicates();
-
-		Predicates() : this(SourceDefinition.Default.Get,
-		                    TypeMetadataSelector.Default
-		                                        .Select(I<IsAssignableFrom>.Default.From)
-		                                        .Select(x => new Func<Type, bool>(x.IsSatisfiedBy))
-		                                        .Get) {}
-
-		readonly Func<Type, Type>             _source;
-		readonly Func<Type, Func<Type, bool>> _selector;
-
-		public Predicates(Func<Type, Type> source, Func<Type, Func<Type, bool>> selector)
-		{
-			_source   = source;
-			_selector = selector;
-		}
-
-		public IEnumerable<Func<Type, bool>> Get(Type parameter) => parameter.Yield(_source(parameter))
-		                                                                     .Select(_selector);
-	}
-
-	sealed class ComponentTypesSelector : ISelect<Type, IEnumerable<Type>>, IActivateMarker<IEnumerable<Type>>
-	{
-		readonly static Func<Type, IEnumerable<Func<Type, bool>>> Predicates = Environment.Predicates.Default.Get;
-
-		readonly Func<Func<Type, bool>, IEnumerable<Type>> _predicate;
-		readonly Func<Type, IEnumerable<Func<Type, bool>>> _predicates;
+		readonly ImmutableArray<Type>            _types;
+		readonly ICondition<Type>                _condition;
+		readonly Func<Type, ISelect<Type, Type>> _selections;
 
 		[UsedImplicitly]
-		public ComponentTypesSelector(IEnumerable<Type> types) : this(types.Where, Predicates) {}
+		public ComponentTypesSelector(Array<Type> types)
+			: this(types, IsAssigned<Type>.Default, Selections.Default.Get) {}
 
-		public ComponentTypesSelector(Func<Func<Type, bool>, IEnumerable<Type>> predicate,
-		                              Func<Type, IEnumerable<Func<Type, bool>>> predicates)
+		public ComponentTypesSelector(ImmutableArray<Type> types,
+		                              ICondition<Type> condition,
+		                              Func<Type, ISelect<Type, Type>> selections)
 		{
-			_predicate  = predicate;
-			_predicates = predicates;
+			_types      = types;
+			_condition  = condition;
+			_selections = selections;
 		}
 
-		public IEnumerable<Type> Get(Type parameter) => _predicates(parameter)
-		                                                .Select(_predicate)
-		                                                .Concat();
+		public IEnumerable<Type> Get(Type parameter)
+		{
+			var select = _selections(parameter);
+			var length = _types.Length;
+			for (var i = 0; i < length; i++)
+			{
+				var type = select.Get(_types[i]);
+				if (_condition.Get(type))
+				{
+					yield return type;
+				}
+			}
+		}
 	}
 }

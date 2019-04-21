@@ -1,8 +1,8 @@
-﻿using System;
+﻿using AutoFixture.Xunit2;
+using FluentAssertions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using AutoFixture.Xunit2;
-using FluentAssertions;
 using Xunit;
 
 // ReSharper disable PossibleMultipleEnumeration
@@ -80,14 +80,6 @@ namespace Super.Testing.Application.Runtime
 		public void AppendParams()
 		{
 			1.Yield().Append(2, 3).Should().BeEquivalentTo(new[] {1, 2, 3});
-		}
-
-		[Fact]
-		public void Fixed()
-		{
-			var sut = new[] {2, 3, 5}.Hide().Fixed(4, 15);
-			Assert.Contains(3, sut);
-			Assert.Contains(15, sut);
 		}
 
 		[Fact]

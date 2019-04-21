@@ -1,32 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Super.Model.Selection.Conditions;
+using System;
 using System.Reflection;
-using Super.Reflection.Types;
 
 namespace Super.Reflection
 {
-	sealed class Declared<T> : IDeclared<T>
+	class Declared<TAttribute, T> : Conditional<ICustomAttributeProvider, T> where TAttribute : Attribute
 	{
-		public static Declared<T> Default { get; } = new Declared<T>();
+		protected Declared(Func<TAttribute, T> select) : this(LocalAttribute<TAttribute>.Default, @select) {}
 
-		public static Declared<T> Inherited { get; } = new Declared<T>(true);
-
-		Declared() : this(false) {}
-
-		readonly bool _inherit;
-
-		readonly Type _type;
-
-		public Declared(bool inherit) : this(Type<T>.Instance, inherit) {}
-
-		public Declared(Type type, bool inherit)
-		{
-			_type    = type;
-			_inherit = inherit;
-		}
-
-		public IEnumerable<T> Get(ICustomAttributeProvider parameter)
-			=> parameter.GetCustomAttributes(_type, _inherit).Cast<T>();
+		protected Declared(IAttribute<TAttribute> attribute, Func<TAttribute, T> select)
+			: base(attribute.Condition, attribute.Select(select).ToTable()) {}
 	}
 }

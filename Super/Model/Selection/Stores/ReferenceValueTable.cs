@@ -1,31 +1,23 @@
-﻿using Super.Reflection;
-using Super.Runtime.Activation;
+﻿using Super.Compose;
 using System;
 using System.Runtime.CompilerServices;
 
 namespace Super.Model.Selection.Stores
 {
-	public class AssociatedResource<TParameter, TResult> : DecoratedTable<TParameter, TResult>
+	public class AssociatedResource<TIn, TOut> : DecoratedTable<TIn, TOut>
 	{
-		readonly static Func<TParameter, TResult> Resource = Activator<TResult>.Default
-		                                                                       .Out(I<TParameter>.Default)
-		                                                                       .Get;
+		public AssociatedResource() : this(Start.A.Selection<TIn>().AndOf<TOut>().By.Activation().Get) {}
 
-		public AssociatedResource() : this(Resource) {}
-
-		public AssociatedResource(Func<TParameter, TResult> resource)
-			: base(Tables<TParameter, TResult>.Default.Get(resource)) {}
+		public AssociatedResource(Func<TIn, TOut> resource) : base(Tables<TIn, TOut>.Default.Get(resource)) {}
 	}
 
-	public class ReferenceValueTable<TParameter, TResult> : DecoratedTable<TParameter, TResult>
-		where TParameter : class
-		where TResult : class
+	public class ReferenceValueTable<TIn, TOut> : DecoratedTable<TIn, TOut> where TIn : class
+	                                                                        where TOut : class
 	{
 		public ReferenceValueTable() : this(_ => default) {}
 
-		public ReferenceValueTable(Func<TParameter, TResult> parameter)
-			: base(ReferenceValueTables<TParameter, TResult>.Defaults
-			                                                .Get(parameter)
-			                                                .Get(new ConditionalWeakTable<TParameter, TResult>())) {}
+		public ReferenceValueTable(Func<TIn, TOut> parameter)
+			: base(ReferenceValueTables<TIn, TOut>.Defaults.Get(parameter)
+			                                      .Get(new ConditionalWeakTable<TIn, TOut>())) {}
 	}
 }

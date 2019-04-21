@@ -2,12 +2,12 @@
 
 namespace Super.Model.Selection
 {
-	sealed class DelegateSelector<TParameter, TResult> : ISelect<ISelect<TParameter, TResult>, Func<TParameter, TResult>>
+	sealed class DelegateSelector<TIn, TOut> : ISelect<ISelect<TIn, TOut>, Func<TIn, TOut>>
 	{
-		public static DelegateSelector<TParameter, TResult> Default { get; } = new DelegateSelector<TParameter, TResult>();
+		public static DelegateSelector<TIn, TOut> Default { get; } = new DelegateSelector<TIn, TOut>();
 
 		DelegateSelector() {}
 
-		public Func<TParameter, TResult> Get(ISelect<TParameter, TResult> parameter) => parameter.Get;
+		public Func<TIn, TOut> Get(ISelect<TIn, TOut> parameter) => parameter.Get;
 	}
 }

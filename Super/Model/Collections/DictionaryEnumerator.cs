@@ -17,14 +17,7 @@ namespace Super.Model.Collections
 
 		public bool MoveNext() => _impl.MoveNext();
 
-		public DictionaryEntry Entry
-		{
-			get
-			{
-				var pair = _impl.Current;
-				return new DictionaryEntry(pair.Key, pair.Value);
-			}
-		}
+		public DictionaryEntry Entry => new DictionaryEntry(_impl.Current.Key, _impl.Current.Value);
 
 		public object Key => _impl.Current.Key;
 		public object Value => _impl.Current.Value;

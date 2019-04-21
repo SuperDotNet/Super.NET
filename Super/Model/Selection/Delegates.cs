@@ -3,9 +3,9 @@ using System;
 
 namespace Super.Model.Selection
 {
-	sealed class Delegates<TParameter, TResult> : ReferenceValueTable<ISelect<TParameter, TResult>, Func<TParameter, TResult>>
+	sealed class Delegates<TIn, TOut> : ReferenceValueStore<ISelect<TIn, TOut>, Func<TIn, TOut>>
 	{
-		public static Delegates<TParameter, TResult> Default { get; } = new Delegates<TParameter, TResult>();
+		public static Delegates<TIn, TOut> Default { get; } = new Delegates<TIn, TOut>();
 
 		Delegates() : base(x => x.Get) {}
 	}

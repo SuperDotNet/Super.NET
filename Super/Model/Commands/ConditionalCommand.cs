@@ -1,23 +1,23 @@
-﻿using Super.Model.Specifications;
+﻿using Super.Model.Selection.Conditions;
 
 namespace Super.Model.Commands
 {
 	class ConditionalCommand<T> : ICommand<T>
 	{
 		readonly ICommand<T>       _false;
-		readonly ISpecification<T> _specification;
+		readonly ICondition<T> _condition;
 		readonly ICommand<T>       _true;
 
-		public ConditionalCommand(ISpecification<T> specification, ICommand<T> @true, ICommand<T> @false)
+		public ConditionalCommand(ICondition<T> condition, ICommand<T> @true, ICommand<T> @false)
 		{
-			_specification = specification;
+			_condition = condition;
 			_true          = @true;
 			_false         = @false;
 		}
 
 		public void Execute(T parameter)
 		{
-			var command = _specification.IsSatisfiedBy(parameter) ? _true : _false;
+			var command = _condition.Get(parameter) ? _true : _false;
 			command.Execute(parameter);
 		}
 	}

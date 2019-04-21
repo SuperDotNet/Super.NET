@@ -1,16 +1,16 @@
-﻿using Super.Runtime.Activation;
-using System;
+﻿using System;
 
 namespace Super.Model.Selection.Stores
 {
-	public class ReferenceStore<TParameter, TResult> : DecoratedSelect<TParameter, TResult>
-		where TParameter : class
+	public class ReferenceValueStore<TIn, TOut> : DecoratedSelect<TIn, TOut> where TIn : class where TOut : class
 	{
-		readonly static Func<TParameter, TResult> Source = New<TParameter, TResult>.Default.Get;
+		protected ReferenceValueStore(Func<TIn, TOut> source) : base(new ReferenceValueTable<TIn, TOut>(source)) {}
+	}
 
-		protected ReferenceStore() : this(Source) {}
-
-		protected ReferenceStore(Func<TParameter, TResult> source)
-			: base(ReferenceTables<TParameter, TResult>.Default.Get(source)) {}
+	public class StructureValueStore<TIn, TOut> : DecoratedSelect<TIn, TOut>
+		where TIn : class
+		where TOut : struct
+	{
+		protected StructureValueStore(Func<TIn, TOut> source) : base(new StructureValueTable<TIn, TOut>(source)) {}
 	}
 }

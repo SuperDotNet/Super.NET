@@ -1,21 +1,21 @@
-﻿using Super.Model.Specifications;
+﻿using Super.Model.Selection.Conditions;
 
 namespace Super.Model.Commands
 {
 	class ValidatedCommand<T> : ICommand<T>
 	{
 		readonly ICommand<T>       _command;
-		readonly ISpecification<T> _specification;
+		readonly ICondition<T> _condition;
 
-		public ValidatedCommand(ISpecification<T> specification, ICommand<T> command)
+		public ValidatedCommand(ICondition<T> condition, ICommand<T> command)
 		{
-			_specification = specification;
+			_condition = condition;
 			_command       = command;
 		}
 
 		public void Execute(T parameter)
 		{
-			if (_specification.IsSatisfiedBy(parameter))
+			if (_condition.Get(parameter))
 			{
 				_command.Execute(parameter);
 			}

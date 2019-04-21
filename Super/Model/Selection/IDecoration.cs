@@ -1,4 +1,4 @@
 ﻿namespace Super.Model.Selection
 {
-	public interface IDecoration<TParameter, TResult> : ISelect<Decoration<TParameter, TResult>, TResult> {}
+	public interface IDecoration<TIn, TOut> : ISelect<Decoration<TIn, TOut>, TOut> {}
 }

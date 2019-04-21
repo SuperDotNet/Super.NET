@@ -1,3 +1,4 @@
+using Super.Compose;
 using Super.Model.Selection;
 
 namespace Super.Model.Collections
@@ -6,8 +7,13 @@ namespace Super.Model.Collections
 	{
 		public static SortSelector<T> Default { get; } = new SortSelector<T>();
 
-		SortSelector() : base(In<T>.Start(-1)
-		                           .Unless(SortMetadata<T>.Default)
-		                           .UnlessCast(Self<ISortAware>.Default.Value())) {}
+		SortSelector() : base(Start.A.Selection.Of<T>()
+		                           .By.Returning(-1)
+		                           .Unless(Start.An.Instance<SortMetadata<T>>())
+		                           .UnlessOf(Start.A.Selection<ISortAware>()
+		                                          .By.Self.AsDefined()
+		                                          .Then()
+		                                          .Value()
+		                                          .Get())) {}
 	}
 }

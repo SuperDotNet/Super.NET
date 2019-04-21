@@ -1,19 +1,23 @@
-﻿using System.Collections.Generic;
-using Super.Model.Collections;
-using Super.Model.Specifications;
+﻿using Super.Model.Sequences;
+using System.Collections.Generic;
 
 namespace Super.Model.Selection.Stores
 {
-	public class TableValues<TParameter, TResult> : Query<TParameter, TResult>, ISpecification<TParameter, TResult>
+	public interface ITableValues<TIn, TOut> : ITable<TIn, TOut>
 	{
-		readonly ISpecification<TParameter> _source;
+		IArray<TOut> Values { get; }
+	}
 
-		public TableValues(IDictionary<TParameter, TResult> store)
-			: this(new Table<TParameter, TResult>(store), new Values<TParameter, TResult>(store)) {}
+	public class TableValues<TIn, TOut> : DecoratedTable<TIn, TOut>, ITableValues<TIn, TOut>
+	{
+		public TableValues(IDictionary<TIn, TOut> store)
+			: this(new Table<TIn, TOut>(store), new DeferredArray<TOut>(store.Values)) {}
 
-		public TableValues(ITable<TParameter, TResult> source, IEnumerable<TResult> items)
-			: base(source, items) => _source = source;
+		public TableValues(ITable<TIn, TOut> source, IArray<TOut> values) : base(source)
+		{
+			Values = values;
+		}
 
-		public bool IsSatisfiedBy(TParameter parameter) => _source.IsSatisfiedBy(parameter);
+		public IArray<TOut> Values { get; }
 	}
 }

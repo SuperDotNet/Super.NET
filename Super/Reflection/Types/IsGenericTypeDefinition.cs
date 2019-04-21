@@ -1,9 +1,9 @@
 using System;
-using Super.Model.Specifications;
+using Super.Model.Selection.Conditions;
 
 namespace Super.Reflection.Types
 {
-	sealed class IsGenericTypeDefinition : DelegatedSpecification<Type>
+	sealed class IsGenericTypeDefinition : DelegatedCondition<Type>
 	{
 		public static IsGenericTypeDefinition Default { get; } = new IsGenericTypeDefinition();
 

@@ -1,21 +1,19 @@
-﻿using Super.Model.Collections;
+﻿using Super.Model.Sequences;
 using System;
-using System.Collections.Generic;
 
 namespace Super.Reflection.Selection
 {
-	public sealed class AllTypesInSameNamespace<T> : Array<Type>
+	public sealed class AllTypesInSameNamespace<T> : DecoratedArray<Type>
 	{
-		public AllTypesInSameNamespace() : this(new AllTypesInSameNamespace(typeof(T)).AsEnumerable()) {}
+		public static AllTypesInSameNamespace<T> Default { get; } = new AllTypesInSameNamespace<T>();
 
-		public AllTypesInSameNamespace(IEnumerable<Type> items) : base(items) {}
+		AllTypesInSameNamespace() : base(new AllTypesInSameNamespace(typeof(T))) {}
 	}
 
-	public sealed class AllTypesInSameNamespace : Array<Type>
+	public sealed class AllTypesInSameNamespace : DecoratedArray<Type>
 	{
 		public AllTypesInSameNamespace(Type referenceType)
-			: this(new TypesInSameNamespace(referenceType, new AllAssemblyTypes(referenceType).AsEnumerable()).AsEnumerable()) {}
+			: base(new TypesInSameNamespace(referenceType, new AllAssemblyTypes(referenceType).Get().Open())) {}
 
-		public AllTypesInSameNamespace(IEnumerable<Type> items) : base(items) {}
 	}
 }

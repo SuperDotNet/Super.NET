@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Super.Model.Collections;
+using Super.Model.Sequences;
 using Super.Runtime.Execution;
 using System;
 using System.Collections.Generic;
@@ -14,45 +14,38 @@ namespace Super.Testing.Application.Runtime.Environment
 		[Fact]
 		void Verify()
 		{
-			Super.Runtime.Environment.Types.Default.Execute(GetType().Yield().ToArray());
+			var types = Super.Runtime.Environment.Types.Default;
+			types.Execute(GetType().Yield().ToArray());
 
-			Super.Runtime.Environment.Types.Default.AsEnumerable().Should().HaveCount(1);
-			Super.Runtime.Environment.Types.Default.Execute(default);
+			types.Get().Open().Should().HaveCount(1);
+			types.Execute(default);
 
-			Super.Runtime.Environment.Types.Default.AsEnumerable().Should().HaveCountGreaterThan(1);
+			types.Get().Open().Should().HaveCountGreaterThan(1);
 		}
 
 		[Fact]
 		void Count()
 		{
 			var counter = new Counter();
-			var source = new TypeSource();
+			var source = typeof(object).Yield();
 			counter.Get().Should().Be(0);
 			var types = new Types(counter, source);
 			counter.Get().Should().Be(1);
-			Super.Runtime.Environment.Types.Default.Execute(types);
+			var registered = Super.Runtime.Environment.Types.Default;
+			registered.Execute(types);
 			counter.Get().Should().Be(1);
-			Super.Runtime.Environment.Types.Default.AsEnumerable().Should().BeEquivalentTo(source);
+			registered.Get().Open().Should().Equal(source);
 			counter.Get().Should().Be(1);
-			Super.Runtime.Environment.Types.Default.AsEnumerable().Should().BeEquivalentTo(source);
+			registered.Get().Open().Should().Equal(source);
 
-			Super.Runtime.Environment.Types.Default.AsEnumerable().Should().Equal(Super.Runtime.Environment.Types.Default.AsEnumerable());
+			registered.Get().Open().Should().Equal(registered.Get().Open());
 			types.Get().Should().BeEquivalentTo(types.Get());
 			counter.Get().Should().Be(1);
 		}
 
-		sealed class Types : Array<Type>
+		sealed class Types : ArrayInstance<Type>
 		{
-			public Types(Counter counter, IEnumerable<Type> types) : base(types.Select(counter.ExecuteAndReturn)) {}
-		}
-
-		sealed class TypeSource : Enumerable<Type>
-		{
-			public override IEnumerator<Type> GetEnumerator()
-			{
-				yield return typeof(object);
-//				yield return typeof(int);
-			}
+			public Types(Counter counter, IEnumerable<Type> types) : base(types.Select(counter.Parameter)) {}
 		}
 	}
 }

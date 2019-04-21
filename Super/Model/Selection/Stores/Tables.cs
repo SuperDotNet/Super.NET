@@ -1,20 +1,26 @@
-﻿using Super.Model.Specifications;
+﻿using Super.Compose;
+using Super.Model.Sequences;
+using Super.Reflection;
 using Super.Reflection.Types;
 using Super.Runtime.Activation;
 using System;
 
 namespace Super.Model.Selection.Stores
 {
-	public sealed class Tables<TParameter, TResult> : Select<Func<TParameter, TResult>, ITable<TParameter, TResult>>
+	public sealed class Tables<TIn, TOut> : DecoratedSelect<Func<TIn, TOut>, ITable<TIn, TOut>>
 	{
-		public static Tables<TParameter, TResult> Default { get; } = new Tables<TParameter, TResult>();
+		public static Tables<TIn, TOut> Default { get; } = new Tables<TIn, TOut>();
 
-		Tables()
-			: this(IsValueType.Default.IsSatisfiedBy(typeof(TParameter))
-				       ? MarkedActivations<Func<TParameter, TResult>, ConcurrentTables<TParameter, TResult>>.Default.Select(x => x.Reduce().Get())
-				       : new Generic<ISelect<Func<TParameter, TResult>, ITable<TParameter, TResult>>>(typeof(ReferenceTables<,>))
-					       .Get(typeof(TParameter), typeof(TResult))()) {}
+		Tables() : this(Start.A.Generic(typeof(ReferenceTables<,>))
+		                     .Of.Type<ISelect<Func<TIn, TOut>, ITable<TIn, TOut>>>()
+		                     .In(new Array<Type>(typeof(TIn), typeof(TOut)))
+		                     .Emit()
+		                     .Emit(),
+		                Start.An.Instance<Activations<Func<TIn, TOut>, ConcurrentTables<TIn, TOut>>>()
+		                     .Select(x => x.New().Get())) {}
 
-		public Tables(ISelect<Func<TParameter, TResult>, ITable<TParameter, TResult>> select) : base(select.ToDelegate()) {}
+		public Tables(ISelect<Func<TIn, TOut>, ITable<TIn, TOut>> references,
+		              ISelect<Func<TIn, TOut>, ITable<TIn, TOut>> structures)
+			: base(IsReference.Default.Get(Type<TIn>.Instance) ? references : structures) {}
 	}
 }

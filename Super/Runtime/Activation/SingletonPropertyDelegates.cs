@@ -1,7 +1,8 @@
-﻿using System;
-using System.Reflection;
+﻿using Super.Compose;
 using Super.Model.Selection;
 using Super.Reflection.Members;
+using System;
+using System.Reflection;
 
 namespace Super.Runtime.Activation
 {
@@ -9,8 +10,11 @@ namespace Super.Runtime.Activation
 	{
 		public static SingletonPropertyDelegates Default { get; } = new SingletonPropertyDelegates();
 
-		SingletonPropertyDelegates() : base(PropertyAccessMethodSelector.Default
-		                                                                .Select(MethodDelegates<Func<object>>.Default)
-		                                                                .Singleton()) {}
+		SingletonPropertyDelegates() : base(Start.A.Selection<PropertyInfo>()
+		                                         .By.Calling(x => x.GetMethod)
+		                                         .Select(MethodDelegates<Func<object>>.Default)
+		                                         .Then()
+		                                         .Singleton()
+		                                         .Get()) {}
 	}
 }

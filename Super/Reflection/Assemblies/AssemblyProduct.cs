@@ -2,9 +2,9 @@
 
 namespace Super.Reflection.Assemblies
 {
-	sealed class AssemblyProduct : Attribute<AssemblyProductAttribute, string>
+	sealed class AssemblyProduct : Declared<AssemblyProductAttribute, string>
 	{
-		public static IAttribute<string> Default { get; } = new AssemblyProduct();
+		public static AssemblyProduct Default { get; } = new AssemblyProduct();
 
 		AssemblyProduct() : base(x => x.Product) {}
 	}

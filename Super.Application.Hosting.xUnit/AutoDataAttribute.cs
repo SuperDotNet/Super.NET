@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
 using AutoFixture.Kernel;
 using JetBrains.Annotations;
-using Super.Model.Sources;
+using Super.Model.Results;
 using System;
 using System.Collections.Generic;
 
@@ -23,9 +23,9 @@ namespace Super.Application.Hosting.xUnit
 			: this(transformations, customization) {}
 
 		protected AutoDataAttribute(IEnumerable<ISpecimenBuilderTransformation> transformations, ICustomization customization)
-			: this(new Fixtures(new EngineParts(transformations.Fixed()), customization)) {}
+			: this(new Fixtures(new EngineParts(transformations.Open()), customization)) {}
 
-		protected AutoDataAttribute(ISource<IFixture> source) : base(source.Get) {}
+		protected AutoDataAttribute(IResult<IFixture> result) : base(result.Get) {}
 
 		[UsedImplicitly]
 		protected AutoDataAttribute(Func<IFixture> fixture) : base(fixture) {}

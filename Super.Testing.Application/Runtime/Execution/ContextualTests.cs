@@ -10,23 +10,23 @@ namespace Super.Testing.Application.Runtime.Execution
 		[Fact]
 		void VerifyResource()
 		{
-			ExecutionContextStore.Default.IsSatisfiedBy().Should().BeFalse();
+			ExecutionContextStore.Default.Condition.Get().Should().BeFalse();
 			var instance = Resource.Default.Get();
 			var context = ExecutionContextStore.Default.Get();
 			context.Should().NotBeNull();
-			AssociatedResources.Default.IsSatisfiedBy(context).Should().BeTrue();
+			AssociatedResources.Default.Condition.Get(context).Should().BeTrue();
 			instance.Get().Should().Be(0);
-			ExecutionContextStore.Default.IsSatisfiedBy().Should().BeTrue();
+			ExecutionContextStore.Default.Condition.Get().Should().BeTrue();
 			DisposeContext.Default.Execute();
 
 			instance.Get().Should().Be(1);
-			ExecutionContextStore.Default.IsSatisfiedBy().Should().BeFalse();
-			AssociatedResources.Default.IsSatisfiedBy(context).Should().BeFalse();
+			ExecutionContextStore.Default.Condition.Get().Should().BeFalse();
+			AssociatedResources.Default.Condition.Get(context).Should().BeFalse();
 
 			DisposeContext.Default.Execute();
 			instance.Get().Should().Be(1);
-			ExecutionContextStore.Default.IsSatisfiedBy().Should().BeFalse();
-			AssociatedResources.Default.IsSatisfiedBy(context).Should().BeFalse();
+			ExecutionContextStore.Default.Condition.Get().Should().BeFalse();
+			AssociatedResources.Default.Condition.Get(context).Should().BeFalse();
 		}
 
 		sealed class Resource : Contextual<CountingDisposable>

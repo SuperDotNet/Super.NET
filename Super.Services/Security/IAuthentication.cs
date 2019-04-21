@@ -1,11 +1,11 @@
-﻿using System;
-using Refit;
+﻿using Refit;
+using System.Threading.Tasks;
 
 namespace Super.Services.Security
 {
 	interface IAuthentication
 	{
 		[Get("/.auth/me")]
-		IObservable<AuthenticationInformation[]> Current();
+		Task<AuthenticationInformation[]> Current();
 	}
 }

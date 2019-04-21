@@ -1,11 +1,11 @@
 ﻿namespace Super.Model.Selection
 {
-	sealed class FixedReducer<TParameter, TResult> : ISelect<ISelect<TParameter, TResult>, TResult>
+	sealed class FixedReducer<TIn, TOut> : ISelect<ISelect<TIn, TOut>, TOut>
 	{
-		readonly TParameter _parameter;
+		readonly TIn _parameter;
 
-		public FixedReducer(TParameter parameter) => _parameter = parameter;
+		public FixedReducer(TIn parameter) => _parameter = parameter;
 
-		public TResult Get(ISelect<TParameter, TResult> parameter) => parameter.Get(_parameter);
+		public TOut Get(ISelect<TIn, TOut> parameter) => parameter.Get(_parameter);
 	}
 }

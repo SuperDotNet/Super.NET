@@ -1,7 +1,7 @@
 ﻿namespace Super.Model.Selection
 {
-	public class DecoratedSelect<TParameter, TResult> : Select<TParameter, TResult>
+	public class DecoratedSelect<TIn, TOut> : Select<TIn, TOut>
 	{
-		public DecoratedSelect(ISelect<TParameter, TResult> select) : base(select.Get) {}
+		public DecoratedSelect(ISelect<TIn, TOut> select) : base(select.Get) {}
 	}
 }

@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Super.Testing.Application.Model.Collections
 {
-	public class SortSelectorTests
+	public sealed class SortSelectorTests
 	{
 		[Fact]
 		void Verify()
@@ -32,9 +32,6 @@ namespace Super.Testing.Application.Model.Collections
 		}
 
 		[Sort(123)]
-		sealed class Declared
-		{
-
-		}
+		sealed class Declared {}
 	}
 }

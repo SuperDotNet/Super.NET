@@ -4,7 +4,6 @@ using Super.Runtime.Objects;
 using Super.Text;
 using Super.Text.Formatting;
 using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace Super
@@ -13,10 +12,14 @@ namespace Super
 
 	public static partial class ExtensionMethods
 	{
-		public static KeyValuePair<Type, Func<string, Func<object, IProjection>>> Entry<T>(
+		public static Pair<Type, Func<string, Func<object, IProjection>>> Entry<T>(
 			this IFormattedProjection<T> @this)
-			=> Pairs.Create(Reflection.Types.Type<T>.Instance,
-			                @this.Select(x => In<object>.Cast(x).ToDelegate()).ToDelegate());
+		{
+			return Pairs.Create(Reflection.Types.Type<T>.Instance,
+			                    @this.Select(Compose.Start.A.Selection.Of.Any.AndOf<T>().By.Cast.Or.Throw.Select)
+			                         .Select(x => x.ToDelegate())
+			                         .ToDelegate());
+		}
 
 		public static IProjection Get<T>(this IFormattedProjection<T> @this, T parameter) => @this.Get(null)(parameter);
 
@@ -24,12 +27,15 @@ namespace Super
 		                                                 params Expression<Func<T, object>>[] expressions)
 			=> new Projection<T>(@this, expressions);
 
-		public static KeyValuePair<string, Func<T, IProjection>> Entry<T>(this IFormatEntry<T> @this,
-		                                                                  params Expression<Func<T, object>>[] expressions)
-			=> @this.Get().Entry(expressions);
+		public static Pair<string, Func<T, IProjection>> Entry<T>(
+			this IFormatEntry<T> @this, params Expression<Func<T, object>>[] expressions)
+		{
+			var pair = @this.Get();
+			return pair.Entry(expressions);
+		}
 
-		public static KeyValuePair<string, Func<T, IProjection>> Entry<T>(this KeyValuePair<string, Func<T, string>> @this,
-		                                                                  params Expression<Func<T, object>>[] expressions)
+		public static Pair<string, Func<T, IProjection>> Entry<T>(ref this Pair<string, Func<T, string>> @this,
+		                                                          params Expression<Func<T, object>>[] expressions)
 			=> Pairs.Create(@this.Key, new Projection<T>(@this.Value, expressions).ToDelegate());
 	}
 }

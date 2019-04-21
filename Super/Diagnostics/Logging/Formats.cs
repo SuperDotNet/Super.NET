@@ -9,10 +9,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Super.Runtime;
 
 namespace Super.Diagnostics.Logging
 {
-	sealed class Formats : ReferenceStore<MessageTemplate, IFormats>
+	sealed class Formats : ReferenceValueStore<MessageTemplate, IFormats>
 	{
 		public static Formats Default { get; } = new Formats();
 
@@ -22,17 +23,17 @@ namespace Super.Diagnostics.Logging
 		                       .AsReadOnly()
 		                       .To(I<Selection>.Default)) {}
 
-		sealed class Selection : Select<string, string>, IFormats, IActivateMarker<IReadOnlyDictionary<string, string>>
+		sealed class Selection : Select<string, string>, IFormats, IActivateUsing<IReadOnlyDictionary<string, string>>
 		{
 			readonly ImmutableArray<string> _names;
 
 			[UsedImplicitly]
 			public Selection(IReadOnlyDictionary<string, string> source)
-				: this(source.ToStore().AsSelect().Get, source.Keys.ToImmutableArray()) {}
+				: this(source.ToStore().Get, source.Keys.ToImmutableArray()) {}
 
 			public Selection(Func<string, string> source, ImmutableArray<string> names) : base(source) => _names = names;
 
-			public ImmutableArray<string> Get() => _names;
+			public ImmutableArray<string> Get(Unit _) => _names;
 		}
 	}
 }

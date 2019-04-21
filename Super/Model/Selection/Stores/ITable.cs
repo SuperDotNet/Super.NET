@@ -1,7 +1,10 @@
+using Super.Model.Commands;
+using Super.Model.Selection.Conditions;
+
 namespace Super.Model.Selection.Stores
 {
-	public interface ITable<TParameter, TResult> : ISpecification<TParameter, TResult>, IMutable<TParameter, TResult>
+	public interface ITable<TIn, TOut> : IConditional<TIn, TOut>, IAssign<TIn, TOut>
 	{
-		bool Remove(TParameter key);
+		bool Remove(TIn key);
 	}
 }

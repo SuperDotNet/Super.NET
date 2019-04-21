@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
-using Super.Model.Collections;
-using Super.Model.Sources;
+using Super.Model.Results;
+using Super.Model.Sequences;
 using Super.Reflection.Types;
 using System;
 using System.Runtime.CompilerServices;
@@ -19,7 +19,7 @@ namespace Super.Platform
 
 		public uint Get(Type type) => _generic.Get(type).Invoke();
 
-		sealed class SizeOf<T> : ISource<uint>
+		sealed class SizeOf<T> : IResult<uint>
 		{
 			[UsedImplicitly]
 			public static SizeOf<T> Instance { get; } = new SizeOf<T>();

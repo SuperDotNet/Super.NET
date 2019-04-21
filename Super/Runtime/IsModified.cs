@@ -1,56 +1,70 @@
-﻿using Super.Model.Selection;
-using Super.Model.Specifications;
+﻿using JetBrains.Annotations;
+using Super.Compose;
+using Super.Model.Selection;
+using Super.Model.Selection.Conditions;
+using Super.Model.Selection.Stores;
 using Super.Reflection;
 using Super.Reflection.Types;
 using Super.Runtime.Invocation;
 using System;
+using System.Reflection;
 
 namespace Super.Runtime
 {
-	sealed class IsModified<T> : InverseSpecification<T>
+	sealed class IsModified<T> : InverseCondition<T>
 	{
 		public static IsModified<T> Default { get; } = new IsModified<T>();
 
 		IsModified() : base(IsDefault<T>.Default) {}
 	}
 
-	sealed class IsAssigned : InverseSpecification<object>
+	sealed class IsAssigned : InverseCondition<object>
 	{
 		public static IsAssigned Default { get; } = new IsAssigned();
 
 		IsAssigned() : base(IsNullReference.Default) {}
 	}
 
-	sealed class HasValue<T> : DelegatedSpecification<T?> where T : struct
+	sealed class HasValue<T> : DelegatedCondition<T?> where T : struct
 	{
+		[UsedImplicitly]
 		public static HasValue<T> Default { get; } = new HasValue<T>();
 
 		HasValue() : base(x => x.HasValue) {}
 	}
 
-	sealed class HasAssignment<T> : DecoratedSpecification<T> where T : class
+	sealed class IsAssignedConditions<T> : ReferenceValueStore<TypeInfo, Func<T, bool>>
 	{
-		public static HasAssignment<T> Default { get; } = new HasAssignment<T>();
+		[UsedImplicitly]
+		public static IsAssignedConditions<T> Default { get; } = new IsAssignedConditions<T>();
 
-		HasAssignment() : base(IsAssigned.Default) {}
+		IsAssignedConditions() : base(Start.A.Selection.Of.System.Metadata.By.Returning(IsModified<T>.Default)
+		                                   .Unless(IsReference.Default,
+		                                           Start.A.Selection<T>()
+		                                                .AndOf<object>()
+		                                                .By.Cast.Select(IsAssigned.Default)
+		                                                .Start())
+		                                   .Unless(IsAssignableStructure.Default,
+		                                           Start.A.Generic(typeof(HasValue<>))
+		                                                .Of.Type<T>()
+		                                                .As.Condition()
+		                                                .Then()
+		                                                .Invoke()
+		                                                .Get()
+		                                                .In(Type<T>.Instance.Yield().Result()))
+		                                   .To(AccountForUnassignedType.Default.Select)
+		                                   .Select(x => x.ToDelegate())
+		                                   .Get) {}
 	}
 
-	sealed class IsAssigned<T> : DelegatedSpecification<T>
+	sealed class IsAssigned<T> : Select<T, bool>, ICondition<T>
 	{
-		readonly static Func<T, bool> Value = IsModified<T>.Default.IsSatisfiedBy;
-
 		public static IsAssigned<T> Default { get; } = new IsAssigned<T>();
 
-		IsAssigned() : base(IsReference.Default.IsSatisfiedBy(Type<T>.Instance)
-			                    ? new Generic<ISpecification<T>>(typeof(HasAssignment<>))
-			                      .Get(Type<T>.Instance)().IsSatisfiedBy
-			                    : IsAssignableStructure.Default.IsSatisfiedBy(Type<T>.Instance)
-				                    ? new Generic<ISpecification<T>>(typeof(HasValue<>))
-				                      .Get(AccountForUnassignedAlteration.Default.Get(Type<T>.Instance))().IsSatisfiedBy
-				                    : Value) {}
+		IsAssigned() : base(IsAssignedConditions<T>.Default.Get(typeof(T))) {}
 	}
 
-	sealed class IsNullReference : DelegatedSpecification<object>
+	sealed class IsNullReference : DelegatedCondition<object>
 	{
 		public static IsNullReference Default { get; } = new IsNullReference();
 
@@ -64,9 +78,9 @@ namespace Super.Runtime
 		EqualsNullReference() : base(ReferenceEquals, null) {}
 	}
 
-	public class IsAssigned<TParameter, TResult> : DelegatedSpecification<TParameter> where TResult : class
+	public class IsAssigned<TIn, TOut> : DelegatedCondition<TIn> where TOut : class
 	{
-		protected IsAssigned(Func<TParameter, TResult> source)
-			: base(new Result<TParameter, TResult, bool>(source, IsAssigned.Default.IsSatisfiedBy).Get) {}
+		protected IsAssigned(Func<TIn, TOut> source)
+			: base(new Selection<TIn, TOut, bool>(source, IsAssigned.Default.Get).Get) {}
 	}
 }

@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Super.Model.Selection.Alterations;
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using Super.Model.Selection.Alterations;
 
 namespace Super.Services.Security
 {
@@ -25,7 +25,8 @@ namespace Super.Services.Security
 
 		public string Get(string parameter)
 		{
-			using (var hmac = new HMACSHA512(_key.ToArray()))
+			var key = _key;
+			using (var hmac = new HMACSHA512(key.ToArray()))
 			{
 				return BitConverter.ToString(hmac.ComputeHash(_encoding.GetBytes(parameter)))
 				                   .Replace("-", string.Empty);

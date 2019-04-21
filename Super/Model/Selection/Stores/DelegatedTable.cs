@@ -1,32 +1,37 @@
+using Super.Model.Selection.Conditions;
+using Super.Runtime;
 using System;
-using System.Collections.Generic;
 
 namespace Super.Model.Selection.Stores
 {
-	public class DelegatedTable<TParameter, TResult> : ITable<TParameter, TResult>
+	public class DelegatedTable<TIn, TOut> : ITable<TIn, TOut>
 	{
-		readonly Action<(TParameter, TResult)> _assign;
-		readonly Func<TParameter, bool>        _contains;
-		readonly Func<TParameter, TResult>     _get;
-		readonly Func<TParameter, bool>        _remove;
+		readonly Action<(TIn, TOut)> _assign;
+		readonly Func<TIn, TOut>     _get;
+		readonly Func<TIn, bool>     _remove;
 
 		// ReSharper disable once TooManyDependencies
-		public DelegatedTable(Func<TParameter, bool> contains, Action<(TParameter, TResult)> assign,
-		                      Func<TParameter, TResult> get,
-		                      Func<TParameter, bool> remove)
+		public DelegatedTable(Func<TIn, bool> contains, Action<(TIn, TOut)> assign,
+		                      Func<TIn, TOut> get, Func<TIn, bool> remove)
+			: this(new DelegatedCondition<TIn>(contains), assign, get, remove) {}
+
+		// ReSharper disable once TooManyDependencies
+		public DelegatedTable(ICondition<TIn> contains, Action<(TIn, TOut)> assign,
+		                      Func<TIn, TOut> get,
+		                      Func<TIn, bool> remove)
 		{
-			_contains = contains;
+			Condition = contains;
 			_assign   = assign;
 			_get      = get;
 			_remove   = remove;
 		}
 
-		public bool IsSatisfiedBy(TParameter parameter) => _contains(parameter);
+		public ICondition<TIn> Condition { get; }
 
-		public TResult Get(TParameter key) => _get(key);
+		public TOut Get(TIn key) => _get(key);
 
-		public bool Remove(TParameter key) => _remove(key);
+		public bool Remove(TIn key) => _remove(key);
 
-		public void Execute(KeyValuePair<TParameter, TResult> parameter) => _assign(parameter.Key.Pair(parameter.Value));
+		public void Execute(Pair<TIn, TOut> parameter) => _assign(parameter.Key.Pair(parameter.Value));
 	}
 }

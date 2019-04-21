@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using JetBrains.Annotations;
 using Super.Application.Hosting.xUnit;
-using Super.Model.Sources;
+using Super.Model.Results;
 using Super.Runtime.Environment;
 using Super.Runtime.Execution;
 using System.Linq;
@@ -50,7 +50,7 @@ namespace Super.Testing.Application.Runtime.Execution
 			ExecutionContext.Default.Get().Should().BeSameAs(ExecutionContext.Default.Get());
 		}
 
-		sealed class DefaultExecutionContext : DelegatedSource<object>, IExecutionContext
+		sealed class DefaultExecutionContext : DelegatedResult<object>, IExecutionContext
 		{
 			[UsedImplicitly]
 			public static IExecutionContext Default { get; } = new DefaultExecutionContext();

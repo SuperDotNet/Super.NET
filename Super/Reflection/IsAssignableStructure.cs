@@ -1,8 +1,8 @@
-using Super.Model.Specifications;
 using Super.Reflection.Types;
 using Super.Runtime;
 using System;
 using System.Reflection;
+using Super.Model.Selection.Conditions;
 
 namespace Super.Reflection
 {
@@ -13,7 +13,7 @@ namespace Super.Reflection
 		IsAssignableStructure() : base(Nullable.GetUnderlyingType) {}
 	}
 
-	sealed class IsReference : InverseSpecification<TypeInfo>
+	sealed class IsReference : InverseCondition<TypeInfo>
 	{
 		public static IsReference Default { get; } = new IsReference();
 		IsReference() : base(IsValueType.Default) {}

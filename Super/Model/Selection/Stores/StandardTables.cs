@@ -4,23 +4,23 @@ using System.Collections.Generic;
 
 namespace Super.Model.Selection.Stores
 {
-	public class StandardTables<TParameter, TResult>
-		: ISelect<IDictionary<TParameter, TResult>, ITable<TParameter, TResult>>, IActivateMarker<Func<TParameter, TResult>>
+	public class StandardTables<TIn, TOut>
+		: ISelect<IDictionary<TIn, TOut>, ITable<TIn, TOut>>, IActivateUsing<Func<TIn, TOut>>
 	{
-		public static StandardTables<TParameter, TResult> Default { get; } = new StandardTables<TParameter, TResult>();
+		public static StandardTables<TIn, TOut> Default { get; } = new StandardTables<TIn, TOut>();
 
-		StandardTables() : this(Default<TParameter, TResult>.Instance.Get) {}
+		StandardTables() : this(Default<TIn, TOut>.Instance.Get) {}
 
-		readonly Func<TParameter, TResult> _source;
+		readonly Func<TIn, TOut> _source;
 
-		public StandardTables(Func<TParameter, TResult> source) => _source = source;
+		public StandardTables(Func<TIn, TOut> source) => _source = source;
 
-		public ITable<TParameter, TResult> Get(IDictionary<TParameter, TResult> parameter)
+		public ITable<TIn, TOut> Get(IDictionary<TIn, TOut> parameter)
 		{
-			var get    = new DictionaryAccessAdapter<TParameter, TResult>(parameter, _source);
-			var assign = new DictionaryAssignCommand<TParameter, TResult>(parameter);
+			var get    = new DictionaryAccessAdapter<TIn, TOut>(parameter, _source);
+			var assign = new DictionaryAssignCommand<TIn, TOut>(parameter);
 			var result =
-				new DelegatedTable<TParameter, TResult>(parameter.ContainsKey, assign.Execute, get.Get, parameter.Remove);
+				new DelegatedTable<TIn, TOut>(parameter.ContainsKey, assign.Execute, get.Get, parameter.Remove);
 			return result;
 		}
 	}

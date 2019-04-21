@@ -1,8 +1,8 @@
-﻿using Super.Model.Sources;
+﻿using Super.Model.Results;
 
 namespace Super.Application.Hosting.BenchmarkDotNet
 {
-	class EnvironmentVariable : Source<global::BenchmarkDotNet.Jobs.EnvironmentVariable>
+	class EnvironmentVariable : Instance<global::BenchmarkDotNet.Jobs.EnvironmentVariable>
 	{
 		public EnvironmentVariable(string name, string value)
 			: this(new global::BenchmarkDotNet.Jobs.EnvironmentVariable(name, value)) {}

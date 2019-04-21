@@ -1,6 +1,6 @@
-using Super.Model.Sources;
+using Super.Model.Results;
 
 namespace Super.Model.Collections
 {
-	public interface ISortAware : ISource<int> {}
+	public interface ISortAware : IResult<int> {}
 }

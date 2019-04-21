@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace Super.Model.Selection.Stores
 {
-	public class EqualityStore<TParameter, TResult> : DecoratedSelect<TParameter, TResult>
+	public class EqualityStore<TIn, TOut> : DecoratedSelect<TIn, TOut>
 	{
-		protected EqualityStore(ISelect<TParameter, TResult> source, IDictionary<TParameter, TResult> store)
+		protected EqualityStore(ISelect<TIn, TOut> source, IDictionary<TIn, TOut> store)
 			: this(source.Get, store) {}
 
-		protected EqualityStore(Func<TParameter, TResult> source, IDictionary<TParameter, TResult> store)
-			: base(new StandardTables<TParameter, TResult>(source).Get(store)) {}
+		protected EqualityStore(Func<TIn, TOut> source, IDictionary<TIn, TOut> store)
+			: base(new StandardTables<TIn, TOut>(source).Get(store)) {}
 	}
 }

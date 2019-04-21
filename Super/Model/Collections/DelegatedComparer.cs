@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Super.Model.Collections
 {
-	class DelegatedComparer<T> : IComparer<T>
+	public class DelegatedComparer<T> : IComparer<T>
 	{
 		readonly Func<T, int> _sort;
 

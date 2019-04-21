@@ -1,18 +1,18 @@
 ﻿using JetBrains.Annotations;
+using Super.Compose;
 using Super.Model.Commands;
+using Super.Model.Results;
 using Super.Model.Selection;
-using Super.Model.Sources;
-using Super.Model.Specifications;
-using System.Reactive;
+using Super.Model.Selection.Conditions;
 using System.Threading;
 
 namespace Super.Runtime.Execution
 {
-	public interface ICounter : ISource<int>, ICommand {}
+	public interface ICounter : IResult<int>, ICommand {}
 
 	public static class Extensions
 	{
-		public static int Count(this ICounter @this) => @this.Executed().Get();
+		public static int Count(this ICounter @this) => @this.Parameter().Get();
 	}
 
 	public sealed class Counter : ICounter
@@ -21,7 +21,7 @@ namespace Super.Runtime.Execution
 
 		public int Get() => _count;
 
-		public void Execute(Unit parameter)
+		public void Execute(None parameter)
 		{
 			Interlocked.Increment(ref _count);
 		}
@@ -29,15 +29,22 @@ namespace Super.Runtime.Execution
 
 	sealed class Counter<T> : DecoratedSelect<T, int>
 	{
-		public Counter() : base(In<T>.New<Counter>().ToTable().Select(x => x.Count())) {}
+		public Counter() : base(Start.A.Selection<T>()
+		                             .AndOf<Counter>()
+		                             .By.Instantiation.ToTable()
+		                             .Select(x => x.Count())) {}
 	}
 
-	sealed class First<T> : DecoratedSpecification<T>
+	sealed class First<T> : DecoratedCondition<T>
 	{
-		public First() : base(In<T>.New<First>().ToTable().Select(ConditionSelector.Default).Out()) {}
+		public First() : base(Start.A.Selection<T>()
+		                           .AndOf<First>()
+		                           .By.Activation()
+		                           .ToTable()
+		                           .Select(ConditionSelector.Default)) {}
 	}
 
-	public sealed class First : ISpecification
+	public sealed class First : ICondition
 	{
 		readonly ICounter _counter;
 
@@ -46,6 +53,6 @@ namespace Super.Runtime.Execution
 
 		public First(ICounter counter) => _counter = counter;
 
-		public bool IsSatisfiedBy(Unit parameter) => _counter.Get() == 0 && _counter.Count() == 1;
+		public bool Get(None parameter) => _counter.Get() == 0 && _counter.Count() == 1;
 	}
 }

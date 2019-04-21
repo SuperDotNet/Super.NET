@@ -1,31 +1,17 @@
-using Super.Model.Collections;
-using Super.Model.Selection;
-using System;
-using System.Collections.Generic;
+﻿using Super.Model.Selection.Stores;
+using Super.Model.Sequences;
 using System.Linq;
 using System.Reflection;
 
 namespace Super.Reflection.Types
 {
-	public static partial class Implementations
-	{
-		public static ISelect<TypeInfo, ReadOnlyMemory<TypeInfo>> GenericInterfaces { get; } =
-			Types.GenericInterfaces.Default.ToArray().ToStore();
-
-	}
-
-	sealed class GenericInterfaces : ISequence<TypeInfo, TypeInfo>
+	sealed class GenericInterfaces : Store<TypeInfo, Array<TypeInfo>>
 	{
 		public static GenericInterfaces Default { get; } = new GenericInterfaces();
 
-		GenericInterfaces() : this(AllInterfaces.Default) {}
-
-		readonly ISequence<TypeInfo, TypeInfo> _sequence;
-
-		public GenericInterfaces(ISequence<TypeInfo, TypeInfo> sequence) => _sequence = sequence;
-
-		public IEnumerable<TypeInfo> Get(TypeInfo parameter) => _sequence.Get(parameter)
-		                                                               .Where(x => x.IsGenericType)
-		                                                               .Distinct();
+		GenericInterfaces() : base(AllInterfaces.Default.Open()
+		                                        .Select(x => x.Where(y => y.IsGenericType))
+		                                        .Result()
+		                                        .Get) {}
 	}
 }

@@ -1,8 +1,9 @@
-﻿using System.Collections.Immutable;
+﻿using Super.Model.Selection.Conditions;
+using Super.Model.Sequences;
+using System;
 using System.Reflection;
-using Super.Model.Selection;
 
 namespace Super.Reflection
 {
-	public interface IAttributes<T> : ISelect<ICustomAttributeProvider, ImmutableArray<T>> {}
+	public interface IAttributes<T> : IConditional<ICustomAttributeProvider, Array<T>> where T : Attribute {}
 }

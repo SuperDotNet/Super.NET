@@ -1,19 +1,22 @@
-﻿using System.Reflection;
-using Super.Model.Sources;
+﻿using Super.Model.Results;
 using Super.Reflection.Types;
+using Super.Runtime;
+using System.Reflection;
 
 namespace Super.Reflection
 {
-	public sealed class I<T> : Source<TypeInfo>, IInfer
+	public static class I
 	{
-		public static I<T> Default { get; } = new I<T>();
+		public static I<T> A<T>() => I<T>.Default;
 
-		I() : base(Type<T>.Metadata) {}
+		public static I<object> Any() => I<object>.Default;
+
+		public static I<None> None() => I<None>.Default;
 	}
 
-	public sealed class I<T, TParameter, TResult> : Source<TypeInfo>, IInfer
+	public sealed class I<T> : Instance<TypeInfo>, IInfer
 	{
-		public static I<T, TParameter, TResult> Default { get; } = new I<T, TParameter, TResult>();
+		public static I<T> Default { get; } = new I<T>();
 
 		I() : base(Type<T>.Metadata) {}
 	}

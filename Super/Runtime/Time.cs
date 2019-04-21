@@ -1,9 +1,9 @@
-﻿using Super.Model.Sources;
+﻿using Super.Model.Results;
 using System;
 
 namespace Super.Runtime
 {
-	public sealed class Time : DelegatedSource<DateTimeOffset>, ITime
+	public sealed class Time : DelegatedResult<DateTimeOffset>, ITime
 	{
 		public static Time Default { get; } = new Time();
 

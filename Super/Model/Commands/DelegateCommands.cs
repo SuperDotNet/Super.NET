@@ -3,7 +3,7 @@ using System;
 
 namespace Super.Model.Commands
 {
-	sealed class DelegateCommands<T> : ReferenceStore<Action<T>, ICommand<T>>
+	sealed class DelegateCommands<T> : ReferenceValueStore<Action<T>, ICommand<T>>
 	{
 		public static DelegateCommands<T> Default { get; } = new DelegateCommands<T>();
 

@@ -2,7 +2,7 @@
 
 namespace Super.Runtime.Execution
 {
-	public struct Details
+	public readonly struct Details
 	{
 		public Details(string name) : this(name, Time.Default) {}
 

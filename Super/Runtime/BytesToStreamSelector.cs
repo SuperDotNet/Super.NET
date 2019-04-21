@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Super.Runtime
 {
-	sealed class BytesToStreamSelector : Store<byte[], MemoryStream>
+	sealed class BytesToStreamSelector : ActivatedStore<byte[], MemoryStream>
 	{
 		public static BytesToStreamSelector Default { get; } = new BytesToStreamSelector();
 

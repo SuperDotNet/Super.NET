@@ -1,0 +1,15 @@
+using Super.Model.Commands;
+using Super.Model.Selection.Conditions;
+
+namespace Super.Model.Collections.Groups
+{
+	class DefaultAddGroupElementCommand<T> : DecoratedCommand<T>
+	{
+		public DefaultAddGroupElementCommand(GroupName defaultName, IConditional<string, GroupName> names,
+		                                     IGroupCollection<T> collection)
+			: base(new AddGroupElementCommand<T>(collection, new GroupName<T>(defaultName, names))
+			       .ToSelect()
+			       .UnlessOf(new GroupingAwareCommand<T>(collection).ToSelect())
+			       .ToCommand()) {}
+	}
+}

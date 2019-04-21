@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+﻿using Super.Model.Sequences;
 
 namespace Super.Application.Hosting.Console
 {
@@ -12,7 +12,7 @@ namespace Super.Application.Hosting.Console
 
 		public ConsoleApplication(IApplicationContexts contexts) => _contexts = contexts;
 
-		public void Execute(ImmutableArray<string> parameter)
+		public void Execute(Array<string> parameter)
 		{
 			using (var context = _contexts.Get(parameter))
 			{

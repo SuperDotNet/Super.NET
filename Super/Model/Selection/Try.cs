@@ -2,18 +2,20 @@
 
 namespace Super.Model.Selection
 {
-	public class Try<TException, TParameter, TResult> : ISelect<TParameter, TResult> where TException : Exception
+	public class Try<TException, TIn, TOut> : ISelect<TIn, TOut> where TException : Exception
 	{
-		readonly Func<TParameter, TResult> _fallback;
-		readonly Func<TParameter, TResult> _source;
+		readonly Func<TIn, TOut> _fallback;
+		readonly Func<TIn, TOut> _source;
 
-		public Try(Func<TParameter, TResult> source, Func<TParameter, TResult> fallback)
+		public Try(Func<TIn, TOut> source) : this(source, Default<TIn, TOut>.Instance.Get) {}
+
+		public Try(Func<TIn, TOut> source, Func<TIn, TOut> fallback)
 		{
 			_source   = source;
 			_fallback = fallback;
 		}
 
-		public TResult Get(TParameter parameter)
+		public TOut Get(TIn parameter)
 		{
 			try
 			{

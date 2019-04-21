@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Super.Diagnostics.Logging
 {
@@ -9,7 +10,8 @@ namespace Super.Diagnostics.Logging
 
 		public Scalar(IReadOnlyDictionary<string, ScalarProperty> properties) => _properties = properties;
 
-		public IEnumerator<KeyValuePair<string, ScalarProperty>> GetEnumerator() => _properties.GetEnumerator();
+		public IEnumerator<KeyValuePair<string, ScalarProperty>> GetEnumerator()
+			=> _properties.Select(x => new KeyValuePair<string, ScalarProperty>(x.Key, x.Value)).GetEnumerator();
 
 		IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)_properties).GetEnumerator();
 

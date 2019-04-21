@@ -1,24 +1,20 @@
-﻿using Super.Model.Selection;
+﻿using Super.Compose;
+using Super.Model.Results;
+using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
-using Super.Model.Sources;
 using Super.Reflection;
 using Super.Runtime.Execution;
 
 namespace Super.Runtime.Objects
 {
-	sealed class Cast<TFrom, TTo> : DecoratedSelect<TFrom, TTo>
+	sealed class ResultAwareCast<TFrom, TTo> : DecoratedSelect<TFrom, TTo>
 	{
-		public static Cast<TFrom, TTo> Default { get; } = new Cast<TFrom, TTo>();
+		public static ResultAwareCast<TFrom, TTo> Default { get; } = new ResultAwareCast<TFrom, TTo>();
 
-		Cast() : base(Default<TFrom, TTo>.Instance.Unless(CanCast<TFrom, TTo>.Default, CastSelector<TFrom, TTo>.Default)) {}
-	}
-
-	sealed class ValueAwareCast<TFrom, TTo> : DecoratedSelect<TFrom, TTo>
-	{
-		public static ValueAwareCast<TFrom, TTo> Default { get; } = new ValueAwareCast<TFrom, TTo>();
-
-		ValueAwareCast() : base(Cast<TFrom, TTo>.Default.Unless(CanCast<TFrom, ISource<TTo>>.Default,
-		                                                        Cast<TFrom, ISource<TTo>>.Default.Value())) {}
+		ResultAwareCast() : base(Start.A.Selection<TFrom>()
+		                              .AndOf<TTo>()
+		                              .By.Cast.Unless(CanCast<TFrom, IResult<TTo>>.Default,
+		                                              CastOrThrow<TFrom, IResult<TTo>>.Default.Then().Value().Get())) {}
 	}
 
 	sealed class OnlyOnceAlteration<TIn, TOut> : IAlteration<ISelect<TIn, TOut>>
@@ -27,7 +23,10 @@ namespace Super.Runtime.Objects
 
 		OnlyOnceAlteration() {}
 
-		public ISelect<TIn, TOut> Get(ISelect<TIn, TOut> parameter) => new First().Out().Select(I<TIn>.Default).Out().Then(parameter);
+		public ISelect<TIn, TOut> Get(ISelect<TIn, TOut> parameter)
+			=> new First().Out()
+			              .ToSelect(I.A<TIn>())
+			              .To(parameter.If);
 	}
 
 	sealed class OncePerParameter<TIn, TOut> : IAlteration<ISelect<TIn, TOut>>
@@ -36,6 +35,6 @@ namespace Super.Runtime.Objects
 
 		OncePerParameter() {}
 
-		public ISelect<TIn, TOut> Get(ISelect<TIn, TOut> parameter) => new First<TIn>().Then(parameter);
+		public ISelect<TIn, TOut> Get(ISelect<TIn, TOut> parameter) => parameter.If(new First<TIn>());
 	}
 }

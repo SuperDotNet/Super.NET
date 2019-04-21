@@ -1,8 +1,6 @@
-﻿using Super.Model.Collections;
-using Super.Model.Selection;
-using Super.Runtime.Activation;
+﻿using Super.Model.Selection;
+using Super.Model.Sequences;
 using System;
-using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
 
 namespace Super.Runtime.Invocation
@@ -11,20 +9,20 @@ namespace Super.Runtime.Invocation
 	/// Attribution: https://github.com/i3arnon/AsyncUtilities
 	/// </summary>
 	// ReSharper disable once PossibleInfiniteInheritance
-	sealed class LockItem<T> : ISelect<int, (ImmutableArray<T> Items, int Mask)>
+	sealed class LockItem<T> : ISelect<int, (Array<T> Items, int Mask)>
 	{
 		public static LockItem<T> Default { get; } = new LockItem<T>();
 
-		LockItem() : this(New<T>.Default.ToDelegateReference()) {}
+		LockItem() : this(Repeat<T>.Default.Get) {}
 
-		readonly Func<T> _create;
+		readonly Func<uint, Array<T>> _create;
 
-		public LockItem(Func<T> create) => _create = create;
+		public LockItem(Func<uint, Array<T>> create) => _create = create;
 
-		public (ImmutableArray<T> Items, int Mask) Get(int parameter)
+		public (Array<T> Items, int Mask) Get(int parameter)
 		{
 			var mask   = GetStripeMask(parameter);
-			var result = (new Repeat<T>(mask + 1, _create).ToImmutableArray(), mask);
+			var result = (_create((uint)mask + 1), mask);
 			return result;
 		}
 

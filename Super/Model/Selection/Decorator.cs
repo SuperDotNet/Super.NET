@@ -2,26 +2,26 @@
 
 namespace Super.Model.Selection
 {
-	public class Decorator<TParameter, TResult> : ISelect<TParameter, TResult>
+	public class Decorator<TIn, TOut> : ISelect<TIn, TOut>
 	{
-		readonly Func<Decoration<TParameter, TResult>, TResult> _decorator;
-		readonly Func<TParameter, TResult>                      _source;
+		readonly Func<Decoration<TIn, TOut>, TOut> _decorator;
+		readonly Func<TIn, TOut>                      _source;
 
-		public Decorator(ISelect<Decoration<TParameter, TResult>, TResult> decorator,
-		                 ISelect<TParameter, TResult> @select)
+		public Decorator(ISelect<Decoration<TIn, TOut>, TOut> decorator,
+		                 ISelect<TIn, TOut> @select)
 			: this(decorator.Get, @select.Get) {}
 
-		public Decorator(Func<Decoration<TParameter, TResult>, TResult> decorator)
+		public Decorator(Func<Decoration<TIn, TOut>, TOut> decorator)
 			: this(decorator, _ => default) {}
 
-		public Decorator(Func<Decoration<TParameter, TResult>, TResult> decorator,
-		                 Func<TParameter, TResult> source)
+		public Decorator(Func<Decoration<TIn, TOut>, TOut> decorator,
+		                 Func<TIn, TOut> source)
 		{
 			_decorator = decorator;
 			_source    = source;
 		}
 
-		public TResult Get(TParameter parameter)
-			=> _decorator(new Decoration<TParameter, TResult>(parameter, _source(parameter)));
+		public TOut Get(TIn parameter)
+			=> _decorator(new Decoration<TIn, TOut>(parameter, _source(parameter)));
 	}
 }

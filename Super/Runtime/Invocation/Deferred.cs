@@ -1,24 +1,34 @@
-﻿using Super.Model.Commands;
+﻿using JetBrains.Annotations;
+using Super.Compose;
+using Super.Model.Commands;
+using Super.Model.Results;
 using Super.Model.Selection;
-using Super.Model.Sources;
+using Super.Model.Selection.Stores;
 using Super.Runtime.Activation;
 
 namespace Super.Runtime.Invocation
 {
-	class Deferred<TParameter, TResult> : DecoratedSelect<TParameter, TResult>,
-	                                      IActivateMarker<ISelect<TParameter, TResult>>
+	class Deferred<TIn, TOut> : DecoratedSelect<TIn, TOut>, IActivateUsing<ISelect<TIn, TOut>>
 	{
-		public Deferred(ISelect<TParameter, TResult> select) : this(select, In<TParameter>.Default<TResult>().ToTable()) {}
+		[UsedImplicitly]
+		public Deferred(ISelect<TIn, TOut> select) : this(select, Start.A.Selection<TIn>()
+		                                                               .AndOf<TOut>()
+		                                                               .Into.Table()) {}
 
-		public Deferred(ISelect<TParameter, TResult> select, IMutable<TParameter, TResult> mutable)
-			: base(new Configuration<TParameter, TResult>(select, mutable).Unless(mutable)) {}
+		public Deferred(ISelect<TIn, TOut> select, ITable<TIn, TOut> assignable)
+			: this(@select, assignable, assignable) {}
+
+		public Deferred(ISelect<TIn, TOut> select, IAssign<TIn, TOut> assign, ISelect<TIn, TOut> source)
+			: base(Start.A.Selection(new Configured<TIn, TOut>(select, assign)).Unless(source)) {}
 	}
 
-	public class Deferred<T> : DecoratedSource<T>
+	public class Deferred<T> : DecoratedResult<T>
 	{
-		public Deferred(ISource<T> source, IMutable<T> mutable) : this(source, mutable, mutable) {}
+		public Deferred(ISelect<T> result, IMutable<T> mutable) : this(result, mutable, mutable) {}
 
-		public Deferred(ISource<T> source, ISource<T> store, ICommand<T> assign)
-			: base(source.Select(assign.ToConfiguration()).Unless(store)) {}
+		public Deferred(ISelect<T> result, IResult<T> store, ICommand<T> assign)
+			: base(result.Select(assign.Then().ToConfiguration().Get())
+			             .Unless(store.ToSelect())
+			             .Out()) {}
 	}
 }

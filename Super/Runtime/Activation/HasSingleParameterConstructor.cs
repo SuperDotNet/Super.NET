@@ -1,25 +1,29 @@
-﻿using Super.Model.Selection;
-using Super.Model.Specifications;
+﻿using Super.Compose;
+using Super.Model.Selection;
+using Super.Model.Selection.Conditions;
+using Super.Model.Sequences;
 using Super.Reflection.Members;
 using Super.Reflection.Types;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace Super.Runtime.Activation
 {
-	sealed class HasSingleParameterConstructor<T> : DecoratedSpecification<ConstructorInfo>
+	sealed class HasSingleParameterConstructor<T> : DelegatedCondition<ConstructorInfo>
 	{
 		public static HasSingleParameterConstructor<T> Default { get; } = new HasSingleParameterConstructor<T>();
 
 		HasSingleParameterConstructor() : this(Parameters.Default) {}
 
-		public HasSingleParameterConstructor(ISelect<ConstructorInfo, ICollection<ParameterInfo>> parameters)
-			: base(parameters.Materialize()
+		public HasSingleParameterConstructor(ISelect<ConstructorInfo, Array<ParameterInfo>> parameters)
+			: base(parameters.Query()
 			                 .FirstAssigned()
-			                 .Out(ParameterType.Default
-			                                   .Select(TypeMetadataSelector.Default)
-			                                   .Select(IsAssignableFrom<T>.Default)
-			                                   .Assigned())
-			                 .And(parameters.Out(RemainingParametersAreOptional.Default))) {}
+			                 .Select(A.This(ParameterType.Default)
+			                          .Then()
+			                          .Metadata()
+			                          .Select(IsAssignableFrom<T>.Default)
+			                          .Assigned()
+			                          .Get())
+			                 .Then()
+			                 .And(parameters.Then().Select(RemainingParametersAreOptional.Default))) {}
 	}
 }

@@ -1,24 +1,20 @@
-﻿using Super.Runtime;
-using System.Collections.Generic;
+﻿using Super.Model.Selection.Conditions;
+using Super.Runtime;
 
 namespace Super.Model.Selection.Stores
 {
-	public class SelectedTable<TFrom, TTo, TValue> : ITable<TTo, TValue>
+	public class SelectedTable<TFrom, TTo, TValue> : SelectedConditional<TTo, TFrom, TValue>, ITable<TTo, TValue>
 	{
-		readonly ISelect<TTo, TFrom>   _select;
-		readonly ITable<TFrom, TValue> _table;
+		readonly ISelect<TTo, TFrom>       _select;
+		readonly ITable<TFrom, TValue>     _table;
 
-		public SelectedTable(ITable<TFrom, TValue> table, ISelect<TTo, TFrom> @select)
+		public SelectedTable(ITable<TFrom, TValue> table, ISelect<TTo, TFrom> @select) : base(table, select.Get)
 		{
-			_table   = table;
-			_select = @select;
+			_table       = table;
+			_select      = @select;
 		}
 
-		public bool IsSatisfiedBy(TTo parameter) => _table.IsSatisfiedBy(_select.Get(parameter));
-
-		public TValue Get(TTo parameter) => _table.Get(_select.Get(parameter));
-
-		public void Execute(KeyValuePair<TTo, TValue> parameter)
+		public void Execute(Pair<TTo, TValue> parameter)
 		{
 			_table.Execute(Pairs.Create(_select.Get(parameter.Key), parameter.Value));
 		}

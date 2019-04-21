@@ -1,10 +1,10 @@
-﻿using Super.Model.Sources;
+﻿using Super.Model.Results;
 using Super.Runtime;
 using Super.Runtime.Execution;
 
 namespace Super.Testing.Objects
 {
-	public sealed class CountingDisposable : DelegatedDisposable, ISource<int>
+	public sealed class CountingDisposable : DelegatedDisposable, IResult<int>
 	{
 		readonly ICounter _counter;
 

@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
+using Super.Compose;
+using Super.Model.Results;
 using Super.Model.Selection;
-using Super.Model.Sources;
 using Super.Reflection.Types;
 using System;
 using System.Reflection;
@@ -13,27 +14,40 @@ namespace Super.Testing.Application.Model.Extents
 		[Fact]
 		void VerifySourceDirect()
 		{
-			new Source<string>("Hello World!").Out().AsSelect().Type().Metadata().Out().Get().Should().Be(Type<string>.Metadata);
+			A.This(new Instance<string>("Hello World!"))
+			 .Then()
+			 .Type()
+			 .Metadata()
+			 .Out()()
+			 .Should()
+			 .Be(Type<string>.Metadata);
 		}
 
 		[Fact]
 		void VerifySourceDelegated()
 		{
-			new Source<int>(6776).Select(x => x.GetType().GetTypeInfo()).Get().Should().Be(Type<int>.Metadata);
+			6776.Start().ToSelect().Select(x => x.GetType().GetTypeInfo()).Get().Should().Be(Type<int>.Metadata);
 		}
 
 		[Fact]
 		void VerifyGuard()
 		{
-			In<string>.Start().Guard().Invoking(x => x.Get(null)).Should().Throw<InvalidOperationException>();
-			In<string>.Start().Invoking(x => x.Get(null)).Should().NotThrow();
+			Start.A.Selection<string>()
+			     .By.Self.Guard()
+			     .Invoking(x => x.Get(null))
+			     .Should()
+			     .Throw<InvalidOperationException>();
+			Start.A.Selection<string>()
+			     .By.Self.Invoking(x => x.Get(null))
+			     .Should()
+			     .NotThrow();
 		}
 
 		[Fact]
 		void VerifyOnlyOnce()
 		{
-			var count = 0;
-			var counter = new Select<string, int>(x => count++).OnlyOnce();
+			var count   = 0;
+			var counter = new Select<string, int>(x => count++).Then().OnlyOnce().Get();
 			count.Should().Be(0);
 			counter.Get("HelloWorld");
 			count.Should().Be(1);
@@ -49,7 +63,7 @@ namespace Super.Testing.Application.Model.Extents
 		void VerifyOnceStriped()
 		{
 			var count   = 0;
-			var counter = new Select<string, int>(x => count++).OnceStriped();
+			var counter = new Select<string, int>(x => count++).Then().OnceStriped().Get();
 			count.Should().Be(0);
 			counter.Get("HelloWorld");
 			count.Should().Be(1);

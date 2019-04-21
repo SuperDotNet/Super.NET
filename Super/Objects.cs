@@ -2,6 +2,7 @@
 using Super.Model.Selection;
 using Super.Runtime;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -18,29 +19,47 @@ namespace Super
 			return @this;
 		}
 
-		public static TResult To<T, TResult>(this T @this, ISelect<T, TResult> select) => @this.To(select.Get);
+		/// Attribution: https://stackoverflow.com/a/55034370/10340424
+		public static uint Clamp0(this long @this) => (uint)(@this & ~@this >> 63);
 
-		public static TResult To<T, TResult>(this T @this, Func<T, TResult> select) => select(@this);
+		public static T[] Lease<T>(this ArrayPool<T> @this, int count)
+		{
+			var result = @this.Rent(count);
+			var length = result.Length;
+			for (var i = 0u; i < length; i++)
+			{
+				result[i] = default;
+			}
 
-		public static T If<T>(this bool @this, T @true, T @false) => @this ? @true : @false;
+			return result;
+		}
 
-		public static TResult Return<T, TResult>(this T _, TResult result) => result;
+		public static TOut Return<T, TOut>(this T _, TOut result) => result;
 
-		public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> @this,
+		public static TOut To<T, TOut>(this T @this, ISelect<T, TOut> select) => @this.To(select.Get);
+
+		public static TOut To<T, TOut>(this T @this, Func<T, TOut> select) => select(@this);
+
+		public static T If<T>(ref this bool @this, T @true, T @false) => @this ? @true : @false;
+
+		public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<Pair<TKey, TValue>> @this,
 		                                                                  IEqualityComparer<TKey> comparer = null)
 			=> @this.ToDictionary(x => x.Key, x => x.Value, comparer);
 
 		public static OrderedDictionary<TKey, TValue> ToOrderedDictionary<TKey, TValue>(
-			this IEnumerable<KeyValuePair<TKey, TValue>> @this,
+			this IEnumerable<Pair<TKey, TValue>> @this,
 			IEqualityComparer<TKey> comparer = null)
 			=> @this.ToOrderedDictionary(x => x.Key, x => x.Value, comparer);
 
-		public static IReadOnlyDictionary<TKey, TValue> AsReadOnly<TKey, TValue>(
-			this IEnumerable<KeyValuePair<TKey, TValue>> @this)
-			=> @this as IReadOnlyDictionary<TKey, TValue> ?? new ReadOnlyDictionary<TKey, TValue>(@this.ToDictionary());
+		public static IReadOnlyDictionary<TKey, TValue> AsReadOnly<TKey, TValue>(this IDictionary<TKey, TValue> @this)
+			=> new ReadOnlyDictionary<TKey, TValue>(@this);
 
-		public static TResult AsTo<TSource, TResult>(this object target, Func<TSource, TResult> transform,
-		                                             Func<TResult> resolve = null)
+		public static IReadOnlyDictionary<TKey, TValue> AsReadOnly<TKey, TValue>(
+			this IEnumerable<Pair<TKey, TValue>> @this)
+			=> new ReadOnlyDictionary<TKey, TValue>(@this.ToDictionary());
+
+		public static TOut AsTo<TSource, TOut>(this object target, Func<TSource, TOut> transform,
+		                                       Func<TOut> resolve = null)
 		{
 			var @default = resolve ?? (() => default);
 			var result   = target is TSource source ? transform(source) : @default();
@@ -53,7 +72,7 @@ namespace Super
 
 		public static T Self<T>(this T @this) => @this;
 
-		public static TResult Accept<TParameter, TResult>(this TResult @this, TParameter _) => @this;
+		public static TOut Accept<TIn, TOut>(this TOut @this, TIn _) => @this;
 
 		public static IEnumerable<T> Yield<T>(this T @this)
 		{
@@ -69,13 +88,11 @@ namespace Super
 
 		public static IDisposable ToDisposable(this object @this) => @this as IDisposable ?? EmptyDisposable.Default;
 
-		public static void Dispose(this IDisposable @this, object parameter) => @this.Dispose();
-
 		public static T To<T>(this object @this)
-			=> To<T>(@this, $"'{@this.GetType().FullName}' is not of type {typeof(T).FullName}.");
-
-		public static T To<T>(this object @this, string message)
-			=> @this is T result ? result : throw new InvalidOperationException(message);
+			=> @this is T result
+				   ? result
+				   : throw new
+					     InvalidOperationException($"'{@this.GetType().FullName}' is not of type {typeof(T).FullName}.");
 
 		public static T Get<T>(this IServiceProvider @this)
 		{

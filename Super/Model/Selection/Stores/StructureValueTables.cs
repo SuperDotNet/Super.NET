@@ -4,45 +4,45 @@ using System.Runtime.CompilerServices;
 
 namespace Super.Model.Selection.Stores
 {
-	public sealed class StructureValueTables<TParameter, TResult>
-		: ISelect<ConditionalWeakTable<TParameter, Tuple<TResult>>, ITable<TParameter, TResult>>,
-		  IActivateMarker<Func<TParameter, TResult>>
-		where TParameter : class
-		where TResult : struct
+	public sealed class StructureValueTables<TIn, TOut>
+		: ISelect<ConditionalWeakTable<TIn, Tuple<TOut>>, ITable<TIn, TOut>>,
+		  IActivateUsing<Func<TIn, TOut>>
+		where TIn : class
+		where TOut : struct
 	{
-		public static StructureValueTables<TParameter, TResult> Default { get; } = new StructureValueTables<TParameter, TResult>();
+		public static StructureValueTables<TIn, TOut> Default { get; } = new StructureValueTables<TIn, TOut>();
 
-		StructureValueTables() : this(Default<TParameter, TResult>.Instance.Get) {}
+		StructureValueTables() : this(Default<TIn, TOut>.Instance.Get) {}
 
 
-		readonly Func<TParameter, Tuple<TResult>> _source;
+		readonly Func<TIn, Tuple<TOut>> _source;
 
-		public StructureValueTables(Func<TParameter, TResult> source) => _source = new TupleSelector(source).Get;
+		public StructureValueTables(Func<TIn, TOut> source) => _source = new TupleSelector(source).Get;
 
-		public ITable<TParameter, TResult> Get(ConditionalWeakTable<TParameter, Tuple<TResult>> parameter)
+		public ITable<TIn, TOut> Get(ConditionalWeakTable<TIn, Tuple<TOut>> parameter)
 		{
 			var get =
-				new ConditionalWeakTableAccessAdapter<TParameter, Tuple<TResult>>(parameter,
-				                                                                  new ConditionalWeakTable<TParameter,
-					                                                                  Tuple<TResult>>.CreateValueCallback(_source));
-			var access   = new StructureTableAccessAdapter<TParameter, TResult>(get);
-			var contains = new ConditionalWeakTableContainsAdapter<TParameter, Tuple<TResult>>(parameter);
+				new ConditionalWeakTableAccessAdapter<TIn, Tuple<TOut>>(parameter,
+				                                                                  new ConditionalWeakTable<TIn,
+					                                                                  Tuple<TOut>>.CreateValueCallback(_source));
+			var access   = new StructureTableAccessAdapter<TIn, TOut>(get);
+			var contains = new ConditionalWeakTableContainsAdapter<TIn, Tuple<TOut>>(parameter);
 			var assign =
-				new StructureTableAssignCommand<TParameter, TResult>(new ConditionalWeakTableAssignCommand<TParameter,
-					                                                     Tuple<TResult>
+				new StructureTableAssignCommand<TIn, TOut>(new ConditionalWeakTableAssignCommand<TIn,
+					                                                     Tuple<TOut>
 				                                                     >(parameter));
 			var result =
-				new DelegatedTable<TParameter, TResult>(contains.IsSatisfiedBy, assign.Execute, access.Get, parameter.Remove);
+				new DelegatedTable<TIn, TOut>(contains.Get, assign.Execute, access.Get, parameter.Remove);
 			return result;
 		}
 
-		sealed class TupleSelector : ISelect<TParameter, Tuple<TResult>>
+		sealed class TupleSelector : ISelect<TIn, Tuple<TOut>>
 		{
-			readonly Func<TParameter, TResult> _source;
+			readonly Func<TIn, TOut> _source;
 
-			public TupleSelector(Func<TParameter, TResult> source) => _source = source;
+			public TupleSelector(Func<TIn, TOut> source) => _source = source;
 
-			public Tuple<TResult> Get(TParameter parameter) => Tuple.Create(_source(parameter));
+			public Tuple<TOut> Get(TIn parameter) => Tuple.Create(_source(parameter));
 		}
 	}
 }

@@ -2,16 +2,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <GenerateProgramFile>false</GenerateProgramFile>
+
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <!--<PlatformTarget Condition="'$(BuildingInsideVisualStudio)' != ''">x64</PlatformTarget>-->
     <LangVersion>latest</LangVersion>
     <IsPackable>false</IsPackable>
+    <startupobject>Super.Testing.Application.Program</startupobject>
 
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0">
+    <Compile Remove="Aspects\**" />
+    <Compile Remove="BenchmarkDotNet.Artifacts\**" />
+    <EmbeddedResource Remove="Aspects\**" />
+    <EmbeddedResource Remove="BenchmarkDotNet.Artifacts\**" />
+    <None Remove="Aspects\**" />
+    <None Remove="BenchmarkDotNet.Artifacts\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
@@ -27,5 +36,8 @@
     <ProjectReference Include="..\Super.Testing.Platform.NetCore\Super.Testing.Platform.NetCore.csproj" />
     <ProjectReference Include="..\Super.Platform.NetCore\Super.Platform.NetCore.csproj" />
     <ProjectReference Include="..\Super\Super.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Reflection\Members\" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-﻿using System.Reactive;
+﻿using Super.Runtime;
 using FluentAssertions;
 using Super.Model.Commands;
 using Xunit;
@@ -11,7 +11,7 @@ namespace Super.Testing.Application.Model.Commands
 		public void Verify()
 		{
 			var count = 0;
-			new CompositeCommand<Unit>(new DelegatedCommand<Unit>(x => count++), new DelegatedCommand<Unit>(x => count++))
+			new CompositeCommand<None>(new DelegatedCommand<None>(x => count++), new DelegatedCommand<None>(x => count++))
 				.Execute();
 			count.Should()
 			     .Be(2);

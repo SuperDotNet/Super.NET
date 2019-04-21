@@ -2,9 +2,9 @@
 
 namespace Super.Reflection.Assemblies
 {
-	sealed class AssemblyTitle : Attribute<AssemblyTitleAttribute, string>
+	sealed class AssemblyTitle : Declared<AssemblyTitleAttribute, string>
 	{
-		public static IAttribute<string> Default { get; } = new AssemblyTitle();
+		public static AssemblyTitle Default { get; } = new AssemblyTitle();
 
 		AssemblyTitle() : base(x => x.Title) {}
 	}

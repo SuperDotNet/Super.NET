@@ -1,27 +1,35 @@
-﻿using Super.Model.Selection;
-using Super.Model.Sources;
+﻿using Super.Model.Results;
+using Super.Model.Selection;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Super.Runtime
 {
 	public static class Pairs
 	{
-		public static KeyValuePair<TKey, TValue> Create<TKey, TValue>(TKey key, TValue value)
-			 => new KeyValuePair<TKey, TValue>(key, value);
+		public static Pair<TKey, TValue> Create<TKey, TValue>(TKey key, TValue value)
+			 => new Pair<TKey, TValue>(key, value);
 
-		public static ISpecification<TParameter, TResult> Select<TParameter, TResult>(
-			params ISource<KeyValuePair<TParameter, TResult>>[] pairs) => pairs.Select(x => x.Get()).ToStore();
-
-		public static ISelect<TParameter, TIn, TOut> Select<TParameter, TIn, TOut>(
-			params KeyValuePair<TParameter, Func<TIn, TOut>>[] pairs) => pairs.ToSelect();
+		public static ISelect<T, TIn, TOut> Select<T, TIn, TOut>(
+			params Pair<T, Func<TIn, TOut>>[] pairs) => pairs.ToSelect();
 	}
 
-	public interface IPair<TKey, TValue> : ISource<KeyValuePair<TKey, TValue>> {}
+	public interface IPair<TKey, TValue> : IResult<Pair<TKey, TValue>> {}
 
-	public class Pair<TKey, TValue> : Source<KeyValuePair<TKey, TValue>>, IPair<TKey, TValue>
+	public class Pairing<TKey, TValue> : Instance<Pair<TKey, TValue>>, IPair<TKey, TValue>
 	{
-		protected Pair(TKey key, TValue value) : base(Pairs.Create(key, value)) {}
+		protected Pairing(TKey key, TValue value) : base(Pairs.Create(key, value)) {}
+	}
+
+	public readonly struct Pair<TKey, TValue>
+	{
+		public Pair(TKey key, TValue value)
+		{
+			Key   = key;
+			Value = value;
+		}
+
+		public TKey Key { get; }
+
+		public TValue Value { get; }
 	}
 }

@@ -1,19 +1,8 @@
-﻿using FluentAssertions;
-using Serilog;
-using Serilog.Core;
-using Serilog.Events;
-using Super.Diagnostics.Logging.Configuration;
-using Super.Text.Formatting;
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using Xunit;
-
-namespace Super.Testing.Application.Diagnostics
+﻿namespace Super.Testing.Application.Diagnostics
 {
 	public sealed class ApplyProjectionsCommandTests
 	{
-		[Fact]
+		/*[Fact]
 		void Verify()
 		{
 			var sink = new TextSink();
@@ -99,7 +88,10 @@ namespace Super.Testing.Application.Diagnostics
 		{
 			public void Emit(LogEvent logEvent)
 			{
-				logEvent.Properties.Values.OfType<StructureValue>().ForEach(Add);
+				foreach (var value in logEvent.Properties.Values.OfType<StructureValue>())
+				{
+					Add(value);
+				}
 			}
 		}
 
@@ -115,6 +107,6 @@ namespace Super.Testing.Application.Diagnostics
 			{
 				Add(logEvent.RenderMessage(_services));
 			}
-		}
+		}*/
 	}
 }

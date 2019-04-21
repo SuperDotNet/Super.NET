@@ -1,23 +1,13 @@
 ﻿using Super.Model.Selection;
-using Super.Model.Selection.Alterations;
-using System;
 using System.Linq.Expressions;
 
 namespace Super.Runtime.Invocation.Expressions
 {
-	class Delegates<TParameter, TResult> : DecoratedSelect<TParameter, TResult>
+	class Delegates<TIn, TOut> : Select<TIn, TOut>
 	{
-		public Delegates(ISelect<TParameter, Expression> @select) : this(@select, Empty<ParameterExpression>.Array) {}
+		public Delegates(ISelect<TIn, Expression> @select) : this(@select, Empty<ParameterExpression>.Array) {}
 
-		public Delegates(ISelect<TParameter, Expression> @select, params ParameterExpression[] expressions)
-			: this(@select, ReturnType<TResult>.Default.Get(), expressions) {}
-
-		public Delegates(ISelect<TParameter, Expression> @select, Type resultType, params ParameterExpression[] parameters)
-			: this(select, ConvertExpressions.Default.Get(resultType), parameters) {}
-
-		public Delegates(ISelect<TParameter, Expression> @select, IAlteration<Expression> alteration, params ParameterExpression[] parameters)
-			: base(@select.Select(alteration)
-			              .Select(new Lambda<TResult>(parameters))
-			              .Compile()) {}
+		protected Delegates(ISelect<TIn, Expression> @select, params ParameterExpression[] parameters)
+			: base(@select.Then().Select(new Lambda<TOut>(parameters)).Compile()) {}
 	}
 }

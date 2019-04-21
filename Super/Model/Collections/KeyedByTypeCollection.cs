@@ -1,16 +1,19 @@
-﻿using Super.Runtime.Objects;
+﻿using Super.Runtime;
+using Super.Runtime.Objects;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Super.Model.Collections
 {
-	// ATTRIBUTION: https://msdn.microsoft.com/en-us/library/ms404549%28v=vs.110%29.aspx?f=255&MSPPError=-2147217396
+	/// <summary>
+	/// ATTRIBUTION: https://msdn.microsoft.com/en-us/library/ms404549%28v=vs.110%29.aspx?f=255&amp;MSPPError=-2147217396
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
 	public class KeyedByTypeCollection<T> : DelegatedKeyedCollection<Type, T>
 	{
-		public KeyedByTypeCollection() : this(Enumerable.Empty<T>()) {}
+		public KeyedByTypeCollection() : this(Empty<T>.Enumerable) {}
 
-		public KeyedByTypeCollection(IEnumerable<T> items) : base(InstanceTypeSelector<T>.Default.Get)
+		public KeyedByTypeCollection(IEnumerable<T> items) : base(InstanceType<T>.Default.Get)
 		{
 			foreach (var obj in items)
 			{
@@ -20,17 +23,12 @@ namespace Super.Model.Collections
 
 		protected sealed override void InsertItem(int index, T item)
 		{
-			if (Contains(item.GetType()))
+			var key = GetKeyForItem(item);
+			if (Contains(key))
 			{
-				throw new InvalidOperationException($"Duplicate type: {item.GetType().FullName}");
+				Dictionary.Remove(key);
 			}
-
 			base.InsertItem(index, item);
-		}
-
-		protected sealed override void SetItem(int index, T item)
-		{
-			base.SetItem(index, item);
 		}
 	}
 }

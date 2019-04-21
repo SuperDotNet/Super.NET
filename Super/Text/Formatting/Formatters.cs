@@ -5,7 +5,7 @@ using System;
 
 namespace Super.Text.Formatting
 {
-	sealed class Formatters : DecoratedSelect<object, IFormattable>
+	/*sealed class Formatters : DecoratedSelect<object, IFormattable>
 	{
 		public static Formatters Default { get; } = new Formatters();
 
@@ -13,16 +13,12 @@ namespace Super.Text.Formatting
 
 		public Formatters(ISelect<object, IFormattable> formatters, ISelect<object, IFormattable> fallback)
 			: base(fallback.Unless(formatters)) {}
-	}
+	}*/
 
 	sealed class Formatters<T> : ISelect<T, IFormattable>,
-	                             IActivateMarker<IFormatter<T>>,
-	                             IActivateMarker<ISelectFormatter<T>>
+	                             IActivateUsing<ISelectFormatter<T>>
 	{
 		readonly Func<string, Func<T, string>> _select;
-
-		[UsedImplicitly]
-		public Formatters(IFormatter<T> formatter) : this(formatter.ToDelegate().Accept) {}
 
 		[UsedImplicitly]
 		public Formatters(ISelectFormatter<T> formatter) : this(formatter.Get) {}

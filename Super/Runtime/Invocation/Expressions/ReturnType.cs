@@ -1,10 +1,10 @@
-﻿using Super.Model.Sources;
+﻿using Super.Model.Results;
 using Super.Reflection.Types;
 using System;
 
 namespace Super.Runtime.Invocation.Expressions
 {
-	public sealed class ReturnType<T> : Source<Type>
+	public sealed class ReturnType<T> : Instance<Type>
 	{
 		public static ReturnType<T> Default { get; } = new ReturnType<T>();
 

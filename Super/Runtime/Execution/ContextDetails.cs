@@ -2,7 +2,7 @@
 
 namespace Super.Runtime.Execution
 {
-	public sealed class ContextDetails : IActivateMarker<string>
+	public sealed class ContextDetails : IActivateUsing<string>
 	{
 		public ContextDetails(string name) : this(new Details(name), new ThreadingDetails(), new TaskDetails()) {}
 

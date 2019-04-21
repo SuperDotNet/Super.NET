@@ -1,7 +1,7 @@
-﻿using System;
-using AutoFixture.Xunit2;
+﻿using AutoFixture.Xunit2;
 using FluentAssertions;
 using Super.Runtime.Activation;
+using System;
 using Xunit;
 
 namespace Super.Testing.Application.Runtime.Activation
@@ -13,10 +13,10 @@ namespace Super.Testing.Application.Runtime.Activation
 		public void Verify(int number)
 		{
 			var sut = new ServiceProvider(number);
-			sut.IsSatisfiedBy(typeof(DateTime))
+			sut.Get(typeof(DateTime))
 			   .Should()
 			   .BeFalse();
-			sut.IsSatisfiedBy(typeof(int))
+			sut.Get(typeof(int))
 			   .Should()
 			   .BeTrue();
 

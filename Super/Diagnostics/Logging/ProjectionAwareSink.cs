@@ -9,7 +9,7 @@ namespace Super.Diagnostics.Logging
 	sealed class ProjectionAwareSink : SelectedParameterCommand<LogEvent, LogEvent>,
 	                                   IDisposable,
 	                                   ILogEventSink,
-	                                   IActivateMarker<ILogEventSink>
+	                                   IActivateUsing<ILogEventSink>
 	{
 		readonly IDisposable _disposable;
 

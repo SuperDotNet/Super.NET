@@ -1,10 +1,10 @@
-﻿using Super.Model.Specifications;
-using System;
+﻿using System;
 using System.Collections.Immutable;
+using Super.Model.Selection.Conditions;
 
 namespace Super.Runtime.Activation
 {
-	public class ServiceProvider : IServiceProvider, ISpecification<Type>
+	public class ServiceProvider : IServiceProvider, ICondition<Type>
 	{
 		readonly ImmutableArray<object> _services;
 		readonly int _length;
@@ -33,7 +33,7 @@ namespace Super.Runtime.Activation
 			return null;
 		}
 
-		public bool IsSatisfiedBy(Type parameter)
+		public bool Get(Type parameter)
 		{
 			for (var i = 0; i < _length; i++)
 			{

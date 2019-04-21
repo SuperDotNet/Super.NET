@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Super.Model.Selection;
+using Super.Model.Selection.Conditions;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Super.Model.Selection;
-using Super.Model.Specifications;
 
 namespace Super.Reflection.Members
 {
@@ -10,29 +10,29 @@ namespace Super.Reflection.Members
 	{
 		public static ConstructorLocator Default { get; } = new ConstructorLocator();
 
-		ConstructorLocator() : this(ConstructorSpecification.Default) {}
+		ConstructorLocator() : this(ConstructorCondition.Default) {}
 
 		readonly ISelect<TypeInfo, IEnumerable<ConstructorInfo>> _constructors;
-		readonly ISpecification<ConstructorInfo>                 _specification;
+		readonly ICondition<ConstructorInfo>                     _condition;
 
-		public ConstructorLocator(ISpecification<ConstructorInfo> specification)
-			: this(specification, InstanceConstructors.Default) {}
+		public ConstructorLocator(ICondition<ConstructorInfo> condition)
+			: this(condition, InstanceConstructors.Default) {}
 
-		public ConstructorLocator(ISpecification<ConstructorInfo> specification,
+		public ConstructorLocator(ICondition<ConstructorInfo> condition,
 		                          ISelect<TypeInfo, IEnumerable<ConstructorInfo>> constructors)
 		{
-			_specification = specification;
-			_constructors  = constructors;
+			_condition    = condition;
+			_constructors = constructors;
 		}
 
 		public ConstructorInfo Get(TypeInfo parameter)
 		{
 			var constructors = _constructors.Get(parameter).ToArray();
 			var length       = constructors.Length;
-			for (var i = 0; i < length; i++)
+			for (var i = 0u; i < length; i++)
 			{
 				var constructor = constructors[i];
-				if (_specification.IsSatisfiedBy(constructor))
+				if (_condition.Get(constructor))
 				{
 					return constructor;
 				}

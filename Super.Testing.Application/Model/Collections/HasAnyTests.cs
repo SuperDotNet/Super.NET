@@ -8,12 +8,12 @@ namespace Super.Testing.Application.Model.Collections
 	public class HasAnyTests
 	{
 		[Fact]
-		public void Has() => HasAny.Default.IsSatisfiedBy(new[] {new object()})
+		public void Has() => HasAny.Default.Get(new[] {new object()})
 		                                          .Should()
 		                                          .BeTrue();
 
 		[Fact]
-		public void HasNot() => HasAny.Default.IsSatisfiedBy(Empty<object>.Array)
+		public void HasNot() => HasAny.Default.Get(Empty<object>.Array)
 		                                             .Should()
 		                                             .BeFalse();
 	}

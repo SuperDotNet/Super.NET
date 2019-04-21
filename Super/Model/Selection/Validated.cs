@@ -1,31 +1,29 @@
-﻿using Super.Model.Specifications;
+﻿using Super.Model.Selection.Conditions;
 using System;
 
 namespace Super.Model.Selection
 {
-	public class Validated<TParameter, TResult> : ISelect<TParameter, TResult>
+	public class Validated<TIn, TOut> : ISelect<TIn, TOut>
 	{
-		readonly Func<TParameter, TResult> _source, _fallback;
-		readonly Func<TParameter, bool>    _specification;
+		readonly Func<TIn, TOut> _source, _fallback;
+		readonly Func<TIn, bool>    _specification;
 
-		public Validated(ISpecification<TParameter> specification, ISelect<TParameter, TResult> @select)
-			: this(specification, @select, select.Default()) {}
+		public Validated(ICondition<TIn> condition, ISelect<TIn, TOut> @select)
+			: this(condition, @select, Default<TIn, TOut>.Instance) {}
 
-		public Validated(ISpecification<TParameter> specification, ISelect<TParameter, TResult> @select,
-		                 ISelect<TParameter, TResult> fallback)
-			: this(specification.IsSatisfiedBy, @select.Get, fallback.Get) {}
+		public Validated(ICondition<TIn> condition, ISelect<TIn, TOut> @select, ISelect<TIn, TOut> fallback)
+			: this(condition.Get, @select.Get, fallback.Get) {}
 
-		public Validated(Func<TParameter, bool> specification, Func<TParameter, TResult> source)
-			: this(specification, source, source.Out().Default().ToDelegate()) {}
+		public Validated(Func<TIn, bool> specification, Func<TIn, TOut> source)
+			: this(specification, source, Default<TIn, TOut>.Instance.Get) {}
 
-		public Validated(Func<TParameter, bool> specification, Func<TParameter, TResult> source,
-		                 Func<TParameter, TResult> fallback)
+		public Validated(Func<TIn, bool> specification, Func<TIn, TOut> source, Func<TIn, TOut> fallback)
 		{
 			_specification = specification;
 			_source        = source;
 			_fallback      = fallback;
 		}
 
-		public TResult Get(TParameter parameter) => _specification(parameter) ? _source(parameter) : _fallback(parameter);
+		public TOut Get(TIn parameter) => _specification(parameter) ? _source(parameter) : _fallback(parameter);
 	}
 }

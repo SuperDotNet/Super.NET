@@ -1,25 +1,17 @@
-﻿using JetBrains.Annotations;
-using LightInject;
-using Super.Model.Collections;
-using Super.Model.Commands;
-using Super.Model.Selection;
+﻿using Super.Compose;
 using Super.Model.Selection.Alterations;
-using Super.Model.Sources;
-using Super.Reflection;
+using Super.Model.Sequences;
 using Super.Reflection.Members;
 using Super.Reflection.Types;
 using Super.Runtime.Activation;
-using Super.Runtime.Environment;
 using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
 
 namespace Super.Application
 {
-	public interface IServices : IServiceContainer, IServiceProvider {}
+	public interface IServices : /*IServiceContainer,*/ IServiceProvider {}
+	/*
 
-	class Services : ServiceContainer, IServices, IActivateMarker<ContainerOptions>
+	class Services : ServiceContainer, IServices, IActivateUsing<ContainerOptions>
 	{
 		[UsedImplicitly]
 		public Services() {}
@@ -54,12 +46,12 @@ namespace Super.Application
 
 	class DecoratedRegistration : DecoratedAlteration<IServiceRegistry>,
 	                              IRegistration,
-	                              IActivateMarker<IAlteration<IServiceRegistry>>
+	                              IActivateUsing<IAlteration<IServiceRegistry>>
 	{
 		public DecoratedRegistration(ISelect<IServiceRegistry, IServiceRegistry> registration) : base(registration) {}
 	}
 
-	sealed class InstanceRegistration<T> : IRegistration, IActivateMarker<T>
+	sealed class InstanceRegistration<T> : IRegistration, IActivateUsing<T>
 	{
 		readonly T _instance;
 
@@ -69,7 +61,7 @@ namespace Super.Application
 			=> parameter.RegisterInstance(_instance, _instance.GetType().AssemblyQualifiedName);
 	}
 
-	sealed class InstanceRegistration : IRegistration, IActivateMarker<object>
+	sealed class InstanceRegistration : IRegistration, IActivateUsing<object>
 	{
 		readonly object _instance;
 
@@ -88,47 +80,52 @@ namespace Super.Application
 
 	sealed class RegisterWithDependencies<TFrom, TTo> : CompositeRegistration where TTo : class, TFrom
 	{
-		public static RegisterWithDependencies<TFrom, TTo> Default { get; } = new RegisterWithDependencies<TFrom, TTo>();
+		public static RegisterWithDependencies<TFrom, TTo> Default { get; } =
+			new RegisterWithDependencies<TFrom, TTo>();
 
 		RegisterWithDependencies() : base(new ImplementationRegistration(typeof(TFrom), typeof(TTo)),
 		                                  RegisterDependencies<TTo>.Default) {}
-	}
+	}*/
 
-	sealed class RegisterDependencies<T> : DecoratedRegistration
+	/*sealed class RegisterDependencies<T> : DecoratedRegistration
 	{
 		public static RegisterDependencies<T> Default { get; } = new RegisterDependencies<T>();
 
 		RegisterDependencies() : base(new RegisterDependencies(typeof(T))) {}
-	}
+	}*/
 
-	sealed class GenericTypeDependencySelector : DecoratedAlteration<Type>, IActivateMarker<Type>
+/*
+ sealed class CanRegister : DecoratedSelect<IServiceRegistry, Func<Type, bool>>
+	{
+		public static CanRegister Default { get; } = new CanRegister();
+
+		CanRegister() : base(Start.From<IServiceRegistry>()
+		                         .Select(x => x.AvailableServices)
+		                         .Select(ServiceTypeSelector.Default)
+		                         .Select(I<NotHave<Type>>.Default)
+		                         .Select(DelegateSelector<Type, bool>.Default)) {}
+	}*/
+
+	sealed class GenericTypeDependencySelector : ValidatedAlteration<Type>, IActivateUsing<Type>
 	{
 		public GenericTypeDependencySelector(Type type)
-			: base(IsGenericTypeDefinition.Default
-			                              .Out()
-			                              .Out(type)
-			                              .And(IsConstructedGenericType.Default,
-			                                   IsGenericTypeDefinition
-				                                   .Default.Inverse())
-			                              .Then(GenericTypeDefinitionAlteration.Default)) {}
+			: base(Start.A.Selection.Of.System.Type.By.Returning(IsGenericTypeDefinition.Default.In(type)),
+			       GenericTypeDefinition.Default.If(IsDefinedGenericType.Default)) {}
 	}
 
-	sealed class DependencyCandidates : DecoratedSelect<Type, ImmutableArray<Type>>, IActivateMarker<Type>
+	sealed class DependencyCandidates : ArrayStore<Type, Type>, IActivateUsing<Type>
 	{
-		public DependencyCandidates(Type type)
-			: base(TypeMetadataSelector.Default
-			                           .Select(Constructors.Default)
-			                           .Select(Parameters.Default
-			                                             .Select(x => x.AsEnumerable())
-			                                             .SelectMany())
-			                           .Select(ParameterType.Default.Select())
-			                           .Select(type.To(I<GenericTypeDependencySelector>.Default)
-			                                       .Select())
-			                           .Select(x => x.Where(IsClass.Default.IsSatisfiedBy)
-			                                         .ToImmutableArray())) {}
+		public DependencyCandidates(Type type) : base(A.This(TypeMetadata.Default)
+		                                               .Select(Constructors.Default)
+		                                               .Select(Parameters.Default.Open().Many())
+		                                               .Query()
+		                                               .Select(ParameterType.Default)
+		                                               .Select(new GenericTypeDependencySelector(type))
+		                                               .Where(IsClass.Default)
+		                                               .Out()) {}
 	}
 
-	sealed class ServiceTypeSelector : SelectSelector<LightInject.ServiceRegistration, Type>
+	/*sealed class ServiceTypeSelector : SelectSelector<LightInject.ServiceRegistration, Type>
 	{
 		public static ServiceTypeSelector Default { get; } = new ServiceTypeSelector();
 
@@ -137,13 +134,12 @@ namespace Super.Application
 
 	sealed class RegisterDependencies : IRegistration
 	{
-		readonly static Func<IServiceRegistry, Func<Type, bool>> Where = NotRegistered.Default.Get;
+		readonly static Func<IServiceRegistry, Func<Type, bool>> Where = CanRegister.Default.Get;
 
 		readonly ImmutableArray<Type>                     _candidates;
 		readonly Func<IServiceRegistry, Func<Type, bool>> _where;
 
-		public RegisterDependencies(Type type)
-			: this(type.To(I<DependencyCandidates>.Default).Get(type), Where) {}
+		public RegisterDependencies(Type type) : this(type.To(I<DependencyCandidates>.Default).Get(type), Where) {}
 
 		public RegisterDependencies(ImmutableArray<Type> candidates, Func<IServiceRegistry, Func<Type, bool>> where)
 		{
@@ -185,16 +181,17 @@ namespace Super.Application
 		public Registration(Type type) : base(typeof(T), type) {}
 	}
 
-	class CompositeRegistration : IRegistration, IActivateMarker<IEnumerable<IRegistration>>
+	class CompositeRegistration : IRegistration, IActivateUsing<IEnumerable<IRegistration>>
 	{
 		readonly ImmutableArray<IRegistration> _configurations;
 
 		public CompositeRegistration(params IRegistration[] configurations) : this(configurations.AsEnumerable()) {}
 
-		public CompositeRegistration(IEnumerable<IRegistration> registrations) : this(registrations.ToImmutableArray()) {}
+		public CompositeRegistration(IEnumerable<IRegistration> registrations) :
+			this(registrations.ToImmutableArray()) {}
 
 		public CompositeRegistration(ImmutableArray<IRegistration> configurations) => _configurations = configurations;
 
 		public IServiceRegistry Get(IServiceRegistry parameter) => _configurations.ToArray().Alter(parameter);
-	}
+	}*/
 }

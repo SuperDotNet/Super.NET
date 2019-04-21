@@ -4,13 +4,11 @@ using Super.Runtime.Activation;
 
 namespace Super.Runtime.Invocation
 {
-	sealed class Striped<TParameter, TResult> : DecoratedSelect<TParameter, TResult>,
-	                                            IActivateMarker<ISelect<TParameter, TResult>>
+	sealed class Striped<TIn, TOut> : DecoratedSelect<TIn, TOut>, IActivateUsing<ISelect<TIn, TOut>>
 	{
-		public Striped(ISelect<TParameter, TResult> @select)
-			: base(select.To(I<Deferred<TParameter, TResult>>.Default)
-			             .ToDelegate()
-			             .To(I<Stripe<TParameter, TResult>>.Default)
-			             .Unless(select)) {}
+		public Striped(ISelect<TIn, TOut> @select) : base(select.To(I.A<Deferred<TIn, TOut>>())
+		                                                        .ToDelegate()
+		                                                        .To(I.A<Stripe<TIn, TOut>>())
+		                                                        .Unless(select)) {}
 	}
 }

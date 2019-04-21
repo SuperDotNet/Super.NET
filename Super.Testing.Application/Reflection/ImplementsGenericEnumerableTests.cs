@@ -1,26 +1,26 @@
-﻿using System;
+﻿using FluentAssertions;
+using Super.Model.Commands;
+using Super.Model.Results;
+using Super.Reflection.Collections;
+using Super.Runtime;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive;
-using FluentAssertions;
-using Super.Model.Commands;
-using Super.Model.Sources;
-using Super.Reflection.Collections;
 using Xunit;
 
 namespace Super.Testing.Application.Reflection
 {
 	public class ImplementsGenericEnumerableTests
 	{
-		sealed class Source : ISource<object>
+		sealed class Result : IResult<object>
 		{
 			public object Get() => throw new NotSupportedException();
 		}
 
-		sealed class Command : ICommand<Unit>
+		sealed class Command : ICommand<None>
 		{
-			public void Execute(Unit parameter)
+			public void Execute(None parameter)
 			{
 				throw new NotSupportedException();
 			}
@@ -48,23 +48,24 @@ namespace Super.Testing.Application.Reflection
 		}
 
 		[Fact]
-		public void Are() => new[]
-			{
-				typeof(Subject),
-				typeof(Subject<int>),
-				typeof(Integers)
-			}.ToMetadata()
-			 .All(ImplementsGenericEnumerable.Default.IsSatisfiedBy)
-			 .Should()
-			 .BeTrue();
+		public void Are()
+		{
+			new[]
+				{
+					typeof(Subject),
+					typeof(Subject<int>),
+					typeof(Integers)
+				}.All(ImplementsGenericEnumerable.Default.Get)
+				 .Should()
+				 .BeTrue();
+		}
 
 		[Fact]
 		public void AreNot() => new[]
 			{
-				typeof(Source),
+				typeof(Result),
 				typeof(Command)
-			}.ToMetadata()
-			 .All(ImplementsGenericEnumerable.Default.IsSatisfiedBy)
+			}.All(ImplementsGenericEnumerable.Default.Get)
 			 .Should()
 			 .BeFalse();
 	}

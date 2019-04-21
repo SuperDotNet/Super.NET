@@ -1,32 +1,15 @@
-﻿using Super.Model.Sources;
-using Super.Runtime.Activation;
+﻿using Super.Runtime.Activation;
 using System;
 
 namespace Super.Model.Selection
 {
-	public class Select<TParameter, TResult> : ISelect<TParameter, TResult>,
-	                                           IActivateMarker<Func<TParameter, TResult>>
+	public class Select<TIn, TOut> : ISelect<TIn, TOut>,
+	                                 IActivateUsing<Func<TIn, TOut>>
 	{
-		readonly Func<TParameter, TResult> _source;
+		readonly Func<TIn, TOut> _source;
 
-		public Select(Func<TParameter, TResult> source) => _source = source;
+		public Select(Func<TIn, TOut> source) => _source = source;
 
-		public TResult Get(TParameter parameter) => _source(parameter);
-	}
-
-	public class DelegatedInstanceSelector<TParameter, TResult> : ISelect<TParameter, TResult>,
-	                                                              IActivateMarker<ISource<ISelect<TParameter, TResult>>>,
-	                                                              IActivateMarker<Func<Func<TParameter, TResult>>>
-	{
-		readonly Func<Func<TParameter, TResult>> _source;
-
-		public DelegatedInstanceSelector(ISource<ISelect<TParameter, TResult>> source)
-			: this(source.Select(DelegateSelector<TParameter, TResult>.Default)) {}
-
-		public DelegatedInstanceSelector(ISource<Func<TParameter, TResult>> source) : this(source.Get) {}
-
-		public DelegatedInstanceSelector(Func<Func<TParameter, TResult>> source) => _source = source;
-
-		public TResult Get(TParameter parameter) => _source()(parameter);
+		public TOut Get(TIn parameter) => _source(parameter);
 	}
 }

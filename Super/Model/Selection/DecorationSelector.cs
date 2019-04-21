@@ -3,18 +3,18 @@ using System;
 
 namespace Super.Model.Selection
 {
-	sealed class DecorationSelector<TFrom, TTo, TResult> : ISelect<Decoration<TFrom, TResult>, Decoration<TTo, TResult>>
+	sealed class DecorationSelector<TFrom, TTo, TOut> : ISelect<Decoration<TFrom, TOut>, Decoration<TTo, TOut>>
 	{
-		public static DecorationSelector<TFrom, TTo, TResult> Default { get; } =
-			new DecorationSelector<TFrom, TTo, TResult>();
+		public static DecorationSelector<TFrom, TTo, TOut> Default { get; } =
+			new DecorationSelector<TFrom, TTo, TOut>();
 
-		DecorationSelector() : this(CastSelector<TFrom, TTo>.Default.Get) {}
+		DecorationSelector() : this(CastOrThrow<TFrom, TTo>.Default.Get) {}
 
 		readonly Func<TFrom, TTo> _select;
 
 		public DecorationSelector(Func<TFrom, TTo> coercer) => _select = coercer;
 
-		public Decoration<TTo, TResult> Get(Decoration<TFrom, TResult> parameter)
-			=> new Decoration<TTo, TResult>(_select(parameter.Parameter), parameter.Result);
+		public Decoration<TTo, TOut> Get(Decoration<TFrom, TOut> parameter)
+			=> new Decoration<TTo, TOut>(_select(parameter.Parameter), parameter.Result);
 	}
 }

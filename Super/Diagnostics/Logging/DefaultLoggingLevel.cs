@@ -1,5 +1,5 @@
 ﻿using Serilog.Events;
-using Super.Model.Sources;
+using Super.Model.Selection.Sources;
 
 namespace Super.Diagnostics.Logging
 {

@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using Super.Model.Specifications;
 using Super.Reflection.Types;
 using System.IO;
 using Xunit;
@@ -13,7 +12,7 @@ namespace Super.Testing.Application.Reflection
 		public void Verify()
 		{
 			IsAssignableFrom<Stream>.Default
-			                        .IsSatisfiedBy(typeof(MemoryStream))
+			                        .Get(typeof(MemoryStream))
 			                        .Should()
 			                        .BeTrue();
 		}

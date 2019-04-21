@@ -1,14 +1,14 @@
 ﻿using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Toolchains.InProcess;
-using Super.Model.Sources;
+using Super.Model.Results;
 
 namespace Super.Application.Hosting.BenchmarkDotNet
 {
-	sealed class Quick : FixedDeferredSingleton<Job, IConfig>
+	sealed class Quick : FixedSelectedSingleton<Job, IConfig>
 	{
-		public static Quick Default { get; } = new Quick();
+		public static IResult<IConfig> Default { get; } = new Quick();
 
-		Quick() : base(QuickConfiguration.Default, Job.ShortRun.With(InProcessToolchain.Instance)) {}
+		Quick() : base(QuickConfiguration.Default, Job.ShortRun.With(InProcessToolchain.DontLogOutput)) {}
 	}
 }

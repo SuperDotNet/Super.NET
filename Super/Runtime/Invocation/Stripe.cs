@@ -4,22 +4,22 @@ using System;
 
 namespace Super.Runtime.Invocation
 {
-	sealed class Stripe<TParameter, TResult> : ISelect<TParameter, TResult>, IActivateMarker<Func<TParameter, TResult>>
+	sealed class Stripe<TIn, TOut> : ISelect<TIn, TOut>, IActivateUsing<Func<TIn, TOut>>
 	{
-		readonly static Func<TParameter, object> Lock = Locks<TParameter>.Default.Get;
+		readonly static Func<TIn, object> Lock = Locks<TIn>.Default.Get;
 
-		readonly Func<TParameter, object>  _lock;
-		readonly Func<TParameter, TResult> _source;
+		readonly Func<TIn, object>  _lock;
+		readonly Func<TIn, TOut> _source;
 
-		public Stripe(Func<TParameter, TResult> source) : this(Lock, source) {}
+		public Stripe(Func<TIn, TOut> source) : this(Lock, source) {}
 
-		public Stripe(Func<TParameter, object> @lock, Func<TParameter, TResult> source)
+		public Stripe(Func<TIn, object> @lock, Func<TIn, TOut> source)
 		{
 			_lock   = @lock;
 			_source = source;
 		}
 
-		public TResult Get(TParameter parameter)
+		public TOut Get(TIn parameter)
 		{
 			lock (_lock(parameter))
 			{

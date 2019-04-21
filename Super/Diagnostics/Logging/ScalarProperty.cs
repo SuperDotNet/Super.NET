@@ -1,8 +1,9 @@
-﻿using Super.Model.Sources;
+﻿using Super.Model.Selection.Sources;
+using Super.Runtime;
 
 namespace Super.Diagnostics.Logging
 {
-	public struct ScalarProperty : ISource<string>
+	public readonly struct ScalarProperty : ISource<string>
 	{
 		readonly IFormats _formats;
 
@@ -17,6 +18,6 @@ namespace Super.Diagnostics.Logging
 
 		public object Instance { get; }
 
-		public string Get() => _formats.Get(Key);
+		public string Get(Unit _) => _formats.Get(Key);
 	}
 }

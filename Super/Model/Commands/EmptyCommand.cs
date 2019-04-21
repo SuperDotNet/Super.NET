@@ -1,4 +1,4 @@
-using System.Reactive;
+using Super.Runtime;
 
 namespace Super.Model.Commands
 {
@@ -17,6 +17,6 @@ namespace Super.Model.Commands
 
 		EmptyCommand() {}
 
-		public void Execute(Unit parameter) {}
+		public void Execute(None parameter) {}
 	}
 }

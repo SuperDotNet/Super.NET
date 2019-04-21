@@ -1,21 +1,23 @@
-﻿using Super.Model.Selection;
-using Super.Model.Sources;
+﻿using Super.Model.Results;
+using Super.Model.Selection.Stores;
 using Super.Reflection.Types;
 using System;
 using System.Linq.Expressions;
 
 namespace Super.Runtime.Invocation.Expressions
 {
-	static class Implementations<T>
+	sealed class Parameters<T> : ReferenceValueStore<string, ParameterExpression>
 	{
-		public static ISelect<string, ParameterExpression> Select { get; } = new Parameter(Type<T>.Instance).ToReferenceStore();
+		public static Parameters<T> Default { get; } = new Parameters<T>();
+
+		Parameters() : base(new Parameter(Type<T>.Instance).Get) {}
 	}
 
-	sealed class Parameter<T> : Source<ParameterExpression>
+	sealed class Parameter<T> : FixedSelectedSingleton<string, ParameterExpression>
 	{
 		public static Parameter<T> Default { get; } = new Parameter<T>();
 
-		public Parameter(string name = "parameter") : base(Implementations<T>.Select.Get(name)) {}
+		public Parameter(string name = "parameter") : base(Parameters<T>.Default, name) {}
 	}
 
 	sealed class Parameter : Invocation1<Type, string, ParameterExpression>

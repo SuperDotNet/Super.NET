@@ -1,5 +1,5 @@
 ﻿using Super.Diagnostics.Logging.Configuration;
-using Super.Model.Sources;
+using Super.Model.Selection.Sources;
 using Super.Reflection;
 
 namespace Super.Diagnostics.Logging

@@ -1,17 +1,20 @@
-﻿using System;
+﻿using Super.Runtime;
+using System;
 
 namespace Super.Model.Selection
 {
-	public interface ISelect<in TParameter, out TResult>
+	public interface ISelect<in TIn, out TOut>
 	{
-		TResult Get(TParameter parameter);
+		TOut Get(TIn parameter);
 	}
 
-	public interface ISelect<in TParameter, in TIn, out TOut> : ISelect<TParameter, Func<TIn, TOut>> {}
+	public interface ISelect<out T> : ISelect<None, T> {}
 
-	public class Select<TParameter, TIn, TOut> : Select<TParameter, Func<TIn, TOut>>, ISelect<TParameter, TIn, TOut>
+	public interface ISelect<in T, in TIn, out TOut> : ISelect<T, Func<TIn, TOut>> {}
+
+	public class Select<T, TIn, TOut> : Select<T, Func<TIn, TOut>>, ISelect<T, TIn, TOut>
 	{
-		public Select(Func<TParameter, Func<TIn, TOut>> select) : base(select) {}
+		public Select(Func<T, Func<TIn, TOut>> select) : base(select) {}
 	}
 
 }

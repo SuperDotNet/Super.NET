@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
-using Super.Model.Sources;
-using Super.Model.Specifications;
+using Super.Model.Results;
+using Super.Model.Selection.Conditions;
 using Super.Runtime.Environment;
 using Super.Runtime.Execution;
 using System;
@@ -18,7 +18,7 @@ using Xunit.Sdk;
 
 namespace Super.Application.Hosting.xUnit
 {
-	public sealed class DefaultExecutionContext : DelegatedSource<object>, IExecutionContext
+	public sealed class DefaultExecutionContext : DelegatedResult<object>, IExecutionContext
 	{
 		public static IExecutionContext Default { get; } = new DefaultExecutionContext();
 
@@ -303,7 +303,7 @@ namespace Super.Application.Hosting.xUnit
 	{
 		readonly IXunitTestCase _case;
 		readonly ITestMethod    _method;
-		readonly ISpecification _specification;
+		readonly ICondition _condition;
 		readonly Action         _action;
 
 		public TestCase() {}
@@ -311,11 +311,11 @@ namespace Super.Application.Hosting.xUnit
 		public TestCase(IXunitTestCase @case, Action action) : this(@case, new TestMethod(@case.TestMethod),
 		                                                            new First(), action) {}
 
-		public TestCase(IXunitTestCase @case, ITestMethod method, ISpecification specification, Action action)
+		public TestCase(IXunitTestCase @case, ITestMethod method, ICondition condition, Action action)
 		{
 			_case          = @case;
 			_method        = method;
-			_specification = specification;
+			_condition = condition;
 			_action        = action;
 		}
 
@@ -343,7 +343,7 @@ namespace Super.Application.Hosting.xUnit
 		{
 			get
 			{
-				if (_specification.IsSatisfiedBy())
+				if (_condition.Get())
 				{
 					_action();
 					return _method;

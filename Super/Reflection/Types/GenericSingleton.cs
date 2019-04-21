@@ -1,34 +1,34 @@
-﻿using System;
+﻿using Super.Model.Sequences;
+using Super.Runtime.Activation;
+using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Super.Runtime.Activation;
 
 namespace Super.Reflection.Types
 {
-	sealed class GenericSingleton : IGenericActivation
+	sealed class GenericSingleton : IActivateExpressions
 	{
+		public IArray<ParameterExpression> Parameters { get; }
 		public static GenericSingleton Default { get; } = new GenericSingleton();
 
-		GenericSingleton() : this(Singletons.Default,
-		                          typeof(Singletons).GetRuntimeMethod(nameof(Singletons.Get),
-		                                                              typeof(Type).Yield().ToArray())) {}
+		GenericSingleton() : this(typeof(Singletons).GetRuntimeMethod(nameof(Singletons.Get),
+		                                                              typeof(Type).Yield().ToArray()),
+		                          new ArrayInstance<ParameterExpression>(Array<ParameterExpression>.Empty)) {}
 
 		readonly MethodInfo _method;
 
-		readonly ISingletons _singletons;
-
-		public GenericSingleton(ISingletons singletons, MethodInfo method)
+		public GenericSingleton(MethodInfo method, IArray<ParameterExpression> expressions)
 		{
-			_singletons = singletons;
-			_method     = method;
+			_method = method;
+			Parameters = expressions;
 		}
 
 		public Expression Get(Type parameter)
 		{
-			var instance = Expression.Constant(_singletons);
-			var call     = Expression.Call(instance, _method, Expression.Constant(parameter));
-			var result   = Expression.Convert(call, parameter);
+			var call = Expression.Call(Expression.Constant(Singletons.Default), _method,
+			                           Expression.Constant(parameter));
+			var result = Expression.Convert(call, parameter);
 			return result;
 		}
 	}

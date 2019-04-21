@@ -1,13 +1,16 @@
-using Super.Model.Specifications;
+using Super.Compose;
+using Super.Model.Selection.Conditions;
 using System;
 using System.Reflection;
 
 namespace Super.Reflection.Types
 {
-	public class ImplementsGenericType : DecoratedSpecification<TypeInfo>
+	public class ImplementsGenericType : DelegatedCondition<TypeInfo>
 	{
 		public ImplementsGenericType(Type definition)
-			: base(In<TypeInfo>.Activate<HasGenericInterface>()
-			                   .Out(new FixedParameterSpecification<TypeInfo>(definition.GetTypeInfo()))) {}
+			: base(Start.An.Instance(GenericInterfaceImplementations.Default)
+			            .Select(x => x.Condition)
+			            .Select(definition.To)
+			            .Then()) {}
 	}
 }

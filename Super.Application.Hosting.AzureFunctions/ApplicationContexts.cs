@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Super.Compose;
 using Super.Model.Selection;
 
 namespace Super.Application.Hosting.AzureFunctions
@@ -9,7 +10,6 @@ namespace Super.Application.Hosting.AzureFunctions
 	{
 		public static ApplicationContexts<T> Default { get; } = new ApplicationContexts<T>();
 
-		ApplicationContexts() : base(In<AzureFunctionParameter>.Activate<AzureFunctionArgument>()
-		                                                       .Select(Services<AzureFunctionArgument>.Default)) {}
+		ApplicationContexts() : base(Start.A.Selection<AzureFunctionParameter>().By.Default<IServices>()) {}
 	}
 }

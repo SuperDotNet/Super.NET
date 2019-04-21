@@ -1,8 +1,9 @@
-﻿using System;
-using AutoFixture.Xunit2;
+﻿using AutoFixture.Xunit2;
 using FluentAssertions;
 using Super.Runtime;
 using Super.Runtime.Activation;
+using System;
+using System.Linq;
 using Xunit;
 
 namespace Super.Testing.Application.Runtime
@@ -89,12 +90,10 @@ namespace Super.Testing.Application.Runtime
 		[Fact]
 		public void YieldMetadata()
 		{
-			GetType()
-				.Yield()
-				.YieldMetadata(x => x.Name != string.Empty)
-				.Only()
-				.Should()
-				.Be(GetType());
+			GetType().Yield()
+			         .Where(x => x.Name != string.Empty).Only()
+			         .Should()
+			         .Be(GetType());
 		}
 	}
 }

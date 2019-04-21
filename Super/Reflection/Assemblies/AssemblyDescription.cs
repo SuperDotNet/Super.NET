@@ -2,9 +2,9 @@
 
 namespace Super.Reflection.Assemblies
 {
-	sealed class AssemblyDescription : Attribute<AssemblyDescriptionAttribute, string>
+	sealed class AssemblyDescription : Declared<AssemblyDescriptionAttribute, string>
 	{
-		public static IAttribute<string> Default { get; } = new AssemblyDescription();
+		public static AssemblyDescription Default { get; } = new AssemblyDescription();
 
 		AssemblyDescription() : base(x => x.Description) {}
 	}

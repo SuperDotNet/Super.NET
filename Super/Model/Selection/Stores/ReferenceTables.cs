@@ -1,28 +1,22 @@
-﻿using Super.Model.Specifications;
+﻿using Super.Model.Sequences;
 using Super.Reflection.Types;
 using System;
 
 namespace Super.Model.Selection.Stores
 {
-	/*public class ReferenceTable<TParameter, TResult> : DecoratedTable<TParameter, TResult> where TParameter : class
+	public sealed class ReferenceTables<TIn, TOut> : Select<Func<TIn, TOut>, ITable<TIn, TOut>> where TIn : class
 	{
-		public ReferenceTable(Func<TParameter, TResult> source)
-			: base(ReferenceTables<TParameter, TResult>.Default.Get(source)) {}
-	}*/
+		public static ReferenceTables<TIn, TOut> Default { get; } = new ReferenceTables<TIn, TOut>();
 
-	public sealed class ReferenceTables<TParameter, TResult>
-		: Select<Func<TParameter, TResult>, ITable<TParameter, TResult>>
-		where TParameter : class
-	{
-		public static ReferenceTables<TParameter, TResult> Default { get; } = new ReferenceTables<TParameter, TResult>();
-
-		ReferenceTables() : this(IsValueType.Default.IsSatisfiedBy(typeof(TResult))
+		ReferenceTables() : this(IsValueType.Default.Get(typeof(TOut))
 			                         ? typeof(StructureValueTable<,>)
 			                         : typeof(ReferenceValueTable<,>)) {}
 
-		public ReferenceTables(Type type)
-			: base(new Generic<Func<TParameter, TResult>, ITable<TParameter, TResult>>(type)
-			       .Get(typeof(TParameter), typeof(TResult))
-			       .Invoke) {}
+		public ReferenceTables(Type type) : base(Compose.Start.A.Generic(type)
+		                                                .Of.Type<ITable<TIn, TOut>>()
+		                                                .WithParameterOf<Func<TIn, TOut>>()
+		                                                .In(new Array<Type>(typeof(TIn), typeof(TOut)))
+		                                                .Emit()
+		                                                .Get) {}
 	}
 }

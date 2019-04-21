@@ -4,25 +4,25 @@ using System.Collections.Concurrent;
 
 namespace Super.Model.Selection.Stores
 {
-	public sealed class ConcurrentTables<TParameter, TResult>
-		: ISelect<ConcurrentDictionary<TParameter, TResult>, ITable<TParameter, TResult>>,
-		  IActivateMarker<Func<TParameter, TResult>>
+	public sealed class ConcurrentTables<TIn, TOut>
+		: ISelect<ConcurrentDictionary<TIn, TOut>, ITable<TIn, TOut>>,
+		  IActivateUsing<Func<TIn, TOut>>
 	{
-		public static ConcurrentTables<TParameter, TResult> Default { get; } = new ConcurrentTables<TParameter, TResult>();
+		public static ConcurrentTables<TIn, TOut> Default { get; } = new ConcurrentTables<TIn, TOut>();
 
-		ConcurrentTables() : this(Default<TParameter, TResult>.Instance.Get) {}
+		ConcurrentTables() : this(Default<TIn, TOut>.Instance.Get) {}
 
-		readonly Func<TParameter, TResult> _source;
+		readonly Func<TIn, TOut> _source;
 
-		public ConcurrentTables(Func<TParameter, TResult> source) => _source = source;
+		public ConcurrentTables(Func<TIn, TOut> source) => _source = source;
 
-		public ITable<TParameter, TResult> Get(ConcurrentDictionary<TParameter, TResult> parameter)
+		public ITable<TIn, TOut> Get(ConcurrentDictionary<TIn, TOut> parameter)
 		{
-			var get    = new TableAccessAdapter<TParameter, TResult>(parameter.GetOrAdd, _source);
-			var remove = new ConcurrentDictionaryRemoveAdapter<TParameter, TResult>(parameter);
-			var assign = new DictionaryAssignCommand<TParameter, TResult>(parameter);
+			var get    = new TableAccessAdapter<TIn, TOut>(parameter.GetOrAdd, _source);
+			var remove = new ConcurrentDictionaryRemoveAdapter<TIn, TOut>(parameter);
+			var assign = new DictionaryAssignCommand<TIn, TOut>(parameter);
 			var result =
-				new DelegatedTable<TParameter, TResult>(parameter.ContainsKey, assign.Execute, get.Get, remove.IsSatisfiedBy);
+				new DelegatedTable<TIn, TOut>(parameter.ContainsKey, assign.Execute, get.Get, remove.Get);
 			return result;
 		}
 	}

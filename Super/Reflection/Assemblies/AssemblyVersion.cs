@@ -3,9 +3,9 @@ using System.Reflection;
 
 namespace Super.Reflection.Assemblies
 {
-	sealed class AssemblyVersion : Attribute<AssemblyFileVersionAttribute, Version>
+	sealed class AssemblyVersion : Declared<AssemblyFileVersionAttribute, Version>
 	{
-		public static IAttribute<Version> Default { get; } = new AssemblyVersion();
+		public static AssemblyVersion Default { get; } = new AssemblyVersion();
 
 		AssemblyVersion() : base(x => Version.Parse(x.Version)) {}
 	}

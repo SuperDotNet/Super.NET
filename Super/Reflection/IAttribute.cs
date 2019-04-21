@@ -1,7 +1,8 @@
-﻿using System.Reflection;
-using Super.Model.Selection;
+﻿using Super.Model.Selection.Conditions;
+using System;
+using System.Reflection;
 
 namespace Super.Reflection
 {
-	public interface IAttribute<out T> : ISelect<ICustomAttributeProvider, T> {}
+	public interface IAttribute<out T> : IConditional<ICustomAttributeProvider, T> where T : Attribute {}
 }

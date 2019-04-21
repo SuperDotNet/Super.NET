@@ -1,12 +1,12 @@
 ﻿using AutoFixture;
 using AutoFixture.Kernel;
 using JetBrains.Annotations;
-using Super.Model.Collections;
+using Super.Model.Sequences;
 using System.Collections.Generic;
 
 namespace Super.Application.Hosting.xUnit
 {
-	sealed class DefaultTransformations : Array<ISpecimenBuilderTransformation>
+	sealed class DefaultTransformations : ArrayInstance<ISpecimenBuilderTransformation>
 	{
 		public static DefaultTransformations Default { get; } = new DefaultTransformations();
 
@@ -17,7 +17,7 @@ namespace Super.Application.Hosting.xUnit
 	{
 		public static EngineParts Default { get; } = new EngineParts();
 
-		EngineParts() : this(DefaultTransformations.Default.AsEnumerable()) {}
+		EngineParts() : this(DefaultTransformations.Default.Get().Open()) {}
 
 		readonly IEnumerable<ISpecimenBuilderTransformation> _transformers;
 

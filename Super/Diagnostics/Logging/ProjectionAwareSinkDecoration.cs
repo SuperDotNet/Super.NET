@@ -6,8 +6,8 @@ using Super.Runtime.Activation;
 namespace Super.Diagnostics.Logging
 {
 	public sealed class ProjectionAwareSinkDecoration : LoggerSinkDecoration,
-	                                                    IActivateMarker<ILoggingSinkConfiguration>,
-	                                                    IActivateMarker<ILogEventSink>
+	                                                    IActivateUsing<ILoggingSinkConfiguration>,
+	                                                    IActivateUsing<ILogEventSink>
 	{
 		public ProjectionAwareSinkDecoration(ILogEventSink sink) : this(new SinkConfiguration(sink)) {}
 

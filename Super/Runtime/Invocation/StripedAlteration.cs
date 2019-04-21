@@ -4,10 +4,10 @@ using Super.Reflection;
 
 namespace Super.Runtime.Invocation
 {
-	sealed class StripedAlteration<TParameter, TResult> : DelegatedAlteration<ISelect<TParameter, TResult>>
+	sealed class StripedAlteration<TIn, TOut> : DelegatedAlteration<ISelect<TIn, TOut>>
 	{
-		public static StripedAlteration<TParameter, TResult> Default { get; } = new StripedAlteration<TParameter, TResult>();
+		public static StripedAlteration<TIn, TOut> Default { get; } = new StripedAlteration<TIn, TOut>();
 
-		StripedAlteration() : base(I<Striped<TParameter, TResult>>.Default.From) {}
+		StripedAlteration() : base(I<Striped<TIn, TOut>>.Default.From) {}
 	}
 }

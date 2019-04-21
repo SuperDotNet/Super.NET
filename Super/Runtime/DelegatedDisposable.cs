@@ -4,7 +4,6 @@ using Super.Runtime.Activation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace Super.Runtime
 {
@@ -25,7 +24,10 @@ namespace Super.Runtime
 
 		public void Dispose()
 		{
-			_collection.ForEach(x => x.Dispose());
+			foreach (var disposable in _collection)
+			{
+				disposable.Dispose();
+			}
 			_collection.Clear();
 		}
 	}
@@ -37,7 +39,7 @@ namespace Super.Runtime
 		DisposeCommand() : base(x => x.Dispose()) {}
 	}
 
-	public class DelegatedDisposable : IDisposable, IActivateMarker<Action>
+	public class DelegatedDisposable : IDisposable, IActivateUsing<Action>
 	{
 		readonly Action _callback;
 

@@ -2,6 +2,7 @@
 using Super.Application.Hosting.xUnit;
 using Super.Model.Selection;
 using Super.Reflection;
+using Super.Runtime;
 using Super.Runtime.Activation;
 using Xunit;
 
@@ -41,23 +42,23 @@ namespace Super.Testing.Application.Runtime.Activation
 			Singleton() {}
 		}
 
-		sealed class Subject<TParameter, TResult> : ISelect<TParameter, TResult>
+		sealed class Subject<TIn, TOut> : ISelect<TIn, TOut>
 		{
-			public static Subject<TParameter, TResult> Default { get; } = new Subject<TParameter, TResult>();
+			public static Subject<TIn, TOut> Default { get; } = new Subject<TIn, TOut>();
 
 			Subject() {}
 
-			public TResult Get(TParameter parameter) => default;
+			public TOut Get(TIn parameter) => default;
 		}
 
-		sealed class Subject : IActivateMarker<int>
+		sealed class Subject : IActivateUsing<int>
 		{
 			public Subject(int number) => Number = number;
 
 			public int Number { get; }
 		}
 
-		sealed class Object : IActivateMarker<object>
+		sealed class Object : IActivateUsing<object>
 		{
 			public Object(object @object) => O = @object;
 
@@ -67,7 +68,11 @@ namespace Super.Testing.Application.Runtime.Activation
 		[Fact]
 		void VerifyGet()
 		{
+			IsAssigned<Singleton>.Default.Get(Singleton.Default).Should().BeTrue();
+
 			Activator<Singleton>.Default.Get().Should().BeSameAs(Singleton.Default);
+
+			Activator<Singleton>.Default.Get().Should().BeSameAs(Activator<Singleton>.Default.Get());
 		}
 
 		[Fact]

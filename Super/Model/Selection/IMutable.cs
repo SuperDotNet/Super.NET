@@ -2,5 +2,5 @@
 
 namespace Super.Model.Selection
 {
-	public interface IMutable<TParameter, TResult> : ISelect<TParameter, TResult>, IAssignable<TParameter, TResult> {}
+	public interface IMutable<TIn, TOut> : ISelect<TIn, TOut>, IAssign<TIn, TOut> {}
 }

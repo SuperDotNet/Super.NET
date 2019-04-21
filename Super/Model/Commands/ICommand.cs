@@ -1,15 +1,15 @@
-﻿using Super.Model.Sources;
+﻿using Super.Model.Results;
+using Super.Runtime;
 using System;
-using System.Reactive;
 
 namespace Super.Model.Commands
 {
-	public interface ICommand : ICommand<Unit> {}
+	public interface ICommand : ICommand<None> {}
 
 	public interface ICommand<in T>
 	{
 		void Execute(T parameter);
 	}
 
-	public interface IDelegateAware<in T> : ISource<Action<T>> {}
+	public interface IDelegateAware<in T> : IResult<Action<T>> {}
 }

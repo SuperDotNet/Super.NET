@@ -3,7 +3,7 @@
 namespace Super.Application.Hosting.AzureFunctions
 {
 	public sealed class AzureFunctionArgument : ApplicationArgument<AzureFunctionParameter>,
-	                                            IActivateMarker<AzureFunctionParameter>
+	                                            IActivateUsing<AzureFunctionParameter>
 	{
 		public AzureFunctionArgument(AzureFunctionParameter instance) : base(instance) {}
 	}

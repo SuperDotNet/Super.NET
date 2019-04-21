@@ -3,18 +3,18 @@ using System.Collections.Generic;
 
 namespace Super.Model.Selection.Stores
 {
-	public sealed class DictionaryAccessAdapter<TParameter, TResult> : ISelect<TParameter, TResult>
+	public sealed class DictionaryAccessAdapter<TIn, TOut> : ISelect<TIn, TOut>
 	{
-		readonly Func<TParameter, TResult>        _create;
-		readonly IDictionary<TParameter, TResult> _store;
+		readonly Func<TIn, TOut>        _create;
+		readonly IDictionary<TIn, TOut> _store;
 
-		public DictionaryAccessAdapter(IDictionary<TParameter, TResult> store, Func<TParameter, TResult> create)
+		public DictionaryAccessAdapter(IDictionary<TIn, TOut> store, Func<TIn, TOut> create)
 		{
 			_store  = store;
 			_create = create;
 		}
 
-		public TResult Get(TParameter parameter)
+		public TOut Get(TIn parameter)
 		{
 			if (_store.TryGetValue(parameter, out var existing))
 			{

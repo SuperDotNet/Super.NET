@@ -1,9 +1,9 @@
 ﻿using System.IO;
-using Super.Model.Specifications;
+using Super.Model.Selection.Conditions;
 
 namespace Super.Io
 {
-	sealed class FilePathExists : DelegatedSpecification<string>
+	sealed class FilePathExists : DelegatedCondition<string>
 	{
 		public static FilePathExists Default { get; } = new FilePathExists();
 

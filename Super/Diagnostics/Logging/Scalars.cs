@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Serilog.Events;
+﻿using Serilog.Events;
 using Super.Model.Selection;
+using System.Collections.Generic;
+using System.Linq;
+using Super.Runtime;
 
 namespace Super.Diagnostics.Logging
 {
@@ -22,7 +23,7 @@ namespace Super.Diagnostics.Logging
 		{
 			var formats    = _format.Get(parameter.MessageTemplate);
 			var properties = parameter.Properties;
-			foreach (var name in formats.Get())
+			foreach (var name in formats.Get(Unit.Default))
 			{
 				var property = properties[name];
 				if (property is ScalarValue scalar)

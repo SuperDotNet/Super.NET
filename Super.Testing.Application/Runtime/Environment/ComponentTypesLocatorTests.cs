@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Super.Compose;
 using Super.Model.Collections;
 using Super.Reflection.Selection;
 using Super.Runtime.Environment;
@@ -6,6 +7,7 @@ using Super.Runtime.Execution;
 using System;
 using System.Linq;
 using Xunit;
+
 // ReSharper disable All
 
 namespace Super.Testing.Application.Runtime.Environment
@@ -17,9 +19,9 @@ namespace Super.Testing.Application.Runtime.Environment
 		{
 			SortSelector<Type>.Default.Get(typeof(First)).Should().Be(-10);
 
-			Types.Default.Execute(new NestedTypes<ComponentTypesTests>());
+			Types.Default.Execute(NestedTypes<ComponentTypesTests>.Default);
 
-			var types = ComponentTypes.Default.Get(typeof(IComponent)).AsEnumerable();
+			var types = ComponentTypes.Default.Get(typeof(IComponent)).Open();
 			types.Should().HaveCount(4);
 			types.Should().BeEquivalentTo(typeof(First), typeof(Subject), typeof(AnotherSubject), typeof(Last));
 			types.First().Should().Be(typeof(First));
@@ -33,14 +35,16 @@ namespace Super.Testing.Application.Runtime.Environment
 			var callAfter  = new Counter();
 
 			var before = new Counter();
-			var after = new Counter();
-			var sut = Start.New(() => In<Type>.Select(x => new object()))
-			                                  .Select(x => x.Select(callBefore.ExecuteAndReturn)
-			                                                .ToStore()
-			                                                .Select(callAfter.ExecuteAndReturn))
-			                                  .Select(before.ExecuteAndReturn)
-			                                  .ToContextual()
-			                                  .Select(after.ExecuteAndReturn);
+			var after  = new Counter();
+			var sut = Start.A.Result(() => Start.A.Selection.Of.System.Type.By.Returning(Start.A.Result<object>()
+			                                                                                  .By.Instantiation()))
+			               .Select(x => x.Select(callBefore.Parameter)
+			                             .ToStore()
+			                             .Select(callAfter.Parameter))
+			               .Select(before.Parameter)
+			               .ToContextual()
+			               .ToSelect()
+			               .Select(after.Parameter);
 
 			callBefore.Get().Should().Be(0);
 			callAfter.Get().Should().Be(0);
@@ -94,13 +98,11 @@ namespace Super.Testing.Application.Runtime.Environment
 		sealed class NotSubject {}
 
 		[Sort(-10)]
-		sealed class First : IComponent{}
+		sealed class First : IComponent {}
 
-		sealed class Last : IComponent, ISortAware {
-			public int Get()
-			{
-				return 100;
-			}
+		sealed class Last : IComponent, ISortAware
+		{
+			public int Get() => 100;
 		}
 	}
 }

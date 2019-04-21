@@ -1,27 +1,25 @@
-﻿using Super.Model.Specifications;
+﻿using Super.Model.Selection.Conditions;
 using System;
 
 namespace Super.Model.Selection
 {
-	class ValidatedResult<TParameter, TResult> : ISelect<TParameter, TResult>
+	class ValidatedResult<TIn, TOut> : ISelect<TIn, TOut>
 	{
-		readonly Func<TParameter, TResult> _fallback;
-		readonly Func<TParameter, TResult> _source;
-		readonly Func<TResult, bool>       _specification;
+		readonly Func<TIn, TOut>  _fallback;
+		readonly Func<TIn, TOut>  _source;
+		readonly Func<TOut, bool> _specification;
 
-		public ValidatedResult(ISpecification<TResult> specification, ISelect<TParameter, TResult> @select,
-		                       ISelect<TParameter, TResult> fallback)
-			: this(specification.IsSatisfiedBy, @select.Get, fallback.Get) {}
+		public ValidatedResult(ICondition<TOut> condition, ISelect<TIn, TOut> @select, ISelect<TIn, TOut> fallback)
+			: this(condition.Get, @select.Get, fallback.Get) {}
 
-		public ValidatedResult(Func<TResult, bool> specification, Func<TParameter, TResult> source,
-		                       Func<TParameter, TResult> fallback)
+		public ValidatedResult(Func<TOut, bool> specification, Func<TIn, TOut> source, Func<TIn, TOut> fallback)
 		{
 			_specification = specification;
 			_source        = source;
 			_fallback      = fallback;
 		}
 
-		public TResult Get(TParameter parameter)
+		public TOut Get(TIn parameter)
 		{
 			var candidate = _source(parameter);
 			var result    = _specification(candidate) ? candidate : _fallback(parameter);

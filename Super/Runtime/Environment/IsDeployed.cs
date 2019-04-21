@@ -1,16 +1,16 @@
-﻿using System.Reflection;
-using Super.Model.Sources;
-using Super.Model.Specifications;
+﻿using Super.Model.Results;
+using Super.Model.Selection.Conditions;
+using System.Reflection;
 
 namespace Super.Runtime.Environment
 {
-	public sealed class IsDeployed : DelegatedResultSpecification
+	public sealed class IsDeployed : DelegatedResultCondition
 	{
 		public static IsDeployed Default { get; } = new IsDeployed();
 
 		IsDeployed() : this(IsAssemblyDeployed.Default, PrimaryAssembly.Default) {}
 
-		public IsDeployed(ISpecification<Assembly> specification, ISource<Assembly> source)
-			: base(specification.Out().Out(source).Singleton().Get) {}
+		public IsDeployed(ICondition<Assembly> condition, IResult<Assembly> result) 
+			: base(condition.In(result).Singleton().Get) {}
 	}
 }

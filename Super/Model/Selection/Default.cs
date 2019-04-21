@@ -7,9 +7,9 @@
 		Default() : base(default) {}
 	}
 
-	sealed class Default<TParameter, TResult> : FixedResult<TParameter, TResult>
+	sealed class Default<TIn, TOut> : FixedResult<TIn, TOut>
 	{
-		public static Default<TParameter, TResult> Instance { get; } = new Default<TParameter, TResult>();
+		public static ISelect<TIn, TOut> Instance { get; } = new Default<TIn, TOut>();
 
 		Default() : base(default) {}
 	}

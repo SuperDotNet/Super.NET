@@ -1,8 +1,8 @@
-﻿using Super.Model.Sources;
+﻿using Super.Model.Results;
 
 namespace Super.Text
 {
-	public class Text : Source<string>
+	public class Text : Instance<string>
 	{
 		protected Text(string instance) : base(instance) {}
 

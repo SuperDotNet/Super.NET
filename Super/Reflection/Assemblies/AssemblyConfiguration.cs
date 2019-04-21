@@ -2,9 +2,9 @@
 
 namespace Super.Reflection.Assemblies
 {
-	sealed class AssemblyConfiguration : Attribute<AssemblyConfigurationAttribute, string>
+	sealed class AssemblyConfiguration : Declared<AssemblyConfigurationAttribute, string>
 	{
-		public static IAttribute<string> Default { get; } = new AssemblyConfiguration();
+		public static AssemblyConfiguration Default { get; } = new AssemblyConfiguration();
 
 		AssemblyConfiguration() : base(x => x.Configuration) {}
 	}

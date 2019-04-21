@@ -1,15 +1,15 @@
 ﻿namespace Super.Model.Selection
 {
-	public readonly struct Decoration<TParameter, TResult>
+	public readonly struct Decoration<TIn, TOut>
 	{
-		public Decoration(TParameter parameter, TResult result)
+		public Decoration(TIn parameter, TOut result)
 		{
 			Parameter = parameter;
 			Result    = result;
 		}
 
-		public TParameter Parameter { get; }
+		public TIn Parameter { get; }
 
-		public TResult Result { get; }
+		public TOut Result { get; }
 	}
 }

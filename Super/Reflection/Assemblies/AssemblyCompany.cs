@@ -2,9 +2,9 @@
 
 namespace Super.Reflection.Assemblies
 {
-	sealed class AssemblyCompany : Attribute<AssemblyCompanyAttribute, string>
+	sealed class AssemblyCompany : Declared<AssemblyCompanyAttribute, string>
 	{
-		public static IAttribute<string> Default { get; } = new AssemblyCompany();
+		public static AssemblyCompany Default { get; } = new AssemblyCompany();
 
 		AssemblyCompany() : base(x => x.Company) {}
 	}

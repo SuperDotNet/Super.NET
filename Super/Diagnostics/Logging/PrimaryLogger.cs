@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace Super.Diagnostics.Logging
 {
-	public sealed class PrimaryLogger : DelegatedDisposable, IPrimaryLogger, IActivateMarker<ILogger>
+	public sealed class PrimaryLogger : DelegatedDisposable, IPrimaryLogger, IActivateUsing<ILogger>
 	{
 		readonly ILogger _logger;
 

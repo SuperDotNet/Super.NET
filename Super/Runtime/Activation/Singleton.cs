@@ -1,5 +1,4 @@
-﻿using Super.Model.Sources;
-using Super.Reflection;
+﻿using Super.Model.Results;
 using Super.Reflection.Types;
 
 namespace Super.Runtime.Activation
@@ -8,9 +7,6 @@ namespace Super.Runtime.Activation
 	{
 		public static Singleton<T> Default { get; } = new Singleton<T>();
 
-		Singleton() : base(Singletons.Default
-		                             .Select(Type<T>.Instance)
-		                             .Cast(I<T>.Default)
-		                             .Out()) {}
+		Singleton() : base(Singletons.Default.In(Type<T>.Instance).Then().Cast<T>().Out()) {}
 	}
 }

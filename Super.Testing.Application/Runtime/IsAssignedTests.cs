@@ -10,30 +10,30 @@ namespace Super.Testing.Application.Runtime
 		[Fact]
 		void VerifyReferences()
 		{
-			IsAssigned<object>.Default.IsSatisfiedBy(new object()).Should().BeTrue();
-			IsAssigned<object>.Default.IsSatisfiedBy(null).Should().BeFalse();}
+			IsAssigned<object>.Default.Get(new object()).Should().BeTrue();
+			IsAssigned<object>.Default.Get(null).Should().BeFalse();}
 
 		[Fact]
 		void VerifyValues()
 		{
-			IsAssigned<int>.Default.IsSatisfiedBy(1).Should().BeTrue();
-			IsAssigned<int>.Default.IsSatisfiedBy(0).Should().BeFalse();
+			IsAssigned<int>.Default.Get(1).Should().BeTrue();
+			IsAssigned<int>.Default.Get(0).Should().BeFalse();
 		}
 
 		[Fact]
 		void VerifyUnassignedValues()
 		{
-			IsAssigned<int?>.Default.IsSatisfiedBy(1).Should().BeTrue();
-			IsAssigned<int?>.Default.IsSatisfiedBy(0).Should().BeTrue();
-			IsAssigned<int?>.Default.IsSatisfiedBy(null).Should().BeFalse();
+			IsAssigned<int?>.Default.Get(1).Should().BeTrue();
+			IsAssigned<int?>.Default.Get(0).Should().BeTrue();
+			IsAssigned<int?>.Default.Get(null).Should().BeFalse();
 		}
 
 		[Fact]
 		void VerifyImmutableArrays()
 		{
-			IsAssigned<ImmutableArray<object>>.Default.IsSatisfiedBy(default).Should().BeFalse();
-			IsAssigned<ImmutableArray<object>>.Default.IsSatisfiedBy(ImmutableArray<object>.Empty).Should().BeTrue();
-			IsAssigned<ImmutableArray<object>>.Default.IsSatisfiedBy(ImmutableArray.Create(new object())).Should().BeTrue();
+			IsAssigned<ImmutableArray<object>>.Default.Get(default).Should().BeFalse();
+			IsAssigned<ImmutableArray<object>>.Default.Get(ImmutableArray<object>.Empty).Should().BeTrue();
+			IsAssigned<ImmutableArray<object>>.Default.Get(ImmutableArray.Create(new object())).Should().BeTrue();
 		}
 	}
 }

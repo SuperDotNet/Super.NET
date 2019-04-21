@@ -1,8 +1,9 @@
+using Super.Compose;
 using Super.Model.Selection.Alterations;
-using Super.Model.Specifications;
+using Super.Model.Selection.Conditions;
+using Super.Model.Sequences;
 using Super.Reflection.Types;
 using System;
-using System.Collections.Immutable;
 using System.Reflection;
 
 namespace Super.Reflection.Collections
@@ -13,28 +14,28 @@ namespace Super.Reflection.Collections
 
 		InnerType() : this(Always<TypeInfo>.Default) {}
 
-		readonly Func<TypeInfo, ImmutableArray<TypeInfo>> _hierarchy;
-		readonly Func<Type[], TypeInfo>                   _select;
-		readonly ISpecification<TypeInfo>                 _specification;
+		readonly Func<TypeInfo, Array<TypeInfo>> _hierarchy;
+		readonly Func<Type[], TypeInfo>          _select;
+		readonly Func<TypeInfo, bool>            _condition;
 
-		public InnerType(ISpecification<TypeInfo> specification) : this(HasGenericArguments.Default.And(specification),
-		                                                                TypeHierarchy.Default.Get,
-		                                                                x => x.Only()?.GetTypeInfo()) {}
+		public InnerType(ICondition<TypeInfo> condition)
+			: this(HasGenericArguments.Default.Then().And(condition), TypeHierarchy.Default.Get,
+			       Start.A.Selection<Type>().As.Sequence.Array.By.Self.Query().Only().Then().Metadata()) {}
 
-		public InnerType(ISpecification<TypeInfo> specification, Func<TypeInfo, ImmutableArray<TypeInfo>> hierarchy,
+		public InnerType(Func<TypeInfo, bool> condition, Func<TypeInfo, Array<TypeInfo>> hierarchy,
 		                 Func<Type[], TypeInfo> select)
 		{
-			_specification = specification;
-			_hierarchy     = hierarchy;
-			_select        = select;
+			_condition = condition;
+			_hierarchy = hierarchy;
+			_select    = select;
 		}
 
 		public TypeInfo Get(TypeInfo parameter)
 		{
-			var hierarchy = _hierarchy(parameter);
+			var hierarchy = _hierarchy(parameter).Open();
 			foreach (var info in hierarchy)
 			{
-				var result = _specification.IsSatisfiedBy(info)
+				var result = _condition(info)
 					             ? _select(info.GenericTypeArguments)
 					             : info.IsArray
 						             ? info.GetElementType()

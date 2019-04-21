@@ -9,11 +9,11 @@ namespace Super.Testing.Application.Reflection
 		[Fact]
 		public void AccountForNullable()
 		{
-			AccountForUnassignedAlteration.Default.Get(typeof(int?))
+			AccountForUnassignedType.Default.Get(typeof(int?))
 			                              .Should()
 			                              .Be<int>();
 
-			AccountForUnassignedAlteration.Default.Get(GetType())
+			AccountForUnassignedType.Default.Get(GetType())
 			                              .Should()
 			                              .Be(GetType());
 		}

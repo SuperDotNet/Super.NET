@@ -1,27 +1,23 @@
 ﻿using Polly;
-using Super.Model.Commands;
 using Super.Model.Selection;
-using Super.Model.Sources;
 using Super.Runtime.Execution;
 using System;
-using System.Reactive;
-using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Super.Runtime.Invocation.Operations
 {
-	class EventSubscriber : EventSubscriber<EventArgs>
+	/*class EventSubscriber : EventSubscriber<EventArgs>
 	{
 		public EventSubscriber(ICommand<EventHandler> add, ICommand<EventHandler> remove)
-			: this(In<EventHandler<EventArgs>>.New<EventHandler>(), add, remove) {}
+			: this(Start.From<EventHandler<EventArgs>>().New<EventHandler>(), add, remove) {}
 
 		public EventSubscriber(ISelect<EventHandler<EventArgs>, EventHandler> select, ICommand<EventHandler> add,
 		                       ICommand<EventHandler> remove)
 			: base(select.Out(add), select.Out(remove)) {}
-	}
+	}*/
 
-	class EventSubscriber<T> : Subscriber<EventPattern<T>> where T : EventArgs
+	/*class EventSubscriber<T> : Subscriber<EventPattern<T>> where T : EventArgs
 	{
 		public EventSubscriber(ICommand<EventHandler<T>> add, ICommand<EventHandler<T>> remove)
 			: this(add.Execute, remove.Execute) {}
@@ -30,9 +26,9 @@ namespace Super.Runtime.Invocation.Operations
 			: this(Observable.FromEventPattern(add, remove)) {}
 
 		public EventSubscriber(IObservable<EventPattern<T>> instance) : base(instance) {}
-	}
+	}*/
 
-	sealed class DomainUnload : EventSubscriber
+	/*sealed class DomainUnload : EventSubscriber
 	{
 		public static DomainUnload Default { get; } = new DomainUnload();
 
@@ -65,14 +61,14 @@ namespace Super.Runtime.Invocation.Operations
 				_domain.DomainUnload -= parameter;
 			}
 		}
-	}
+	}*/
 
-	class Subscriber<T> : Source<IObservable<T>>
+	/*class Subscriber<T> : Source<IObservable<T>>
 	{
 		public Subscriber(IObservable<T> instance) : base(instance) {}
-	}
+	}*/
 
-	public interface IObserve<T> : ISelect<IObservable<T>, T> {}
+	public interface IObserve<T> : ISelect<Task<T>, T> {}
 
 	public class DurableObservableSource<T> : IObserve<T>
 	{
@@ -84,7 +80,16 @@ namespace Super.Runtime.Invocation.Operations
 
 		public DurableObservableSource(Func<Func<T>, T> policy) => _policy = policy;
 
-		public T Get(IObservable<T> parameter) => _policy(parameter.Wait);
+		public T Get(Task<T> parameter) => _policy(parameter.Wait);
+	}
+
+	public static class Extensions
+	{
+		public static T Wait<T>(this Task<T> @this)
+		{
+			@this.Wait();
+			return @this.Result;
+		}
 	}
 
 	sealed class TaskSelector : Select<Action, Task>
@@ -101,12 +106,12 @@ namespace Super.Runtime.Invocation.Operations
 		TaskSelector() : base(Task.Run) {}
 	}
 
-	sealed class InvokeTaskSelector : Invoke<Task>
+	/*sealed class InvokeTaskSelector : Invoke<Task>
 	{
 		public static InvokeTaskSelector Default { get; } = new InvokeTaskSelector();
 
 		InvokeTaskSelector() : base(Task.Run) {}
-	}
+	}*/
 
 	/*sealed class ContinuationSelector : ISelect<Task, Task>
 	{

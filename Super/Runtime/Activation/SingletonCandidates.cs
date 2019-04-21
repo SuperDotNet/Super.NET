@@ -1,8 +1,8 @@
-﻿using Super.Model.Collections;
+﻿using Super.Model.Sequences;
 
 namespace Super.Runtime.Activation
 {
-	sealed class SingletonCandidates : Array<string>, ISingletonCandidates
+	sealed class SingletonCandidates : ArrayInstance<string>, ISingletonCandidates
 	{
 		public static SingletonCandidates Default { get; } = new SingletonCandidates();
 

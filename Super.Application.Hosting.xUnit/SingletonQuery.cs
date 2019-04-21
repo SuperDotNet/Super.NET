@@ -1,35 +1,33 @@
 ﻿using AutoFixture;
 using AutoFixture.Kernel;
-using Super.Model.Collections;
+using Super.Model.Collections.Commands;
 using Super.Model.Commands;
 using Super.Model.Selection;
-using Super.Model.Specifications;
 using Super.Runtime.Activation;
 using System;
 using System.Collections.Generic;
+using Super.Model.Selection.Conditions;
 
 namespace Super.Application.Hosting.xUnit
 {
-	public sealed class SingletonQuery : ISelect<Type, IEnumerable<IMethod>>, IMethodQuery, ISpecification<Type>
+	public sealed class SingletonQuery : ISelect<Type, IEnumerable<IMethod>>, IMethodQuery
 	{
 		public static SingletonQuery Default { get; } = new SingletonQuery();
 		SingletonQuery() : this(HasSingletonProperty.Default) {}
 
-		readonly ISpecification<Type> _specification;
+		readonly ICondition<Type> _condition;
 
-		public SingletonQuery(ISpecification<Type> specification) => _specification = specification;
+		public SingletonQuery(ICondition<Type> condition) => _condition = condition;
 
 		public IEnumerable<IMethod> Get(Type parameter)
 		{
-			if (_specification.IsSatisfiedBy(parameter))
+			if (_condition.Get(parameter))
 			{
 				yield return new SingletonMethod(parameter);
 			}
 		}
 
 		IEnumerable<IMethod> IMethodQuery.SelectMethods(Type type) => Get(type);
-
-		bool ISpecification<Type>.IsSatisfiedBy(Type parameter) => false;
 	}
 
 	sealed class SelectCustomizations : Select<IFixture, IList<ISpecimenBuilder>>
@@ -51,8 +49,7 @@ namespace Super.Application.Hosting.xUnit
 		public InsertCustomization(ISpecimenBuilder specimen) : this(specimen, x => 0) {}
 
 		public InsertCustomization(ISpecimenBuilder specimen, Func<IList<ISpecimenBuilder>, int> index)
-			: base(SelectCustomizations.Default
-			                           .Out(new InsertIntoList<ISpecimenBuilder>(specimen, index))) {}
+			: base(SelectCustomizations.Default.Terminate(new InsertIntoList<ISpecimenBuilder>(specimen, index))) {}
 
 		public void Customize(IFixture fixture)
 		{

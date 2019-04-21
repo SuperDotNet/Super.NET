@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Flurl;
+using Super.Model.Selection.Alterations;
+using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Flurl;
-using Super.Model.Selection.Alterations;
 
 namespace Super.Services.Security
 {
@@ -20,8 +20,8 @@ namespace Super.Services.Security
 			_secret = secret;
 		}
 
-		protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
-		                                                             CancellationToken cancellationToken)
+		protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
+		                                                       CancellationToken cancellationToken)
 		{
 			var uri = request.RequestUri
 			                 .ToString()
@@ -32,8 +32,9 @@ namespace Super.Services.Security
 			var parameter = request.RequestUri.ToString();
 			var secret    = _secret(parameter);
 			request.Headers.Add("apisign", secret);
-			return await base.SendAsync(request, cancellationToken)
-			                 .ConfigureAwait(false);
+
+			var result = base.SendAsync(request, cancellationToken);
+			return result;
 		}
 	}
 }

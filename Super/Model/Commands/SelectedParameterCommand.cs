@@ -1,6 +1,5 @@
-﻿using Super.Runtime.Activation;
+﻿using Super.Runtime;
 using System;
-using System.Reactive;
 
 namespace Super.Model.Commands
 {
@@ -29,28 +28,9 @@ namespace Super.Model.Commands
 			_parameter = parameter;
 		}
 
-		public void Execute(Unit parameter)
+		public void Execute(None parameter)
 		{
 			_command(_parameter());
-		}
-	}
-
-	public interface IAny : ICommand, ICommand<object> {}
-
-	sealed class Any : IAny, IActivateMarker<ICommand<Unit>>
-	{
-		readonly ICommand<Unit> _command;
-
-		public Any(ICommand<Unit> command) => _command = command;
-
-		public void Execute(object _)
-		{
-			_command.Execute();
-		}
-
-		public void Execute(Unit _)
-		{
-			_command.Execute();
 		}
 	}
 
@@ -65,7 +45,7 @@ namespace Super.Model.Commands
 			_parameter = parameter;
 		}
 
-		public void Execute(Unit parameter)
+		public void Execute(None parameter)
 		{
 			_command(_parameter);
 		}

@@ -11,11 +11,8 @@ namespace Super.Reflection
 		public static Func<Type, ParameterExpression> Parameter { get; } = Expression.Parameter;
 
 		public static Func<ParameterExpression, Type, Expression> ExpressionZip { get; }
-			= (expression, type)
-				  =>
-					  type.GetTypeInfo()
-					      .IsAssignableFrom(expression.Type)
-						  ? expression
-						  : (Expression)Expression.Convert(expression, type);
+			= (expression, type) => type.GetTypeInfo().IsAssignableFrom(expression.Type)
+				                        ? expression
+				                        : (Expression)Expression.Convert(expression, type);
 	}
 }

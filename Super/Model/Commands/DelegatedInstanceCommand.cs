@@ -1,28 +1,27 @@
-﻿using Super.Model.Sources;
+﻿using Super.Model.Results;
+using Super.Runtime;
 using Super.Runtime.Activation;
 using System;
-using System.Collections.Generic;
 
 namespace Super.Model.Commands
 {
-	public class DelegatedInstanceCommand<T> : ICommand<T>, IActivateMarker<ISource<ICommand<T>>>
+	public class DelegatedInstanceCommand<T> : ICommand<T>, IActivateUsing<IResult<ICommand<T>>>
 	{
 		readonly Func<ICommand<T>> _instance;
 
-		public DelegatedInstanceCommand(ISource<ICommand<T>> source) : this(source.Get) {}
+		public DelegatedInstanceCommand(IResult<ICommand<T>> result) : this(result.Get) {}
 
 		public DelegatedInstanceCommand(Func<ICommand<T>> instance) => _instance = instance;
 
 		public void Execute(T parameter) => _instance().Execute(parameter);
 	}
 
-	sealed class SelectedAssignment<TParameter, TResult> : IAssignable<TParameter, TResult>
+	sealed class SelectedAssignment<TIn, TOut> : IAssign<TIn, TOut>
 	{
-		readonly Func<TParameter, ICommand<TResult>> _select;
+		readonly Func<TIn, ICommand<TOut>> _select;
 
-		public SelectedAssignment(Func<TParameter, ICommand<TResult>> select) => _select = @select;
+		public SelectedAssignment(Func<TIn, ICommand<TOut>> select) => _select = @select;
 
-		public void Execute(KeyValuePair<TParameter, TResult> parameter)
-			=> _select(parameter.Key).Execute(parameter.Value);
+		public void Execute(Pair<TIn, TOut> parameter) => _select(parameter.Key).Execute(parameter.Value);
 	}
 }

@@ -1,15 +1,14 @@
-﻿using System;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
+using System;
+using System.Threading.Tasks;
 
 namespace Super.Services
 {
 	public static class ExtensionMethods
 	{
-		public static T Response<T>(this IObservable<T> @this) => Request<T>.Default.Get(@this);
-
-		public static ISelect<TParameter, TResult> Request<TParameter, T, TResult>(
-			this ISelect<TParameter, T> @this, Func<T, IObservable<TResult>> parameter)
-			=> @this.Select(new Request<T, TResult>(parameter))
-			        .Select(Request<TResult>.Default);
+		public static ISelect<TIn, TOut> Request<TIn, T, TOut>(
+			this ISelect<TIn, T> @this, Func<T, Task<TOut>> parameter)
+			=> @this.Select(new Request<T, TOut>(parameter))
+			        .Select(Request<TOut>.Default);
 	}
 }

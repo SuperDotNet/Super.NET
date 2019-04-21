@@ -1,11 +1,11 @@
-﻿using Super.Model.Specifications;
-using Super.Reflection.Types;
+﻿using Super.Reflection.Types;
 using System;
 using System.Reflection;
+using Super.Model.Selection.Conditions;
 
 namespace Super.Reflection
 {
-	sealed class IsDefined<T> : ISpecification<ICustomAttributeProvider>
+	sealed class IsDefined<T> : DelegatedCondition<ICustomAttributeProvider>
 	{
 		public static IsDefined<T> Default { get; } = new IsDefined<T>();
 
@@ -13,11 +13,18 @@ namespace Super.Reflection
 
 		IsDefined() : this(false) {}
 
+		public IsDefined(bool inherit) : this(Type<T>.Instance, inherit) {}
+
+		public IsDefined(Type type, bool inherit) : base(new IsDefined(type, inherit).Get) {}
+
+		public bool IsSatisfiedBy(ICustomAttributeProvider parameter) => Get(parameter);
+	}
+
+	sealed class IsDefined : ICondition<ICustomAttributeProvider>
+	{
 		readonly bool _inherit;
 
 		readonly Type _type;
-
-		public IsDefined(bool inherit) : this(Type<T>.Instance, inherit) {}
 
 		public IsDefined(Type type, bool inherit)
 		{
@@ -25,6 +32,6 @@ namespace Super.Reflection
 			_inherit = inherit;
 		}
 
-		public bool IsSatisfiedBy(ICustomAttributeProvider parameter) => parameter.IsDefined(_type, _inherit);
+		public bool Get(ICustomAttributeProvider parameter) => parameter.IsDefined(_type, _inherit);
 	}
 }

@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Super.Model.Selection;
+using Super.Model.Sequences;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
-using Super.Model.Selection;
 
 namespace Super.Runtime.Invocation
 {
@@ -25,7 +26,7 @@ namespace Super.Runtime.Invocation
 
 		public Locks(int stripes) : this(LockItem<TLock>.Default.Get(stripes), EqualityComparer<TKey>.Default) {}
 
-		public Locks((ImmutableArray<TLock> Items, int Mask) item, IEqualityComparer<TKey> comparer)
+		public Locks((Array<TLock> Items, int Mask) item, IEqualityComparer<TKey> comparer)
 			: this(item.Mask, item.Items, comparer) {}
 
 		public Locks(int mask, ImmutableArray<TLock> stripes, IEqualityComparer<TKey> comparer)

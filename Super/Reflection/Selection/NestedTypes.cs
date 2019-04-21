@@ -1,21 +1,19 @@
-﻿using Super.Model.Collections;
+﻿using Super.Model.Sequences;
+using Super.Reflection.Types;
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace Super.Reflection.Selection
 {
-	public sealed class NestedTypes<T> : Array<Type>
+	public sealed class NestedTypes<T> : DecoratedArray<Type>
 	{
-		public NestedTypes() : this(new NestedTypes(typeof(T)).Get()
-		                                                      .AsEnumerable()) {}
+		public static NestedTypes<T> Default { get; } = new NestedTypes<T>();
 
-		public NestedTypes(IEnumerable<Type> items) : base(items) {}
+		NestedTypes() : base(new NestedTypes(Type<T>.Metadata)) {}
 	}
 
-	public sealed class NestedTypes : Array<Type>
+	public sealed class NestedTypes : ArrayInstance<Type>
 	{
-		public NestedTypes(Type referenceType) : base(referenceType.GetTypeInfo()
-		                                                           .DeclaredNestedTypes) {}
+		public NestedTypes(TypeInfo referenceType) : base(referenceType.DeclaredNestedTypes) {}
 	}
 }

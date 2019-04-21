@@ -1,32 +1,32 @@
-﻿using Super.Model.Specifications;
-using System.Collections.Generic;
+﻿using Super.Model.Selection.Conditions;
+using Super.Runtime;
 
 namespace Super.Model.Selection.Stores
 {
-	public class ValidatedTable<TParameter, TResult> : ITable<TParameter, TResult>
+	public class ValidatedTable<TIn, TOut> : ITable<TIn, TOut>
 	{
-		readonly ISpecification<TParameter>  _specification;
-		readonly ITable<TParameter, TResult> _table;
+		readonly ITable<TIn, TOut> _table;
 
-		public ValidatedTable(ISpecification<TParameter> specification, ITable<TParameter, TResult> table)
+		public ValidatedTable(ITable<TIn, TOut> table) : this(table.Condition, table) {}
+
+		public ValidatedTable(ICondition<TIn> condition, ITable<TIn, TOut> table)
 		{
-			_specification = specification;
-			_table         = table;
+			Condition = condition;
+			_table    = table;
 		}
 
-		public bool IsSatisfiedBy(TParameter parameter)
-			=> _specification.IsSatisfiedBy(parameter) && _table.IsSatisfiedBy(parameter);
-
-		public TResult Get(TParameter parameter) => _specification.IsSatisfiedBy(parameter) ? _table.Get(parameter) : default;
-
-		public void Execute(KeyValuePair<TParameter, TResult> parameter)
+		public void Execute(Pair<TIn, TOut> parameter)
 		{
-			if (_specification.IsSatisfiedBy(parameter.Key))
+			if (Condition.Get(parameter.Key))
 			{
 				_table.Execute(parameter);
 			}
 		}
 
-		public bool Remove(TParameter key) => _specification.IsSatisfiedBy(key) && _table.Remove(key);
+		public bool Remove(TIn key) => Condition.Get(key) && _table.Remove(key);
+
+		public TOut Get(TIn parameter) => _table.Get(parameter);
+
+		public ICondition<TIn> Condition { get; }
 	}
 }

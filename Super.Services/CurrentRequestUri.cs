@@ -5,7 +5,7 @@ using System;
 
 namespace Super.Services
 {
-	sealed class CurrentRequestUri : ReferenceStore<HttpRequest, Uri>
+	sealed class CurrentRequestUri : ReferenceValueTable<HttpRequest, Uri>
 	{
 		public static CurrentRequestUri Default { get; } = new CurrentRequestUri();
 

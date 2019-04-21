@@ -3,10 +3,10 @@ using System;
 
 namespace Super.Model.Selection
 {
-	sealed class Selections<TParameter, TResult> : ReferenceStore<Func<TParameter, TResult>, ISelect<TParameter, TResult>>
+	sealed class Selections<TIn, TOut> : ReferenceValueStore<Func<TIn, TOut>, ISelect<TIn, TOut>>
 	{
-		public static Selections<TParameter, TResult> Default { get; } = new Selections<TParameter, TResult>();
+		public static Selections<TIn, TOut> Default { get; } = new Selections<TIn, TOut>();
 
-		Selections() : base(x => x.Target as ISelect<TParameter, TResult> ?? new Select<TParameter, TResult>(x)) {}
+		Selections() : base(x => x.Target as ISelect<TIn, TOut> ?? new Select<TIn, TOut>(x)) {}
 	}
 }

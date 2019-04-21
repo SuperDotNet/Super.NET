@@ -1,19 +1,25 @@
-﻿using System.Collections.Generic;
+﻿using Super.Model.Selection.Conditions;
+using Super.Runtime;
 
 namespace Super.Model.Selection.Stores
 {
-	public class DecoratedTable<TParameter, TResult> : ITable<TParameter, TResult>
+	public class DecoratedTable<TIn, TOut> : ITable<TIn, TOut>
 	{
-		readonly ITable<TParameter, TResult> _source;
+		public ICondition<TIn> Condition { get; }
+		readonly ITable<TIn, TOut> _source;
 
-		public DecoratedTable(ITable<TParameter, TResult> source) => _source = source;
+		public DecoratedTable(ITable<TIn, TOut> source) : this(source.Condition, source) {}
 
-		public bool IsSatisfiedBy(TParameter parameter) => _source.IsSatisfiedBy(parameter);
+		public DecoratedTable(ICondition<TIn> condition, ITable<TIn, TOut> source)
+		{
+			Condition = condition;
+			_source = source;
+		}
 
-		public void Execute(KeyValuePair<TParameter, TResult> parameter) => _source.Execute(parameter);
+		public void Execute(Pair<TIn, TOut> parameter) => _source.Execute(parameter);
 
-		public bool Remove(TParameter key) => _source.Remove(key);
+		public bool Remove(TIn key) => _source.Remove(key);
 
-		public TResult Get(TParameter parameter) => _source.Get(parameter);
+		public TOut Get(TIn parameter) => _source.Get(parameter);
 	}
 }

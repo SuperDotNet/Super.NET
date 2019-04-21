@@ -1,27 +1,23 @@
-using JetBrains.Annotations;
-using Super.Model.Collections;
-using Super.Runtime.Activation;
-using System.Collections.Generic;
+﻿using Super.Compose;
+using Super.Model.Selection;
+using Super.Model.Selection.Conditions;
+using Super.Model.Selection.Stores;
+using Super.Model.Sequences;
+using System;
 using System.Reflection;
 
 namespace Super.Reflection.Types
 {
-	public sealed class GenericInterfaceImplementations : ArrayStore<TypeInfo, TypeInfo>, IActivateMarker<TypeInfo>
+	sealed class GenericInterfaceImplementations : Store<TypeInfo, IConditional<Type, Array<TypeInfo>>>
 	{
-		public GenericInterfaceImplementations(TypeInfo type) : base(I<Sequence>.Default.From(type).ToArray().Get) {}
+		public static GenericInterfaceImplementations Default { get; } = new GenericInterfaceImplementations();
 
-		sealed class Sequence : ISequence<TypeInfo, TypeInfo>, IActivateMarker<TypeInfo>
-		{
-			readonly IEnumerable<TypeInfo> _candidates;
+		GenericInterfaceImplementations() : this(GenericTypeDefinition.Default) {}
 
-			[UsedImplicitly]
-			public Sequence(TypeInfo type) : this(Implementations.GenericInterfaces.Get(type).AsEnumerable()) {}
-
-			public Sequence(IEnumerable<TypeInfo> candidates) => _candidates = candidates;
-
-			public IEnumerable<TypeInfo> Get(TypeInfo parameter)
-				=> _candidates.Introduce(parameter.GetGenericTypeDefinition(),
-				                         t => t.Item1.GetGenericTypeDefinition() == t.Item2);
-		}
+		public GenericInterfaceImplementations(ISelect<Type, Type> definition)
+			: base(A.This(GenericInterfaces.Default)
+			        .Grouping(definition).Then().Activate<Model.Sequences.Query.Lookup<Type, TypeInfo>>().Get()
+			        .Select(definition.Unless(IsGenericTypeDefinition.Default, A.Self<Type>()))
+			        .Get) {}
 	}
 }

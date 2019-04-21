@@ -1,4 +1,6 @@
-﻿namespace Super.Services.Security
+﻿using Super.Compose;
+
+namespace Super.Services.Security
 {
 	sealed class AppServiceAuthSession : ResponseState
 	{
@@ -6,9 +8,8 @@
 
 		public static AppServiceAuthSession Default { get; } = new AppServiceAuthSession();
 
-		AppServiceAuthSession() : base(Name,
-		                               AuthenticationSessionToken.Default.Out()
-		                                                         .Unless(new RequestStateValue(Name))
-		                               .Get) {}
+		AppServiceAuthSession() : base(Name, Start.A.Selection(new RequestStateValue(Name))
+		                                          .Unless(AuthenticationSessionToken.Default.ToDelegate())
+		                                          .Get) {}
 	}
 }

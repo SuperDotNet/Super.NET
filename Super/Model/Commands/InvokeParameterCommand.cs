@@ -1,60 +1,59 @@
-﻿using Super.Model.Sources;
+﻿using Super.Model.Results;
+using Super.Runtime;
 using Super.Runtime.Activation;
 using System;
-using System.Reactive;
 
 namespace Super.Model.Commands
 {
 	sealed class InvokeParameterCommand<T> : DecoratedCommand<T>
 	{
-		public InvokeParameterCommand(Func<T, Unit> @delegate) : base(new InvokeParameterCommand<T, Unit>(@delegate)) {}
+		public InvokeParameterCommand(Func<T, None> @delegate) : base(new InvokeParameterCommand<T, None>(@delegate)) {}
 	}
 
-	sealed class InvokeParameterCommand<TParameter, TResult> : ICommand<TParameter>,
-	                                                           IActivateMarker<Func<TParameter, TResult>>
+	sealed class InvokeParameterCommand<TIn, TOut> : ICommand<TIn>, IActivateUsing<Func<TIn, TOut>>
 	{
-		readonly Func<TParameter, TResult> _delegate;
+		readonly Func<TIn, TOut> _delegate;
 
-		public InvokeParameterCommand(Func<TParameter, TResult> @delegate) => _delegate = @delegate;
+		public InvokeParameterCommand(Func<TIn, TOut> @delegate) => _delegate = @delegate;
 
-		public void Execute(TParameter parameter)
+		public void Execute(TIn parameter)
 		{
 			_delegate(parameter);
 		}
 	}
 
-	sealed class InvokeCommand<T> : ICommand<Unit>
+	sealed class InvokeCommand<T> : ICommand<None>
 	{
 		readonly Func<T> _delegate;
 
 		public InvokeCommand(Func<T> @delegate) => _delegate = @delegate;
 
-		public void Execute(Unit _)
+		public void Execute(None _)
 		{
 			_delegate();
 		}
 	}
 
-	class ThrowCommand<T> : ThrowCommand<Unit, T> where T : Exception
+	class ThrowCommand<T> : ThrowCommand<None, T> where T : Exception
 	{
 		public ThrowCommand(T exception) : base(exception) {}
 
-		public ThrowCommand(ISource<T> source) : base(source) {}
+		public ThrowCommand(IResult<T> result) : base(result) {}
 
 		public ThrowCommand(Func<T> exception) : base(exception) {}
 	}
 
 	class ThrowCommand<T, TException> : ICommand<T>,
-	                                    IActivateMarker<TException>,
-	                                    IActivateMarker<ISource<TException>>,
-	                                    IActivateMarker<Func<TException>>
+	                                    IActivateUsing<TException>,
+	                                    IActivateUsing<IResult<TException>>,
+	                                    IActivateUsing<Func<TException>>
 		where TException : Exception
 	{
 		readonly Func<TException> _exception;
 
-		public ThrowCommand(TException exception) : this(exception.ToSource()) {}
+		public ThrowCommand(TException exception) : this(exception.Start()) {}
 
-		public ThrowCommand(ISource<TException> source) : this(source.Get) {}
+		public ThrowCommand(IResult<TException> result) : this(result.Get) {}
 
 		public ThrowCommand(Func<TException> exception) => _exception = exception;
 

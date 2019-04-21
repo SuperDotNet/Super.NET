@@ -20,9 +20,9 @@ namespace Super.Application.Hosting.BenchmarkDotNet
 		public IConfig Get(Job parameter)
 		{
 			var result = ManualConfig.Create(DefaultConfig.Instance);
+			result.Orderer = new DefaultOrderer();
 			result.Add(parameter);
 			result.Add(parameter.To(_configure));
-			result.Set(new DefaultOrderer(SummaryOrderPolicy.FastestToSlowest));
 			result.Add(MemoryDiagnoser.Default);
 			return result;
 		}

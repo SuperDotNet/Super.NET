@@ -1,0 +1,27 @@
+﻿using FluentAssertions;
+using Super.Compose;
+using System.Linq;
+using Xunit;
+
+namespace Super.Testing.Application.Model.Selection.Adapters
+{
+	public sealed class QueryTests
+	{
+		[Fact]
+		void Verify()
+		{
+			var numbers = new[] {1, 2, 3, 4, 5};
+
+			var expected = numbers.Skip(3).ToArray();
+
+			Start.A.Selection<int>()
+			     .As.Sequence.Array.By.Self.Query()
+			     .Skip(3)
+			     .Get()
+			     .Get(numbers)
+			     .Open()
+			     .Should()
+			     .Equal(expected);
+		}
+	}
+}

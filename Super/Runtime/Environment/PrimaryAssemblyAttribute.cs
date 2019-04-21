@@ -1,13 +1,13 @@
-﻿using Super.Model.Sources;
+﻿using Super.Model.Results;
 using System;
 using System.Reflection;
 
 namespace Super.Runtime.Environment
 {
-	public interface IHosting : ISource<Assembly> {}
+	public interface IHosting : IResult<Assembly> {}
 
 	[AttributeUsage(AttributeTargets.Assembly)]
-	public abstract class HostingAttribute : Attribute, IHosting
+	public class HostingAttribute : Attribute, IHosting
 	{
 		readonly Assembly _assembly;
 
@@ -16,14 +16,10 @@ namespace Super.Runtime.Environment
 		public Assembly Get() => _assembly;
 	}
 
-	public sealed class HostingAssembly : Source<Assembly>
+	public sealed class HostingAssembly : DecoratedResult<Assembly>
 	{
 		public static HostingAssembly Default { get; } = new HostingAssembly();
 
-		HostingAssembly() : base(PrimaryAssembly.Default
-		                                        .Select(x => x.Attribute<HostingAttribute>()
-		                                                      .Get())
-		                                        /*.AsSelect(x => x.Attribute(I<HostingAttribute>.Default).Value())*/
-		                                        .Get()) {}
+		HostingAssembly() : base(PrimaryAssembly.Default.Select(x => x.Attribute<HostingAttribute>().Get())) {}
 	}
 }
