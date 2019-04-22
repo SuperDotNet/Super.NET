@@ -2,6 +2,7 @@
 using Super.Model.Results;
 using Super.Model.Selection;
 using Super.Model.Selection.Adapters;
+using Super.Model.Selection.Alterations;
 using Super.Model.Selection.Conditions;
 using Super.Model.Sequences;
 using Super.Model.Sequences.Query;
@@ -96,7 +97,8 @@ namespace Super
 		public static Query<_, TOut> Select<_, T, TOut>(this Query<_, T> @this, Func<T, TOut> select)
 			=> @this.Select(new Projections<T, TOut>(select).Returned());
 
-		public static Query<_, TOut> SelectManyBy<_, T, TOut>(this Query<_, T> @this, Expression<Func<T, IEnumerable<TOut>>> select)
+		public static Query<_, TOut> SelectManyBy<_, T, TOut>(this Query<_, T> @this,
+		                                                      Expression<Func<T, IEnumerable<TOut>>> select)
 			=> @this.SelectMany(select.Compile());
 
 		public static Query<_, TOut> SelectMany<_, T, TOut>(this Query<_, T> @this, Func<T, IEnumerable<TOut>> select)
@@ -139,9 +141,14 @@ namespace Super
 
 		public static ICommand Out<T>(this CommandSelector<T> @this, T parameter) => @this.Input(parameter).Command;
 
+		public static IAlteration<T> Out<T>(this CommandSelector<T> @this)
+			=> @this.ToConfiguration().Get().ToAlteration();
+
 		public static Func<T> Out<T>(this Selector<None, T> @this) => @this.Get().ToResult().Get;
 
 		public static ICondition<T> Out<T>(this Selector<T, bool> @this) => @this.Get().ToCondition();
+
+		public static IAlteration<T> Out<T>(this Selector<T, T> @this) => @this.Get().ToAlteration();
 
 		public static ISelect<_, Array<T>> Out<_, T>(this OpenArraySelector<_, T> @this) => @this.Get().Result();
 	}

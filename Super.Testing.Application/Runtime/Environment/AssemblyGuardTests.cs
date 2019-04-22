@@ -25,7 +25,7 @@ namespace Super.Testing.Application.Runtime.Environment
 			Start.A.Result<Assembly>()
 			     .By.Calling(() => null)
 			     .ToSelect()
-			     .Select(PrimaryAssemblyMessage.Default.AsGuard().ReturnSelf())
+			     .Select(PrimaryAssemblyMessage.Default.AsGuard())
 			     .Invoking(x => x.Get())
 			     .Should()
 			     .Throw<InvalidOperationException>();
@@ -37,7 +37,7 @@ namespace Super.Testing.Application.Runtime.Environment
 			Start.A.Result<Assembly>()
 			     .By.Calling(() => GetType().Assembly)
 			     .ToSelect()
-			     .Select(PrimaryAssemblyMessage.Default.AsGuard().ReturnSelf())
+			     .Select(PrimaryAssemblyMessage.Default.AsGuard())
 			     .Invoking(x => x.Get())
 			     .Should()
 			     .NotThrow();

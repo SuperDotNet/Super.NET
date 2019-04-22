@@ -135,14 +135,10 @@ namespace Super.Model.Selection.Adapters
 		public CommandSelector<T> And(params ICommand<T>[] commands)
 			=> new CommandSelector<T>(new CompositeCommand<T>(Get().Yield().Concat(commands).ToImmutableArray()));
 
-		/*public static IAny Clear<T>(this ICommand<T> @this) => @this.Then().ToCommand(default(T)).Any();*/
-
-		/**/
-
 		public Selector<T, None> ToSelector() => new Selector<T, None>(Get().ToSelect());
 
 		public AlterationSelector<T> ToConfiguration()
-			=> new AlterationSelector<T>(new ConfiguringAlteration<T>(Get()));
+			=> new AlterationSelector<T>(new Configured<T>(Get().Execute));
 	}
 
 	public class AlterationSelector<T> : Selector<T, T>

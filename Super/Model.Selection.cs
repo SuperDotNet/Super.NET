@@ -3,6 +3,7 @@ using Super.Model.Commands;
 using Super.Model.Results;
 using Super.Model.Selection;
 using Super.Model.Selection.Adapters;
+using Super.Model.Selection.Alterations;
 using Super.Model.Selection.Conditions;
 using Super.Model.Selection.Stores;
 using Super.Model.Sequences;
@@ -37,9 +38,9 @@ namespace Super
 		/**/
 
 		public static ISelect<TIn, TOut> Guard<TIn, TOut>(this ISelect<TIn, TOut> @this)
-			=> @this.If(A.Of<DefaultGuard<TIn>>());
+			=> DefaultGuard<TIn>.Default.Then().ToConfiguration().Select(@this).Get();
 
-		public static ICondition<T> AsGuard<T>(this IMessage<T> @this) => new AssignedGuard<T>(@this);
+		public static IAlteration<T> AsGuard<T>(this IMessage<T> @this) => new AssignedGuard<T>(@this).Then().Out();
 
 		/**/
 

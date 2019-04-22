@@ -1,6 +1,4 @@
-﻿using Super.Compose;
-
-namespace Super.Runtime.Environment
+﻿namespace Super.Runtime.Environment
 {
 	sealed class DefaultComponentLocator<T> : SystemStore<T>
 	{
@@ -8,8 +6,6 @@ namespace Super.Runtime.Environment
 
 		public static DefaultComponentLocator<T> Default { get; } = new DefaultComponentLocator<T>();
 
-		DefaultComponentLocator() : base(Start.A.Selection<T>()
-		                                      .By.Self.If(LocateGuard<T>.Default)
-		                                      .In(ComponentLocator<T>.Default)) {}
+		DefaultComponentLocator() : base(LocateGuard<T>.Default.Then().Out().In(ComponentLocator<T>.Default)) {}
 	}
 }

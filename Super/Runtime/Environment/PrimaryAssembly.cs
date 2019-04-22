@@ -19,7 +19,7 @@ namespace Super.Runtime.Environment
 		PrimaryAssembly() : base(Start.A.Selection.Of<Assembly>()
 		                              .As.Sequence.Immutable.By.Self.Query()
 		                              .Only(x => x.Has<HostingAttribute>())
-		                              .Select(PrimaryAssemblyMessage.Default.AsGuard().ReturnSelf())
+		                              .Select(PrimaryAssemblyMessage.Default.AsGuard())
 		                              .In(Reflection.Assemblies.Assemblies.Default.Get)
 		                              .Get()) {}
 	}
