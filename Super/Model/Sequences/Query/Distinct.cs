@@ -72,12 +72,7 @@ namespace Super.Model.Sequences.Query
 			Slots.Return(slots);
 		}
 
-		public bool Add(in T value) => !Find(in value, true);
-
-		public bool Contains(in T value) => !Find(in value);
-
-		// ReSharper disable once FlagArgument - Performance.
-		bool Find(in T value, bool add = false)
+		public bool Add(in T value)
 		{
 			var hashCode = value?.GetHashCode() ?? 0;
 
@@ -85,37 +80,34 @@ namespace Super.Model.Sequences.Query
 			{
 				if (slots[index].hashCode == hashCode && comparer.Equals(slots[index].value, value))
 				{
-					return true;
+					return false;
 				}
 			}
 
-			if (add)
+			int index1;
+			if (freeList >= 0)
 			{
-				int index1;
-				if (freeList >= 0)
+				index1   = freeList;
+				freeList = slots[index1].next;
+			}
+			else
+			{
+				if (count == slots.Length)
 				{
-					index1   = freeList;
-					freeList = slots[index1].next;
-				}
-				else
-				{
-					if (count == slots.Length)
-					{
-						Resize();
-					}
-
-					index1 = count;
-					++count;
+					Resize();
 				}
 
-				var index2 = hashCode % buckets.Length;
-				slots[index1].hashCode = hashCode;
-				slots[index1].value    = value;
-				slots[index1].next     = buckets[index2] - 1;
-				buckets[index2]        = index1 + 1;
+				index1 = count;
+				++count;
 			}
 
-			return false;
+			var index2 = hashCode % buckets.Length;
+			slots[index1].hashCode = hashCode;
+			slots[index1].value    = value;
+			slots[index1].next     = buckets[index2] - 1;
+			buckets[index2]        = index1 + 1;
+
+			return true;
 		}
 
 		void Resize()

@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 
 namespace Super.Operations
 {
-	public static class Extensions
-	{
-		
-	}
+	public static class Extensions {}
 
 	public class OperationSelector<_, T> : Selector<_, ValueTask<T>>
 	{
@@ -69,7 +66,12 @@ namespace Super.Operations
 		SelectTask() : base(x => x.AsTask()) {}
 	}
 
-	public interface IOperation<TIn, TOut> : ISelect<TIn, ValueTask<TOut>> {}
+	public interface IOperation<in TIn, TOut> : ISelect<TIn, ValueTask<TOut>> {}
+
+	public class Operation<TIn, TOut> : Select<TIn, ValueTask<TOut>>, IOperation<TIn, TOut>
+	{
+		public Operation(Func<TIn, ValueTask<TOut>> source) : base(source) {}
+	}
 
 	public interface IOperation<T> : IResult<ValueTask<T>> {}
 

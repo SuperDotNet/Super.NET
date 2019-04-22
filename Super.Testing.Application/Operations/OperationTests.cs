@@ -14,13 +14,11 @@ namespace Super.Testing.Application.Operations
 		                       .Get("Hello World!")
 		                       .ContinueWith(x => x.Result.Should().Be(24));
 
-		sealed class Number : IOperation<string, uint>
+		sealed class Number : Operation<string, uint>
 		{
 			public static Number Default { get; } = new Number();
 
-			Number() {}
-
-			public ValueTask<uint> Get(string parameter) => new ValueTask<uint>((uint)parameter.Length);
+			Number() : base(x => new ValueTask<uint>((uint)x.Length)) {}
 		}
 	}
 }
