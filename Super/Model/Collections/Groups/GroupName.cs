@@ -17,7 +17,7 @@ namespace Super.Model.Collections.Groups
 		public override int GetHashCode() => Name != null ? Name.GetHashCode() : 0;
 	}
 
-	sealed class GroupName<T> : DecoratedSelect<T, GroupName>, IGroupName<T>
+	sealed class GroupName<T> : Select<T, GroupName>, IGroupName<T>
 	{
 		public GroupName(GroupName defaultName, ISelect<string, GroupName> names)
 			: base(Start.A.Selection<T>()

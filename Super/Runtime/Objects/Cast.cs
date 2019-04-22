@@ -7,7 +7,7 @@ using Super.Runtime.Execution;
 
 namespace Super.Runtime.Objects
 {
-	sealed class ResultAwareCast<TFrom, TTo> : DecoratedSelect<TFrom, TTo>
+	sealed class ResultAwareCast<TFrom, TTo> : Select<TFrom, TTo>
 	{
 		public static ResultAwareCast<TFrom, TTo> Default { get; } = new ResultAwareCast<TFrom, TTo>();
 

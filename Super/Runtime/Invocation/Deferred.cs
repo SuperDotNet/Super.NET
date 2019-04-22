@@ -8,7 +8,7 @@ using Super.Runtime.Activation;
 
 namespace Super.Runtime.Invocation
 {
-	class Deferred<TIn, TOut> : DecoratedSelect<TIn, TOut>, IActivateUsing<ISelect<TIn, TOut>>
+	class Deferred<TIn, TOut> : Select<TIn, TOut>, IActivateUsing<ISelect<TIn, TOut>>
 	{
 		[UsedImplicitly]
 		public Deferred(ISelect<TIn, TOut> select) : this(select, Start.A.Selection<TIn>()

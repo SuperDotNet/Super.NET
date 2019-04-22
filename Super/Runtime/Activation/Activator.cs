@@ -6,7 +6,7 @@ using System;
 
 namespace Super.Runtime.Activation
 {
-	sealed class Activator : DecoratedSelect<Type, object>, IActivator
+	sealed class Activator : Select<Type, object>, IActivator
 	{
 		public static Activator Default { get; } = new Activator();
 

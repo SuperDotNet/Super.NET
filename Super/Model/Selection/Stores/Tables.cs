@@ -7,7 +7,7 @@ using System;
 
 namespace Super.Model.Selection.Stores
 {
-	public sealed class Tables<TIn, TOut> : DecoratedSelect<Func<TIn, TOut>, ITable<TIn, TOut>>
+	public sealed class Tables<TIn, TOut> : Select<Func<TIn, TOut>, ITable<TIn, TOut>>
 	{
 		public static Tables<TIn, TOut> Default { get; } = new Tables<TIn, TOut>();
 

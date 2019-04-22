@@ -10,6 +10,6 @@ namespace Super.Application.Hosting.BenchmarkDotNet
 	{
 		protected Run() : this(BenchmarkRunner.Run<T>) {}
 
-		public Run(Func<IConfig, Summary> source) : base(source) {}
+		public Run(Func<IConfig, Summary> @select) : base(@select) {}
 	}
 }

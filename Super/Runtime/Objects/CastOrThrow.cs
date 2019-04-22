@@ -5,7 +5,7 @@ using System;
 
 namespace Super.Runtime.Objects
 {
-	sealed class CastOrThrow<TFrom, TTo> : DecoratedSelect<TFrom, TTo>
+	sealed class CastOrThrow<TFrom, TTo> : Select<TFrom, TTo>
 	{
 		public static CastOrThrow<TFrom, TTo> Default { get; } = new CastOrThrow<TFrom, TTo>();
 

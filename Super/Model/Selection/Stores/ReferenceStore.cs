@@ -2,12 +2,12 @@
 
 namespace Super.Model.Selection.Stores
 {
-	public class ReferenceValueStore<TIn, TOut> : DecoratedSelect<TIn, TOut> where TIn : class where TOut : class
+	public class ReferenceValueStore<TIn, TOut> : Select<TIn, TOut> where TIn : class where TOut : class
 	{
 		protected ReferenceValueStore(Func<TIn, TOut> source) : base(new ReferenceValueTable<TIn, TOut>(source)) {}
 	}
 
-	public class StructureValueStore<TIn, TOut> : DecoratedSelect<TIn, TOut>
+	public class StructureValueStore<TIn, TOut> : Select<TIn, TOut>
 		where TIn : class
 		where TOut : struct
 	{

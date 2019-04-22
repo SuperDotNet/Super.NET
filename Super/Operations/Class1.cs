@@ -70,7 +70,7 @@ namespace Super.Operations
 
 	public class Operation<TIn, TOut> : Select<TIn, ValueTask<TOut>>, IOperation<TIn, TOut>
 	{
-		public Operation(Func<TIn, ValueTask<TOut>> source) : base(source) {}
+		public Operation(Func<TIn, ValueTask<TOut>> @select) : base(@select) {}
 	}
 
 	public interface IOperation<T> : IResult<ValueTask<T>> {}

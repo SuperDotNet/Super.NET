@@ -8,7 +8,7 @@ namespace Super.Model.Selection.Stores
 		protected ActivatedStore() : base(New<TIn, TOut>.Default.ToDelegateReference()) {}
 	}
 
-	public class Store<TIn, TOut> : DecoratedSelect<TIn, TOut>
+	public class Store<TIn, TOut> : Select<TIn, TOut>
 	{
 		protected Store(Func<TIn, TOut> source) : base(Stores<TIn, TOut>.Default.Get(source)) {}
 	}

@@ -16,7 +16,7 @@ namespace Super.Reflection
 			: base(select.Select(value.Condition).Get, select.Select(value.Get).Get) {}
 	}
 
-	sealed class AttributeProvider<T> : DecoratedSelect<T, ICustomAttributeProvider>
+	sealed class AttributeProvider<T> : Select<T, ICustomAttributeProvider>
 	{
 		public static AttributeProvider<T> Default { get; } = new AttributeProvider<T>();
 

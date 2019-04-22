@@ -4,7 +4,7 @@ using Super.Model.Selection;
 
 namespace Super.Services.Security
 {
-	public sealed class Authentication : DecoratedSelect<HttpRequest, AuthenticationInformation>
+	public sealed class Authentication : Select<HttpRequest, AuthenticationInformation>
 	{
 		public static Authentication Default { get; } = new Authentication();
 

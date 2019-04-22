@@ -12,7 +12,7 @@ using System.Collections.Immutable;
 
 namespace Super.Runtime.Environment
 {
-	sealed class ComponentType : DecoratedSelect<Type, Type>
+	sealed class ComponentType : Select<Type, Type>
 	{
 		public static ComponentType Default { get; } = new ComponentType();
 

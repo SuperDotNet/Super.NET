@@ -4,7 +4,7 @@ using System;
 
 namespace Super.Reflection.Types
 {
-	public class Generic<T> : DecoratedSelect<Array<Type>, Func<T>>, IGeneric<T>
+	public class Generic<T> : Select<Array<Type>, Func<T>>, IGeneric<T>
 	{
 		public Generic(Type definition) : base(new MakeGenericType(definition).Select(Delegates.Default.Get)) {}
 
@@ -16,7 +16,7 @@ namespace Super.Reflection.Types
 		}
 	}
 
-	public class Generic<T1, T> : DecoratedSelect<Array<Type>, Func<T1, T>>, IGeneric<T1, T>
+	public class Generic<T1, T> : Select<Array<Type>, Func<T1, T>>, IGeneric<T1, T>
 	{
 		public Generic(Type definition) : base(new MakeGenericType(definition).Select(Delegates.Default.Get)) {}
 
@@ -28,7 +28,7 @@ namespace Super.Reflection.Types
 		}
 	}
 
-	public class Generic<T1, T2, T> : DecoratedSelect<Array<Type>, Func<T1, T2, T>>, IGeneric<T1, T2, T>
+	public class Generic<T1, T2, T> : Select<Array<Type>, Func<T1, T2, T>>, IGeneric<T1, T2, T>
 	{
 		public Generic(Type definition) : base(new MakeGenericType(definition).Select(Delegates.Default.Get)) {}
 
@@ -40,7 +40,7 @@ namespace Super.Reflection.Types
 		}
 	}
 
-	public class Generic<T1, T2, T3, T> : DecoratedSelect<Array<Type>, Func<T1, T2, T3, T>>, IGeneric<T1, T2, T3, T>
+	public class Generic<T1, T2, T3, T> : Select<Array<Type>, Func<T1, T2, T3, T>>, IGeneric<T1, T2, T3, T>
 	{
 		public Generic(Type definition) : base(new MakeGenericType(definition).Select(Delegates.Default.Get)) {}
 
@@ -52,7 +52,7 @@ namespace Super.Reflection.Types
 		}
 	}
 
-	public class Generic<T1, T2, T3, T4, T> : DecoratedSelect<Array<Type>, Func<T1, T2, T3, T4, T>>, IGeneric<T1, T2, T3, T4, T>
+	public class Generic<T1, T2, T3, T4, T> : Select<Array<Type>, Func<T1, T2, T3, T4, T>>, IGeneric<T1, T2, T3, T4, T>
 	{
 		public Generic(Type definition) : base(new MakeGenericType(definition).Select(Delegates.Default.Get)) {}
 

@@ -11,8 +11,7 @@ namespace Super.Application
 
 	public interface IApplicationContext<in TIn, out TOut> : ISelect<TIn, TOut>, IApplicationContext {}
 
-	public class ApplicationContext<TIn, TOut> : DecoratedSelect<TIn, TOut>,
-	                                             IApplicationContext<TIn, TOut>
+	public class ApplicationContext<TIn, TOut> : Select<TIn, TOut>, IApplicationContext<TIn, TOut>
 	{
 		readonly IDisposable _disposable;
 
@@ -72,14 +71,14 @@ namespace Super.Application
 		ServiceSelector() : base(x => x.Get<T>()) {}
 	}
 
-	public class ApplicationContexts<TIn, TContext> : DecoratedSelect<TIn, IApplicationContext<TIn>>
+	public class ApplicationContexts<TIn, TContext> : Select<TIn, IApplicationContext<TIn>>
 		where TContext : IApplicationContext<TIn>
 	{
 		protected ApplicationContexts(ISelect<TIn, IServices> services)
 			: base(services.Select(ServiceSelector<TContext>.Default).Then().Cast<IApplicationContext<TIn>>().Get()) {}
 	}
 
-	public class ApplicationContexts<TContext, TIn, TOut> : DecoratedSelect<TIn, IApplicationContext<TIn, TOut>>
+	public class ApplicationContexts<TContext, TIn, TOut> : Select<TIn, IApplicationContext<TIn, TOut>>
 		where TContext : IApplicationContext<TIn, TOut>
 	{
 		protected ApplicationContexts(ISelect<TIn, IServices> services)

@@ -126,8 +126,7 @@ namespace Super.Runtime.Objects
 
 	public interface IProperty<in T> : ISelect<T, Pair<string, object>> {}
 
-	sealed class Property<T> : DecoratedSelect<T, Pair<string, object>>,
-	                           IProperty<T>,
+	sealed class Property<T> : Select<T, Pair<string, object>>, IProperty<T>,
 	                           IActivateUsing<Expression<Func<T, object>>>
 	{
 		[UsedImplicitly]

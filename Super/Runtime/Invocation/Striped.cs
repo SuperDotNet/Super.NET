@@ -4,7 +4,7 @@ using Super.Runtime.Activation;
 
 namespace Super.Runtime.Invocation
 {
-	sealed class Striped<TIn, TOut> : DecoratedSelect<TIn, TOut>, IActivateUsing<ISelect<TIn, TOut>>
+	sealed class Striped<TIn, TOut> : Select<TIn, TOut>, IActivateUsing<ISelect<TIn, TOut>>
 	{
 		public Striped(ISelect<TIn, TOut> @select) : base(select.To(I.A<Deferred<TIn, TOut>>())
 		                                                        .ToDelegate()

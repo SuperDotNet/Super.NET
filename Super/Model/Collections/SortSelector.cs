@@ -3,7 +3,7 @@ using Super.Model.Selection;
 
 namespace Super.Model.Collections
 {
-	sealed class SortSelector<T> : DecoratedSelect<T, int>
+	sealed class SortSelector<T> : Select<T, int>
 	{
 		public static SortSelector<T> Default { get; } = new SortSelector<T>();
 

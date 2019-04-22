@@ -4,7 +4,7 @@ using System;
 
 namespace Super.Text.Formatting
 {
-	sealed class KnownFormatters : DecoratedSelect<object, IFormattable>
+	sealed class KnownFormatters : Select<object, IFormattable>
 	{
 		public static KnownFormatters Default { get; } = new KnownFormatters();
 

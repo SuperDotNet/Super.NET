@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Super.Model.Selection.Stores
 {
-	public class EqualityStore<TIn, TOut> : DecoratedSelect<TIn, TOut>
+	public class EqualityStore<TIn, TOut> : Select<TIn, TOut>
 	{
 		protected EqualityStore(ISelect<TIn, TOut> source, IDictionary<TIn, TOut> store)
 			: this(source.Get, store) {}

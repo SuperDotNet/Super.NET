@@ -3,7 +3,7 @@ using Super.Model.Selection;
 
 namespace Super.Services
 {
-	public sealed class Service<T> : DecoratedSelect<Uri, T>
+	public sealed class Service<T> : Select<Uri, T>
 	{
 		public static Service<T> Default { get; } = new Service<T>();
 

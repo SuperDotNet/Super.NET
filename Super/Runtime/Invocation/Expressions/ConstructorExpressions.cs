@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Super.Runtime.Invocation.Expressions
 {
-	sealed class ConstructorExpressions<T> : DecoratedSelect<ConstructorInfo, Expression>
+	sealed class ConstructorExpressions<T> : Select<ConstructorInfo, Expression>
 	{
 		public static ConstructorExpressions<T> Default { get; } = new ConstructorExpressions<T>();
 
