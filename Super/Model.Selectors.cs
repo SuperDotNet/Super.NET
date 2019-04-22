@@ -5,10 +5,12 @@ using Super.Model.Selection.Adapters;
 using Super.Model.Selection.Conditions;
 using Super.Model.Sequences;
 using Super.Model.Sequences.Query;
+using Super.Operations;
 using Super.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace Super
 {
@@ -16,6 +18,12 @@ namespace Super
 	public static partial class ExtensionMethods
 	{
 		public static ISelect<TIn, IResult<TOut>> AsDefined<TIn, TOut>(this ISelect<TIn, IResult<TOut>> @this) => @this;
+
+		/**/
+		public static OperationSelector<_, T> Then<_, T>(this ISelect<_, ValueTask<T>> @this)
+			=> new OperationSelector<_, T>(@this);
+
+		public static TaskSelector<_, T> Then<_, T>(this ISelect<_, Task<T>> @this) => new TaskSelector<_, T>(@this);
 
 		/**/
 

@@ -29,10 +29,7 @@ namespace Super.Application.Hosting.xUnit
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
 	public class TestPriorityAttribute : Attribute
 	{
-		public TestPriorityAttribute(int priority)
-		{
-			Priority = priority;
-		}
+		public TestPriorityAttribute(int priority) => Priority = priority;
 
 		public int Priority { get; private set; }
 	}
@@ -94,17 +91,12 @@ namespace Super.Application.Hosting.xUnit
 		                IMessageSink diagnosticMessageSink)
 			: base(assemblyName, sourceInformationProvider, diagnosticMessageSink) {}
 
-		protected override async void RunTestCases(IEnumerable<IXunitTestCase> testCases,
-		                                           IMessageSink executionMessageSink,
-		                                           ITestFrameworkExecutionOptions executionOptions)
+		protected override void RunTestCases(IEnumerable<IXunitTestCase> testCases,
+		                                     IMessageSink executionMessageSink,
+		                                     ITestFrameworkExecutionOptions executionOptions)
 		{
-			using (var assemblyRunner = new AssemblyRunner(TestAssembly, testCases, DiagnosticMessageSink,
-			                                               executionMessageSink,
-			                                               executionOptions))
-			{
-				StorageTypeDefinition.Default.Execute(typeof(Logical<>));
-				await assemblyRunner.RunAsync();
-			}
+			StorageTypeDefinition.Default.Execute(typeof(Logical<>));
+			base.RunTestCases(testCases, executionMessageSink, executionOptions);
 		}
 	}
 
@@ -169,10 +161,7 @@ namespace Super.Application.Hosting.xUnit
 	{
 		readonly IMethodInfo _method;
 
-		public Decorated(IMethodInfo method)
-		{
-			_method = method;
-		}
+		public Decorated(IMethodInfo method) => _method = method;
 
 		public IEnumerable<IAttributeInfo> GetCustomAttributes(string assemblyQualifiedAttributeTypeName)
 		{
@@ -198,20 +187,12 @@ namespace Super.Application.Hosting.xUnit
 			}
 		}
 
-		public IEnumerable<ITypeInfo> GetGenericArguments()
-		{
-			return _method.GetGenericArguments();
-		}
+		public IEnumerable<ITypeInfo> GetGenericArguments() => _method.GetGenericArguments();
 
-		public IEnumerable<IParameterInfo> GetParameters()
-		{
-			return _method.GetParameters();
-		}
+		public IEnumerable<IParameterInfo> GetParameters() => _method.GetParameters();
 
 		public IMethodInfo MakeGenericMethod(params ITypeInfo[] typeArguments)
-		{
-			return _method.MakeGenericMethod(typeArguments);
-		}
+			=> _method.MakeGenericMethod(typeArguments);
 
 		public bool IsAbstract => _method.IsAbstract;
 
@@ -239,7 +220,7 @@ namespace Super.Application.Hosting.xUnit
 		public TestMethod(ITestMethod method, IMethodInfo info)
 		{
 			_method = method;
-			Method   = info;
+			Method  = info;
 		}
 
 		public void Deserialize(IXunitSerializationInfo info)
@@ -303,7 +284,7 @@ namespace Super.Application.Hosting.xUnit
 	{
 		readonly IXunitTestCase _case;
 		readonly ITestMethod    _method;
-		readonly ICondition _condition;
+		readonly ICondition     _condition;
 		readonly Action         _action;
 
 		public TestCase() {}
@@ -313,10 +294,10 @@ namespace Super.Application.Hosting.xUnit
 
 		public TestCase(IXunitTestCase @case, ITestMethod method, ICondition condition, Action action)
 		{
-			_case          = @case;
-			_method        = method;
+			_case      = @case;
+			_method    = method;
 			_condition = condition;
-			_action        = action;
+			_action    = action;
 		}
 
 		public void Deserialize(IXunitSerializationInfo info)
