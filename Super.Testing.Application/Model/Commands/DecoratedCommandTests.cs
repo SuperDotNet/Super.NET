@@ -1,6 +1,6 @@
-﻿using Super.Runtime;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Super.Model.Commands;
+using Super.Runtime;
 using Xunit;
 
 namespace Super.Testing.Application.Model.Commands
@@ -11,8 +11,8 @@ namespace Super.Testing.Application.Model.Commands
 		public void Verify()
 		{
 			var count = 0;
-			var inner = new DelegatedCommand<None>(x => count++);
-			var sut   = new DecoratedCommand<None>(inner);
+			var inner = new Command<None>(x => count++);
+			var sut   = new Command<None>(inner);
 			sut.Execute();
 			count.Should()
 			     .Be(1);

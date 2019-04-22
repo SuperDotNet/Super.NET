@@ -32,7 +32,7 @@ namespace Super.Runtime
 		}
 	}
 
-	sealed class DisposeCommand : DelegatedCommand<IDisposable>
+	sealed class DisposeCommand : Command<IDisposable>
 	{
 		public static ICommand<IDisposable> Default { get; } = new DisposeCommand();
 

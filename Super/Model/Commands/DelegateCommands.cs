@@ -7,6 +7,6 @@ namespace Super.Model.Commands
 	{
 		public static DelegateCommands<T> Default { get; } = new DelegateCommands<T>();
 
-		DelegateCommands() : base(x => x.Target as ICommand<T> ?? new DelegatedCommand<T>(x)) {}
+		DelegateCommands() : base(x => x.Target as ICommand<T> ?? new Command<T>(x)) {}
 	}
 }

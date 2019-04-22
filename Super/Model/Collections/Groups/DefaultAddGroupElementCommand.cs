@@ -3,7 +3,7 @@ using Super.Model.Selection.Conditions;
 
 namespace Super.Model.Collections.Groups
 {
-	class DefaultAddGroupElementCommand<T> : DecoratedCommand<T>
+	class DefaultAddGroupElementCommand<T> : Command<T>
 	{
 		public DefaultAddGroupElementCommand(GroupName defaultName, IConditional<string, GroupName> names,
 		                                     IGroupCollection<T> collection)

@@ -3,10 +3,10 @@ using AutoFixture.Kernel;
 using Super.Model.Collections.Commands;
 using Super.Model.Commands;
 using Super.Model.Selection;
+using Super.Model.Selection.Conditions;
 using Super.Runtime.Activation;
 using System;
 using System.Collections.Generic;
-using Super.Model.Selection.Conditions;
 
 namespace Super.Application.Hosting.xUnit
 {
@@ -44,7 +44,7 @@ namespace Super.Application.Hosting.xUnit
 		SingletonCustomization() : base(new MethodInvoker(SingletonQuery.Default)) {}
 	}
 
-	public class InsertCustomization : DecoratedCommand<IFixture>, ICustomization
+	public class InsertCustomization : Command<IFixture>, ICustomization
 	{
 		public InsertCustomization(ISpecimenBuilder specimen) : this(specimen, x => 0) {}
 

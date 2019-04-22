@@ -27,7 +27,7 @@ namespace Super.Application
 	public interface IApplicationContexts<in TIn, out TContext> : ISelect<TIn, TContext>
 		where TContext : IApplicationContext {}
 
-	public class ApplicationContext<T> : DecoratedCommand<T>, IApplicationContext<T>
+	public class ApplicationContext<T> : Command<T>, IApplicationContext<T>
 	{
 		readonly IDisposable _disposable;
 

@@ -44,7 +44,7 @@ namespace Super.Runtime.Execution
 		}
 	}
 
-	sealed class DisposeContext : DecoratedCommand<None>, ICommand
+	sealed class DisposeContext : Command<None>, ICommand
 	{
 		public static DisposeContext Default { get; } = new DisposeContext();
 

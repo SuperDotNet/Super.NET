@@ -5,7 +5,7 @@ namespace Super.Model.Selection.Adapters
 {
 	public interface IAction<in T> : ISelect<T, None> {}
 
-	public class Action<T> : DelegatedCommand<T>, IAction<T>
+	public class Action<T> : Command<T>, IAction<T>
 	{
 		public static implicit operator Action<T>(System.Action<T> value) => new Action<T>(value);
 
@@ -18,7 +18,7 @@ namespace Super.Model.Selection.Adapters
 		}
 	}
 
-	public class Action : DelegatedCommand, IAction<None>, ICommand
+	public class Action : Command, IAction<None>, ICommand
 	{
 		public static implicit operator Action(System.Action value) => new Action(value);
 

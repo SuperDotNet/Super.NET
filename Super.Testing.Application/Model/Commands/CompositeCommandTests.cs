@@ -11,7 +11,7 @@ namespace Super.Testing.Application.Model.Commands
 		public void Verify()
 		{
 			var count = 0;
-			new CompositeCommand<None>(new DelegatedCommand<None>(x => count++), new DelegatedCommand<None>(x => count++))
+			new CompositeCommand<None>(new Command<None>(x => count++), new Command<None>(x => count++))
 				.Execute();
 			count.Should()
 			     .Be(2);

@@ -5,7 +5,7 @@ using System;
 
 namespace Super.Model.Commands
 {
-	sealed class InvokeParameterCommand<T> : DecoratedCommand<T>
+	sealed class InvokeParameterCommand<T> : Command<T>
 	{
 		public InvokeParameterCommand(Func<T, None> @delegate) : base(new InvokeParameterCommand<T, None>(@delegate)) {}
 	}
