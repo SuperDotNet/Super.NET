@@ -1,12 +1,20 @@
 ﻿using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
+using Super.Runtime;
 using System;
 
 namespace Super.Aspects
 {
 	public interface IAspects<TIn, TOut> : IAlteration<ISelect<TIn, TOut>> {}
 
-	class ValidationAspect<TIn, TOut> : IAspects<TIn, TOut>
+	public sealed class AssignedAspect<TIn, TOut> : ValidationAspect<TIn, TOut>
+	{
+		public static AssignedAspect<TIn,TOut> Default { get; } = new AssignedAspect<TIn,TOut>();
+
+		AssignedAspect() : base(DefaultGuard<TIn>.Default.Execute) {}
+	}
+
+	public class ValidationAspect<TIn, TOut> : IAspects<TIn, TOut>
 	{
 		readonly Action<TIn> _validate;
 

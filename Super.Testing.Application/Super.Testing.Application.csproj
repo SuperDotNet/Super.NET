@@ -11,11 +11,8 @@
 
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Aspects\**" />
     <Compile Remove="BenchmarkDotNet.Artifacts\**" />
-    <EmbeddedResource Remove="Aspects\**" />
     <EmbeddedResource Remove="BenchmarkDotNet.Artifacts\**" />
-    <None Remove="Aspects\**" />
     <None Remove="BenchmarkDotNet.Artifacts\**" />
   </ItemGroup>
   <ItemGroup>
