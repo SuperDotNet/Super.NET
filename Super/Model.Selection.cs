@@ -56,11 +56,11 @@ namespace Super
 
 		public static ISelect<TIn, TOut> SelectOf<TIn, TOut, TOther>(this ISelect<TIn, TOut> @this,
 		                                                             IAssign<TIn, TOther> configuration)
-			=> new Configured<TIn, TOut, TOther>(@this, configuration);
+			=> new Configuration<TIn, TOut, TOther>(@this, configuration);
 
 		public static ISelect<TIn, TOut> Select<TIn, TOut>(this ISelect<TIn, TOut> @this,
 		                                                   IAssign<TIn, TOut> configuration)
-			=> new Configured<TIn, TOut>(@this, configuration);
+			=> new Configuration<TIn, TOut>(@this, configuration);
 
 		public static ISelect<_, IConditional<TFrom, __>> Select<_, __, TFrom, TTo>(
 			this ISelect<_, IConditional<TTo, __>> @this, ISelect<TFrom, TTo> select)

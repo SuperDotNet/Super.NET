@@ -1,6 +1,5 @@
 ﻿using Super.Model.Results;
 using Super.Model.Selection;
-using Super.Reflection.Types;
 using Super.Runtime.Invocation;
 using System;
 using System.Buffers;
@@ -188,13 +187,7 @@ namespace Super.Model.Sequences.Query.Construction
 	public class Continuations<T, TIn, TOut> : Invocation1<T, IStores<TOut>, IContinuation<TIn, TOut>>,
 	                                           IProjections<TIn, TOut>
 	{
-		public Continuations(T parameter, Type definition) : this(parameter, definition, typeof(TIn), typeof(TOut)) {}
-
-		public Continuations(T parameter, Type definition, params Type[] arguments)
-			: this(parameter, definition, arguments.Result()) {}
-
-		public Continuations(T parameter, Type definition, Array<Type> arguments)
-			: base(new Generic<T, IStores<TOut>, IContinuation<TIn, TOut>>(definition).Get(arguments), parameter) {}
+		public Continuations(Func<T, IStores<TOut>, IContinuation<TIn, TOut>> @delegate, T parameter) : base(@delegate, parameter) {}
 	}
 
 	public sealed class ReturnedContinuation<TIn, TOut> : IContinuation<TIn, TOut>

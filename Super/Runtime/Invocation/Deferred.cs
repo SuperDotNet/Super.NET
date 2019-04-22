@@ -19,7 +19,7 @@ namespace Super.Runtime.Invocation
 			: this(@select, assignable, assignable) {}
 
 		public Deferred(ISelect<TIn, TOut> select, IAssign<TIn, TOut> assign, ISelect<TIn, TOut> source)
-			: base(Start.A.Selection(new Configured<TIn, TOut>(select, assign)).Unless(source)) {}
+			: base(Start.A.Selection(new Configuration<TIn, TOut>(select, assign)).Unless(source)) {}
 	}
 
 	public class Deferred<T> : DecoratedResult<T>

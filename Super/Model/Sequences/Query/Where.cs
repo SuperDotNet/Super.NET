@@ -70,12 +70,14 @@ namespace Super.Model.Sequences.Query
 
 	public class Projections<TIn, TOut> : Continuations<Func<TIn, TOut>, TIn, TOut>
 	{
-		public Projections(Func<TIn, TOut> parameter) : base(parameter, typeof(Projection<,>)) {}
+		public Projections(Func<TIn, TOut> parameter)
+			: base((x, stores) => new Projection<TIn, TOut>(x, stores), parameter) {}
 	}
 
 	public sealed class Concatenations<T> : Continuations<ISequence<T>, T, T>
 	{
-		public Concatenations(ISequence<T> parameter) : base(parameter, typeof(Concatenation<>), typeof(T)) {}
+		public Concatenations(ISequence<T> parameter)
+			: base((sequence, stores) => new Concatenation<T>(sequence, stores), parameter) {}
 	}
 
 	public class Concatenation<T> : IContinuation<T, T>
@@ -261,7 +263,7 @@ namespace Super.Model.Sequences.Query
 	public class ProjectionManySegment<TIn, TOut> : Continuations<Func<TIn, IEnumerable<TOut>>, TIn, TOut>
 	{
 		public ProjectionManySegment(Func<TIn, IEnumerable<TOut>> parameter)
-			: base(parameter, typeof(ProjectionMany<,>)) {}
+			: base((x, stores) => new ProjectionMany<TIn, TOut>(x, stores), parameter) {}
 	}
 
 	public class ProjectionMany<TIn, TOut> : IContinuation<TIn, TOut>
@@ -378,7 +380,7 @@ namespace Super.Model.Sequences.Query
 	public class InlineProjections<TIn, TOut> : Continuations<Expression<Func<TIn, TOut>>, TIn, TOut>
 	{
 		public InlineProjections(Expression<Func<TIn, TOut>> parameter)
-			: base(parameter, typeof(InlineProjection<,>)) {}
+			: base((expression, stores) => new InlineProjection<TIn, TOut>(expression, stores), parameter) {}
 	}
 
 	public sealed class InlineProjection<TFrom, TTo> : IContinuation<TFrom, TTo>
