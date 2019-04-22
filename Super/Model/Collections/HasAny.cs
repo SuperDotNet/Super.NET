@@ -4,14 +4,14 @@ using Super.Model.Selection.Conditions;
 
 namespace Super.Model.Collections
 {
-	public sealed class HasAny : DelegatedCondition<ICollection>
+	public sealed class HasAny : Condition<ICollection>
 	{
 		public static HasAny Default { get; } = new HasAny();
 
 		HasAny() : base(x => x.Count > 0) {}
 	}
 
-	public sealed class HasAny<T> : DelegatedCondition<ICollection<T>>
+	public sealed class HasAny<T> : Condition<ICollection<T>>
 	{
 		public static HasAny<T> Default { get; } = new HasAny<T>();
 

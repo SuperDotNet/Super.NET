@@ -3,7 +3,7 @@ using System;
 
 namespace Super.Model.Selection.Adapters
 {
-	public class Condition<T> : DelegatedCondition<T>
+	public class Condition<T> : Conditions.Condition<T>
 	{
 		public static implicit operator Condition<T>(Func<T, bool> value) => new Condition<T>(value);
 

@@ -3,7 +3,7 @@ using Super.Model.Selection.Conditions;
 
 namespace Super.Reflection.Types
 {
-	sealed class IsClass : DelegatedCondition<Type>
+	sealed class IsClass : Condition<Type>
 	{
 		public static IsClass Default { get; } = new IsClass();
 

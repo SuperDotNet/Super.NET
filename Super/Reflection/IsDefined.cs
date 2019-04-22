@@ -5,7 +5,7 @@ using Super.Model.Selection.Conditions;
 
 namespace Super.Reflection
 {
-	sealed class IsDefined<T> : DelegatedCondition<ICustomAttributeProvider>
+	sealed class IsDefined<T> : Condition<ICustomAttributeProvider>
 	{
 		public static IsDefined<T> Default { get; } = new IsDefined<T>();
 

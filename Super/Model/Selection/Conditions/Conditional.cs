@@ -33,7 +33,7 @@ namespace Super.Model.Selection.Conditions
 			: this(source.Condition.Then().Or(condition), source.Get) {}
 
 		public Conditional(Func<TIn, bool> condition, Func<TIn, TOut> source)
-			: this(condition.Target as ICondition<TIn> ?? new DelegatedCondition<TIn>(condition), source) {}
+			: this(condition.Target as ICondition<TIn> ?? new Condition<TIn>(condition), source) {}
 
 		public Conditional(ICondition<TIn> condition, Func<TIn, TOut> source)
 			: this(condition, source, Start.A.Selection<TIn>().By.Default<TOut>().Get) {}

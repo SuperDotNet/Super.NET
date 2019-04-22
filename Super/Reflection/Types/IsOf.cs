@@ -11,7 +11,7 @@ namespace Super.Reflection.Types
 		public bool Get(TIn parameter) => parameter is T;
 	}
 
-	public sealed class IsOf<T> : DecoratedCondition<object>
+	public sealed class IsOf<T> : Condition<object>
 	{
 		public static IsOf<T> Default { get; } = new IsOf<T>();
 

@@ -25,7 +25,7 @@ namespace Super.Runtime
 		IsAssigned() : base(IsNullReference.Default) {}
 	}
 
-	sealed class HasValue<T> : DelegatedCondition<T?> where T : struct
+	sealed class HasValue<T> : Condition<T?> where T : struct
 	{
 		[UsedImplicitly]
 		public static HasValue<T> Default { get; } = new HasValue<T>();
@@ -64,7 +64,7 @@ namespace Super.Runtime
 		IsAssigned() : base(IsAssignedConditions<T>.Default.Get(typeof(T))) {}
 	}
 
-	sealed class IsNullReference : DelegatedCondition<object>
+	sealed class IsNullReference : Condition<object>
 	{
 		public static IsNullReference Default { get; } = new IsNullReference();
 
@@ -78,7 +78,7 @@ namespace Super.Runtime
 		EqualsNullReference() : base(ReferenceEquals, null) {}
 	}
 
-	public class IsAssigned<TIn, TOut> : DelegatedCondition<TIn> where TOut : class
+	public class IsAssigned<TIn, TOut> : Condition<TIn> where TOut : class
 	{
 		protected IsAssigned(Func<TIn, TOut> source)
 			: base(new Selection<TIn, TOut, bool>(source, IsAssigned.Default.Get).Get) {}

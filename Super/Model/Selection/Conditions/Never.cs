@@ -1,6 +1,6 @@
 ﻿namespace Super.Model.Selection.Conditions
 {
-	public sealed class Never : DelegatedCondition<object>
+	public sealed class Never : Condition<object>
 	{
 		public static Never Default { get; } = new Never();
 

@@ -3,7 +3,7 @@ using System;
 
 namespace Super.Reflection.Types
 {
-	sealed class IsConstructedGenericType : DelegatedCondition<Type>
+	sealed class IsConstructedGenericType : Condition<Type>
 	{
 		public static IsConstructedGenericType Default { get; } = new IsConstructedGenericType();
 

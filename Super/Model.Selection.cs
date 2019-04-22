@@ -119,7 +119,7 @@ namespace Super
 			=> Selections<TIn, TOut>.Default.Get(@this);
 
 		public static ICondition<T> ToCondition<T>(this ISelect<T, bool> @this) => @this as ICondition<T> ??
-		                                                                           new DelegatedCondition<T>(@this.Get);
+		                                                                           new Model.Selection.Conditions.Condition<T>(@this.Get);
 
 		public static IConditional<TIn, TOut> ToConditional<TIn, TOut>(this ISelect<TIn, TOut> @this,
 		                                                               ICondition<TIn> condition)

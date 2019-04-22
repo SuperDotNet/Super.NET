@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Super.Reflection.Types
 {
-	public class ImplementsGenericType : DelegatedCondition<TypeInfo>
+	public class ImplementsGenericType : Condition<TypeInfo>
 	{
 		public ImplementsGenericType(Type definition)
 			: base(Start.An.Instance(GenericInterfaceImplementations.Default)

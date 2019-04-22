@@ -31,7 +31,7 @@ namespace Super
 		public static IResult<T> Unless<T>(this IResult<T> @this, ICondition<T> condition, IResult<T> then)
 			=> @this.Unless(condition.ToDelegate(), then);
 
-		public static IResult<T> Unless<T>(this IResult<T> @this, Condition<T> condition, IResult<T> then)
+		public static IResult<T> Unless<T>(this IResult<T> @this, Model.Selection.Adapters.Condition<T> condition, IResult<T> then)
 			=> new ValidatedResult<T>(condition, then, @this);
 
 		public static IResult<T> Unless<T>(this IResult<T> @this, ICondition condition, IResult<T> then)

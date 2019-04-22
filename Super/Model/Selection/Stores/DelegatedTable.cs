@@ -13,7 +13,7 @@ namespace Super.Model.Selection.Stores
 		// ReSharper disable once TooManyDependencies
 		public DelegatedTable(Func<TIn, bool> contains, Action<(TIn, TOut)> assign,
 		                      Func<TIn, TOut> get, Func<TIn, bool> remove)
-			: this(new DelegatedCondition<TIn>(contains), assign, get, remove) {}
+			: this(new Condition<TIn>(contains), assign, get, remove) {}
 
 		// ReSharper disable once TooManyDependencies
 		public DelegatedTable(ICondition<TIn> contains, Action<(TIn, TOut)> assign,

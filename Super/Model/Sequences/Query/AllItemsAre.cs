@@ -5,7 +5,7 @@ using Super.Model.Selection.Conditions;
 
 namespace Super.Model.Sequences.Query
 {
-	public sealed class AllItemsAre<T> : DelegatedCondition<T[]>, IActivateUsing<Func<T, bool>>
+	public sealed class AllItemsAre<T> : Condition<T[]>, IActivateUsing<Func<T, bool>>
 	{
 		public AllItemsAre(Func<T, bool> specification) : this(new Predicate<T>(specification)) {}
 

@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Super.Runtime.Activation
 {
-	sealed class HasSingleParameterConstructor<T> : DelegatedCondition<ConstructorInfo>
+	sealed class HasSingleParameterConstructor<T> : Condition<ConstructorInfo>
 	{
 		public static HasSingleParameterConstructor<T> Default { get; } = new HasSingleParameterConstructor<T>();
 

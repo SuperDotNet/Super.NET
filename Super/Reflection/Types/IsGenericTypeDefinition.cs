@@ -3,7 +3,7 @@ using Super.Model.Selection.Conditions;
 
 namespace Super.Reflection.Types
 {
-	sealed class IsGenericTypeDefinition : DelegatedCondition<Type>
+	sealed class IsGenericTypeDefinition : Condition<Type>
 	{
 		public static IsGenericTypeDefinition Default { get; } = new IsGenericTypeDefinition();
 

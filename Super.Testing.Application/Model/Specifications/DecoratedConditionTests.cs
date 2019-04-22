@@ -9,7 +9,7 @@ namespace Super.Testing.Application.Model.Specifications
 		[Fact]
 		public void Verify()
 		{
-			new DecoratedCondition<object>(Always<object>.Default).Get(new object()).Should().BeTrue();
+			new Condition<object>(Always<object>.Default).Get(new object()).Should().BeTrue();
 		}
 	}
 }

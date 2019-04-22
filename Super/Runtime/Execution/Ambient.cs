@@ -35,7 +35,7 @@ namespace Super.Runtime.Execution
 		                             .Select(x => x.Count())) {}
 	}
 
-	sealed class First<T> : DecoratedCondition<T>
+	sealed class First<T> : Condition<T>
 	{
 		public First() : base(Start.A.Selection<T>()
 		                           .AndOf<First>()

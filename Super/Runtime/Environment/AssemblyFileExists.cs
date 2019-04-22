@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace Super.Runtime.Environment
 {
-	sealed class AssemblyFileExists : DelegatedCondition<Assembly>, IActivateUsing<IAlteration<string>>
+	sealed class AssemblyFileExists : Condition<Assembly>, IActivateUsing<IAlteration<string>>
 	{
 		public AssemblyFileExists(IAlteration<string> alter)
 			: base(AssemblyLocation.Default.Select(LocalFilePath.Default)

@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Super.Reflection.Members
 {
-	sealed class ConstructorCondition : DelegatedCondition<ConstructorInfo>
+	sealed class ConstructorCondition : Condition<ConstructorInfo>
 	{
 		public static ConstructorCondition Default { get; } = new ConstructorCondition();
 

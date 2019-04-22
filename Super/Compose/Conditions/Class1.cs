@@ -94,6 +94,6 @@ namespace Super.Compose.Conditions
 
 		public ICondition<T> Assigned => IsAssigned<T>.Default;
 
-		public ICondition<T> Calling(Func<T, bool> condition) => new DelegatedCondition<T>(condition);
+		public ICondition<T> Calling(Func<T, bool> condition) => new Condition<T>(condition);
 	}
 }
