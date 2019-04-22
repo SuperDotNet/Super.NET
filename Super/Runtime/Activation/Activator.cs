@@ -21,7 +21,7 @@ namespace Super.Runtime.Activation
 		                        .To(Start.A.Selection.Of.System.Type.By.Array().Select)) {}
 	}
 
-	public sealed class Activator<T> : DelegatedResult<T>, IActivator<T>
+	public sealed class Activator<T> : Result<T>, IActivator<T>
 	{
 		public static Activator<T> Default { get; } = new Activator<T>();
 

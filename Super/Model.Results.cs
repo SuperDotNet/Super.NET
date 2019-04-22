@@ -21,7 +21,7 @@ namespace Super
 		public static IResult<T> Start<T>(this T @this) => Compose.Start.A.Result(@this);
 
 		public static IResult<T> Start<T>(this Func<T> @this) => @this.Target as IResult<T> ??
-		                                                         I.A<DelegatedResult<T>>().From(@this);
+		                                                         I.A<Model.Results.Result<T>>().From(@this);
 
 		public static IResult<T> Singleton<T>(this IResult<T> @this) => new DeferredSingleton<T>(@this.Get);
 

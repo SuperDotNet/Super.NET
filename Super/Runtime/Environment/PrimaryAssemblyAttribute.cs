@@ -16,7 +16,7 @@ namespace Super.Runtime.Environment
 		public Assembly Get() => _assembly;
 	}
 
-	public sealed class HostingAssembly : DecoratedResult<Assembly>
+	public sealed class HostingAssembly : Result<Assembly>
 	{
 		public static HostingAssembly Default { get; } = new HostingAssembly();
 

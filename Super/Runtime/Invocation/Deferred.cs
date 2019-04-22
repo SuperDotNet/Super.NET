@@ -22,7 +22,7 @@ namespace Super.Runtime.Invocation
 			: base(Start.A.Selection(new Configuration<TIn, TOut>(select, assign)).Unless(source)) {}
 	}
 
-	public class Deferred<T> : DecoratedResult<T>
+	public class Deferred<T> : Result<T>
 	{
 		public Deferred(ISelect<T> result, IMutable<T> mutable) : this(result, mutable, mutable) {}
 

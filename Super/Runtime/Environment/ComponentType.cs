@@ -19,7 +19,7 @@ namespace Super.Runtime.Environment
 		ComponentType() : base(ComponentTypes.Default.Query().FirstAssigned()) {}
 	}
 
-	sealed class ComponentTypesDefinition : DelegatedResult<ISelect<Type, Array<Type>>>
+	sealed class ComponentTypesDefinition : Model.Results.Result<ISelect<Type, Array<Type>>>
 	{
 		public static ComponentTypesDefinition Default { get; } = new ComponentTypesDefinition();
 

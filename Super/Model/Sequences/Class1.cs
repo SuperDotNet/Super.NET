@@ -71,7 +71,7 @@ namespace Super.Model.Sequences
 		public ArrayStore(Func<Array<T>> source) : base(source) {}
 	}
 
-	public class DelegatedArray<T> : DelegatedResult<Array<T>>, IArray<T>
+	public class DelegatedArray<T> : Results.Result<Array<T>>, IArray<T>
 	{
 		public DelegatedArray(Func<Array<T>> source) : base(source) {}
 	}

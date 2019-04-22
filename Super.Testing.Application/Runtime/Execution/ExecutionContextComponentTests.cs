@@ -50,7 +50,7 @@ namespace Super.Testing.Application.Runtime.Execution
 			ExecutionContext.Default.Get().Should().BeSameAs(ExecutionContext.Default.Get());
 		}
 
-		sealed class DefaultExecutionContext : DelegatedResult<object>, IExecutionContext
+		sealed class DefaultExecutionContext : Result<object>, IExecutionContext
 		{
 			[UsedImplicitly]
 			public static IExecutionContext Default { get; } = new DefaultExecutionContext();

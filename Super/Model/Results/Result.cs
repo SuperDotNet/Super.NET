@@ -3,13 +3,15 @@ using System;
 
 namespace Super.Model.Results
 {
-	public class DelegatedResult<T> : IResult<T>, IActivateUsing<Func<T>>
+	public class Result<T> : IResult<T>, IActivateUsing<Func<T>>, IActivateUsing<IResult<T>>
 	{
-		public static implicit operator T(DelegatedResult<T> result) => result.Get();
+		public static implicit operator T(Result<T> result) => result.Get();
 
 		readonly Func<T> _source;
 
-		public DelegatedResult(Func<T> source) => _source = source;
+		public Result(IResult<T> result) : this(result.Get) {}
+
+		public Result(Func<T> source) => _source = source;
 
 		public T Get() => _source();
 	}

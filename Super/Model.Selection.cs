@@ -134,6 +134,6 @@ namespace Super
 			=> new Model.Selection.Adapters.Action(@this.ToCommand().Execute);
 
 		public static IResult<T> ToResult<T>(this ISelect<None, T> @this) => @this as IResult<T> ??
-		                                                                     new DelegatedResult<T>(@this.Get);
+		                                                                     new Model.Results.Result<T>(@this.Get);
 	}
 }

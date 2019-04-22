@@ -114,14 +114,14 @@ namespace Super.Compose.Results
 
 		public IResult<T> Using(T instance) => new Instance<T>(instance);
 
-		public IResult<T> Using(ISelect<None, T> source) => new DelegatedResult<T>(source.Get);
+		public IResult<T> Using(ISelect<None, T> source) => new Model.Results.Result<T>(source.Get);
 
 		public IResult<T> Using(IResult<T> instance) => instance;
 
 		public IResult<T> Using<TResult>() where TResult : class, IResult<T>
 			=> Activator<TResult>.Default.Get().To(Using);
 
-		public IResult<T> Calling(Func<T> select) => new DelegatedResult<T>(select);
+		public IResult<T> Calling(Func<T> select) => new Model.Results.Result<T>(select);
 	}
 
 	public sealed class Location<T> : Model.Selection.Adapters.Result<T>

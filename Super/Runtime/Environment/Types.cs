@@ -44,7 +44,7 @@ namespace Super.Runtime.Environment
 		StorageTypeDefinition() : base(typeof(Variable<>)) {}
 	}
 
-	sealed class SystemStores<T> : DelegatedResult<IMutable<T>>
+	sealed class SystemStores<T> : Model.Results.Result<IMutable<T>>
 	{
 		public static SystemStores<T> Default { get; } = new SystemStores<T>();
 

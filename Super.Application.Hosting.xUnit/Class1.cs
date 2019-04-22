@@ -18,7 +18,7 @@ using Xunit.Sdk;
 
 namespace Super.Application.Hosting.xUnit
 {
-	public sealed class DefaultExecutionContext : DelegatedResult<object>, IExecutionContext
+	public sealed class DefaultExecutionContext : Result<object>, IExecutionContext
 	{
 		public static IExecutionContext Default { get; } = new DefaultExecutionContext();
 

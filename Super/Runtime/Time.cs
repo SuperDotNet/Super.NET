@@ -3,7 +3,7 @@ using System;
 
 namespace Super.Runtime
 {
-	public sealed class Time : DelegatedResult<DateTimeOffset>, ITime
+	public sealed class Time : Result<DateTimeOffset>, ITime
 	{
 		public static Time Default { get; } = new Time();
 

@@ -5,14 +5,14 @@ using Super.Runtime.Environment;
 
 namespace Super.Runtime.Execution
 {
-	public sealed class ExecutionContext : DecoratedResult<object>, IExecutionContext
+	public sealed class ExecutionContext : Result<object>, IExecutionContext
 	{
 		public static ExecutionContext Default { get; } = new ExecutionContext();
 
 		ExecutionContext() : base(ExecutionContextStore.Default) {}
 	}
 
-	sealed class ExecutionContextLocator : DecoratedResult<IExecutionContext>
+	sealed class ExecutionContextLocator : Result<IExecutionContext>
 	{
 		public static ExecutionContextLocator Default { get; } = new ExecutionContextLocator();
 

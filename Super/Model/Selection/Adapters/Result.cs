@@ -1,11 +1,10 @@
-﻿using Super.Model.Results;
-using Super.Model.Selection.Stores;
+﻿using Super.Model.Selection.Stores;
 using Super.Runtime;
 using System;
 
 namespace Super.Model.Selection.Adapters
 {
-	public class Result<T> : DelegatedResult<T>, ISelect<T>
+	public class Result<T> : Results.Result<T>, ISelect<T>
 	{
 		public static implicit operator Result<T>(Func<T> value) => new Result<T>(value);
 

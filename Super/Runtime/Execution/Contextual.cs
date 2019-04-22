@@ -7,7 +7,7 @@ using System;
 
 namespace Super.Runtime.Execution
 {
-	public class Contextual<T> : DelegatedResult<T>
+	public class Contextual<T> : Result<T>
 	{
 		readonly static bool Attach = IsAssignableFrom<IDisposable>.Default.Get(A.Metadata<T>());
 
