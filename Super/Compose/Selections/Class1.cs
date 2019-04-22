@@ -114,7 +114,7 @@ namespace Super.Compose.Selections
 
 		public ISelect<T, TOut> Calling<TOut>(Func<TOut> result) => new DelegatedResult<T, TOut>(result);
 
-		public IAlteration<T> Calling(Func<T, T> result) => new DelegatedAlteration<T>(result);
+		public IAlteration<T> Calling(Func<T, T> result) => new Alteration<T>(result);
 
 		public ISelect<T, TOut> Returning<TOut>(TOut result) => new FixedResult<T, TOut>(result);
 

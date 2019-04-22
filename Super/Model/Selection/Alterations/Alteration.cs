@@ -1,11 +1,13 @@
-using System;
 using Super.Model.Selection.Conditions;
+using System;
 
 namespace Super.Model.Selection.Alterations
 {
-	public class DelegatedAlteration<T> : Select<T, T>, IAlteration<T>
+	public class Alteration<T> : Select<T, T>, IAlteration<T>
 	{
-		public DelegatedAlteration(Func<T, T> alteration) : base(alteration) {}
+		public Alteration(ISelect<T, T> @select) : this(@select.Get) {}
+
+		public Alteration(Func<T, T> alteration) : base(alteration) {}
 	}
 
 	public class ValidatedAlteration<T> : Validated<T, T>

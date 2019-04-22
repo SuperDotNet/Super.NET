@@ -4,7 +4,7 @@ using Super.Reflection;
 
 namespace Super.Runtime.Invocation
 {
-	sealed class StripedAlteration<TIn, TOut> : DelegatedAlteration<ISelect<TIn, TOut>>
+	sealed class StripedAlteration<TIn, TOut> : Alteration<ISelect<TIn, TOut>>
 	{
 		public static StripedAlteration<TIn, TOut> Default { get; } = new StripedAlteration<TIn, TOut>();
 

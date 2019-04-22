@@ -4,7 +4,7 @@ using Super.Reflection;
 
 namespace Super.Runtime.Invocation
 {
-	sealed class ProtectAlteration<TIn, TOut> : DelegatedAlteration<ISelect<TIn, TOut>>
+	sealed class ProtectAlteration<TIn, TOut> : Alteration<ISelect<TIn, TOut>>
 	{
 		public static ProtectAlteration<TIn, TOut> Default { get; } = new ProtectAlteration<TIn, TOut>();
 

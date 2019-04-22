@@ -3,7 +3,7 @@ using System;
 
 namespace Super.Reflection.Types
 {
-	sealed class GenericTypeDefinition : DelegatedAlteration<Type>
+	sealed class GenericTypeDefinition : Alteration<Type>
 	{
 		public static GenericTypeDefinition Default { get; } = new GenericTypeDefinition();
 

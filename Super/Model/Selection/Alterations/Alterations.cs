@@ -7,6 +7,6 @@ namespace Super.Model.Selection.Alterations
 	{
 		public static Alterations<T> Default { get; } = new Alterations<T>();
 
-		Alterations() : base(x => x.Target as IAlteration<T> ?? new DelegatedAlteration<T>(x)) {}
+		Alterations() : base(x => x.Target as IAlteration<T> ?? new Alteration<T>(x)) {}
 	}
 }
