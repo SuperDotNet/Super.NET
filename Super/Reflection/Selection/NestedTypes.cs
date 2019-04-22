@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Super.Reflection.Selection
 {
-	public sealed class NestedTypes<T> : DecoratedArray<Type>
+	public sealed class NestedTypes<T> : ArrayResult<Type>
 	{
 		public static NestedTypes<T> Default { get; } = new NestedTypes<T>();
 

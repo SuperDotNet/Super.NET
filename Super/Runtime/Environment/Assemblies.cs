@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Super.Runtime.Environment
 {
-	sealed class Assemblies : DecoratedArray<Assembly>
+	sealed class Assemblies : ArrayResult<Assembly>
 	{
 		public static Assemblies Default { get; } = new Assemblies();
 

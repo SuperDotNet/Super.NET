@@ -42,20 +42,18 @@ namespace Super.Model.Sequences
 		}
 	}
 
-	public interface IArrayResult<T> : ISelect<Store<T>, T[]> {}
-
-	sealed class ArrayResult<T> : IArrayResult<T>
+	sealed class Arrays<T> : ISelect<Store<T>, T[]>
 	{
-		public static ArrayResult<T> Default { get; } = new ArrayResult<T>();
+		public static Arrays<T> Default { get; } = new Arrays<T>();
 
-		ArrayResult() : this(Selection.Default) {}
+		Arrays() : this(Selection.Default) {}
 
 		readonly uint           _start;
 		readonly Assigned<uint> _length;
 
-		public ArrayResult(Selection selection) : this(selection.Start, selection.Length) {}
+		public Arrays(Selection selection) : this(selection.Start, selection.Length) {}
 
-		public ArrayResult(uint start, Assigned<uint> length)
+		public Arrays(uint start, Assigned<uint> length)
 		{
 			_start  = start;
 			_length = length;

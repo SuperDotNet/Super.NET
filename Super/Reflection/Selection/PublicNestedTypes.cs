@@ -4,7 +4,7 @@ using System;
 
 namespace Super.Reflection.Selection
 {
-	public sealed class PublicNestedTypes<T> : DecoratedArray<Type>
+	public sealed class PublicNestedTypes<T> : ArrayResult<Type>
 	{
 		public static PublicNestedTypes<T> Default { get; } = new PublicNestedTypes<T>();
 

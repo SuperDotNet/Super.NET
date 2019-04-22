@@ -8,7 +8,7 @@ namespace Super.Reflection.Selection
 		public AllAssemblyTypes(Type referenceType) : base(referenceType.Assembly.DefinedTypes) {}
 	}
 
-	public sealed class AllAssemblyTypes<T> : DecoratedArray<Type>
+	public sealed class AllAssemblyTypes<T> : ArrayResult<Type>
 	{
 		public static AllAssemblyTypes<T> Default { get; } = new AllAssemblyTypes<T>();
 

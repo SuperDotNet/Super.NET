@@ -9,13 +9,13 @@ using Xunit;
 
 namespace Super.Testing.Application.Model.Sequences
 {
-	public sealed class ArrayResultTests
+	public sealed class ArraysTests
 	{
 		[Fact]
 		void Verify()
 		{
 			var expected = Enumerable.Range(0, 10_000).ToArray();
-			ArrayResult<int>.Default.Get(expected)
+			Arrays<int>.Default.Get(expected)
 			                  .Should()
 			                  .Equal(expected);
 		}
@@ -25,7 +25,7 @@ namespace Super.Testing.Application.Model.Sequences
 		{
 			var source   = Enumerable.Range(0, 10_000).ToArray();
 			var expected = source.Skip(1000).Take(250).ToArray();
-			ArrayResult<int>.Default.Get(expected)
+			Arrays<int>.Default.Get(expected)
 			                  .Should()
 			                  .Equal(expected);
 		}
@@ -38,7 +38,7 @@ namespace Super.Testing.Application.Model.Sequences
 			public Benchmarks() : this(Near.Default) {}
 
 			public Benchmarks(Super.Model.Sequences.Selection selection)
-				: this(new ArrayResult<uint>(selection),
+				: this(new Arrays<uint>(selection),
 				       FixtureInstance.Default
 				                      .Many<uint>(10_000)
 				                      .Get()

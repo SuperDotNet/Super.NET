@@ -71,14 +71,11 @@ namespace Super.Model.Sequences
 		public ArrayStore(Func<Array<T>> source) : base(source) {}
 	}
 
-	public class DelegatedArray<T> : Results.Result<Array<T>>, IArray<T>
+	public class ArrayResult<T> : Results.Result<Array<T>>, IArray<T>
 	{
-		public DelegatedArray(Func<Array<T>> source) : base(source) {}
-	}
+		public ArrayResult(IResult<Array<T>> source) : this(source.Get) {}
 
-	public class DecoratedArray<T> : DelegatedArray<T>
-	{
-		public DecoratedArray(IResult<Array<T>> source) : base(source.Get) {}
+		public ArrayResult(Func<Array<T>> source) : base(source) {}
 	}
 
 	public interface IArray<in _, T> : ISelect<_, Array<T>> {}

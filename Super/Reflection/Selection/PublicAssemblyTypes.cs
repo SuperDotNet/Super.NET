@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Super.Reflection.Selection
 {
-	public sealed class PublicAssemblyTypes<T> : DecoratedArray<Type>
+	public sealed class PublicAssemblyTypes<T> : ArrayResult<Type>
 	{
 		public static PublicAssemblyTypes<T> Default { get; } = new PublicAssemblyTypes<T>();
 
