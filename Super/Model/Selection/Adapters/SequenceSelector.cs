@@ -74,6 +74,8 @@ namespace Super.Model.Selection.Adapters
 
 		public Query<_, TOut> Select<TOut>(IProjections<T, TOut> select) => new Query<_, TOut>(_node.Get(select));
 
+		public Query<_, T> Where(ISelect<T, bool> where) => Where(where.Get);	
+
 		public Query<_, T> Where(Func<T, bool> where) => new Query<_, T>(_node.Get(new WhereDefinition<T>(where)));
 
 		public ISelect<_, T> Select(IElement<T> select) => _node.Get(select);

@@ -10,8 +10,7 @@ namespace Super.Testing.Application.Runtime.Environment
 		[Fact]
 		void Verify()
 		{
-			var assignment = Implementations<object>.Store.Get();
-			assignment.Should().NotBeSameAs(Implementations<object>.Store.Get());
+			Implementations<object>.Store.Get().Should().NotBeSameAs(Implementations<object>.Store.Get());
 
 			SystemStores<object>.Default.Get().Should().BeOfType<Logical<object>>();
 		}

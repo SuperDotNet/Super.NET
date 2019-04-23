@@ -18,7 +18,7 @@ namespace Super.Testing.Application.Model.Extents
 			 .Then()
 			 .Type()
 			 .Metadata()
-			 .Out()()
+			 .Selector()()
 			 .Should()
 			 .Be(Type<string>.Metadata);
 		}

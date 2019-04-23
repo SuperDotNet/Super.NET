@@ -23,17 +23,14 @@ namespace Super.Runtime.Environment
 	{
 		public static ComponentTypesDefinition Default { get; } = new ComponentTypesDefinition();
 
-		ComponentTypesDefinition() : this(Types.Default, CanActivate.Default.Get) {}
+		ComponentTypesDefinition() : this(Types.Default.Query()
+		                                       .Where(CanActivate.Default.Get)
+		                                       .To(x => x.Get().Then())
+		                                       .Activate<ComponentTypesSelector>()
+		                                       .Select(x => x.Open().Then().Sort().Out())
+		                                       .Selector()) {}
 
-		public ComponentTypesDefinition(IArray<Type> types, Func<Type, bool> where)
-			: base(types.ToSelect()
-			            .Query()
-			            .Where(where)
-			            .Get()
-			            .Then()
-			            .Activate<ComponentTypesSelector>()
-			            .Select(x => x.Open().Then().Sort().Out())
-			            .Out()) {}
+		public ComponentTypesDefinition(Func<ISelect<Type, Array<Type>>> source) : base(source) {}
 	}
 
 	sealed class ComponentTypes : DelegatedInstanceSelector<Type, Array<Type>>
@@ -46,14 +43,14 @@ namespace Super.Runtime.Environment
 		                         .AsDefined()
 		                         .Then()
 		                         .Delegate()
-		                         .Out()) {}
+		                         .Selector()) {}
 	}
 
-	sealed class SourceDefinition : MakeGenericType
+	sealed class ResultDefinition : MakeGenericType
 	{
-		public static SourceDefinition Default { get; } = new SourceDefinition();
+		public static ResultDefinition Default { get; } = new ResultDefinition();
 
-		SourceDefinition() : base(typeof(IResult<>)) {}
+		ResultDefinition() : base(typeof(IResult<>)) {}
 	}
 
 	sealed class ComponentTypesSelector : ISelect<Type, IEnumerable<Type>>, IActivateUsing<Array<Type>>

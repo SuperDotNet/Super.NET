@@ -1,5 +1,4 @@
 ﻿using Super.Model.Selection.Conditions;
-using Super.Reflection;
 using Super.Reflection.Types;
 using Super.Text;
 using Super.Text.Formatting;
@@ -13,8 +12,7 @@ namespace Super
 	{
 		public static IConditional<object, IFormattable> Register<T>(this ISelectFormatter<T> @this)
 			=> Compose.Start.A.Selection.Of.Any.AndOf<T>()
-			          .By.Cast.Or.Throw
-			          .Select(I.A<Formatters<T>>().From(@this))
+			          .By.Cast.Or.Throw.Select(new Formatters<T>(@this))
 			          .ToConditional(IsOf<T>.Default);
 
 		public static string OrNone<T>(this T @this) => @this?.ToString() ?? None.Default;

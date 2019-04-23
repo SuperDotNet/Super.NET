@@ -9,7 +9,6 @@ using Super.Reflection.Types;
 using Super.Runtime.Activation;
 using Super.Runtime.Invocation;
 using System;
-using System.Linq;
 using System.Reflection;
 using Activator = Super.Runtime.Activation.Activator;
 
@@ -28,13 +27,12 @@ namespace Super.Runtime.Environment
 	{
 		public static Types<T> Default { get; } = new Types<T>();
 
-		Types() : this(Assemblies.Default.ToSelect()
-		                         .Select(y => y.Open()
-		                                       .Select(I<T>.Default.From)
-		                                       .SelectMany(x => x.Get().Open()))
-		                         .Result()) {}
+		Types() : this(Assemblies.Default.Query()
+		                         .Select(I<T>.Default.From)
+		                         .SelectMany(x => x.Get().Open())
+		                         .Selector()) {}
 
-		public Types(ISelect<None, Array<Type>> source) : base(source) {}
+		public Types(Func<Array<Type>> source) : base(source) {}
 	}
 
 	public sealed class StorageTypeDefinition : Variable<Type>
@@ -59,52 +57,41 @@ namespace Super.Runtime.Environment
 		                                                                   .In(Type<T>.Instance)
 		                                                                   .Then()
 		                                                                   .Cast<IMutable<T>>()
-		                                                                   .Out()) {}
+		                                                                   .Selector()) {}
 	}
 
 	sealed class DefaultComponent<T> : Component<T>
 	{
 		public static DefaultComponent<T> Default { get; } = new DefaultComponent<T>();
 
-		DefaultComponent() : this(default(T)) {}
-
-		public DefaultComponent(T @default = default) : base(@default) {}
-
-		public DefaultComponent(Func<T> @default) : base(@default) {}
+		DefaultComponent() : base(Start.A.Result<T>().By.Default()) {}
 	}
 
 	public class Component<T> : SystemStore<T>
 	{
-		protected Component(T @default) : this(@default.Start()) {}
+		public Component(Func<T> @default) : this(@default.Start()) {}
 
-		protected Component(Func<T> @default) : this(@default.Start()) {}
-
-		protected Component(IResult<T> @default) : base(@default.Unless(Make.A<ComponentLocator<T>>()).Get) {}
+		public Component(IResult<T> @default) : base(@default.Unless(ComponentLocator<T>.Default)) {}
 	}
 
 	static class Implementations<T>
 	{
-		public static IResult<IStore<T>> Store { get; }
-			= Start.A.Selection<IMutable<T>>()
-			       .By.StoredActivation<Model.Results.Store<T>>()
-			       .In(SystemStores<T>.Default);
+		public static IResult<IStore<T>> Store { get; } = Start.A.Selection<IMutable<T>>()
+		                                                       .By.StoredActivation<Model.Results.Store<T>>()
+		                                                       .In(SystemStores<T>.Default);
 	}
 
 	public class SystemStore<T> : Deferred<T>, IStore<T>
 	{
 		readonly IStore<T> _store;
 
-		protected SystemStore(T instance) : this(instance.Start()) {}
-
 		protected SystemStore(Func<T> source) : this(source.Start()) {}
 
 		protected SystemStore(IResult<T> result) : this(result, Implementations<T>.Store.Get()) {}
 
-		protected SystemStore(IResult<T> result, IStore<T> store)
-			: this(store.Condition, result, store) {}
+		protected SystemStore(IResult<T> result, IStore<T> store) : this(store.Condition, result, store) {}
 
-		protected SystemStore(ICondition<None> condition, IResult<T> result, IStore<T> store)
-			: base(result.ToSelect(), store)
+		protected SystemStore(ICondition<None> condition, IResult<T> result, IStore<T> store) : base(result, store)
 		{
 			Condition = condition;
 			_store    = store;

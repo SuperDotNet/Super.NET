@@ -224,10 +224,11 @@ namespace Super.Compose.Selections
 
 			public ISelect<TIn, TOut> Throw() => DefaultComponentLocator<TOut>.Default.ToSelect(I.A<TIn>());
 
-			public ISelect<TIn, TOut> Default(TOut instance) => new DefaultComponent<TOut>(instance).ToSelect(I.A<TIn>());
+			public ISelect<TIn, TOut> Default(TOut instance)
+				=> new Component<TOut>(instance.Start()).ToSelect(I.A<TIn>());
 
 			public ISelect<TIn, TOut> Default(Func<TOut> result)
-				=> new DefaultComponent<TOut>(result).ToSelect(I.A<TIn>());
+				=> new Component<TOut>(result).ToSelect(I.A<TIn>());
 		}
 	}
 
@@ -241,7 +242,8 @@ namespace Super.Compose.Selections
 
 		public ITable<TIn, TOut> Table(Func<TIn, TOut> select) => Tables<TIn, TOut>.Default.Get(select);
 
-		public ICondition<TIn> Condition(Func<TIn, bool> condition) => new Model.Selection.Conditions.Condition<TIn>(condition);
+		public ICondition<TIn> Condition(Func<TIn, bool> condition)
+			=> new Model.Selection.Conditions.Condition<TIn>(condition);
 
 		public IAction<TIn> Action(System.Action<TIn> body) => new Model.Selection.Adapters.Action<TIn>(body);
 	}

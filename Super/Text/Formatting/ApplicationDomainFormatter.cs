@@ -9,7 +9,6 @@ namespace Super.Text.Formatting
 
 		ApplicationDomainFormatter()
 			: base(DefaultApplicationDomainFormatter.Default,
-			       ApplicationDomainName.Default,
-			       ApplicationDomainIdentifier.Default) {}
+			       ApplicationDomainName.Default, ApplicationDomainIdentifier.Default) {}
 	}
 }

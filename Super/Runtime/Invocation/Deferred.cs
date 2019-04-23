@@ -24,11 +24,10 @@ namespace Super.Runtime.Invocation
 
 	public class Deferred<T> : Result<T>
 	{
-		public Deferred(ISelect<T> result, IMutable<T> mutable) : this(result, mutable, mutable) {}
+		public Deferred(IResult<T> result, IMutable<T> mutable) : this(result, mutable, mutable) {}
 
-		public Deferred(ISelect<T> result, IResult<T> store, ICommand<T> assign)
+		public Deferred(IResult<T> result, IResult<T> store, ICommand<T> assign)
 			: base(result.Select(assign.Then().ToConfiguration().Get())
-			             .Unless(store.ToSelect())
-			             .Out()) {}
+			             .Unless(store)) {}
 	}
 }

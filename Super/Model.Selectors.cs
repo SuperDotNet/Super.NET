@@ -139,12 +139,14 @@ namespace Super
 
 		public static System.Action<T> Selector<T>(this CommandSelector<T> @this) => @this;
 
+		public static Func<T> Selector<T>(this Selector<None, T> @this) => @this.Get().ToResult().Get;
+
+		public static Func<Array<T>> Selector<T>(this Query<None, T> @this) => @this.Get().ToResult().Get;
+		
 		public static ICommand Out<T>(this CommandSelector<T> @this, T parameter) => @this.Input(parameter).Command;
 
 		public static IAlteration<T> Out<T>(this CommandSelector<T> @this)
 			=> @this.ToConfiguration().Get().ToAlteration();
-
-		public static Func<T> Out<T>(this Selector<None, T> @this) => @this.Get().ToResult().Get;
 
 		public static ICondition<T> Out<T>(this Selector<T, bool> @this) => @this.Get().ToCondition();
 

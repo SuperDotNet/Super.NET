@@ -1,30 +1,11 @@
-﻿using JetBrains.Annotations;
-using Super.Model.Selection;
-using Super.Runtime.Activation;
+﻿using Super.Runtime.Invocation;
 using System;
 
 namespace Super.Text.Formatting
 {
-	/*sealed class Formatters : DecoratedSelect<object, IFormattable>
+	sealed class Formatters<T> : Invocation0<T, ISelectFormatter<T>, IFormattable>
 	{
-		public static Formatters Default { get; } = new Formatters();
-
-		Formatters() : this(KnownFormatters.Default, MarkedActivations<object, DefaultFormatter>.Default) {}
-
-		public Formatters(ISelect<object, IFormattable> formatters, ISelect<object, IFormattable> fallback)
-			: base(fallback.Unless(formatters)) {}
-	}*/
-
-	sealed class Formatters<T> : ISelect<T, IFormattable>,
-	                             IActivateUsing<ISelectFormatter<T>>
-	{
-		readonly Func<string, Func<T, string>> _select;
-
-		[UsedImplicitly]
-		public Formatters(ISelectFormatter<T> formatter) : this(formatter.Get) {}
-
-		public Formatters(Func<string, Func<T, string>> select) => _select = select;
-
-		public IFormattable Get(T parameter) => new Adapter<T>(parameter, _select);
+		public Formatters(ISelectFormatter<T> parameter)
+			: base((instance, formatter) => new Adapter<T>(instance, formatter.Get), parameter) {}
 	}
 }

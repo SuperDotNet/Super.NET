@@ -13,13 +13,9 @@ namespace Super.Runtime.Execution
 
 		public Contextual(Func<T> source) : this(Start.A.Selection.Of.Any.By.Calling(source), Attach) {}
 
-		Contextual(ISelect<object, T> select, bool disposable)
-			: base((disposable
-				        ? select.SelectOf(Implementations.Resources)
-				        : select)
-			       .ToStore()
-			       .In(ExecutionContext.Default)
-			       .Get) {}
+		Contextual(ISelect<object, T> select, bool attach)
+			: base((attach ? select.SelectOf(Implementations.Resources) : select).ToStore()
+			                                                                     .In(ExecutionContext.Default)) {}
 	}
 
 	static class Implementations

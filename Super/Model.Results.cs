@@ -31,7 +31,8 @@ namespace Super
 		public static IResult<T> Unless<T>(this IResult<T> @this, ICondition<T> condition, IResult<T> then)
 			=> @this.Unless(condition.ToDelegate(), then);
 
-		public static IResult<T> Unless<T>(this IResult<T> @this, Model.Selection.Adapters.Condition<T> condition, IResult<T> then)
+		public static IResult<T> Unless<T>(this IResult<T> @this, Model.Selection.Adapters.Condition<T> condition,
+		                                   IResult<T> then)
 			=> new ValidatedResult<T>(condition, then, @this);
 
 		public static IResult<T> Unless<T>(this IResult<T> @this, ICondition condition, IResult<T> then)
@@ -46,7 +47,7 @@ namespace Super
 			=> new DelegatedInstanceSelector<TIn, TOut>(@this.Get);
 
 		public static ISelect<TIn, TOut> Emit<TIn, TOut>(this IResult<ISelect<TIn, TOut>> @this)
-			=> @this.ToSelect().Then().Delegate().Out().Start().Emit();
+			=> @this.ToSelect().Then().Delegate().Selector().Start().Emit();
 
 		public static IResult<T> ToContextual<T>(this IResult<T> @this)
 			=> new Contextual<T>(@this.ToDelegateReference());
@@ -75,6 +76,7 @@ namespace Super
 		public static ISelect<TIn, TOut> ToSelect<TIn, TOut>(this IResult<TOut> @this, I<TIn> _)
 			=> Compose.Start.A.Selection<TIn>().By.Returning(@this);
 
-		public static ISelect<T> ToSelect<T>(this IResult<T> @this) => new Model.Selection.Adapters.Result<T>(@this.Get);
+		public static ISelect<T> ToSelect<T>(this IResult<T> @this)
+			=> new Model.Selection.Adapters.Result<T>(@this.Get);
 	}
 }

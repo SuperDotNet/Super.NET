@@ -140,9 +140,9 @@ namespace Super.Compose.Results
 
 			public IResult<T> Throw() => DefaultComponentLocator<T>.Default;
 
-			public IResult<T> Default(T instance) => new DefaultComponent<T>(instance);
+			public IResult<T> Default(T instance) => new Component<T>(instance.Start());
 
-			public IResult<T> Default(Func<T> result) => new DefaultComponent<T>(result);
+			public IResult<T> Default(Func<T> result) => new Component<T>(result);
 		}
 	}
 }

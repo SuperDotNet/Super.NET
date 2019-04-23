@@ -1,7 +1,8 @@
-﻿using System.Threading;
-using Super.Text;
+﻿using Super.Text;
+using System.Threading;
 
-namespace Super.Runtime.Execution {
+namespace Super.Runtime.Execution
+{
 	sealed class ThreadingDetailsFormatter : IFormatter<ThreadingDetails>
 	{
 		public static ThreadingDetailsFormatter Default { get; } = new ThreadingDetailsFormatter();

@@ -3,9 +3,17 @@ using Super.Model.Selection.Alterations;
 using Super.Runtime;
 using Super.Runtime.Invocation;
 using System;
+using System.Collections.ObjectModel;
 
 namespace Super.Aspects
 {
+	public sealed class Aspects : Collection<object>
+	{
+		public static Aspects Default { get; } = new Aspects();
+
+		Aspects() {}
+	}
+
 	public interface IAspect<TIn, TOut> : IAlteration<ISelect<TIn, TOut>> {}
 
 	public sealed class AssignedAspect<TIn, TOut> : ValidationAspect<TIn, TOut>

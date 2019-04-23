@@ -1,10 +1,9 @@
 ﻿using Super.Model.Selection;
-using Super.Runtime.Activation;
 using System;
 
 namespace Super.Text.Formatting
 {
-	class Adapter<T> : IFormattable, IActivateUsing<T>
+	class Adapter<T> : IFormattable
 	{
 		readonly Func<string, Func<T, string>> _selector;
 		readonly T                             _subject;
@@ -17,11 +16,6 @@ namespace Super.Text.Formatting
 			_selector = selector;
 		}
 
-		public string ToString(string format, IFormatProvider formatProvider)
-		{
-			var selector = _selector(format);
-			var s = selector(_subject);
-			return s;
-		}
+		public string ToString(string format, IFormatProvider formatProvider) => _selector(format)(_subject);
 	}
 }

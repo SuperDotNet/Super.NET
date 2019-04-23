@@ -1,7 +1,6 @@
 ﻿using Super.Model.Results;
 using Super.Model.Selection;
 using Super.Model.Selection.Stores;
-using Super.Runtime;
 using Super.Runtime.Activation;
 using System;
 using System.Collections.Generic;
@@ -66,7 +65,7 @@ namespace Super.Model.Sequences
 	                             IActivateUsing<IResult<Array<Type>>>,
 	                             IActivateUsing<Func<Array<T>>>
 	{
-		public ArrayStore(ISelect<None, Array<T>> source) : this(source.Get) {}
+		public ArrayStore(IResult<Array<T>> source) : this(source.Get) {}
 
 		public ArrayStore(Func<Array<T>> source) : base(source) {}
 	}

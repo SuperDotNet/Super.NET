@@ -17,7 +17,7 @@ namespace Super.Runtime.Execution
 		public static ExecutionContextLocator Default { get; } = new ExecutionContextLocator();
 
 		ExecutionContextLocator() : base(A.This(ComponentTypesDefinition.Default)
-		                                  .Select(x => x.Query().FirstAssigned().ToDelegate())
+		                                  .Select(x => x.Query().FirstAssigned())
 		                                  .Emit()
 		                                  .To(I<ComponentLocator<IExecutionContext>>.Default)) {}
 	}
@@ -34,6 +34,6 @@ namespace Super.Runtime.Execution
 			            .Unless(result)
 			            .Then()
 			            .Value()
-			            .Out()) {}
+			            .Selector()) {}
 	}
 }

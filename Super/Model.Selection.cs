@@ -80,7 +80,7 @@ namespace Super
 /**/
 
 		public static ISelect<TIn, TOut> Assigned<TIn, TOut>(this ISelect<TIn, TOut> @this)
-			=> @this.If(A.Of<IsAssigned<TIn>>());
+			=> @this.If(IsAssigned<TIn>.Default);
 
 		public static ISelect<TIn, TOut> If<TIn, TOut>(this ISelect<TIn, TOut> @this, ISelect<TIn, bool> @true)
 			=> Compose.Start.A.Selection<TIn>().By.Default<TOut>().Unless(@true, @this);
@@ -118,8 +118,9 @@ namespace Super
 		public static ISelect<TIn, TOut> ToSelect<TIn, TOut>(this Func<TIn, TOut> @this)
 			=> Selections<TIn, TOut>.Default.Get(@this);
 
-		public static ICondition<T> ToCondition<T>(this ISelect<T, bool> @this) => @this as ICondition<T> ??
-		                                                                           new Model.Selection.Conditions.Condition<T>(@this.Get);
+		public static ICondition<T> ToCondition<T>(this ISelect<T, bool> @this)
+			=> @this as ICondition<T> ??
+			   new Model.Selection.Conditions.Condition<T>(@this.Get);
 
 		public static IConditional<TIn, TOut> ToConditional<TIn, TOut>(this ISelect<TIn, TOut> @this,
 		                                                               ICondition<TIn> condition)

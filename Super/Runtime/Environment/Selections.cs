@@ -23,7 +23,7 @@ namespace Super.Runtime.Environment
 
 		public ISelect<Type, Type> Get(Type parameter)
 			=> _default.Get(parameter)
-			           .Unless(parameter.To(SourceDefinition.Default.Get)
+			           .Unless(parameter.To(ResultDefinition.Default.Get)
 			                            .To(I<Specification>.Default))
 			           .Unless(parameter.To(I<Specification>.Default));
 
@@ -67,9 +67,8 @@ namespace Super.Runtime.Environment
 
 			public ISelect<Type, Type> Get(Type parameter) => _valid.Then()
 			                                                        .And(_specification.Get(parameter))
-			                                                        .Get()
-			                                                        .To(_source.Get(parameter)
-			                                                                   .If);
+			                                                        .Out()
+			                                                        .To(_source.Get(parameter).If);
 		}
 
 		sealed class Specification : Conditional<Type, Type>, IActivateUsing<Type>
