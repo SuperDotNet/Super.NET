@@ -38,7 +38,7 @@ namespace Super.Runtime.Execution
 			var result = _dispose.Then()
 			                     .And(_command(current))
 			                     .Selector()
-			                     .To(I<DelegatedDisposable>.Default);
+			                     .To(I<Disposable>.Default);
 			_store.Execute(_context(parameter));
 			return result;
 		}
@@ -62,7 +62,7 @@ namespace Super.Runtime.Execution
 			             .To(x => x.Get().ToSelect())
 			             .If(contains)
 			             .To(x => x.ToCommand().Then())
-			             .Input(Start.An.Instance<ExecutionContextStore>())
+			             .Input(ExecutionContextStore.Default)
 			             .To(x => x.Get().ToSelect())
 			             .If(assigned)
 			             .ToAction()) {}

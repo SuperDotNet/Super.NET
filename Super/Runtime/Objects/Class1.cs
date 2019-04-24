@@ -1,9 +1,5 @@
-﻿using JetBrains.Annotations;
-using Super.Compose;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
 using Super.Model.Sequences;
-using Super.Reflection;
-using Super.Runtime.Activation;
 using Super.Runtime.Invocation;
 using Super.Runtime.Invocation.Expressions;
 using Super.Text;
@@ -40,21 +36,7 @@ namespace Super.Runtime.Objects
 	{
 		public static KnownProjectors Default { get; } = new KnownProjectors();
 
-		KnownProjectors() : this(ApplicationDomainProjection.Default.Entry()) {}
-
-		public KnownProjectors(params Pair<Type, Func<string, Func<object, IProjection>>>[] items)
-			: base(items) {}
-	}
-
-	static class Implementations
-	{
-		public static Func<Type, Func<string, Func<object, IProjection>>> KnownProjectors { get; }
-			= A.This(Objects.KnownProjectors.Default)
-			   .ToSelect()
-			   .Select(x => x.Open().ToStore().ToDelegate())
-			   .ToResult()
-			   .Emit()
-			   .Get;
+		KnownProjectors() : base(ApplicationDomainProjection.Default.Entry()) {}
 	}
 
 	public interface IProjectors : ISelect<Type, string, Func<object, IProjection>> {}
@@ -63,7 +45,7 @@ namespace Super.Runtime.Objects
 	{
 		public static Projectors Default { get; } = new Projectors();
 
-		Projectors() : base(Implementations.KnownProjectors) {}
+		Projectors() : base(KnownProjectors.Default.Select(x => x.Open().ToStore().ToDelegate()).Assume()) {}
 	}
 
 	sealed class ApplicationDomainProjection : FormattedProjection<AppDomain>
@@ -79,10 +61,9 @@ namespace Super.Runtime.Objects
 
 	public interface IFormattedProjection<in T> : ISelect<string, T, IProjection> {}
 
-	class FormattedProjection<T> : TextSelect<T, IProjection>, IFormattedProjection<T>
+	class FormattedProjection<T> : Selection<T, IProjection>, IFormattedProjection<T>
 	{
-		public FormattedProjection(ISelect<T, IProjection> @default,
-		                           params Pair<string, Func<T, IProjection>>[] pairs)
+		public FormattedProjection(ISelect<T, IProjection> @default, params Pair<string, Func<T, IProjection>>[] pairs)
 			: base(@default, pairs) {}
 	}
 
@@ -95,9 +76,9 @@ namespace Super.Runtime.Objects
 			: this(formatter.Get, expressions) {}
 
 		public Projection(Func<T, string> formatter, params Expression<Func<T, object>>[] expressions)
-			: this(formatter, new Values(expressions.Select(I.A<Property<T>>().From)
-			                                        .Result<IProperty<T>>()).Select(x => x.ToOrderedDictionary())
-			                                                                .Get) {}
+			: this(formatter, new Values(expressions.Select(x => new Property<T>(x)).Result<IProperty<T>>())
+			                  .Select(x => x.ToOrderedDictionary())
+			                  .Get) {}
 
 		public Projection(Func<T, string> formatter, Func<T, IDictionary<string, object>> properties)
 		{
@@ -108,7 +89,7 @@ namespace Super.Runtime.Objects
 		public IProjection Get(T parameter)
 			=> new Projection(_formatter(parameter), parameter.GetType(), _properties(parameter));
 
-		sealed class Values : ISelect<T, IEnumerable<Pair<string, object>>>, IActivateUsing<Array<IProperty<T>>>
+		sealed class Values : ISelect<T, IEnumerable<Pair<string, object>>>
 		{
 			readonly Array<IProperty<T>> _properties;
 
@@ -126,17 +107,14 @@ namespace Super.Runtime.Objects
 
 	public interface IProperty<in T> : ISelect<T, Pair<string, object>> {}
 
-	sealed class Property<T> : Select<T, Pair<string, object>>, IProperty<T>,
-	                           IActivateUsing<Expression<Func<T, object>>>
+	sealed class Property<T> : Select<T, Pair<string, object>>, IProperty<T>
 	{
-		[UsedImplicitly]
 		public Property(Expression<Func<T, object>> expression)
-			: this(expression,
-			       new Invocation1<string, object, Pair<string, object>>(Pairs.Create,
-			                                                             expression.GetMemberInfo().Name)) {}
+			: base(expression.Compile().ToSelect().Select(new Pairing(expression.GetMemberInfo().Name))) {}
+	}
 
-		[UsedImplicitly]
-		public Property(Expression<Func<T, object>> expression, ISelect<object, Pair<string, object>> pairs)
-			: base(expression.Compile().ToSelect().Select(pairs)) {}
+	sealed class Pairing : Invocation1<string, object, Pair<string, object>>
+	{
+		public Pairing(string parameter) : base(Pairs.Create, parameter) {}
 	}
 }

@@ -8,9 +8,7 @@ namespace Super.Text.Formatting
 	{
 		public static KnownFormatters Default { get; } = new KnownFormatters();
 
-		KnownFormatters() : this(Start.A.Selection.Of.Any.By.StoredActivation<DefaultFormatter>()
-		                              .Unless(Start.An.Instance<ApplicationDomainFormatter>().Register())) {}
-
-		public KnownFormatters(ISelect<object, IFormattable> source) : base(source) {}
+		KnownFormatters() : base(Start.A.Selection.Of.Any.By.StoredActivation<DefaultFormatter>()
+		                              .Unless(ApplicationDomainFormatter.Default.Register())) {}
 	}
 }

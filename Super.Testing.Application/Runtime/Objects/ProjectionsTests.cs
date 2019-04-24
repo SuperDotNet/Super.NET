@@ -1,6 +1,6 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Super.Runtime.Objects;
+using System;
 using Xunit;
 
 namespace Super.Testing.Application.Runtime.Objects
@@ -10,7 +10,7 @@ namespace Super.Testing.Application.Runtime.Objects
 		[Fact]
 		void Verify()
 		{
-			var projection = ApplicationDomainProjection.Default.Get(AppDomain.CurrentDomain);
+			var projection = ApplicationDomainProjection.Default.Default(AppDomain.CurrentDomain);
 			projection.InstanceType.Should().Be(typeof(AppDomain));
 			projection.Keys
 			          .Should()

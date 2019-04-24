@@ -4,13 +4,13 @@ using Xunit;
 
 namespace Super.Testing.Application.Runtime
 {
-	public class DelegatedDisposableTests
+	public class DisposableTests
 	{
 		[Fact]
 		public void Verify()
 		{
 			var called = false;
-			using (new DelegatedDisposable(() => called = true))
+			using (new Disposable(() => called = true))
 			{
 				called.Should()
 				      .BeFalse();

@@ -13,10 +13,10 @@ namespace Super.Testing.Application.Aspects
 		{
 			var subject = Start.A.Selection<string>().By.Self;
 			subject.Invoking(x => x.Get(null)).Should().NotThrow();
-			AssignedAspect<string, string>.Default.Get(subject)
-			                              .Invoking(x => x.Get(null))
-			                              .Should()
-			                              .Throw<InvalidOperationException>();
+			subject.Featured()
+			       .Invoking(x => x.Get(null))
+			       .Should()
+			       .Throw<InvalidOperationException>();
 		}
 	}
 }

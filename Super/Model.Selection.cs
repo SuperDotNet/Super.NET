@@ -88,7 +88,7 @@ namespace Super
 		public static ISelect<TIn, TOut> Unless<TIn, TOut>(this ISelect<TIn, TOut> @this, ISelect<TIn, TOut> assigned)
 			=> @this.Unless(assigned.ToDelegate());
 
-		public static ISelect<TIn, TOut> Unless<TIn, TOut>(this ISelect<TIn, TOut> @this, Selection<TIn, TOut> assigned)
+		public static ISelect<TIn, TOut> Unless<TIn, TOut>(this ISelect<TIn, TOut> @this, Model.Selection.Adapters.Selection<TIn, TOut> assigned)
 			=> new ValidatedResult<TIn, TOut>(IsAssigned<TOut>.Default, assigned, @this);
 
 		public static ISelect<TIn, TOut> Unless<TIn, TOut>(this ISelect<TIn, TOut> @this, IConditional<TIn, TOut> then)

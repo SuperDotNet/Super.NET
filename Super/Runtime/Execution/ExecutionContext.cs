@@ -18,7 +18,7 @@ namespace Super.Runtime.Execution
 
 		ExecutionContextLocator() : base(A.This(ComponentTypesDefinition.Default)
 		                                  .Select(x => x.Query().FirstAssigned())
-		                                  .Emit()
+		                                  .Assume()
 		                                  .To(I<ComponentLocator<IExecutionContext>>.Default)) {}
 	}
 

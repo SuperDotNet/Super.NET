@@ -1,50 +1,62 @@
 ﻿using BenchmarkDotNet.Attributes;
-using Super.Reflection;
+using Super.Model.Sequences;
 using Super.Testing.Objects;
-using System;
-using System.Linq;
+using System.Collections.Immutable;
+// ReSharper disable NotAccessedVariable
+// ReSharper disable RedundantAssignment
 
 namespace Super.Testing.Application
 {
 	public class IterationBenchmarks
 	{
-		readonly Func<uint, Enumerations<uint>> _classics;
-		readonly Sequencing<uint>               _subject;
+		readonly ImmutableArray<string> _immutable;
+		readonly Array<string>          _array;
+		readonly string[]               _open;
 
-		Enumerations<uint> _classic;
+		public IterationBenchmarks() : this(Data.Default.Get()) {}
 
-		uint[] _source;
+		public IterationBenchmarks(Array<string> array) : this(array, array, array) {}
 
-		public IterationBenchmarks() : this(Numbers.Default
-		                                           .Select(x => x.Open().Select(y => (uint)y))
-		                                           .Select(I<ArrayEnumerations<uint>>.Default.From)
-		                                           .Get,
-		                                    Sequencing<uint>.Default) {}
-
-		public IterationBenchmarks(Func<uint, Enumerations<uint>> classics, Sequencing<uint> subject)
+		public IterationBenchmarks(ImmutableArray<string> immutable, Array<string> array, string[] open)
 		{
-			_classics = classics;
-			_subject  = subject;
+			_immutable = immutable;
+			_array     = array;
+			_open      = open;
 		}
 
-		[Params(1u, 2u, 3u, 4u, 5u, 8u, 16u, 32u, 64u, 128u, 256u, 512u, 1024u, 1025u, 2048u, 4096u, 8196u,
-			10_000u, 100_000u, 1_000_000u, 10_000_000u, 100_000_000u)]
-		public uint Count
+		[Benchmark]
+		public void Array()
 		{
-			get => _count;
-			set
+			string current = null;
+			var    array   = _array;
+			var    length  = array.Length;
+			for (var i = 0u; i < length; i++)
 			{
-				_classic = _classics(_count = value);
-				_source  = _classic.Full.ToArray();
+				current = array[i];
 			}
 		}
 
-		uint _count;
+		[Benchmark]
+		public void Immutable()
+		{
+			string current = null;
+			var    length  = _immutable.Length;
+			for (var i = 0; i < length; i++)
+			{
+				current = _immutable[i];
+			}
+		}
 
 		[Benchmark]
-		public Array Full() => _subject.Full.Get(_source);
-
-		[Benchmark]
-		public Array FullClassic() => _classic.Full.ToArray();
+		public void Open()
+		{
+			string current = null;
+			var    array   = _open;
+			var    length  = array.Length;
+			for (var i = 0; i < length; i++)
+			{
+				current = array[i];
+			}
+		}
 	}
 }

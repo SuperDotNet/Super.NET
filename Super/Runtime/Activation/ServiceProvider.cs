@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Immutable;
-using Super.Model.Selection.Conditions;
+﻿using Super.Model.Selection.Conditions;
+using Super.Model.Sequences;
+using System;
 
 namespace Super.Runtime.Activation
 {
 	public class ServiceProvider : IServiceProvider, ICondition<Type>
 	{
-		readonly ImmutableArray<object> _services;
-		readonly int _length;
+		readonly Array<object> _services;
+		readonly uint _length;
 
-		public ServiceProvider(params object[] services) : this(services.ToImmutableArray()) {}
+		public ServiceProvider(params object[] services) : this(new Array<object>(services)) {}
 
-		public ServiceProvider(ImmutableArray<object> services) : this(services, services.Length) {}
+		public ServiceProvider(Array<object> services) : this(services, services.Length) {}
 
-		ServiceProvider(ImmutableArray<object> services, int length)
+		ServiceProvider(Array<object> services, uint length)
 		{
 			_services = services;
 			_length = length;
@@ -21,7 +21,7 @@ namespace Super.Runtime.Activation
 
 		public object GetService(Type serviceType)
 		{
-			for (var i = 0; i < _length; i++)
+			for (var i = 0u; i < _length; i++)
 			{
 				var item = _services[i];
 				if (serviceType.IsInstanceOfType(item))
@@ -35,7 +35,7 @@ namespace Super.Runtime.Activation
 
 		public bool Get(Type parameter)
 		{
-			for (var i = 0; i < _length; i++)
+			for (var i = 0u; i < _length; i++)
 			{
 				if (parameter.IsInstanceOfType(_services[i]))
 				{

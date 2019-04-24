@@ -41,15 +41,13 @@ namespace Super.Model.Sequences
 
 		[Pure]
 		public T[] Open() => _reference;
-
-		public T this[int index] => _reference[index];
 	}
 
 	sealed class Size<T> : FixedSelectedSingleton<Type, uint>
 	{
 		public static Size<T> Default { get; } = new Size<T>();
 
-		Size() : base(DefaultComponentLocator<ISize>.Default.Emit(), Type<T>.Instance) {}
+		Size() : base(DefaultComponentLocator<ISize>.Default.Assume(), Type<T>.Instance) {}
 	}
 
 	public interface ISize : ISelect<Type, uint> {}

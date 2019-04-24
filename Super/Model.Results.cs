@@ -14,9 +14,10 @@ namespace Super
 	// ReSharper disable once MismatchedFileName
 	public static partial class ExtensionMethods
 	{
-		public static IResult<T> AsResult<T>(this IResult<T> @this) => @this;
+		public static IResult<IResult<T>> AsDefined<T>(this IResult<IResult<T>> @this) => @this;
 
 		public static IResult<ISelect<TIn, TOut>> AsDefined<TIn, TOut>(this IResult<ISelect<TIn, TOut>> @this) => @this;
+
 
 		public static IResult<T> Start<T>(this T @this) => Compose.Start.A.Result(@this);
 
@@ -41,13 +42,16 @@ namespace Super
 		public static IResult<T> Unless<T>(this IResult<T> @this, Condition condition, IResult<T> then)
 			=> new Validated<T>(condition, then, @this);
 
-		public static IResult<T> Emit<T>(this IResult<Func<T>> @this) => new WrappedResult<T>(@this.Get);
+		public static IResult<T> Assume<T>(this IResult<IResult<T>> @this)
+			=> new Assume<T>(@this.Then().Delegate().Selector());
 
-		public static ISelect<TIn, TOut> Emit<TIn, TOut>(this IResult<Func<TIn, TOut>> @this)
-			=> new DelegatedInstanceSelector<TIn, TOut>(@this.Get);
+		public static IResult<T> Assume<T>(this IResult<Func<T>> @this) => new Assume<T>(@this.Get);
 
-		public static ISelect<TIn, TOut> Emit<TIn, TOut>(this IResult<ISelect<TIn, TOut>> @this)
-			=> @this.ToSelect().Then().Delegate().Selector().Start().Emit();
+		public static ISelect<TIn, TOut> Assume<TIn, TOut>(this IResult<Func<TIn, TOut>> @this)
+			=> new Assume<TIn, TOut>(@this.Get);
+
+		public static ISelect<TIn, TOut> Assume<TIn, TOut>(this IResult<ISelect<TIn, TOut>> @this)
+			=> new Assume<TIn, TOut>(@this.Then().Delegate().Selector());
 
 		public static IResult<T> ToContextual<T>(this IResult<T> @this)
 			=> new Contextual<T>(@this.ToDelegateReference());

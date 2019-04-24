@@ -2,8 +2,7 @@
 
 namespace Super.Text.Formatting
 {
-	// TODO: Move to Testing Objects.
-	sealed class ApplicationDomainFormatter : TextSelect<AppDomain, string>, ISelectFormatter<AppDomain>
+	sealed class ApplicationDomainFormatter : Selection<AppDomain, string>, ISelectFormatter<AppDomain>
 	{
 		public static ApplicationDomainFormatter Default { get; } = new ApplicationDomainFormatter();
 

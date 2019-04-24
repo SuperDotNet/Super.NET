@@ -215,7 +215,7 @@ namespace Super.Testing.Objects
 		ApplicationDomainIdentifier() : base("I", x => x.Id.ToString()) {}
 	}
 
-	sealed class ApplicationDomainFormatter : TextSelect<AppDomain, string>, ISelectFormatter<AppDomain>
+	sealed class ApplicationDomainFormatter : Text.Selection<AppDomain, string>, ISelectFormatter<AppDomain>
 	{
 		public static ApplicationDomainFormatter Default { get; } = new ApplicationDomainFormatter();
 

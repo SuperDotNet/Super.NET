@@ -1,6 +1,7 @@
 ﻿using Super.Text;
 
-namespace Super.Runtime.Execution {
+namespace Super.Runtime.Execution
+{
 	sealed class ContextFormatter : IFormatter<ContextDetails>
 	{
 		public static ContextFormatter Default { get; } = new ContextFormatter();

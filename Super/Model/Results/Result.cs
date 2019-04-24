@@ -16,13 +16,13 @@ namespace Super.Model.Results
 		public T Get() => _source();
 	}
 
-	public class WrappedResult<T> : IResult<T>
+	public class Assume<T> : IResult<T>
 	{
-		public static implicit operator T(WrappedResult<T> result) => result.Get();
+		public static implicit operator T(Assume<T> result) => result.Get();
 
 		readonly Func<Func<T>> _result;
 
-		public WrappedResult(Func<Func<T>> result) => _result = result;
+		public Assume(Func<Func<T>> result) => _result = result;
 
 		public T Get() => _result()();
 	}

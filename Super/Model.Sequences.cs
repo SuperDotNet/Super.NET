@@ -25,6 +25,11 @@ namespace Super
 
 		/**/
 
+		public static uint Length<T>(in this Model.Sequences.Store<T> @this)
+			=> @this.Length.Or((uint)@this.Instance.Length);
+
+		/**/
+
 		public static ISelect<IEnumerable<TFrom>, IEnumerable<TTo>> Many<TFrom, TTo>(
 			this ISelect<TFrom, IEnumerable<TTo>> @this) => new SelectManySelector<TFrom, TTo>(@this.Get);
 

@@ -1,5 +1,4 @@
 ﻿using Super.Application.Hosting.BenchmarkDotNet;
-using Super.Testing.Application.Model.Sequences.Query;
 using System.Linq;
 
 namespace Super.Testing.Application
@@ -11,11 +10,10 @@ namespace Super.Testing.Application
 			Run.Default
 			   .In(arguments.Any() ? Quick.Default : Deployed.Default)
 			   .Get();
-			/*new ProjectionTests.Benchmarks().Subject();*/
 		}
 	}
 
-	sealed class Run : Run<ProjectionManyTests.Benchmarks>
+	sealed class Run : Run<IterationBenchmarks>
 	{
 		public static Run Default { get; } = new Run();
 

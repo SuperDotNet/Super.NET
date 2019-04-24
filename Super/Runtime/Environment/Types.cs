@@ -1,4 +1,5 @@
 using Super.Compose;
+using Super.Model.Commands;
 using Super.Model.Results;
 using Super.Model.Selection;
 using Super.Model.Selection.Conditions;
@@ -49,12 +50,12 @@ namespace Super.Runtime.Environment
 		SystemStores() : this(Start.A.Selection<Type>()
 		                           .By.StoredActivation<MakeGenericType>()
 		                           .In(StorageTypeDefinition.Default)
-		                           .Emit()) {}
+		                           .Assume()) {}
 
 		public SystemStores(ISelect<Array<Type>, Type> source) : base(Start.A.Selection.Of.System.Type.By.Array()
 		                                                                   .Select(source)
 		                                                                   .Select(Activator.Default)
-		                                                                   .In(Type<T>.Instance)
+		                                                                   .In(A.Type<T>())
 		                                                                   .Then()
 		                                                                   .Cast<IMutable<T>>()
 		                                                                   .Selector()) {}
@@ -81,13 +82,114 @@ namespace Super.Runtime.Environment
 		                                                       .In(SystemStores<T>.Default);
 	}
 
+	public static class Stores
+	{
+		public static IResult<T> New<T>(Func<T> create) => new Deferred<T>(create, New<T>());
+
+		public static IStore<T> New<T>() => Implementations<T>.Store.Get();
+	}
+
+	public class SystemRegistry<T> : Assume<Array<T>>, IRegistry<T>
+	{
+		readonly Func<IRegistry<T>> _result;
+
+		public SystemRegistry(IResult<Array<T>> elements) : this(Start.A.Selection<T>()
+		                                                              .As.Sequence.Immutable.AndOf<Registry<T>>()
+		                                                              .By.Instantiation.In(elements)
+		                                                              .ToDelegate()
+		                                                              .To(Stores.New)) {}
+
+		public SystemRegistry(IResult<IRegistry<T>> result)
+			: this(result.Get, result.AsDefined().Then().Delegate().Selector()) {}
+
+		public SystemRegistry(Func<IRegistry<T>> result, Func<Func<Array<T>>> get) : base(get)
+			=> _result = result;
+
+		public void Execute(Model.Sequences.Store<T> parameter)
+		{
+			_result().Execute(parameter);
+		}
+
+		public void Execute(T parameter)
+		{
+			_result().Execute(parameter);
+		}
+	}
+
+	public interface IRegistry<T> : IArray<T>, IAddRange<T>, ICommand<T> {}
+
+	public interface IAddRange<T> : ICommand<Model.Sequences.Store<T>> {}
+
+	public sealed class AddRange<T> : IAddRange<T>
+	{
+		readonly IMutable<Array<T>> _array;
+
+		public AddRange(IMutable<Array<T>> array) => _array = array;
+
+		public void Execute(Model.Sequences.Store<T> parameter)
+		{
+			var current = _array.Get().Open();
+			var length  = parameter.Length();
+			var to      = (uint)current.Length;
+			Array.Resize(ref current, (int)(length + to));
+			parameter.Instance.CopyInto(current, 0, length, to);
+			_array.Execute(current);
+		}
+	}
+
+	public sealed class Add<T> : ICommand<T>
+	{
+		readonly IMutable<Array<T>> _array;
+
+		public Add(IMutable<Array<T>> array) => _array = array;
+
+		public void Execute(T parameter)
+		{
+			var current = _array.Get().Open();
+			var to      = current.Length;
+			Array.Resize(ref current, to + 1);
+			current[to] = parameter;
+			_array.Execute(current);
+		}
+	}
+
+	public class Registry<T> : ArrayResult<T>, IRegistry<T>
+	{
+		readonly IAddRange<T> _range;
+		readonly ICommand<T>  _add;
+
+		public Registry() : this(Array<T>.Empty) {}
+
+		public Registry(params T[] elements) : this(new Array<T>(elements)) {}
+
+		public Registry(Array<T> elements) : this(new Variable<Array<T>>(elements)) {}
+
+		public Registry(IMutable<Array<T>> source) : this(source, new AddRange<T>(source), new Add<T>(source)) {}
+
+		public Registry(IResult<Array<T>> source, IAddRange<T> range, ICommand<T> add) : base(source)
+		{
+			_range = range;
+			_add   = add;
+		}
+
+		public void Execute(Model.Sequences.Store<T> parameter)
+		{
+			_range.Execute(parameter);
+		}
+
+		public void Execute(T parameter)
+		{
+			_add.Execute(parameter);
+		}
+	}
+
 	public class SystemStore<T> : Deferred<T>, IStore<T>
 	{
 		readonly IStore<T> _store;
 
 		protected SystemStore(Func<T> source) : this(source.Start()) {}
 
-		protected SystemStore(IResult<T> result) : this(result, Implementations<T>.Store.Get()) {}
+		protected SystemStore(IResult<T> result) : this(result, Stores.New<T>()) {}
 
 		protected SystemStore(IResult<T> result, IStore<T> store) : this(store.Condition, result, store) {}
 

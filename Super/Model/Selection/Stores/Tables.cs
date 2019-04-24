@@ -14,8 +14,8 @@ namespace Super.Model.Selection.Stores
 		Tables() : this(Start.A.Generic(typeof(ReferenceTables<,>))
 		                     .Of.Type<ISelect<Func<TIn, TOut>, ITable<TIn, TOut>>>()
 		                     .In(new Array<Type>(typeof(TIn), typeof(TOut)))
-		                     .Emit()
-		                     .Emit(),
+		                     .Assume()
+		                     .Assume(),
 		                Start.An.Instance<Activations<Func<TIn, TOut>, ConcurrentTables<TIn, TOut>>>()
 		                     .Select(x => x.New().Get())) {}
 

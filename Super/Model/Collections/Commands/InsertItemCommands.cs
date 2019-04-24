@@ -11,8 +11,7 @@ namespace Super.Model.Collections.Commands
 	{
 		public static InsertItemCommands<T> Default { get; } = new InsertItemCommands<T>();
 
-		InsertItemCommands() : this(DeclaredGroupIndexes<T>.Default.Condition,
-		                            DeclaredGroupIndexes<T>.Default.Get) {}
+		InsertItemCommands() : this(DeclaredGroupIndexes<T>.Default.Condition, DeclaredGroupIndexes<T>.Default.Get) {}
 
 		readonly Func<T, int> _index;
 

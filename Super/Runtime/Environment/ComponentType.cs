@@ -33,7 +33,7 @@ namespace Super.Runtime.Environment
 		public ComponentTypesDefinition(Func<ISelect<Type, Array<Type>>> source) : base(source) {}
 	}
 
-	sealed class ComponentTypes : DelegatedInstanceSelector<Type, Array<Type>>
+	sealed class ComponentTypes : Assume<Type, Array<Type>>
 	{
 		public static ComponentTypes Default { get; } = new ComponentTypes();
 

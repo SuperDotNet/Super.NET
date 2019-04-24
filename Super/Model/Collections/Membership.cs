@@ -1,12 +1,12 @@
-﻿using Super.Model.Commands;
+﻿using Super.Model.Collections.Commands;
+using Super.Model.Commands;
 using System.Collections.Generic;
-using Super.Model.Collections.Commands;
 
 namespace Super.Model.Collections
 {
 	public class Membership<T> : IMembership<T>
 	{
-		public Membership(ICollection<T> collection) 
+		public Membership(ICollection<T> collection)
 			: this(new AddCommand<T>(collection), new RemoveCommand<T>(collection)) {}
 
 		public Membership(ICommand<T> add, ICommand<T> remove)

@@ -1,4 +1,5 @@
-﻿using Super.Model.Collections;
+﻿using JetBrains.Annotations;
+using Super.Model.Collections;
 using Super.Model.Commands;
 using Super.Runtime.Activation;
 using System;
@@ -7,7 +8,7 @@ using System.Collections.ObjectModel;
 
 namespace Super.Runtime
 {
-	sealed class EmptyDisposable : DelegatedDisposable
+	sealed class EmptyDisposable : Disposable
 	{
 		public static EmptyDisposable Default { get; } = new EmptyDisposable();
 
@@ -16,17 +17,19 @@ namespace Super.Runtime
 
 	public class Disposables : Membership<IDisposable>, IDisposable
 	{
-		readonly ICollection<IDisposable> _collection;
+		readonly IList<IDisposable> _collection;
 
+		[UsedImplicitly]
 		public Disposables() : this(new Collection<IDisposable>()) {}
 
-		public Disposables(ICollection<IDisposable> collection) : base(collection) => _collection = collection;
+		public Disposables(IList<IDisposable> collection) : base(collection) => _collection = collection;
 
 		public void Dispose()
 		{
-			foreach (var disposable in _collection)
+			var count = _collection.Count;
+			for (var i = 0; i < count; i++)
 			{
-				disposable.Dispose();
+				_collection[i].Dispose();
 			}
 			_collection.Clear();
 		}
@@ -39,11 +42,11 @@ namespace Super.Runtime
 		DisposeCommand() : base(x => x.Dispose()) {}
 	}
 
-	public class DelegatedDisposable : IDisposable, IActivateUsing<Action>
+	public class Disposable : IDisposable, IActivateUsing<Action>
 	{
 		readonly Action _callback;
 
-		public DelegatedDisposable(Action callback) => _callback = callback;
+		public Disposable(Action callback) => _callback = callback;
 
 		public void Dispose() => _callback();
 	}

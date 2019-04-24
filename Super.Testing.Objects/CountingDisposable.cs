@@ -4,7 +4,7 @@ using Super.Runtime.Execution;
 
 namespace Super.Testing.Objects
 {
-	public sealed class CountingDisposable : DelegatedDisposable, IResult<int>
+	public sealed class CountingDisposable : Disposable, IResult<int>
 	{
 		readonly ICounter _counter;
 

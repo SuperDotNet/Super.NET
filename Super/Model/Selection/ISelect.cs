@@ -14,6 +14,8 @@ namespace Super.Model.Selection
 
 	public class Select<T, TIn, TOut> : Select<T, Func<TIn, TOut>>, ISelect<T, TIn, TOut>
 	{
+		public Select(ISelect<T, Func<TIn, TOut>> select) : this(select.Get) {}
+
 		public Select(Func<T, Func<TIn, TOut>> select) : base(select) {}
 	}
 

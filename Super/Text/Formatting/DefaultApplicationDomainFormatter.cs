@@ -1,13 +1,12 @@
-﻿using System;
+﻿using Super.Model.Selection;
+using System;
 
 namespace Super.Text.Formatting
 {
-	sealed class DefaultApplicationDomainFormatter : IFormatter<AppDomain>
+	sealed class DefaultApplicationDomainFormatter : Select<AppDomain, string>, IFormatter<AppDomain>
 	{
 		public static DefaultApplicationDomainFormatter Default { get; } = new DefaultApplicationDomainFormatter();
 
-		DefaultApplicationDomainFormatter() {}
-
-		public string Get(AppDomain parameter) => $"AppDomain: {parameter.FriendlyName}";
+		DefaultApplicationDomainFormatter() : base(x => $"AppDomain: {x.FriendlyName}") {}
 	}
 }
