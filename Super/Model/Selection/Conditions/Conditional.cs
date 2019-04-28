@@ -35,6 +35,8 @@ namespace Super.Model.Selection.Conditions
 		public Conditional(Func<TIn, bool> condition, Func<TIn, TOut> source)
 			: this(condition.Target as ICondition<TIn> ?? new Condition<TIn>(condition), source) {}
 
+		public Conditional(ICondition<TIn> condition, ISelect<TIn, TOut> select) : this(condition, select.Get) {}
+
 		public Conditional(ICondition<TIn> condition, Func<TIn, TOut> source)
 			: this(condition, source, Start.A.Selection<TIn>().By.Default<TOut>().Get) {}
 

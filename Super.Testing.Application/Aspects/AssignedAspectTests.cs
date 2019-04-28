@@ -13,10 +13,58 @@ namespace Super.Testing.Application.Aspects
 		{
 			var subject = Start.A.Selection<string>().By.Self;
 			subject.Invoking(x => x.Get(null)).Should().NotThrow();
-			subject.Featured()
+			subject.Configured()
 			       .Invoking(x => x.Get(null))
 			       .Should()
 			       .Throw<InvalidOperationException>();
 		}
+
+		[Fact]
+		void Type()
+		{
+			var subject = Start.A.Selection<string>().By.Self;
+
+			var single = new RuntimeRegistration<string, string>(typeof(AssignedAspect<,>));
+			single.Get(subject).Should().BeSameAs(AssignedAspect<string, string>.Default);
+		}
+
+		/*[Fact]
+		void Count()
+		{
+			var first = 0;
+			Enumerable.Range(0, 100)
+			          .Select(x =>
+			                  {
+				                  first++;
+				                  return x;
+			                  })
+			          .Select(x =>
+			                  {
+				                  first++;
+				                  return x;
+			                  })
+			          .FirstOrDefault();
+
+			first.Should().Be(2);
+
+			var second = 0;
+
+			Start.A.Selection.Of.Type<string>()
+			     .As.Sequence.Array.By.Self.Query()
+			     .Select(x =>
+			             {
+				             second++;
+				             return x;
+			             })
+			     .Select(x =>
+			             {
+				             second++;
+				             return x;
+			             })
+			     .First()
+			     .Get(Data.Default.Get());
+
+			second.Should().Be(2);
+		}*/
 	}
 }

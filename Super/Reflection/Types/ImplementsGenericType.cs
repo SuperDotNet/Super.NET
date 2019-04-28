@@ -7,10 +7,8 @@ namespace Super.Reflection.Types
 {
 	public class ImplementsGenericType : Condition<TypeInfo>
 	{
-		public ImplementsGenericType(Type definition)
-			: base(Start.An.Instance(GenericInterfaceImplementations.Default)
-			            .Select(x => x.Condition)
-			            .Select(definition.To)
-			            .Then()) {}
+		public ImplementsGenericType(Type definition) : base(Start.An.Instance(GenericInterfaceImplementations.Default)
+		                                                          .Select(x => x.Condition)
+		                                                          .Select(definition.To)) {}
 	}
 }

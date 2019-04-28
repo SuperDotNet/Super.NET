@@ -10,6 +10,7 @@ namespace Super.Testing.Application
 			Run.Default
 			   .In(arguments.Any() ? Quick.Default : Deployed.Default)
 			   .Get();
+
 		}
 	}
 

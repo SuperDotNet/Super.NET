@@ -4,15 +4,15 @@ namespace Super.Model.Selection
 {
 	class Selection<TIn, TFrom, TTo> : ISelect<TIn, TTo>
 	{
-		readonly Func<TFrom, TTo> _select;
-		readonly Func<TIn, TFrom> _source;
+		readonly Func<TFrom, TTo> _to;
+		readonly Func<TIn, TFrom> _from;
 
-		public Selection(Func<TIn, TFrom> source, Func<TFrom, TTo> @select)
+		public Selection(Func<TIn, TFrom> from, Func<TFrom, TTo> to)
 		{
-			_select = @select;
-			_source = source;
+			_from = from;
+			_to   = to;
 		}
 
-		public TTo Get(TIn parameter) => _select(_source(parameter));
+		public TTo Get(TIn parameter) => _to(_from(parameter));
 	}
 }

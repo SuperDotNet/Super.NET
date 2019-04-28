@@ -247,7 +247,7 @@ namespace Super.Model.Sequences.Query
 		public Store<TTo> Get(Store<TFrom> parameter)
 		{
 			var @in    = parameter.Instance;
-			var length = parameter.Length.Or((uint)@in.Length);
+			var length = parameter.Length();
 			var result = _stores.Get(length);
 
 			var @out = result.Instance;

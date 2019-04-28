@@ -2,7 +2,6 @@
 using Super.Model.Commands;
 using Super.Model.Results;
 using Super.Model.Selection;
-using Super.Model.Selection.Adapters;
 using Super.Model.Selection.Alterations;
 using Super.Model.Selection.Conditions;
 using Super.Model.Selection.Stores;
@@ -21,6 +20,11 @@ namespace Super
 	// ReSharper disable once MismatchedFileName
 	public static partial class ExtensionMethods
 	{
+		public static ISelect<TIn, TOut> Start<TIn, TOut>(this TOut @this, I<TIn> _)
+			=> Compose.Start.A.Selection<TIn>().By.Returning(@this);
+
+		/**/
+
 		public static T Get<T>(this ISelect<uint, T> @this, int parameter) => @this.Get((uint)parameter);
 
 		public static TOut Get<TItem, TOut>(this ISelect<Array<TItem>, TOut> @this, TItem parameter)
@@ -88,14 +92,15 @@ namespace Super
 		public static ISelect<TIn, TOut> Unless<TIn, TOut>(this ISelect<TIn, TOut> @this, ISelect<TIn, TOut> assigned)
 			=> @this.Unless(assigned.ToDelegate());
 
-		public static ISelect<TIn, TOut> Unless<TIn, TOut>(this ISelect<TIn, TOut> @this, Model.Selection.Adapters.Selection<TIn, TOut> assigned)
+		public static ISelect<TIn, TOut> Unless<TIn, TOut>(this ISelect<TIn, TOut> @this,
+		                                                   Model.Selection.Adapters.Selection<TIn, TOut> assigned)
 			=> new ValidatedResult<TIn, TOut>(IsAssigned<TOut>.Default, assigned, @this);
 
 		public static ISelect<TIn, TOut> Unless<TIn, TOut>(this ISelect<TIn, TOut> @this, IConditional<TIn, TOut> then)
 			=> @this.Unless(then.Condition, then);
 
 		public static ISelect<TIn, TOut> UnlessOf<TIn, TOut, T>(this ISelect<TIn, TOut> @this, ISelect<T, TOut> then)
-			=> @this.Unless(IsOf<TIn, T>.Default, A.Of<CastOrThrow<TIn, T>>().Select(then));
+			=> @this.Unless(IsOf<TIn, T>.Default, CastOrThrow<TIn, T>.Default.Select(then));
 
 		public static ISelect<TIn, TOut> Unless<TIn, TOut>(this ISelect<TIn, TOut> @this, ICondition<TIn> condition,
 		                                                   IResult<TOut> then)
@@ -118,9 +123,8 @@ namespace Super
 		public static ISelect<TIn, TOut> ToSelect<TIn, TOut>(this Func<TIn, TOut> @this)
 			=> Selections<TIn, TOut>.Default.Get(@this);
 
-		public static ICondition<T> ToCondition<T>(this ISelect<T, bool> @this)
-			=> @this as ICondition<T> ??
-			   new Model.Selection.Conditions.Condition<T>(@this.Get);
+		public static ICondition<T> ToCondition<T>(this ISelect<T, bool> @this) => @this as ICondition<T> ??
+		                                                                           new Condition<T>(@this.Get);
 
 		public static IConditional<TIn, TOut> ToConditional<TIn, TOut>(this ISelect<TIn, TOut> @this,
 		                                                               ICondition<TIn> condition)

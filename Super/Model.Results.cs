@@ -42,6 +42,11 @@ namespace Super
 		public static IResult<T> Unless<T>(this IResult<T> @this, Condition condition, IResult<T> then)
 			=> new Validated<T>(condition, then, @this);
 
+		/**/
+
+		public static TOut Get<TIn, TOut>(this IResult<ISelect<TIn, TOut>> @this, TIn parameter)
+			=> @this.Get().Get(parameter);
+
 		public static IResult<T> Assume<T>(this IResult<IResult<T>> @this)
 			=> new Assume<T>(@this.Then().Delegate().Selector());
 

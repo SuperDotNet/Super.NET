@@ -1,62 +1,175 @@
-﻿using Super.Model.Selection;
+﻿using Super.Model.Results;
+using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
+using Super.Model.Selection.Conditions;
 using Super.Model.Sequences;
+using Super.Reflection;
+using Super.Reflection.Types;
 using Super.Runtime;
 using Super.Runtime.Environment;
 using Super.Runtime.Invocation;
+using Super.Runtime.Objects;
 using System;
+using System.Reflection;
 
 namespace Super.Aspects
 {
-	public sealed class Aspects<TIn, TOut> : SystemRegistry<IAspect<TIn, TOut>>
-	{
-		public static Aspects<TIn, TOut> Default { get; } = new Aspects<TIn, TOut>();
-
-		Aspects() : base(DefaultAspects<TIn, TOut>.Default) {}
-	}
-
-	public sealed class DefaultAspects<TIn, TOut> : SystemStore<Array<IAspect<TIn, TOut>>>
-	{
-		public static DefaultAspects<TIn,TOut> Default { get; } = new DefaultAspects<TIn,TOut>();
-
-		DefaultAspects() : this(AssignedAspect<TIn, TOut>.Default) {}
-
-		public DefaultAspects(params IAspect<TIn, TOut>[] elements) : this(new Array<IAspect<TIn, TOut>>(elements)) {}
-
-		public DefaultAspects(Array<IAspect<TIn, TOut>> elements)
-			: base(new ArrayInstance<IAspect<TIn, TOut>>(elements)) {}
-	}
-
 	public static class Extensions
 	{
-		public static ISelect<TIn, TOut> Featured<TIn, TOut>(this ISelect<TIn, TOut> @this)
-			=> Apply<TIn, TOut>.Default.Get(@this);
+		public static ISelect<TIn, TOut> Configured<TIn, TOut>(this ISelect<TIn, TOut> @this)
+			=> AspectConfiguration<TIn, TOut>.Default.Get(@this);
+
+		public static IRegistration<TIn, TOut> Register<TIn, TOut>(this IAspect<TIn, TOut> @this)
+			=> new Registration<TIn, TOut>(@this);
 	}
 
-	public sealed class Apply<TIn, TOut> : IAspect<TIn, TOut>
+	public sealed class AspectConfiguration<TIn, TOut> : SystemStore<IAspect<TIn, TOut>>, IAspect<TIn, TOut>
 	{
-		public static Apply<TIn, TOut> Default { get; } = new Apply<TIn, TOut>();
+		public static AspectConfiguration<TIn, TOut> Default { get; } = new AspectConfiguration<TIn, TOut>();
 
-		Apply() : this(Aspects<TIn, TOut>.Default) {}
+		AspectConfiguration() : base(Apply<TIn, TOut>.Default.Start()) {}
 
-		readonly IArray<IAspect<TIn, TOut>> _items;
+		public ISelect<TIn, TOut> Get(ISelect<TIn, TOut> parameter) => Get().Get(parameter);
+	}
 
-		public Apply(IArray<IAspect<TIn, TOut>> items) => _items = items;
+	/*public sealed class Runtime<TIn, TOut> : IAspect<TIn, TOut>
+	{
+		readonly ISelect<TypeInfo, Array<object>> _select;
 
-		public ISelect<TIn, TOut> Get(ISelect<TIn, TOut> parameter)
+		public Runtime() : this(null) {}
+
+		public Runtime(ISelect<TypeInfo, Array<object>> select)
 		{
-			var items  = _items.Get();
-			var count  = items.Length;
-			var result = parameter;
-			for (var i = 0u; i < count; i++)
+			_select = @select;
+		}
+
+		public ISelect<TIn, TOut> Get(ISelect<TIn, TOut> parameter) => ;
+	}*/
+
+	public interface IAspect<TIn, TOut> : IAlteration<ISelect<TIn, TOut>> {}
+
+	sealed class Aspect<TIn, TOut> : Select<ISelect<TIn, TOut>, ISelect<TIn, TOut>>, IAspect<TIn, TOut>
+	{
+		public static Aspect<TIn, TOut> Default { get; } = new Aspect<TIn, TOut>();
+
+		Aspect() : base(x => x) {}
+	}
+
+	public interface IRegistration<TIn, TOut> : IConditional<ISelect<TIn, TOut>, IAspect<TIn, TOut>> {}
+
+	class RuntimeRegistration<TIn, TOut> : Conditional<ISelect<TIn, TOut>, IAspect<TIn, TOut>>, IRegistration<TIn, TOut>
+	{
+		public RuntimeRegistration(Type definition) : this(new Objects(definition)) {}
+
+		public RuntimeRegistration(IConditional<TypeInfo, object> conditional)
+			: base(InstanceMetadata<ISelect<TIn, TOut>>.Default
+			                                           .Select(conditional.Condition)
+			                                           .ToCondition(),
+			       InstanceMetadata<ISelect<TIn, TOut>>.Default
+			                                           .Select(conditional)
+			                                           .Then()
+			                                           .Cast<IAspect<TIn, TOut>>()) {}
+	}
+
+	class Objects : Conditional<TypeInfo, object>
+	{
+		public Objects(Type definition)
+			: base(ImplementsSelection.Default,
+			       GenericInterfaceImplementations.Default.Select(new RuntimeSelection(definition))
+			                                      .Then()
+			                                      .Value()) {}
+	}
+
+	public sealed class ImplementsSelection : ImplementsGenericType
+	{
+		public static ImplementsSelection Default { get; } = new ImplementsSelection();
+
+		ImplementsSelection() : base(typeof(ISelect<,>)) {}
+	}
+
+	sealed class RuntimeSelection : ISelect<IConditional<Type, Array<TypeInfo>>, IResult<object>>
+	{
+		readonly IGeneric<object> _generic;
+		readonly Type             _parameter;
+
+		public RuntimeSelection(Type definition) : this(definition, typeof(ISelect<,>)) {}
+
+		public RuntimeSelection(Type definition, Type parameter) : this(new Generic<object>(definition), parameter) {}
+
+		public RuntimeSelection(IGeneric<object> generic, Type parameter)
+		{
+			_generic   = generic;
+			_parameter = parameter;
+		}
+
+		public IResult<object> Get(IConditional<Type, Array<TypeInfo>> parameter)
+			=> parameter.In(_parameter)
+			            .Query()
+			            .Select(GenericArguments.Default)
+			            .Select(_generic)
+			            .First()
+			            .Then()
+			            .Invoke()
+			            .Get()
+			            .Out();
+	}
+
+	public class Registration<TIn, TOut> : Conditional<ISelect<TIn, TOut>, IAspect<TIn, TOut>>, IRegistration<TIn, TOut>
+	{
+		public Registration(IAspect<TIn, TOut> aspect)
+			: base(Always<ISelect<TIn, TOut>>.Default, aspect.Start(I.A<ISelect<TIn, TOut>>())) {}
+	}
+
+	public sealed class Selector<TIn, TOut> : IArray<ISelect<TIn, TOut>, IAspect<TIn, TOut>>
+	{
+		readonly Array<IRegistration<TIn, TOut>> _registrations;
+		readonly IStores<IAspect<TIn, TOut>>     _stores;
+
+		public Selector(Array<IRegistration<TIn, TOut>> registrations)
+			: this(registrations, Leases<IAspect<TIn, TOut>>.Default) {}
+
+		public Selector(Array<IRegistration<TIn, TOut>> registrations, IStores<IAspect<TIn, TOut>> stores)
+		{
+			_registrations = registrations;
+			_stores        = stores;
+		}
+
+		public Array<IAspect<TIn, TOut>> Get(ISelect<TIn, TOut> parameter)
+		{
+			var to       = _registrations.Length;
+			var elements = _stores.Get(to);
+			var count    = 0u;
+			var source   = elements.Instance;
+
+			for (var i = 0u; i < to; i++)
 			{
-				result = items[i].Get(result);
+				var registration = _registrations[i];
+				if (registration.Condition.Get(parameter))
+				{
+					source[count++] = registration.Get(parameter);
+				}
 			}
+
+			var result = source.CopyInto(new IAspect<TIn, TOut>[count], 0, count);
 			return result;
 		}
 	}
 
-	public interface IAspect<TIn, TOut> : IAlteration<ISelect<TIn, TOut>> {}
+	public sealed class AspectRegistry<TIn, TOut> : Registry<IAspect<TIn, TOut>>
+	{
+		public static AspectRegistry<TIn, TOut> Default { get; } = new AspectRegistry<TIn, TOut>();
+
+		AspectRegistry() : this(AssignedAspect<TIn, TOut>.Default) {}
+
+		public AspectRegistry(params IAspect<TIn, TOut>[] elements) : base(elements) {}
+	}
+
+	public sealed class Apply<TIn, TOut> : Aggregate<IAspect<TIn, TOut>, ISelect<TIn, TOut>>, IAspect<TIn, TOut>
+	{
+		public static Apply<TIn, TOut> Default { get; } = new Apply<TIn, TOut>();
+
+		Apply() : base(AspectRegistry<TIn, TOut>.Default) {}
+	}
 
 	public sealed class AssignedAspect<TIn, TOut> : ValidationAspect<TIn, TOut>
 	{

@@ -15,9 +15,12 @@ namespace Super.Reflection.Types
 		GenericInterfaceImplementations() : this(GenericTypeDefinition.Default) {}
 
 		public GenericInterfaceImplementations(ISelect<Type, Type> definition)
-			: base(A.This(GenericInterfaces.Default)
-			        .Grouping(definition).Then().Activate<Model.Sequences.Query.Lookup<Type, TypeInfo>>().Get()
-			        .Select(definition.Unless(IsGenericTypeDefinition.Default, A.Self<Type>()))
-			        .Get) {}
+			: base(GenericInterfaces.Default
+			                        .Grouping(definition)
+			                        .Then()
+			                        .Activate<Model.Sequences.Query.Lookup<Type, TypeInfo>>()
+			                        .Get()
+			                        .Select(definition.Unless(IsGenericTypeDefinition.Default, A.Self<Type>()))
+			                        .Get) {}
 	}
 }
