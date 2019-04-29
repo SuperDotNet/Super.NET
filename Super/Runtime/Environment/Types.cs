@@ -155,8 +155,8 @@ namespace Super.Runtime.Environment
 
 	public class Registry<T> : ArrayResult<T>, IRegistry<T>
 	{
-		readonly IAddRange<T> _range;
-		readonly ICommand<T>  _add;
+		readonly ICommand<Model.Sequences.Store<T>> _range;
+		readonly ICommand<T>                        _add;
 
 		public Registry() : this(Array<T>.Empty) {}
 
@@ -166,20 +166,21 @@ namespace Super.Runtime.Environment
 
 		public Registry(IMutable<Array<T>> source) : this(source, new AddRange<T>(source), new Add<T>(source)) {}
 
-		public Registry(IResult<Array<T>> source, IAddRange<T> range, ICommand<T> add) : base(source)
+		public Registry(IResult<Array<T>> source, ICommand<Model.Sequences.Store<T>> range, ICommand<T> add) :
+			base(source)
 		{
 			_range = range;
 			_add   = add;
 		}
 
-		public void Execute(Model.Sequences.Store<T> parameter)
-		{
-			_range.Execute(parameter);
-		}
-
 		public void Execute(T parameter)
 		{
 			_add.Execute(parameter);
+		}
+
+		public void Execute(Model.Sequences.Store<T> parameter)
+		{
+			_range.Execute(parameter);
 		}
 	}
 

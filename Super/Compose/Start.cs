@@ -5,6 +5,7 @@ using Super.Model.Selection;
 using Super.Model.Selection.Conditions;
 using Super.Runtime;
 using System;
+using System.Reflection;
 using Action = Super.Model.Selection.Adapters.Action;
 using Context = Super.Compose.Results.Context;
 
@@ -18,7 +19,7 @@ namespace Super.Compose
 
 		public static Type Type<T>() => Reflection.Types.Type<T>.Instance;
 
-		public static Type Metadata<T>() => Reflection.Types.Type<T>.Metadata;
+		public static TypeInfo Metadata<T>() => Reflection.Types.Type<T>.Metadata;
 
 		public static ISelect<T, T> Self<T>() => Model.Selection.Self<T>.Default;
 	}

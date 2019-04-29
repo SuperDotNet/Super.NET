@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Super.Reflection.Types
 {
-	sealed class GenericInterfaceImplementations : Store<TypeInfo, IConditional<Type, Array<TypeInfo>>>
+	sealed class GenericInterfaceImplementations : Store<Type, IConditional<Type, Array<TypeInfo>>>
 	{
 		public static GenericInterfaceImplementations Default { get; } = new GenericInterfaceImplementations();
 

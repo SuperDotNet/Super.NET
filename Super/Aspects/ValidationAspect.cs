@@ -1,4 +1,5 @@
-﻿using Super.Model.Results;
+﻿using Super.Model.Commands;
+using Super.Model.Results;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
 using Super.Model.Selection.Conditions;
@@ -55,20 +56,53 @@ namespace Super.Aspects
 		Aspect() : base(x => x) {}
 	}
 
+	sealed class AspectRegistration : ICommand<Type>
+	{
+		public static AspectRegistration Default { get; } = new AspectRegistration();
+
+		AspectRegistration() {}
+
+		public void Execute(Type parameter) {}
+
+		public void Execute<TIn, TOut>(IAspect<TIn, TOut> instance) {}
+	}
+
+	/*public sealed class Registrations : ISelect<object, Array<object>>
+	{
+		readonly Array<Type> _definitions;
+
+		public Registrations(Array<Type> definitions) => _definitions = definitions;
+
+		public Array<object> Get(object parameter)
+		{
+			MakeGenericType
+
+			return null;
+		}
+	}*/
+
+	public sealed class OpenAspectTypeRegistrations : Registry<Type>
+	{
+		public OpenAspectTypeRegistrations() : this(new ContainsGenericInterfaceGuard(typeof(IAspect<,>)),
+		                                            Array<Type>.Empty.Start().Variable()) {}
+
+		public OpenAspectTypeRegistrations(ICommand<Type> guard, IMutable<Array<Type>> source)
+			: base(source,
+			       guard.Then().Many().ToConfiguration().Terminate(new AddRange<Type>(source)).Get(),
+			       guard.Then().ToConfiguration().Terminate(new Add<Type>(source)).Get()) {}
+	}
+
 	public interface IRegistration<TIn, TOut> : IConditional<ISelect<TIn, TOut>, IAspect<TIn, TOut>> {}
 
 	class RuntimeRegistration<TIn, TOut> : Conditional<ISelect<TIn, TOut>, IAspect<TIn, TOut>>, IRegistration<TIn, TOut>
 	{
-		public RuntimeRegistration(Type definition) : this(new Objects(definition)) {}
+		public RuntimeRegistration(Type definition)
+			: this(InstanceMetadata<ISelect<TIn, TOut>>.Default, new Objects(definition)) {}
 
-		public RuntimeRegistration(IConditional<TypeInfo, object> conditional)
-			: base(InstanceMetadata<ISelect<TIn, TOut>>.Default
-			                                           .Select(conditional.Condition)
-			                                           .ToCondition(),
-			       InstanceMetadata<ISelect<TIn, TOut>>.Default
-			                                           .Select(conditional)
-			                                           .Then()
-			                                           .Cast<IAspect<TIn, TOut>>()) {}
+		public RuntimeRegistration(ISelect<ISelect<TIn, TOut>, TypeInfo> metadata,
+		                           IConditional<TypeInfo, object> conditional)
+			: base(metadata.Select(conditional.Condition).Then(),
+			       metadata.Select(conditional).Then().Cast<IAspect<TIn, TOut>>()) {}
 	}
 
 	class Objects : Conditional<TypeInfo, object>

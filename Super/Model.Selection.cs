@@ -23,6 +23,9 @@ namespace Super
 		public static ISelect<TIn, TOut> Start<TIn, TOut>(this TOut @this, I<TIn> _)
 			=> Compose.Start.A.Selection<TIn>().By.Returning(@this);
 
+		public static ISelect<TIn, TOut> Start<TIn, TOut>(this Func<TIn, TOut> @this)
+			=> @this.Target as ISelect<TIn, TOut> ?? new Select<TIn, TOut>(@this);
+
 		/**/
 
 		public static T Get<T>(this ISelect<uint, T> @this, int parameter) => @this.Get((uint)parameter);
@@ -129,9 +132,6 @@ namespace Super
 		public static IConditional<TIn, TOut> ToConditional<TIn, TOut>(this ISelect<TIn, TOut> @this,
 		                                                               ICondition<TIn> condition)
 			=> new Conditional<TIn, TOut>(condition, @this.Get);
-
-		public static ICommand<TIn> Terminate<TIn, TOut>(this ISelect<TIn, TOut> @this, ICommand<TOut> command)
-			=> new SelectedParameterCommand<TIn, TOut>(command.Execute, @this.Get);
 
 		public static ICommand<T> ToCommand<T>(this ISelect<T, None> @this) => new InvokeParameterCommand<T>(@this.Get);
 

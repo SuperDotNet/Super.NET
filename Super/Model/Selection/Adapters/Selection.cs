@@ -9,7 +9,6 @@ using Super.Runtime.Activation;
 using Super.Runtime.Invocation;
 using Super.Runtime.Objects;
 using System;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -133,7 +132,9 @@ namespace Super.Model.Selection.Adapters
 			=> new CommandSelector(new DelegatedParameterCommand<T>(Get().Execute, parameter.Get));
 
 		public CommandSelector<T> And(params ICommand<T>[] commands)
-			=> new CommandSelector<T>(new CompositeCommand<T>(Get().Yield().Concat(commands).ToImmutableArray()));
+			=> new CommandSelector<T>(new CompositeCommand<T>(Get().Yield().Concat(commands).Result()));
+
+		public CommandSelector<Sequences.Store<T>> Many() => new CommandSelector<Sequences.Store<T>>(new ManyCommand<T>(Get()));
 
 		public Selector<T, None> ToSelector() => new Selector<T, None>(Get().ToSelect());
 
@@ -202,5 +203,8 @@ namespace Super.Model.Selection.Adapters
 
 		public Selector<_, T> Try<TException>() where TException : Exception
 			=> new Selector<_, T>(new Try<TException, _, T>(Get().Get));
+
+		public CommandSelector<_> Terminate(ICommand<T> command)
+			=> new CommandSelector<_>(new SelectedParameterCommand<_, T>(command.Execute, _subject.Get));
 	}
 }

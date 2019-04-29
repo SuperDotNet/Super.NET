@@ -55,8 +55,8 @@ namespace Super.Runtime.Execution
 
 		public DisposeContext(ICondition<None> assigned, ICondition<object> contains,
 		                      ISelect<object, IDisposable> select)
-			: base(select.Terminate(A.Of<DisposeCommand>())
-			             .Then()
+			: base(select.Then()
+			             .Terminate(A.Of<DisposeCommand>())
 			             .And(ExecutionContextStore.Default.AsCommand().Then().Input().Any().Get(),
 			                  A.Of<ClearResources>())
 			             .To(x => x.Get().ToSelect())
