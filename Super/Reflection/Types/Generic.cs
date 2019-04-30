@@ -1,9 +1,18 @@
 ﻿using Super.Model.Selection;
 using Super.Model.Sequences;
+using Super.Runtime;
 using System;
 
 namespace Super.Reflection.Types
 {
+	public class OpenGeneric : Select<Type, Func<Array<Type>, Func<object>>>
+	{
+		public OpenGeneric(Type definition)
+			: base(new ContainsGenericInterfaceGuard(definition).Then()
+			                                                    .ToConfiguration()
+			                                                    .Select(x => new Generic<object>(x).ToDelegate())) {}
+	}
+
 	public class Generic<T> : Select<Array<Type>, Func<T>>, IGeneric<T>
 	{
 		public Generic(Type definition) : base(new MakeGenericType(definition).Select(Delegates.Default.Get)) {}

@@ -6,10 +6,6 @@ namespace Super.Model.Results
 	{
 		public static Results<T> Default { get; } = new Results<T>();
 
-		Results() : base(x =>
-		                 {
-			                 var asdf = x.Get();
-			                 return asdf;
-		                 }) {}
+		Results() : base(x => x.Get()) {}
 	}
 }

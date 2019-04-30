@@ -13,20 +13,17 @@ namespace Super.Model.Selection.Alterations
 
 	public class Aggregate<TElement, T> : IAlteration<T> where TElement : ISelect<T, T>
 	{
-		readonly Func<Array<TElement>> _items;
+		readonly Array<TElement> _items;
 
-		public Aggregate(IResult<Array<TElement>> items) : this(items.Get) {}
-
-		public Aggregate(Func<Array<TElement>> items) => _items = items;
+		public Aggregate(Array<TElement> items) => _items = items;
 
 		public T Get(T parameter)
 		{
-			var items  = _items();
-			var count  = items.Length;
+			var count  = _items.Length;
 			var result = parameter;
 			for (var i = 0u; i < count; i++)
 			{
-				result = items[i].Get(result);
+				result = _items[i].Get(result);
 			}
 
 			return result;
@@ -35,8 +32,6 @@ namespace Super.Model.Selection.Alterations
 
 	public class Aggregate<T> : Aggregate<ISelect<ISelect<T, T>, ISelect<T, T>>, ISelect<T, T>>
 	{
-		public Aggregate(IResult<Array<ISelect<ISelect<T, T>, ISelect<T, T>>>> items) : this(items.Get) {}
-
-		public Aggregate(Func<Array<ISelect<ISelect<T, T>, ISelect<T, T>>>> items) : base(items) {}
+		public Aggregate(Array<ISelect<ISelect<T, T>, ISelect<T, T>>> items) : base(items) {}
 	}
 }

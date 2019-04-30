@@ -93,11 +93,14 @@ namespace Super.Runtime.Environment
 	{
 		readonly Func<IRegistry<T>> _result;
 
-		public SystemRegistry(IResult<Array<T>> elements) : this(Start.A.Selection<T>()
+		/*public SystemRegistry(IResult<Array<T>> elements) : this(Start.A.Selection<T>()
 		                                                              .As.Sequence.Immutable.AndOf<Registry<T>>()
 		                                                              .By.Instantiation.In(elements)
-		                                                              .ToDelegate()
-		                                                              .To(Stores.New)) {}
+		                                                              .ToDelegate()) {}*/
+
+		public SystemRegistry() : this(() => new Registry<T>()) {}
+
+		public SystemRegistry(Func<IRegistry<T>> registry) : this(registry.To(Stores.New)) {}
 
 		public SystemRegistry(IResult<IRegistry<T>> result)
 			: this(result.Get, result.AsDefined().Then().Delegate().Selector()) {}
@@ -166,8 +169,8 @@ namespace Super.Runtime.Environment
 
 		public Registry(IMutable<Array<T>> source) : this(source, new AddRange<T>(source), new Add<T>(source)) {}
 
-		public Registry(IResult<Array<T>> source, ICommand<Model.Sequences.Store<T>> range, ICommand<T> add) :
-			base(source)
+		public Registry(IResult<Array<T>> source, ICommand<Model.Sequences.Store<T>> range, ICommand<T> add)
+			: base(source)
 		{
 			_range = range;
 			_add   = add;

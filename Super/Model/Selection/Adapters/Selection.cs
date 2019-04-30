@@ -106,7 +106,6 @@ namespace Super.Model.Selection.Adapters
 		public CommandSelector<object> Any() => new CommandSelector<object>(new Any(Get()));
 	}
 
-
 	sealed class Any : ICommand<object>
 	{
 		readonly ICommand<None> _command;
@@ -134,7 +133,8 @@ namespace Super.Model.Selection.Adapters
 		public CommandSelector<T> And(params ICommand<T>[] commands)
 			=> new CommandSelector<T>(new CompositeCommand<T>(Get().Yield().Concat(commands).Result()));
 
-		public CommandSelector<Sequences.Store<T>> Many() => new CommandSelector<Sequences.Store<T>>(new ManyCommand<T>(Get()));
+		public CommandSelector<Sequences.Store<T>> Many()
+			=> new CommandSelector<Sequences.Store<T>>(new ManyCommand<T>(Get()));
 
 		public Selector<T, None> ToSelector() => new Selector<T, None>(Get().ToSelect());
 

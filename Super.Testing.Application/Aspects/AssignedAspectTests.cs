@@ -1,10 +1,8 @@
 ﻿using FluentAssertions;
 using Super.Aspects;
 using Super.Compose;
-using Super.Reflection.Types;
 using System;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Super.Testing.Application.Aspects
 {
@@ -21,56 +19,13 @@ namespace Super.Testing.Application.Aspects
 			       .Throw<InvalidOperationException>();
 		}
 
-		readonly ITestOutputHelper _output;
-
-		public AssignedAspectTests(ITestOutputHelper output) => _output = output;
-
 		[Fact]
-		void Type()
+		void RuntimeRegistration()
 		{
-			/*var subject = Start.A.Selection<string>().By.Self;
-
-			var single = new RuntimeRegistration<string, string>(typeof(AssignedAspect<,>));
-			single.Get(subject).Should().BeSameAs(AssignedAspect<string, string>.Default);*/
-			var yo = GenericInterfaceImplementations.Default.Get(typeof(AssignedAspect<,>))
-			                               .Condition.Get(typeof(IAspect<,>));
-
-			_output.WriteLine(yo.ToString());
+			var single    = new Registration(typeof(AssignedAspect<,>));
+			var parameter = new[] {A.Type<string>(), A.Type<string>()};
+			single.Get(parameter).Should().BeSameAs(AssignedAspect<string, string>.Default);
 		}
-
-		/*public sealed class IsAssignableFromOpenGeneric : ICondition<Type>
-		{
-			readonly Type _definition;
-
-			public IsAssignableFromOpenGeneric(Type definition) => _definition = definition;
-
-			public bool Get(Type parameter)
-			{
-				var interfaceTypes = parameter.GetInterfaces();
-
-				foreach (var it in interfaceTypes)
-				{
-					if (it.IsGenericType && it.GetGenericTypeDefinition() == _definition)
-					{
-						return true;
-					}
-				}
-
-				if (parameter.IsGenericType && parameter.GetGenericTypeDefinition() == _definition)
-				{
-					return true;
-				}
-
-				var baseType = parameter.BaseType;
-
-				if (baseType == null)
-				{
-					return false;
-				}
-
-				return Get(baseType);
-			}
-		}*/
 
 		/*[Fact]
 		void Count()

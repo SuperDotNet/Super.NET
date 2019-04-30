@@ -12,10 +12,10 @@ namespace Super.Reflection.Types
 		GenericParameters() : base(x => x.GenericTypeParameters) {}
 	}
 
-	sealed class GenericArguments : Select<Type, Array<Type>>
+	/*sealed class GenericArguments : Select<Type, Array<Type>>
 	{
 		public static GenericArguments Default { get; } = new GenericArguments();
 
 		GenericArguments() : base(x => x.GetGenericArguments()) {}
-	}
+	}*/
 }
