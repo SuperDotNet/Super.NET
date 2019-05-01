@@ -1,10 +1,46 @@
 ﻿using Super.Model.Selection;
+using Super.Model.Selection.Conditions;
 using Super.Model.Sequences;
 using Super.Runtime;
 using System;
+using System.Linq;
+using System.Reflection;
 
 namespace Super.Reflection.Types
 {
+	public class GenericImplementationArguments : ISelect<Type, Array<Type>>
+	{
+		readonly ISelect<Type, Array<Type>> _implementations;
+
+		public GenericImplementationArguments(ISelect<Type, Array<Type>> implementations)
+			=> _implementations = implementations;
+
+		public Array<Type> Get(Type parameter) => _implementations.Get(parameter)
+		                                                          .Open()
+		                                                          .SelectMany(x => x.GenericTypeArguments)
+		                                                          .ToArray();
+	}
+
+	public class GenericImplementations : ISelect<Type, Array<Type>>
+	{
+		readonly ISelect<Type, IConditional<Type, Array<TypeInfo>>> _implementations;
+		readonly Type                                               _definition;
+
+		public GenericImplementations(Type definition) : this(GenericInterfaceImplementations.Default,
+		                                                      definition) {}
+
+		public GenericImplementations(ISelect<Type, IConditional<Type, Array<TypeInfo>>> implementations,
+		                              Type definition)
+		{
+			_implementations = implementations;
+			_definition      = definition;
+		}
+
+		public Array<Type> Get(Type parameter) => _implementations.Get(parameter)
+		                                                          .Get(_definition)
+		                                                          .Open();
+	}
+
 	public class OpenGeneric : Select<Type, Func<Array<Type>, Func<object>>>
 	{
 		public OpenGeneric(Type definition)

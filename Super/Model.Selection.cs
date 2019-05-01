@@ -2,9 +2,9 @@
 using Super.Model.Commands;
 using Super.Model.Results;
 using Super.Model.Selection;
+using Super.Model.Selection.Adapters;
 using Super.Model.Selection.Alterations;
 using Super.Model.Selection.Conditions;
-using Super.Model.Selection.Stores;
 using Super.Model.Sequences;
 using Super.Reflection;
 using Super.Reflection.Types;
@@ -120,14 +120,15 @@ namespace Super
 		public static Func<TIn, TOut> ToDelegateReference<TIn, TOut>(this ISelect<TIn, TOut> @this)
 			=> Delegates<TIn, TOut>.Default.Get(@this);
 
-		public static ISelect<TIn, TOut> ToStore<TIn, TOut>(this ISelect<TIn, TOut> @this) where TIn : class
-			=> ReferenceTables<TIn, TOut>.Default.Get(@this.ToDelegateReference());
+		public static ReferenceContext<TIn, TOut> Stores<TIn, TOut>(this ISelect<TIn, TOut> @this) where TIn : class
+			=> new ReferenceContext<TIn, TOut>(@this);
+
 
 		public static ISelect<TIn, TOut> ToSelect<TIn, TOut>(this Func<TIn, TOut> @this)
 			=> Selections<TIn, TOut>.Default.Get(@this);
 
 		public static ICondition<T> ToCondition<T>(this ISelect<T, bool> @this) => @this as ICondition<T> ??
-		                                                                           new Condition<T>(@this.Get);
+		                                                                           new Model.Selection.Conditions.Condition<T>(@this.Get);
 
 		public static IConditional<TIn, TOut> ToConditional<TIn, TOut>(this ISelect<TIn, TOut> @this,
 		                                                               ICondition<TIn> condition)

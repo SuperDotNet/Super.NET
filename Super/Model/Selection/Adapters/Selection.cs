@@ -3,6 +3,7 @@ using Super.Model.Commands;
 using Super.Model.Results;
 using Super.Model.Selection.Alterations;
 using Super.Model.Selection.Conditions;
+using Super.Model.Selection.Stores;
 using Super.Reflection.Types;
 using Super.Runtime;
 using Super.Runtime.Activation;
@@ -167,6 +168,24 @@ namespace Super.Model.Selection.Adapters
 
 		public ConditionSelector<T> Inverse()
 			=> new ConditionSelector<T>(InverseSpecifications<T>.Default.Get(new Condition<T>(Get().Get)));
+	}
+
+	public class ReferenceContext<_, T> where _ : class
+	{
+		readonly ISelect<_, T> _subject;
+		readonly ISelect<Func<_, T>, ITable<_, T>> _tables;
+
+		public ReferenceContext(ISelect<_, T> subject) : this(subject, ReferenceTables<_, T>.Default) {}
+
+		public ReferenceContext(ISelect<_, T> subject, ISelect<Func<_, T>, ITable<_, T>> tables)
+		{
+			_subject = subject;
+			_tables = tables;
+		}
+
+		public ISelect<_, T> Reference() => _tables.Get(_subject.ToDelegateReference());
+
+		public ISelect<_, T> New() => _tables.Get(_subject.Get);
 	}
 
 	public class Selector<_, T> : IResult<ISelect<_, T>>, IActivateUsing<ISelect<_, T>>

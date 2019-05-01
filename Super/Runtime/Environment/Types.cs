@@ -98,7 +98,7 @@ namespace Super.Runtime.Environment
 		                                                              .By.Instantiation.In(elements)
 		                                                              .ToDelegate()) {}*/
 
-		public SystemRegistry() : this(() => new Registry<T>()) {}
+		public SystemRegistry() : this(New<Registry<T>>.Default.Get) {}
 
 		public SystemRegistry(Func<IRegistry<T>> registry) : this(registry.To(Stores.New)) {}
 

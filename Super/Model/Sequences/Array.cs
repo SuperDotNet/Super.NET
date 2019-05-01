@@ -21,7 +21,7 @@ namespace Super.Model.Sequences
 
 		readonly T[] _reference;
 
-		public Array(params T[] reference) : this(reference, (uint)reference.Length) {}
+		public Array(params T[] elements) : this(elements, (uint)elements.Length) {}
 
 		public Array(T[] reference, uint length)
 		{

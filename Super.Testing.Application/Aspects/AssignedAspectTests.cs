@@ -11,6 +11,8 @@ namespace Super.Testing.Application.Aspects
 		[Fact]
 		void Verify()
 		{
+			AspectRegistry.Default.Execute(new Registration(typeof(AssignedAspect<,>)));
+
 			var subject = Start.A.Selection<string>().By.Self;
 			subject.Invoking(x => x.Get(null)).Should().NotThrow();
 			subject.Configured()
