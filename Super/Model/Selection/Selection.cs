@@ -2,7 +2,7 @@ using System;
 
 namespace Super.Model.Selection
 {
-	class Selection<TIn, TFrom, TTo> : ISelect<TIn, TTo>
+	sealed class Selection<TIn, TFrom, TTo> : ISelect<TIn, TTo>
 	{
 		readonly Func<TFrom, TTo> _to;
 		readonly Func<TIn, TFrom> _from;

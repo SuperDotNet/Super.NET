@@ -33,7 +33,7 @@ namespace Super.Aspects
 
 		Aspects() : base(Start.A.Selection<ISelect<TIn, TOut>>()
 		                      .By.Type.Then()
-		                      .Select(Stores.New(RegisteredAspects<TIn, TOut>.Default.Stores().New)
+		                      .Select(SystemStores.New(RegisteredAspects<TIn, TOut>.Default.Stores().New)
 		                                    .Assume())) {}
 	}
 
@@ -71,7 +71,7 @@ namespace Super.Aspects
 		}
 	}
 
-	
+
 
 	public sealed class AspectImplementations : GenericImplementations
 	{
@@ -273,6 +273,8 @@ namespace Super.Aspects
 
 	public class CompositeAspect<TIn, TOut> : Aggregate<IAspect<TIn, TOut>, ISelect<TIn, TOut>>, IAspect<TIn, TOut>
 	{
+		/*public CompositeAspect(params IAspect<TIn, TOut>[] aspects) : this(new Array<IAspect<TIn, TOut>>(aspects)) {}*/
+
 		public CompositeAspect(Array<IAspect<TIn, TOut>> items) : base(items) {}
 	}
 

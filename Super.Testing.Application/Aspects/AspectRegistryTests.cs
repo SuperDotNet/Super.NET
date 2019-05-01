@@ -20,15 +20,22 @@ namespace Super.Testing.Application.Aspects
 		}
 
 		[Fact]
+		void Configure()
+		{
+			var subject = A.Self<object>();
+			subject.Configured().Should().BeSameAs(subject);
+		}
+
+		[Fact]
 		void Verify()
 		{
 			AspectRegistry.Default.Get().Open().Should().BeEmpty();
 			AspectRegistry.Default.Execute(new Registration(typeof(Aspect<,>)));
 			AspectRegistry.Default.Get().Open().Should().HaveCount(1);
 			AspectRegistrations<string, int>.Default.Get(GenericArguments.Default.Get(A.Type<ISelect<string, int>>()))
-			                                  .Open()
-			                                  .Should()
-			                                  .HaveCount(1);
+			                                .Open()
+			                                .Should()
+			                                .HaveCount(1);
 		}
 
 		[Fact]
@@ -38,9 +45,9 @@ namespace Super.Testing.Application.Aspects
 			AspectRegistry.Default.Execute(new Registration(Never<Array<Type>>.Default, typeof(Aspect<,>)));
 			AspectRegistry.Default.Get().Open().Should().HaveCount(1);
 			AspectRegistrations<string, int>.Default.Get(GenericArguments.Default.Get(A.Type<ISelect<string, int>>()))
-			                                  .Open()
-			                                  .Should()
-			                                  .BeEmpty();
+			                                .Open()
+			                                .Should()
+			                                .BeEmpty();
 		}
 
 		[Fact]
@@ -48,11 +55,6 @@ namespace Super.Testing.Application.Aspects
 		{
 			AspectRegistry.Default.Get().Open().Should().BeEmpty();
 		}
-
-		/*sealed class Subject<TIn, TOut> : ISelect<TIn, TOut>
-		{
-			public TOut Get(TIn parameter) => default;
-		}*/
 
 		sealed class Aspect<TIn, TOut> : IAspect<TIn, TOut>
 		{

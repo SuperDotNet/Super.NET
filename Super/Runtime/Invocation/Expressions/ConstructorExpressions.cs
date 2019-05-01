@@ -1,5 +1,6 @@
 ﻿using Super.Model.Selection;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -16,13 +17,19 @@ namespace Super.Runtime.Invocation.Expressions
 	{
 		public static ConstructorExpressions Default { get; } = new ConstructorExpressions();
 
-		ConstructorExpressions() :
-			this(new Select<ConstructorInfo, IEnumerable<Expression>>(Empty<Expression>.Enumerable.Accept)) {}
+		ConstructorExpressions() : this(Selector.Instance) {}
 
 		readonly ISelect<ConstructorInfo, IEnumerable<Expression>> _parameters;
 
 		public ConstructorExpressions(ISelect<ConstructorInfo, IEnumerable<Expression>> parameters) => _parameters = parameters;
 
 		public Expression Get(ConstructorInfo parameter) => new New(_parameters.Get(parameter)).Get(parameter);
+
+		sealed class Selector : Select<ConstructorInfo, IEnumerable<Expression>>
+		{
+			public static Selector Instance { get; } = new Selector();
+
+			Selector() : base(x => x.GetParameters().Select(y => Expression.Default(y.ParameterType))) {}
+		}
 	}
 }

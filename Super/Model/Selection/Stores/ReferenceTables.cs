@@ -16,7 +16,6 @@ namespace Super.Model.Selection.Stores
 		                                                .Of.Type<ITable<TIn, TOut>>()
 		                                                .WithParameterOf<Func<TIn, TOut>>()
 		                                                .In(new Array<Type>(typeof(TIn), typeof(TOut)))
-		                                                .Assume()
-		                                                .Get) {}
+		                                                .Assume()) {}
 	}
 }

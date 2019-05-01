@@ -8,6 +8,8 @@ namespace Super.Model.Sequences
 	{
 		public static implicit operator Store<T>(T[] instance) => new Store<T>(instance);
 
+		/*public static implicit operator T[](Store<T> instance) => instance.Instance;*/
+
 		public Store(T[] instance) : this(instance, Assigned<uint>.Unassigned) {}
 
 		public Store(T[] instance, Assigned<uint> length)

@@ -1,4 +1,5 @@
 ﻿using Super.Application.Hosting.BenchmarkDotNet;
+using Super.Testing.Application.Model.Selection;
 using System.Linq;
 
 namespace Super.Testing.Application
@@ -10,11 +11,10 @@ namespace Super.Testing.Application
 			Run.Default
 			   .In(arguments.Any() ? Quick.Default : Deployed.Default)
 			   .Get();
-
 		}
 	}
 
-	sealed class Run : Run<IterationBenchmarks>
+	sealed class Run : Run<SelectionTests.Benchmarks>
 	{
 		public static Run Default { get; } = new Run();
 

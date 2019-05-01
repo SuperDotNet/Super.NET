@@ -311,7 +311,7 @@ namespace Super.Model.Sequences.Query
 		public DynamicStore(uint size, uint length = 32) : this(Items.Get(length).Instance, Selection.Default)
 			=> _stores[0] = new Store<T>(Item.Get(size).Instance, 0);
 
-		DynamicStore(Store<T>[] stores, Selection position, uint index = 0)
+		DynamicStore(Store<T>[] stores, in Selection position, uint index = 0)
 		{
 			_stores   = stores;
 			_position = position;
@@ -344,35 +344,31 @@ namespace Super.Model.Sequences.Query
 
 		public DynamicStore<T> Add(in Store<T> page)
 		{
-			var stores   = _stores;
-			var current  = stores[_index];
+			var current  = _stores[_index];
 			var capacity = (uint)current.Instance.Length;
-			var max      = capacity;
-			var filled   = page.Length.Or((uint)page.Instance.Length);
+			var filled   = page.Length();
 			var size     = filled + current.Length;
 
-			if (size > max)
+			if (size > capacity)
 			{
-				stores[_index] =
+				_stores[_index] =
 					new Store<T>(page.Instance.CopyInto(current.Instance, 0, capacity - current.Length, current.Length),
 					             capacity);
-				var remainder = size - max;
+				var remainder = size - capacity;
 				var next      = capacity * 2;
-				stores[_index + 1] =
-					new
-						Store<T>(page.Instance
-						             .CopyInto(Item.Get(Math.Max(remainder * 2, Math.Min(int.MaxValue - next, next)))
-						                           .Instance,
-						                       capacity - current.Length, remainder),
-						         remainder);
+				_stores[_index + 1] =
+					new Store<T>(page.Instance
+					                 .CopyInto(Item.Get(Math.Max(remainder * 2, Math.Min(int.MaxValue - next, next)))
+					                               .Instance,
+					                           capacity - current.Length, remainder),
+					             remainder);
 
-				return new DynamicStore<T>(_stores, new Selection(_position.Start + max, remainder), _index + 1);
+				return new DynamicStore<T>(_stores, new Selection(_position.Start + capacity, remainder), _index + 1);
 			}
 
-			stores[_index]
-				= new
-					Store<T>(page.Instance.CopyInto(current.Instance, 0, filled, current.Length),
-					         current.Length + filled);
+			_stores[_index]
+				= new Store<T>(page.Instance.CopyInto(current.Instance, 0, filled, current.Length),
+				               current.Length + filled);
 			return new DynamicStore<T>(_stores, new Selection(_position.Start, _position.Length + filled), _index);
 		}
 	}

@@ -1,6 +1,8 @@
-﻿using FluentAssertions;
+﻿using BenchmarkDotNet.Attributes;
+using FluentAssertions;
 using Super.Aspects;
 using Super.Compose;
+using Super.Model.Selection;
 using System;
 using Xunit;
 
@@ -29,6 +31,7 @@ namespace Super.Testing.Application.Aspects
 			single.Get(parameter).Should().BeSameAs(AssignedAspect<string, string>.Default);
 		}
 
+		// TODO: Move to sequence testing.
 		/*[Fact]
 		void Count()
 		{
@@ -67,5 +70,17 @@ namespace Super.Testing.Application.Aspects
 
 			second.Should().Be(2);
 		}*/
+
+		public class Benchmarks
+		{
+			readonly ISelect<object, object> _subject;
+
+			public Benchmarks() : this(A.Self<object>()) {}
+
+			public Benchmarks(ISelect<object, object> subject) => _subject = subject;
+
+			[Benchmark(Baseline = true)]
+			public object Once() => _subject.Configured();
+		}
 	}
 }

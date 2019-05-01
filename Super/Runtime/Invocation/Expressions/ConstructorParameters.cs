@@ -19,10 +19,10 @@ namespace Super.Runtime.Invocation.Expressions
 
 		public ConstructorParameters(ParameterExpression parameter) => _parameter = parameter;
 
-		public IEnumerable<Expression> Get(ConstructorInfo parameter) =>
-			parameter.GetParameters()
-			         .Skip(1)
-			         .Select(x => (Expression)Expression.Constant(x.DefaultValue, x.ParameterType))
-			         .Prepend(_parameter);
+		public IEnumerable<Expression> Get(ConstructorInfo parameter)
+			=> parameter.GetParameters()
+			            .Skip(1)
+			            .Select(x => Expression.Constant(x.DefaultValue, x.ParameterType))
+			            .Prepend<Expression>(_parameter);
 	}
 }

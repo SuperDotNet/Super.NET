@@ -82,7 +82,7 @@ namespace Super.Runtime.Environment
 		                                                       .In(SystemStores<T>.Default);
 	}
 
-	public static class Stores
+	public static class SystemStores
 	{
 		public static IResult<T> New<T>(Func<T> create) => new Deferred<T>(create, New<T>());
 
@@ -93,14 +93,9 @@ namespace Super.Runtime.Environment
 	{
 		readonly Func<IRegistry<T>> _result;
 
-		/*public SystemRegistry(IResult<Array<T>> elements) : this(Start.A.Selection<T>()
-		                                                              .As.Sequence.Immutable.AndOf<Registry<T>>()
-		                                                              .By.Instantiation.In(elements)
-		                                                              .ToDelegate()) {}*/
-
 		public SystemRegistry() : this(New<Registry<T>>.Default.Get) {}
 
-		public SystemRegistry(Func<IRegistry<T>> registry) : this(registry.To(Stores.New)) {}
+		public SystemRegistry(Func<IRegistry<T>> registry) : this(registry.To(SystemStores.New)) {}
 
 		public SystemRegistry(IResult<IRegistry<T>> result)
 			: this(result.Get, result.AsDefined().Then().Delegate().Selector()) {}
@@ -161,7 +156,7 @@ namespace Super.Runtime.Environment
 		readonly ICommand<Model.Sequences.Store<T>> _range;
 		readonly ICommand<T>                        _add;
 
-		public Registry() : this(Array<T>.Empty) {}
+		public Registry() : this(Empty<T>.Array) {}
 
 		public Registry(params T[] elements) : this(new Array<T>(elements)) {}
 
@@ -193,7 +188,7 @@ namespace Super.Runtime.Environment
 
 		protected SystemStore(Func<T> source) : this(source.Start()) {}
 
-		protected SystemStore(IResult<T> result) : this(result, Stores.New<T>()) {}
+		protected SystemStore(IResult<T> result) : this(result, SystemStores.New<T>()) {}
 
 		protected SystemStore(IResult<T> result, IStore<T> store) : this(store.Condition, result, store) {}
 

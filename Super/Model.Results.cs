@@ -58,7 +58,7 @@ namespace Super
 			=> new Assume<TIn, TOut>(@this.Get);
 
 		public static ISelect<TIn, TOut> Assume<TIn, TOut>(this IResult<ISelect<TIn, TOut>> @this)
-			=> new Assume<TIn, TOut>(@this.Then().Delegate().Selector());
+			=> new Select<TIn, TOut>(@this.Get);
 
 		public static IResult<T> ToContextual<T>(this IResult<T> @this)
 			=> new Contextual<T>(@this.ToDelegateReference());
