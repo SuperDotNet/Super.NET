@@ -71,6 +71,7 @@ namespace Super.Aspects
 
 				return new CompositeAspect<TIn, TOut>(store.Get().Instance);
 			}
+
 			return EmptyAspect<TIn, TOut>.Default;
 		}
 	}
@@ -89,19 +90,29 @@ namespace Super.Aspects
 		AspectImplementationArguments() : base(AspectImplementations.Default) {}
 	}
 
+	static class Implementations
+	{
+		public static Func<object, Array<Type>> Arguments { get; }
+			= Start.A.Selection.Of.Any.By.Type.Select(AspectImplementationArguments.Default).Get;
+
+		public static Func<Array<IRegistration>> Registrations { get; }
+			= AspectRegistry.Default.Get;
+	}
+
 	sealed class AdapterAspects<TIn, TOut> : ISelect<object, IAspect<TIn, TOut>>
 	{
 		readonly static Array<Type> Types = new Array<Type>(A.Type<TIn>(), A.Type<TOut>());
 
 		public static AdapterAspects<TIn, TOut> Default { get; } = new AdapterAspects<TIn, TOut>();
 
-		AdapterAspects() : this(Start.A.Selection.Of.Any.By.Type.Select(AspectImplementationArguments.Default),
-		                        new Generic<object, IAspect<TIn, TOut>>(typeof(Cast<,,,>))) {}
+		AdapterAspects() : this(Implementations.Arguments, Start.A.Generic((typeof(Cast<,,,>)))
+		                                                        .Of.Type<IAspect<TIn, TOut>>()
+		                                                        .WithParameterOf<object>()) {}
 
-		readonly ISelect<object, Array<Type>>         _arguments;
+		readonly Func<object, Array<Type>>            _arguments;
 		readonly IGeneric<object, IAspect<TIn, TOut>> _generic;
 
-		public AdapterAspects(ISelect<object, Array<Type>> arguments, IGeneric<object, IAspect<TIn, TOut>> generic)
+		public AdapterAspects(Func<object, Array<Type>> arguments, IGeneric<object, IAspect<TIn, TOut>> generic)
 		{
 			_arguments = arguments;
 			_generic   = generic;
@@ -109,8 +120,7 @@ namespace Super.Aspects
 
 		public IAspect<TIn, TOut> Get(object parameter)
 		{
-			var array  = _arguments.Get(parameter);
-			var types  = array.Open().Append(Types.Open()).ToArray();
+			var types  = _arguments(parameter).Open().Append(Types.Open()).ToArray();
 			var result = _generic.Get(types)(parameter);
 			return result;
 		}
@@ -148,7 +158,7 @@ namespace Super.Aspects
 	{
 		public static AspectRegistrations<TIn, TOut> Default { get; } = new AspectRegistrations<TIn, TOut>();
 
-		AspectRegistrations() : this(Leases<IAspect<TIn, TOut>>.Default, AspectRegistry.Default.Get,
+		AspectRegistrations() : this(Leases<IAspect<TIn, TOut>>.Default, Implementations.Registrations,
 		                             AdapterAspects<TIn, TOut>.Default) {}
 
 		readonly IStores<IAspect<TIn, TOut>>         _stores;

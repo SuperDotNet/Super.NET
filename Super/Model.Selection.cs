@@ -9,9 +9,7 @@ using Super.Model.Sequences;
 using Super.Reflection;
 using Super.Reflection.Types;
 using Super.Runtime;
-using Super.Runtime.Activation;
 using Super.Runtime.Objects;
-using Super.Text;
 using System;
 using None = Super.Runtime.None;
 
@@ -43,14 +41,13 @@ namespace Super
 
 		public static IResult<T> Out<T>(this ISelect<None, T> @this) => @this.In(None.Default);
 
-		public static IResult<TOut> New<TIn, TOut>(this ISelect<TIn, TOut> @this) => @this.In(New<TIn>.Default);
-
 		/**/
 
 		public static ISelect<TIn, TOut> Guard<TIn, TOut>(this ISelect<TIn, TOut> @this)
 			=> DefaultGuard<TIn>.Default.Then().ToConfiguration().Select(@this).Get();
 
-		public static IAlteration<T> AsGuard<T>(this IMessage<T> @this) => new AssignedGuard<T>(@this).Then().Out();
+		public static IAlteration<T> AsGuard<T>(this ISelect<T, string> @this)
+			=> new AssignedGuard<T>(@this).Then().Out();
 
 		/**/
 
@@ -90,8 +87,7 @@ namespace Super
 		public static ISelect<TIn, TOut> Unless<TIn, TOut>(this ISelect<TIn, TOut> @this, ISelect<TIn, TOut> assigned)
 			=> @this.Unless(assigned.ToDelegate());
 
-		public static ISelect<TIn, TOut> Unless<TIn, TOut>(this ISelect<TIn, TOut> @this,
-		                                                   Model.Selection.Adapters.Selection<TIn, TOut> assigned)
+		public static ISelect<TIn, TOut> Unless<TIn, TOut>(this ISelect<TIn, TOut> @this, Selection<TIn, TOut> assigned)
 			=> new ValidatedResult<TIn, TOut>(IsAssigned<TOut>.Default, assigned, @this);
 
 		public static ISelect<TIn, TOut> Unless<TIn, TOut>(this ISelect<TIn, TOut> @this, IConditional<TIn, TOut> then)

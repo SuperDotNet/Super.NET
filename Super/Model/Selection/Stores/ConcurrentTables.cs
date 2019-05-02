@@ -1,12 +1,13 @@
+using Super.Model.Selection.Conditions;
+using Super.Runtime;
 using Super.Runtime.Activation;
 using System;
 using System.Collections.Concurrent;
 
 namespace Super.Model.Selection.Stores
 {
-	public sealed class ConcurrentTables<TIn, TOut>
-		: ISelect<ConcurrentDictionary<TIn, TOut>, ITable<TIn, TOut>>,
-		  IActivateUsing<Func<TIn, TOut>>
+	public sealed class ConcurrentTables<TIn, TOut> : ISelect<ConcurrentDictionary<TIn, TOut>, ITable<TIn, TOut>>,
+	                                                  IActivateUsing<Func<TIn, TOut>>
 	{
 		public static ConcurrentTables<TIn, TOut> Default { get; } = new ConcurrentTables<TIn, TOut>();
 
@@ -16,14 +17,32 @@ namespace Super.Model.Selection.Stores
 
 		public ConcurrentTables(Func<TIn, TOut> source) => _source = source;
 
-		public ITable<TIn, TOut> Get(ConcurrentDictionary<TIn, TOut> parameter)
+		public ITable<TIn, TOut> Get(ConcurrentDictionary<TIn, TOut> parameter) => new Table(parameter, _source);
+
+		sealed class Table : ITable<TIn, TOut>
 		{
-			var get    = new TableAccessAdapter<TIn, TOut>(parameter.GetOrAdd, _source);
-			var remove = new ConcurrentDictionaryRemoveAdapter<TIn, TOut>(parameter);
-			var assign = new DictionaryAssignCommand<TIn, TOut>(parameter);
-			var result =
-				new DelegatedTable<TIn, TOut>(parameter.ContainsKey, assign.Execute, get.Get, remove.Get);
-			return result;
+			public ICondition<TIn> Condition { get; }
+			readonly ConcurrentDictionary<TIn, TOut> _table;
+			readonly Func<TIn, TOut>                 _select;
+
+			public Table(ConcurrentDictionary<TIn, TOut> table, Func<TIn, TOut> select)
+				: this(new Condition<TIn>(table.ContainsKey), table, @select) {}
+
+			public Table(ICondition<TIn> condition, ConcurrentDictionary<TIn, TOut> table, Func<TIn, TOut> select)
+			{
+				Condition = condition;
+				_table    = table;
+				_select   = @select;
+			}
+
+			public TOut Get(TIn parameter) => _table.GetOrAdd(parameter, _select);
+
+			public void Execute(Pair<TIn, TOut> parameter)
+			{
+				_table[parameter.Key] = parameter.Value;
+			}
+
+			public bool Remove(TIn key) => _table.TryRemove(key, out _);
 		}
 	}
 }

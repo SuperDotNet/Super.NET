@@ -30,22 +30,22 @@ namespace Super.Testing.Application.Model.Sequences
 		[Fact]
 		void VerifyCount()
 		{
-			var source   = Enumerable.Range(0, 10_000).ToArray();
-			var expected = source.Where(x => x > 1000).ToArray();
+			var source   = Enumerable.Range(0, 1_000).ToArray();
+			var expected = source.Where(x => x > 100).ToArray();
 			var ints = Start.A.Selection<int>()
 			                .As.Sequence.Array.By.Self.Query()
-			                .WhereBy(x => x > 1000)
+			                .WhereBy(x => x > 100)
 			                .Out()
 			                .Get(source);
 			ints.Should().NotBeSameAs(source);
 			ints.Should().Equal(expected);
-			ints.Should().HaveCountGreaterThan(5000);
+			ints.Should().HaveCountGreaterThan(500);
 		}
 
 		[Fact]
 		void Verify()
 		{
-			const uint count = 10_000_000u;
+			const uint count = 1_000u;
 			var array = Numbers.Default.Open()
 			                   .Query()
 			                   .Skip(count - 5)
@@ -75,15 +75,15 @@ namespace Super.Testing.Application.Model.Sequences
 		[Fact]
 		void VerifyWhereSkipTake()
 		{
-			var source = Enumerable.Range(0, 10_000).ToArray();
-			var count  = 8500;
-			source.Where(x => x > 1000)
+			var source = Enumerable.Range(0, 1_000).ToArray();
+			var count  = 850;
+			source.Where(x => x > 100)
 			      .Skip(count)
 			      .Take(5)
 			      .Should()
 			      .Equal(Start.A.Selection<int>()
 			                  .As.Sequence.Array.By.Self.Query()
-			                  .WhereBy(x => x > 1000)
+			                  .WhereBy(x => x > 100)
 			                  .Skip((uint)count)
 			                  .Take(5)
 			                  .Out()
@@ -93,40 +93,40 @@ namespace Super.Testing.Application.Model.Sequences
 		[Fact]
 		void VerifyAdvanced()
 		{
-			var source = Enumerable.Range(0, 10_000).ToArray();
+			var source = Enumerable.Range(0, 1_000).ToArray();
 			Start.A.Selection<int>()
 			     .As.Sequence.Array.By.Self.Query()
-			     .Skip(3000)
-			     .Take(1000)
-			     .WhereBy(x => x > 1000)
+			     .Skip(300)
+			     .Take(100)
+			     .WhereBy(x => x > 100)
 			     .Out()
 			     .Get(source)
 			     .Should()
-			     .Equal(source.Skip(3000)
-			                  .Take(1000)
-			                  .Where(x => x > 1000)
+			     .Equal(source.Skip(300)
+			                  .Take(100)
+			                  .Where(x => x > 100)
 			                  .ToArray());
 		}
 
 		[Fact]
 		void VerifyComprehensive()
 		{
-			var source = Enumerable.Range(0, 10_000).ToArray();
+			var source = Enumerable.Range(0, 1_000).ToArray();
 			Start.A.Selection<int>()
 			     .As.Sequence.Array.By.Self.Query()
-			     .Skip(3000)
-			     .Take(2000)
-			     .WhereBy(x => x > 1000)
-			     .Skip(500)
-			     .Take(1000)
+			     .Skip(300)
+			     .Take(200)
+			     .WhereBy(x => x > 100)
+			     .Skip(50)
+			     .Take(100)
 			     .Out()
 			     .Get(source)
 			     .Should()
-			     .Equal(source.Skip(3000)
-			                  .Take(2000)
-			                  .Where(x => x > 1000)
-			                  .Skip(500)
-			                  .Take(1000)
+			     .Equal(source.Skip(300)
+			                  .Take(200)
+			                  .Where(x => x > 100)
+			                  .Skip(50)
+			                  .Take(100)
 			                  .ToArray());
 		}
 

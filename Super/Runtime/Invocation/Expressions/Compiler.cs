@@ -3,12 +3,10 @@ using Super.Model.Selection;
 
 namespace Super.Runtime.Invocation.Expressions
 {
-	sealed class Compiler<T> : ISelect<Expression<T>, T>
+	sealed class Compiler<T> : Select<Expression<T>, T>
 	{
 		public static Compiler<T> Default { get; } = new Compiler<T>();
 
-		Compiler() {}
-
-		public T Get(Expression<T> parameter) => parameter.Compile();
+		Compiler() : base(x => x.Compile()) {}
 	}
 }

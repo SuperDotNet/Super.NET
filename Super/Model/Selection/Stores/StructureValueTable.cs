@@ -1,5 +1,4 @@
-﻿using Super.Reflection;
-using System;
+﻿using System;
 using System.Runtime.CompilerServices;
 
 namespace Super.Model.Selection.Stores
@@ -9,7 +8,6 @@ namespace Super.Model.Selection.Stores
 		where TOut : struct
 	{
 		public StructureValueTable(Func<TIn, TOut> parameter)
-			: base(parameter.To(I<StructureValueTables<TIn, TOut>>.Default)
-			                .Get(new ConditionalWeakTable<TIn, Tuple<TOut>>())) {}
+			: base(new StructureValueTables<TIn, TOut>(parameter).Get(new ConditionalWeakTable<TIn, Tuple<TOut>>())) {}
 	}
 }

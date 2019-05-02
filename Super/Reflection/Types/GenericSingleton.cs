@@ -9,7 +9,6 @@ namespace Super.Reflection.Types
 {
 	sealed class GenericSingleton : IActivateExpressions
 	{
-		public IArray<ParameterExpression> Parameters { get; }
 		public static GenericSingleton Default { get; } = new GenericSingleton();
 
 		GenericSingleton() : this(typeof(Singletons).GetRuntimeMethod(nameof(Singletons.Get),
@@ -23,6 +22,8 @@ namespace Super.Reflection.Types
 			_method = method;
 			Parameters = expressions;
 		}
+
+		public IArray<ParameterExpression> Parameters { get; }
 
 		public Expression Get(Type parameter)
 		{

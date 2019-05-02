@@ -1,9 +1,9 @@
-using System.Runtime.CompilerServices;
 using Super.Model.Selection.Conditions;
+using System.Runtime.CompilerServices;
 
 namespace Super.Model.Selection.Stores
 {
-	public sealed class ConditionalWeakTableContainsAdapter<TKey, TValue> : ICondition<TKey>
+	sealed class ConditionalWeakTableContainsAdapter<TKey, TValue> : ICondition<TKey>
 		where TKey : class where TValue : class
 	{
 		readonly ConditionalWeakTable<TKey, TValue> _store;

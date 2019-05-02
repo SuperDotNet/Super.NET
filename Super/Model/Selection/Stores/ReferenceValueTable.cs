@@ -1,4 +1,5 @@
-﻿using Super.Compose;
+﻿using JetBrains.Annotations;
+using Super.Compose;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -14,10 +15,10 @@ namespace Super.Model.Selection.Stores
 	public class ReferenceValueTable<TIn, TOut> : DecoratedTable<TIn, TOut> where TIn : class
 	                                                                        where TOut : class
 	{
+		[UsedImplicitly]
 		public ReferenceValueTable() : this(_ => default) {}
 
 		public ReferenceValueTable(Func<TIn, TOut> parameter)
-			: base(ReferenceValueTables<TIn, TOut>.Defaults.Get(parameter)
-			                                      .Get(new ConditionalWeakTable<TIn, TOut>())) {}
+			: base(new ReferenceValueTables<TIn, TOut>(parameter).Get(new ConditionalWeakTable<TIn, TOut>())) {}
 	}
 }

@@ -35,26 +35,30 @@ namespace Super.Runtime
 
 	sealed class IsAssignedConditions<T> : ReferenceValueStore<TypeInfo, Func<T, bool>>
 	{
+		readonly static Type Type = AccountForUnassignedType.Default.Get(A.Type<T>());
+
 		[UsedImplicitly]
 		public static IsAssignedConditions<T> Default { get; } = new IsAssignedConditions<T>();
 
-		IsAssignedConditions() : base(Start.A.Selection.Of.System.Metadata.By.Returning(IsModified<T>.Default)
-		                                   .Unless(IsReference.Default,
-		                                           Start.A.Selection<T>()
-		                                                .AndOf<object>()
-		                                                .By.Cast.Select(IsAssigned.Default)
-		                                                .Start())
-		                                   .Unless(IsAssignableStructure.Default,
-		                                           Start.A.Generic(typeof(HasValue<>))
-		                                                .Of.Type<T>()
-		                                                .As.Condition()
-		                                                .Then()
-		                                                .Invoke()
-		                                                .Get()
-		                                                .In(Type<T>.Instance.Yield().Result()))
-		                                   .To(AccountForUnassignedType.Default.Select)
-		                                   .Select(x => x.ToDelegate())
-		                                   .Get) {}
+		IsAssignedConditions()
+			: this(IsAssignableStructure.Default.Get(Type)
+				       ? Start.A.Generic(typeof(HasValue<>))
+				              .Of.Type<T>()
+				              .As.Condition()
+				              .Then()
+				              .Invoke()
+				              .Get()
+				              .In(Type<T>.Instance.Yield().Result())
+				              .Assume()
+				       : IsReference.Default.Get(Type)
+					       ? Start.A.Selection<T>()
+					              .AndOf<object>()
+					              .By.Cast.Select(IsAssigned.Default)
+					       : IsModified<T>.Default) {}
+
+		public IsAssignedConditions(ISelect<T, bool> condition)
+			: base(Start.A.Selection.Of.System.Metadata.By.Returning(condition.ToCondition())
+			            .Select(x => x.ToDelegate())) {}
 	}
 
 	sealed class IsAssigned<T> : Select<T, bool>, ICondition<T>

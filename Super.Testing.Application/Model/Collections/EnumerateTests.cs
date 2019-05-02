@@ -25,12 +25,12 @@ namespace Super.Testing.Application.Model.Collections
 		[InlineData(1_000u)]
 		[InlineData(1_024u)]
 		[InlineData(1_025u)]
-		[InlineData(2_048u)]
+		/*[InlineData(2_048u)]
 		[InlineData(4_096u)]
 		[InlineData(8_192u)]
 		[InlineData(10_000u)]
 		[InlineData(100_000u)]
-		[InlineData(1_000_000u)]
+		[InlineData(1_000_000u)]*/
 		void Verify(uint count)
 		{
 			var numbers = Objects.Numbers.Default.Get(count).Open();

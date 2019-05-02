@@ -1,37 +1,56 @@
+using Super.Model.Selection.Conditions;
+using Super.Runtime;
 using System;
 using System.Runtime.CompilerServices;
 
 namespace Super.Model.Selection.Stores
 {
-	public sealed class ReferenceValueTables<TIn, TOut>
-		: ISelect<ConditionalWeakTable<TIn, TOut>, ITable<TIn, TOut>>
+	public sealed class ReferenceValueTables<TIn, TOut> : ISelect<ConditionalWeakTable<TIn, TOut>, ITable<TIn, TOut>>
 		where TIn : class
 		where TOut : class
 	{
-		public static ISelect<Func<TIn, TOut>, ReferenceValueTables<TIn, TOut>> Defaults { get; }
-			= new ReferenceValueTables<Func<TIn, TOut>,
-					ReferenceValueTables<TIn, TOut>>(x => new ReferenceValueTables<TIn, TOut>(x))
-				.Get(new ConditionalWeakTable<Func<TIn, TOut>, ReferenceValueTables<TIn, TOut>>());
-
 		public static ReferenceValueTables<TIn, TOut> Default { get; } = new ReferenceValueTables<TIn, TOut>();
 
-		ReferenceValueTables() : this(Default<TIn, TOut>.Instance.Get) {}
+		ReferenceValueTables() : this(Default<TIn, TOut>.Instance.ToDelegate()) {}
 
-		readonly Func<TIn, TOut> _source;
+		readonly ConditionalWeakTable<TIn, TOut>.CreateValueCallback _callback;
 
-		public ReferenceValueTables(Func<TIn, TOut> source) => _source = source;
+		public ReferenceValueTables(Func<TIn, TOut> callback)
+			: this(new ConditionalWeakTable<TIn, TOut>.CreateValueCallback(callback)) {}
 
-		public ITable<TIn, TOut> Get(ConditionalWeakTable<TIn, TOut> parameter)
+		ReferenceValueTables(ConditionalWeakTable<TIn, TOut>.CreateValueCallback callback) => _callback = callback;
+
+		public ITable<TIn, TOut> Get(ConditionalWeakTable<TIn, TOut> parameter) => new Table(parameter, _callback);
+
+		sealed class Table : ITable<TIn, TOut>
 		{
-			var get =
-				new ConditionalWeakTableAccessAdapter<TIn, TOut>(parameter,
-				                                                           new ConditionalWeakTable<TIn, TOut>.
-					                                                           CreateValueCallback(_source));
-			var contains = new ConditionalWeakTableContainsAdapter<TIn, TOut>(parameter);
-			var assign   = new ConditionalWeakTableAssignCommand<TIn, TOut>(parameter);
-			var result =
-				new DelegatedTable<TIn, TOut>(contains.Get, assign.Execute, get.Get, parameter.Remove);
-			return result;
+			readonly ConditionalWeakTable<TIn, TOut>                     _table;
+			readonly ConditionalWeakTable<TIn, TOut>.CreateValueCallback _callback;
+
+			public Table(ConditionalWeakTable<TIn, TOut> table,
+			             ConditionalWeakTable<TIn, TOut>.CreateValueCallback callback)
+				: this(new ConditionalWeakTableContainsAdapter<TIn, TOut>(table), table, callback) {}
+
+			public Table(ICondition<TIn> condition,
+			             ConditionalWeakTable<TIn, TOut> table,
+			             ConditionalWeakTable<TIn, TOut>.CreateValueCallback callback)
+			{
+				Condition = condition;
+				_table    = table;
+				_callback = callback;
+			}
+
+			public ICondition<TIn> Condition { get; }
+
+			public TOut Get(TIn parameter) => _table.GetValue(parameter, _callback);
+
+			public void Execute(Pair<TIn, TOut> parameter)
+			{
+				_table.Remove(parameter.Key);
+				_table.Add(parameter.Key, parameter.Value);
+			}
+
+			public bool Remove(TIn key) => _table.Remove(key);
 		}
 	}
 }

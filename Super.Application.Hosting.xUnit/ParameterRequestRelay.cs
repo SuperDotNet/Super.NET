@@ -1,5 +1,5 @@
-﻿using System.Reflection;
-using AutoFixture.Kernel;
+﻿using AutoFixture.Kernel;
+using System.Reflection;
 
 namespace Super.Application.Hosting.xUnit
 {
@@ -12,15 +12,8 @@ namespace Super.Application.Hosting.xUnit
 		public ParameterRequestRelay(AutoFixture.Kernel.ParameterRequestRelay inner) => _inner = inner;
 
 		public object Create(object request, ISpecimenContext context)
-		{
-			var result = request is ParameterInfo parameter
-				             ? (ShouldDefault(parameter) ? parameter.DefaultValue : _inner.Create(request, context))
-				             : NoSpecimen;
-			return result;
-		}
-
-		static bool ShouldDefault(ParameterInfo info) => info.IsOptional
-		//&& !CurrentMethod.Default.Get().GeTInTypes().Any(info.ParameterType.IsAssignableFrom)
-		;
+			=> request is ParameterInfo parameter
+				   ? parameter.IsOptional ? parameter.DefaultValue : _inner.Create(request, context)
+				   : NoSpecimen;
 	}
 }

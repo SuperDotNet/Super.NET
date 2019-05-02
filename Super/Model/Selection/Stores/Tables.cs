@@ -3,6 +3,7 @@ using Super.Model.Sequences;
 using Super.Reflection.Types;
 using Super.Runtime.Activation;
 using System;
+using System.Collections.Concurrent;
 
 namespace Super.Model.Selection.Stores
 {
@@ -17,6 +18,6 @@ namespace Super.Model.Selection.Stores
 			                       .Assume()
 			                       .Assume()
 			                : Start.An.Instance(Activations<Func<TIn, TOut>, ConcurrentTables<TIn, TOut>>.Default)
-			                       .Select(x => x.New().Get())) {}
+			                       .Select(x => x.Get(new ConcurrentDictionary<TIn, TOut>()))) {}
 	}
 }
