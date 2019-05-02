@@ -33,6 +33,9 @@ namespace Super
 		public static TOut Get<TItem, TOut>(this ISelect<Array<TItem>, TOut> @this, TItem parameter)
 			=> @this.Get(Model.Sequences.Query.Yield<TItem>.Default.Get(parameter));
 
+		public static TOut Get<TItem, TOut>(this ISelect<Array<TItem>, Func<TOut>> @this, params TItem[] parameters)
+			=> @this.Get(parameters)();
+
 		public static TOut Get<TItem, TOut>(this ISelect<Array<TItem>, TOut> @this, params TItem[] parameters)
 			=> @this.Get(parameters);
 
@@ -55,23 +58,15 @@ namespace Super
 		                                                   ISelect<Decoration<TIn, TOut>, TOut> other)
 			=> new Decorator<TIn, TOut>(other, @this);
 
+		public static IConditional<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this,
+		                                                             IConditional<TFrom, TTo> select)
+			=> new Conditional<TIn, TTo>(@this.Select(select.Condition).Get, @this.Select(select.Get).Get);
+
 		public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this,
 		                                                        ISelect<TFrom, TTo> select) => @this.Select(select.Get);
 
 		public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this, Func<TFrom, TTo> select)
 			=> new Selection<TIn, TFrom, TTo>(@this.Get, select);
-
-		public static ISelect<TIn, TOut> SelectOf<TIn, TOut, TOther>(this ISelect<TIn, TOut> @this,
-		                                                             IAssign<TIn, TOther> configuration)
-			=> new Configuration<TIn, TOut, TOther>(@this, configuration);
-
-		public static ISelect<TIn, TOut> Select<TIn, TOut>(this ISelect<TIn, TOut> @this,
-		                                                   IAssign<TIn, TOut> configuration)
-			=> new Configuration<TIn, TOut>(@this, configuration);
-
-		public static ISelect<_, IConditional<TFrom, __>> Select<_, __, TFrom, TTo>(
-			this ISelect<_, IConditional<TTo, __>> @this, ISelect<TFrom, TTo> select)
-			=> @this.Select(new ParameterSelection<__, TFrom, TTo>(select.Get));
 
 /**/
 
@@ -102,7 +97,7 @@ namespace Super
 		public static ISelect<TIn, TOut> Unless<TIn, TOut>(this ISelect<TIn, TOut> @this, IConditional<TIn, TOut> then)
 			=> @this.Unless(then.Condition, then);
 
-		public static ISelect<TIn, TOut> UnlessOf<TIn, TOut, T>(this ISelect<TIn, TOut> @this, ISelect<T, TOut> then)
+		public static ISelect<TIn, TOut> UnlessIsOf<TIn, TOut, T>(this ISelect<TIn, TOut> @this, ISelect<T, TOut> then)
 			=> @this.Unless(IsOf<TIn, T>.Default, CastOrThrow<TIn, T>.Default.Select(then));
 
 		public static ISelect<TIn, TOut> Unless<TIn, TOut>(this ISelect<TIn, TOut> @this, ICondition<TIn> condition,
@@ -123,12 +118,12 @@ namespace Super
 		public static ReferenceContext<TIn, TOut> Stores<TIn, TOut>(this ISelect<TIn, TOut> @this) where TIn : class
 			=> new ReferenceContext<TIn, TOut>(@this);
 
-
 		public static ISelect<TIn, TOut> ToSelect<TIn, TOut>(this Func<TIn, TOut> @this)
 			=> Selections<TIn, TOut>.Default.Get(@this);
 
 		public static ICondition<T> ToCondition<T>(this ISelect<T, bool> @this) => @this as ICondition<T> ??
-		                                                                           new Model.Selection.Conditions.Condition<T>(@this.Get);
+		                                                                           new Model.Selection.Conditions.
+			                                                                           Condition<T>(@this.Get);
 
 		public static IConditional<TIn, TOut> ToConditional<TIn, TOut>(this ISelect<TIn, TOut> @this,
 		                                                               ICondition<TIn> condition)

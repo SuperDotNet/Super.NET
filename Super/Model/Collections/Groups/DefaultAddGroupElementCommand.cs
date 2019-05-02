@@ -9,7 +9,7 @@ namespace Super.Model.Collections.Groups
 		                                     IGroupCollection<T> collection)
 			: base(new AddGroupElementCommand<T>(collection, new GroupName<T>(defaultName, names))
 			       .ToSelect()
-			       .UnlessOf(new GroupingAwareCommand<T>(collection).ToSelect())
+			       .UnlessIsOf(new GroupingAwareCommand<T>(collection).ToSelect())
 			       .ToCommand()) {}
 	}
 }

@@ -21,6 +21,6 @@ namespace Super.Reflection
 		public static AttributeProvider<T> Default { get; } = new AttributeProvider<T>();
 
 		AttributeProvider() : base(Start.A.Selection<T>()
-		                                .By.Metadata.UnlessOf(Start.A.Selection<ICustomAttributeProvider>().By.Self)) {}
+		                                .By.Metadata.UnlessIsOf(Start.A.Selection<ICustomAttributeProvider>().By.Self)) {}
 	}
 }

@@ -10,7 +10,7 @@ namespace Super.Model.Collections
 		SortSelector() : base(Start.A.Selection.Of<T>()
 		                           .By.Returning(-1)
 		                           .Unless(SortMetadata<T>.Default)
-		                           .UnlessOf(Start.A.Selection<ISortAware>()
+		                           .UnlessIsOf(Start.A.Selection<ISortAware>()
 		                                          .By.Self.AsDefined()
 		                                          .Then()
 		                                          .Value()

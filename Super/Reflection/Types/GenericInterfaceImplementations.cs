@@ -18,9 +18,8 @@ namespace Super.Reflection.Types
 			: base(GenericInterfaces.Default
 			                        .Grouping(definition)
 			                        .Then()
-			                        .Activate<Model.Sequences.Query.Lookup<Type, TypeInfo>>()
+			                        .Select(definition.Unless(IsGenericTypeDefinition.Default, A.Self<Type>()).Select)
 			                        .Get()
-			                        .Select(definition.Unless(IsGenericTypeDefinition.Default, A.Self<Type>()))
 			                        .Get) {}
 	}
 }

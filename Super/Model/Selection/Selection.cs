@@ -2,17 +2,17 @@ using System;
 
 namespace Super.Model.Selection
 {
-	sealed class Selection<TIn, TFrom, TTo> : ISelect<TIn, TTo>
+	public class Selection<TIn, TFrom, TTo> : ISelect<TIn, TTo>
 	{
-		readonly Func<TFrom, TTo> _to;
-		readonly Func<TIn, TFrom> _from;
+		readonly Func<TFrom, TTo> _current;
+		readonly Func<TIn, TFrom> _previous;
 
-		public Selection(Func<TIn, TFrom> from, Func<TFrom, TTo> to)
+		public Selection(Func<TIn, TFrom> previous, Func<TFrom, TTo> current)
 		{
-			_from = from;
-			_to   = to;
+			_previous = previous;
+			_current  = current;
 		}
 
-		public TTo Get(TIn parameter) => _to(_from(parameter));
+		public TTo Get(TIn parameter) => _current(_previous(parameter));
 	}
 }

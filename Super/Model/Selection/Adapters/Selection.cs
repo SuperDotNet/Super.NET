@@ -1,5 +1,4 @@
-﻿using Super.Compose;
-using Super.Model.Commands;
+﻿using Super.Model.Commands;
 using Super.Model.Results;
 using Super.Model.Selection.Alterations;
 using Super.Model.Selection.Conditions;
@@ -172,7 +171,7 @@ namespace Super.Model.Selection.Adapters
 
 	public class ReferenceContext<_, T> where _ : class
 	{
-		readonly ISelect<_, T> _subject;
+		readonly ISelect<_, T>                     _subject;
 		readonly ISelect<Func<_, T>, ITable<_, T>> _tables;
 
 		public ReferenceContext(ISelect<_, T> subject) : this(subject, ReferenceTables<_, T>.Default) {}
@@ -180,7 +179,7 @@ namespace Super.Model.Selection.Adapters
 		public ReferenceContext(ISelect<_, T> subject, ISelect<Func<_, T>, ITable<_, T>> tables)
 		{
 			_subject = subject;
-			_tables = tables;
+			_tables  = tables;
 		}
 
 		public ISelect<_, T> Reference() => _tables.Get(_subject.ToDelegateReference());
@@ -204,9 +203,16 @@ namespace Super.Model.Selection.Adapters
 
 		public Selector<_, TTo> Select<TTo>(ISelect<T, TTo> select) => Select(select.Get);
 
-		public Selector<_, TTo> Select<TTo>(Func<T, TTo> select) => new Selection<_, T, TTo>(Get().Get, select).Then();
+		public Selector<_, TTo> Select<TTo>(Func<T, TTo> select)
+			=> new Selector<_, TTo>(new Selection<_, T, TTo>(Get().Get, select));
 
-		public Selector<_, T> Assigned() => Get().If(A.Of<IsAssigned<_>>()).Then();
+		public Selector<_, T> Configure<TOther>(IAssign<_, TOther> configuration)
+			=> new Selector<_, T>(new Configuration<_, T, TOther>(_subject, configuration));
+
+		public Selector<_, T> Configure(IAssign<_, T> configuration)
+			=> new Selector<_, T>(new Configuration<_, T>(_subject, configuration));
+
+		public Selector<_, T> Assigned() => Get().If(IsAssigned<_>.Default).Then();
 
 		public Selector<_, TTo> Cast<TTo>() => Select(CastOrDefault<T, TTo>.Default);
 

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Super.Model.Selection.Conditions;
 
 namespace Super
 {
@@ -13,13 +14,13 @@ namespace Super
 
 	public static partial class ExtensionMethods
 	{
-		public static ISelect<TIn, TOut> ToStore<TIn, TOut>(this IEnumerable<Pair<TIn, TOut>> @this)
+		public static IConditional<TIn, TOut> ToStore<TIn, TOut>(this IEnumerable<Pair<TIn, TOut>> @this)
 			=> @this.ToOrderedDictionary().AsReadOnly().ToStore();
 
 		public static ISelect<T, TIn, TOut> ToSelect<T, TIn, TOut>(this IEnumerable<Pair<T, Func<TIn, TOut>>> @this)
 			=> new Select<T, TIn, TOut>(@this.ToStore().ToDelegate());
 
-		public static ISelect<TIn, TOut> ToStore<TIn, TOut>(this IReadOnlyDictionary<TIn, TOut> @this)
+		public static IConditional<TIn, TOut> ToStore<TIn, TOut>(this IReadOnlyDictionary<TIn, TOut> @this)
 			=> @this.To(I<Lookup<TIn, TOut>>.Default);
 
 		public static ITable<TIn, TOut> ToTable<TIn, TOut>(this IDictionary<TIn, TOut> @this)

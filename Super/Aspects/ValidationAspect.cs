@@ -34,7 +34,7 @@ namespace Super.Aspects
 		Aspects() : base(Start.A.Selection<ISelect<TIn, TOut>>()
 		                      .By.Type.Then()
 		                      .Select(SystemStores.New(RegisteredAspects<TIn, TOut>.Default.Stores().New)
-		                                    .Assume())) {}
+		                                          .Assume())) {}
 	}
 
 	sealed class RegisteredAspects<TIn, TOut> : ISelect<Type, IAspect<TIn, TOut>>
@@ -60,18 +60,20 @@ namespace Super.Aspects
 		{
 			var implementations = _implementations.Get(parameter);
 			var length          = implementations.Length;
-			var store           = new DynamicStore<IAspect<TIn, TOut>>(32);
-			for (var i = 0u; i < length; i++)
+			if (implementations.Length > 0)
 			{
-				var registrations = _registrations.Get(implementations[i].GenericTypeArguments);
-				store = store.Add(new Store<IAspect<TIn, TOut>>(registrations));
-			}
+				var store = new DynamicStore<IAspect<TIn, TOut>>(32);
+				for (var i = 0u; i < length; i++)
+				{
+					var registrations = _registrations.Get(implementations[i].GenericTypeArguments);
+					store = store.Add(new Store<IAspect<TIn, TOut>>(registrations));
+				}
 
-			return new CompositeAspect<TIn, TOut>(store.Get().Instance);
+				return new CompositeAspect<TIn, TOut>(store.Get().Instance);
+			}
+			return EmptyAspect<TIn, TOut>.Default;
 		}
 	}
-
-
 
 	public sealed class AspectImplementations : GenericImplementations
 	{
@@ -273,7 +275,7 @@ namespace Super.Aspects
 
 	public class CompositeAspect<TIn, TOut> : Aggregate<IAspect<TIn, TOut>, ISelect<TIn, TOut>>, IAspect<TIn, TOut>
 	{
-		/*public CompositeAspect(params IAspect<TIn, TOut>[] aspects) : this(new Array<IAspect<TIn, TOut>>(aspects)) {}*/
+		public CompositeAspect(params IAspect<TIn, TOut>[] aspects) : this(new Array<IAspect<TIn, TOut>>(aspects)) {}
 
 		public CompositeAspect(Array<IAspect<TIn, TOut>> items) : base(items) {}
 	}

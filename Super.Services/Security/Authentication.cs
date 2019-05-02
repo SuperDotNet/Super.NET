@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Super.Compose;
 using Super.Model.Selection;
 
 namespace Super.Services.Security
@@ -8,12 +7,12 @@ namespace Super.Services.Security
 	{
 		public static Authentication Default { get; } = new Authentication();
 
-		Authentication() : base(A.Of<AuthenticationAddress>()
-		                         .Select(ClientStore.Default)
-		                         .Select(A.Of<AuthenticationStateAssignment>())
-		                         .Select(A.Of<Api<IAuthentication>>())
-		                         .Request(x => x.Current())
-		                         .Query()
-		                         .Only()) {}
+		Authentication() : base(AuthenticationAddress.Default.Then()
+		                                             .Select(ClientStore.Default)
+		                                             .Configure(AuthenticationStateAssignment.Default)
+		                                             .Select(Api<IAuthentication>.Default)
+		                                             .Request(x => x.Current())
+		                                             .Query()
+		                                             .Only()) {}
 	}
 }

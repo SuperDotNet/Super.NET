@@ -1,5 +1,6 @@
 ﻿using Super.Model.Results;
 using Super.Model.Selection;
+using Super.Model.Selection.Conditions;
 using Super.Model.Selection.Stores;
 using Super.Runtime.Activation;
 using System;
@@ -79,6 +80,8 @@ namespace Super.Model.Sequences
 
 	public interface IArray<in _, T> : ISelect<_, Array<T>> {}
 
+	public interface IArrayMap<in TIn, T> : IConditional<TIn, Array<T>> {}
+
 	public class ArrayStore<_, T> : Store<_, Array<T>>, IArray<_, T>
 	{
 		public ArrayStore(ISelect<_, IEnumerable<T>> source) : this(source.Result()) {}
@@ -86,6 +89,15 @@ namespace Super.Model.Sequences
 		public ArrayStore(ISelect<_, Array<T>> source) : this(source.Get) {}
 
 		public ArrayStore(Func<_, Array<T>> source) : base(source) {}
+	}
+
+	public class ArrayMap<_, T> : Select<_, Array<T>>, IArrayMap<_, T>
+	{
+		public ICondition<_> Condition { get; }
+
+		public ArrayMap(IConditional<_, Array<T>> source) : this(source.Condition, source.Get) {}
+
+		public ArrayMap(ICondition<_> condition, Func<_, Array<T>> source) : base(source) => Condition = condition;
 	}
 
 	sealed class Result<T> : Select<IEnumerable<T>, Array<T>>

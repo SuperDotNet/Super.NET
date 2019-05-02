@@ -5,8 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-// ReSharper disable TooManyArguments
-
 namespace Super
 {
 	// ReSharper disable once MismatchedFileName
@@ -17,12 +15,12 @@ namespace Super
 			ToDictionary<TKey, TValue>(this IEnumerable<IGrouping<TKey, TValue>> @this)
 			=> @this.ToDictionary(x => x.Key, x => new Array<TValue>(x.ToArray()));
 
-		public static ISelect<_, IReadOnlyDictionary<TKey, Array<T>>>
-			Grouping<_, T, TKey>(this ISelect<_, Array<T>> @this, ISelect<T, TKey> select)
+		public static ISelect<_, IArrayMap<TKey, T>> Grouping<_, T, TKey>(this ISelect<_, Array<T>> @this,
+		                                                                  ISelect<T, TKey> select)
 			=> @this.Grouping(select.Get);
 
-		public static ISelect<_, IReadOnlyDictionary<TKey, Array<T>>>
-			Grouping<_, T, TKey>(this ISelect<_, Array<T>> @this, Func<T, TKey> select)
+		public static ISelect<_, IArrayMap<TKey, T>> Grouping<_, T, TKey>(this ISelect<_, Array<T>> @this,
+		                                                                  Func<T, TKey> select)
 			=> @this.Select(new Grouping<T, TKey>(select));
 	}
 }
