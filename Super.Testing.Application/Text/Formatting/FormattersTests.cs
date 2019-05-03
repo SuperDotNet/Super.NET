@@ -10,6 +10,7 @@ namespace Super.Testing.Application.Text.Formatting
 		[Fact]
 		void Verify()
 		{
+			ApplicationDomainFormatter.Default.Register();
 			var sut = KnownFormatters.Default.Get(AppDomain.CurrentDomain);
 			sut.ToString("F", FormatProvider.Default).Should().Be(AppDomain.CurrentDomain.FriendlyName);
 			sut.ToString("I", FormatProvider.Default).Should().Be(AppDomain.CurrentDomain.Id.ToString());

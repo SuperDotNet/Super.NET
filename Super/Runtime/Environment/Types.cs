@@ -11,7 +11,6 @@ using Super.Runtime.Activation;
 using Super.Runtime.Invocation;
 using System;
 using System.Reflection;
-using Activator = Super.Runtime.Activation.Activator;
 
 namespace Super.Runtime.Environment
 {
@@ -19,21 +18,17 @@ namespace Super.Runtime.Environment
 	{
 		public static Types Default { get; } = new Types();
 
-		Types() : this(Types<PublicAssemblyTypes>.Default) {}
-
-		public Types(IArray<Type> instance) : base(instance) {}
+		Types() : base(Types<PublicAssemblyTypes>.Default) {}
 	}
 
-	public class Types<T> : ArrayStore<Type> where T : class, IActivateUsing<Assembly>, IArray<Type>
+	public sealed class Types<T> : ArrayStore<Type> where T : class, IActivateUsing<Assembly>, IArray<Type>
 	{
 		public static Types<T> Default { get; } = new Types<T>();
 
-		Types() : this(Assemblies.Default.Query()
+		Types() : base(Assemblies.Default.Query()
 		                         .Select(I<T>.Default.From)
 		                         .SelectMany(x => x.Get().Open())
 		                         .Selector()) {}
-
-		public Types(Func<Array<Type>> source) : base(source) {}
 	}
 
 	public sealed class StorageTypeDefinition : Variable<Type>
@@ -47,18 +42,10 @@ namespace Super.Runtime.Environment
 	{
 		public static SystemStores<T> Default { get; } = new SystemStores<T>();
 
-		SystemStores() : this(Start.A.Selection<Type>()
-		                           .By.StoredActivation<MakeGenericType>()
-		                           .In(StorageTypeDefinition.Default)
-		                           .Assume()) {}
-
-		public SystemStores(ISelect<Array<Type>, Type> source) : base(Start.A.Selection.Of.System.Type.By.Array()
-		                                                                   .Select(source)
-		                                                                   .Select(Activator.Default)
-		                                                                   .In(A.Type<T>())
-		                                                                   .Then()
-		                                                                   .Cast<IMutable<T>>()
-		                                                                   .Selector()) {}
+		SystemStores() : base(Implementations.Activator.In(A.Type<T>())
+		                                     .Then()
+		                                     .Cast<IMutable<T>>()
+		                                     .Selector()) {}
 	}
 
 	sealed class DefaultComponent<T> : Component<T>
@@ -73,6 +60,17 @@ namespace Super.Runtime.Environment
 		public Component(Func<T> @default) : this(@default.Start()) {}
 
 		public Component(IResult<T> @default) : base(@default.Unless(ComponentLocator<T>.Default)) {}
+	}
+
+	static class Implementations
+	{
+		public static ISelect<Type, object> Activator { get; }
+			= Start.A.Selection.Of.System.Type.By.Array()
+			       .Select(Start.A.Selection<Type>()
+			                    .By.StoredActivation<MakeGenericType>()
+			                    .In(StorageTypeDefinition.Default)
+			                    .Assume())
+			       .Select(Activation.Activator.Default);
 	}
 
 	static class Implementations<T>

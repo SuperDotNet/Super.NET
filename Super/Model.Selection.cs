@@ -90,7 +90,8 @@ namespace Super
 		public static ISelect<TIn, TOut> Unless<TIn, TOut>(this ISelect<TIn, TOut> @this, Selection<TIn, TOut> assigned)
 			=> new ValidatedResult<TIn, TOut>(IsAssigned<TOut>.Default, assigned, @this);
 
-		public static ISelect<TIn, TOut> Unless<TIn, TOut>(this ISelect<TIn, TOut> @this, IConditional<TIn, TOut> then)
+		public static IConditional<TIn, TOut> Unless<TIn, TOut>(this ISelect<TIn, TOut> @this,
+		                                                        IConditional<TIn, TOut> then)
 			=> @this.Unless(then.Condition, then);
 
 		public static ISelect<TIn, TOut> UnlessIsOf<TIn, TOut, T>(this ISelect<TIn, TOut> @this, ISelect<T, TOut> then)
@@ -100,9 +101,10 @@ namespace Super
 		                                                   IResult<TOut> then)
 			=> @this.Unless(condition, then.ToSelect(I.A<TIn>()));
 
-		public static ISelect<TIn, TOut> Unless<TIn, TOut>(this ISelect<TIn, TOut> @this, ISelect<TIn, bool> unless,
-		                                                   ISelect<TIn, TOut> then)
-			=> new Validated<TIn, TOut>(unless.Get, then.Get, @this.Get);
+		public static IConditional<TIn, TOut> Unless<TIn, TOut>(this ISelect<TIn, TOut> @this,
+		                                                        ISelect<TIn, bool> unless,
+		                                                        ISelect<TIn, TOut> then)
+			=> new Conditional<TIn, TOut>(unless.Get, then.Get, @this.Get);
 
 		/**/
 
