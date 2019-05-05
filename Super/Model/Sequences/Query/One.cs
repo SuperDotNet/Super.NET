@@ -1,15 +1,14 @@
-﻿using Super.Model.Results;
-using Super.Runtime.Activation;
+﻿using Super.Compose;
 using System;
 
 namespace Super.Model.Sequences.Query
 {
-	public class One<T> : IElement<T>, IActivateUsing<Func<T, bool>>
+	public class One<T> : IElement<T>
 	{
 		readonly Func<ArrayView<T>, ArrayView<T>> _where;
 		readonly Func<T>                          _default;
 
-		public One(Func<T, bool> where) : this(@where, Default<T>.Instance.Get) {}
+		public One(Func<T, bool> where) : this(@where, A.Default<T>) {}
 
 		public One(Func<T, bool> where, Func<T> @default) : this(new Where<T>(where).Get, @default) {}
 

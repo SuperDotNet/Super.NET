@@ -12,7 +12,7 @@ namespace Super.Model.Sequences
 
 		public Store(T[] instance) : this(instance, Assigned<uint>.Unassigned) {}
 
-		public Store(T[] instance, Assigned<uint> length)
+		public Store(T[] instance, in Assigned<uint> length)
 		{
 			Instance = instance;
 			Length   = length;

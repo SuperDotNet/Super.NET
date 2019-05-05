@@ -2,6 +2,7 @@
 using Super.Model.Commands;
 using Super.Model.Results;
 using Super.Model.Selection;
+using Super.Model.Selection.Alterations;
 using Super.Model.Selection.Conditions;
 using Super.Runtime;
 using System;
@@ -13,6 +14,8 @@ namespace Super.Compose
 {
 	public static class A
 	{
+		public static T Default<T>() => Model.Results.Default<T>.Instance.Get();
+
 		public static T Of<T>() => Start.An.Instance<T>();
 
 		public static T This<T>(T instance) => instance;
@@ -21,7 +24,7 @@ namespace Super.Compose
 
 		public static TypeInfo Metadata<T>() => Reflection.Types.Type<T>.Metadata;
 
-		public static ISelect<T, T> Self<T>() => Model.Selection.Self<T>.Default;
+		public static IAlteration<T> Self<T>() => Model.Selection.Self<T>.Default;
 	}
 
 	public static class Make

@@ -16,7 +16,7 @@ namespace Super.Model.Sequences.Query.Construction
 		ISelect<_, TTo> Get<TTo>(IElement<T, TTo> parameter);
 	}
 
-	public class Enter<_, T> : Instance<ISelect<_, T[]>>, INode<_, T>
+	sealed class Enter<_, T> : Instance<ISelect<_, T[]>>, INode<_, T>
 	{
 		readonly ISelect<_, T[]> _open;
 
@@ -36,7 +36,7 @@ namespace Super.Model.Sequences.Query.Construction
 			=> _open.Select(Leased<T>.Default).Select(new Element<T, TTo>(parameter));
 	}
 
-	public sealed class Open<_, T> : INode<_, T>
+	sealed class Open<_, T> : INode<_, T>
 	{
 		readonly ISelect<_, T[]> _input;
 		readonly IEnter<T>       _enter;
@@ -70,7 +70,7 @@ namespace Super.Model.Sequences.Query.Construction
 			=> new Node<_, T>(_input.Select(Leased<T>.Default), _content).Get(parameter);
 	}
 
-	public sealed class Store<_, T> : INode<_, T>
+	sealed class Store<_, T> : INode<_, T>
 	{
 		readonly ISelect<_, Store<T>> _input;
 
@@ -89,7 +89,7 @@ namespace Super.Model.Sequences.Query.Construction
 		public ISelect<_, TTo> Get<TTo>(IElement<T, TTo> parameter) => _input.Select(new Element<T, TTo>(parameter));
 	}
 
-	public sealed class Node<_, T> : INode<_, T>
+	sealed class Node<_, T> : INode<_, T>
 	{
 		readonly ISelect<_, Store<T>> _input;
 		readonly IProject<T>          _content;
@@ -115,7 +115,7 @@ namespace Super.Model.Sequences.Query.Construction
 			=> _input.Select(new Element<T, TTo>(_content.Select(parameter)));
 	}
 
-	public sealed class Node<_, TIn, TOut> : INode<_, TOut>
+	sealed class Node<_, TIn, TOut> : INode<_, TOut>
 	{
 		readonly ISelect<_, Store<TIn>>  _input;
 		readonly IProjections<TIn, TOut> _projections;
@@ -346,12 +346,12 @@ namespace Super.Model.Sequences.Query.Construction
 		public TOut Get(Store<TIn> parameter)
 		{
 			var @in    = parameter.Instance;
-			var view   = new ArrayView<TIn>(parameter.Instance, 0, parameter.Length.Or((uint)@in.Length));
+			var view   = new ArrayView<TIn>(@in, 0, parameter.Length());
 			var result = _select.Get(view);
 
 			if (parameter.Length.IsAssigned)
 			{
-				_return(parameter.Instance);
+				_return(@in);
 			}
 
 			return result;
