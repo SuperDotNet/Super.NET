@@ -1,6 +1,4 @@
-﻿// ReSharper disable ComplexConditionExpression
-
-using BenchmarkDotNet.Attributes;
+﻿using BenchmarkDotNet.Attributes;
 using FluentAssertions;
 using Super.Compose;
 using Super.Model.Selection;

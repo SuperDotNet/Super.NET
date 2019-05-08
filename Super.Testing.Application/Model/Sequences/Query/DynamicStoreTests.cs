@@ -1,6 +1,4 @@
-﻿// ReSharper disable ComplexConditionExpression
-
-using FluentAssertions;
+﻿using FluentAssertions;
 using Super.Model.Sequences.Query;
 using System.Linq;
 using Xunit;

@@ -1,6 +1,4 @@
-﻿// ReSharper disable ComplexConditionExpression
-
-using FluentAssertions;
+﻿using FluentAssertions;
 using Super.Compose;
 using Super.Testing.Objects;
 using System.Linq;
@@ -29,7 +27,7 @@ namespace Super.Testing.Application.Model.Sequences.Query
 		void VerifySelect()
 		{
 			Start.A.Selection.Of.Type<string>()
-			     .As.Sequence.Array.By.Self.Query()	
+			     .As.Sequence.Array.By.Self.Query()
 			     .Select(x => (double)x.Length)
 			     .Sum()
 			     .Get(Source)
