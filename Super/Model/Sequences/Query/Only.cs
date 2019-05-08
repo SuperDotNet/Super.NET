@@ -9,6 +9,6 @@ namespace Super.Model.Sequences.Query
 
 		Only() : this(Always<T>.Default.Get) {}
 
-		public Only(Func<T, bool> @where) : base(@where) {}
+		public Only(Func<T, bool> where) : base(where) {}
 	}
 }

@@ -7,10 +7,8 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 		[Fact]
 		void Verify()
 		{
-
 		}
 
-		// TODO: Move to sequence testing.
 		/*[Fact]
 		void Count()
 		{

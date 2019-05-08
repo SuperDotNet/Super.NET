@@ -8,7 +8,7 @@ namespace Super.Runtime.Invocation
 	{
 		readonly Func<TIn, TOut> _source;
 
-		public Protect(ISelect<TIn, TOut> @select) : this(@select.Get) {}
+		public Protect(ISelect<TIn, TOut> select) : this(select.Get) {}
 
 		public Protect(Func<TIn, TOut> source) => _source = source;
 

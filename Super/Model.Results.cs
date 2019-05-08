@@ -66,7 +66,7 @@ namespace Super
 		/**/
 
 		public static IResult<TOut> Select<TIn, TOut>(this IResult<TIn> @this, ISelect<TIn, TOut> select)
-			=> @this.Select(@select.Get);
+			=> @this.Select(select.Get);
 
 		public static IResult<TOut> Select<TIn, TOut>(this IResult<TIn> @this, Func<TIn, TOut> select)
 			=> new DelegatedSelection<TIn, TOut>(select, @this.Get);

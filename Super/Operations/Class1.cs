@@ -38,7 +38,7 @@ namespace Super.Operations
 
 		public Selection(Func<TIn, TOut> select) : this(new Handle<TIn, TOut>(select).Get) {}
 
-		public Selection(Func<Task<TIn>, TOut> select) => _select = @select;
+		public Selection(Func<Task<TIn>, TOut> select) => _select = select;
 
 		public Task<TOut> Get(Task<TIn> parameter) => parameter.ContinueWith(_select);
 	}
@@ -47,7 +47,7 @@ namespace Super.Operations
 	{
 		readonly Func<TIn, TOut> _select;
 
-		public Handle(Func<TIn, TOut> select) => _select = @select;
+		public Handle(Func<TIn, TOut> select) => _select = select;
 
 		public TOut Get(Task<TIn> parameter) => _select(parameter.Result);
 	}
@@ -70,7 +70,7 @@ namespace Super.Operations
 
 	public class Operation<TIn, TOut> : Select<TIn, ValueTask<TOut>>, IOperation<TIn, TOut>
 	{
-		public Operation(Func<TIn, ValueTask<TOut>> @select) : base(@select) {}
+		public Operation(Func<TIn, ValueTask<TOut>> select) : base(select) {}
 	}
 
 	public interface IOperation<T> : IResult<ValueTask<T>> {}

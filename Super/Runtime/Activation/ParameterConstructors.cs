@@ -13,7 +13,7 @@ namespace Super.Runtime.Activation
 
 		ParameterConstructors() : this(ConstructorExpressions<TIn>.Default) {}
 
-		public ParameterConstructors(ISelect<ConstructorInfo, Expression> @select)
-			: base(@select, Parameter<TIn>.Default.Get()) {}
+		public ParameterConstructors(ISelect<ConstructorInfo, Expression> select)
+			: base(select, Parameter<TIn>.Default.Get()) {}
 	}
 }

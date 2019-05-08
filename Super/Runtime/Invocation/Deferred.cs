@@ -16,7 +16,7 @@ namespace Super.Runtime.Invocation
 			: this(select, Start.A.Selection<TIn>().AndOf<TOut>().Into.Table()) {}
 
 		public Deferred(ISelect<TIn, TOut> select, ITable<TIn, TOut> assignable)
-			: this(@select, assignable, assignable) {}
+			: this(select, assignable, assignable) {}
 
 		public Deferred(ISelect<TIn, TOut> select, IAssign<TIn, TOut> assign, ISelect<TIn, TOut> source)
 			: base(new Configuration<TIn, TOut>(select, assign).Unless(source)) {}

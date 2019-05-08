@@ -8,12 +8,12 @@ namespace Super.Model.Selection.Conditions
 		readonly Func<TFrom, TTo>          _select;
 
 		public SelectedConditional(IConditional<TTo, TOut> source, Func<TFrom, TTo> select)
-			: this(new Condition<TFrom>(select.ToSelect().Select(source.Condition).Get), source, @select) {}
+			: this(new Condition<TFrom>(select.ToSelect().Select(source.Condition).Get), source, select) {}
 
 		public SelectedConditional(ICondition<TFrom> condition, IConditional<TTo, TOut> source, Func<TFrom, TTo> select)
 		{
 			Condition = condition;
-			_select        = @select;
+			_select        = select;
 			_source = source;
 		}
 

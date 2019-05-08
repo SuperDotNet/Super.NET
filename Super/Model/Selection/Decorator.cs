@@ -8,8 +8,8 @@ namespace Super.Model.Selection
 		readonly Func<TIn, TOut>                      _source;
 
 		public Decorator(ISelect<Decoration<TIn, TOut>, TOut> decorator,
-		                 ISelect<TIn, TOut> @select)
-			: this(decorator.Get, @select.Get) {}
+		                 ISelect<TIn, TOut> select)
+			: this(decorator.Get, select.Get) {}
 
 		public Decorator(Func<Decoration<TIn, TOut>, TOut> decorator)
 			: this(decorator, _ => default) {}

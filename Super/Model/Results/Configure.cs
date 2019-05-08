@@ -8,10 +8,10 @@ namespace Super.Model.Results
 		readonly Func<TIn>         _instance;
 		readonly Func<TIn, TOut>   _select;
 
-		public Configure(Func<TIn> instance, Func<TIn, TOut> @select, Action<TIn, TOut> configuration)
+		public Configure(Func<TIn> instance, Func<TIn, TOut> select, Action<TIn, TOut> configuration)
 		{
 			_instance      = instance;
-			_select        = @select;
+			_select        = select;
 			_configuration = configuration;
 		}
 

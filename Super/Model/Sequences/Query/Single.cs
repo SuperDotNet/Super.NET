@@ -9,6 +9,6 @@ namespace Super.Model.Sequences.Query
 
 		Single() : this(Always<T>.Default.Get) {}
 
-		public Single(Func<T, bool> @where) : base(@where, () => throw new InvalidOperationException()) {}
+		public Single(Func<T, bool> where) : base(where, () => throw new InvalidOperationException()) {}
 	}
 }

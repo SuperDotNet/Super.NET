@@ -8,11 +8,11 @@ namespace Super.Model.Selection
 		readonly Func<TIn, TOut> _source, _fallback;
 		readonly Func<TIn, bool>    _specification;
 
-		public Validated(ICondition<TIn> condition, ISelect<TIn, TOut> @select)
-			: this(condition, @select, Default<TIn, TOut>.Instance) {}
+		public Validated(ICondition<TIn> condition, ISelect<TIn, TOut> select)
+			: this(condition, select, Default<TIn, TOut>.Instance) {}
 
-		public Validated(ICondition<TIn> condition, ISelect<TIn, TOut> @select, ISelect<TIn, TOut> fallback)
-			: this(condition.Get, @select.Get, fallback.Get) {}
+		public Validated(ICondition<TIn> condition, ISelect<TIn, TOut> select, ISelect<TIn, TOut> fallback)
+			: this(condition.Get, select.Get, fallback.Get) {}
 
 		public Validated(Func<TIn, bool> specification, Func<TIn, TOut> source)
 			: this(specification, source, Default<TIn, TOut>.Instance.Get) {}

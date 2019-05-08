@@ -9,8 +9,8 @@ namespace Super.Model.Selection
 		readonly Func<TIn, TOut>  _source;
 		readonly Func<TOut, bool> _specification;
 
-		public ValidatedResult(ICondition<TOut> condition, ISelect<TIn, TOut> @select, ISelect<TIn, TOut> fallback)
-			: this(condition.Get, @select.Get, fallback.Get) {}
+		public ValidatedResult(ICondition<TOut> condition, ISelect<TIn, TOut> select, ISelect<TIn, TOut> fallback)
+			: this(condition.Get, select.Get, fallback.Get) {}
 
 		public ValidatedResult(Func<TOut, bool> specification, Func<TIn, TOut> source, Func<TIn, TOut> fallback)
 		{

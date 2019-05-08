@@ -139,7 +139,7 @@ namespace Super.Aspects
 		{
 			readonly ISelect<TI, TO> _select;
 
-			public Container(ISelect<TI, TO> select) => _select = @select;
+			public Container(ISelect<TI, TO> select) => _select = select;
 
 			public TOut Get(TIn parameter) => (TOut)_select.Get(parameter);
 		}
@@ -148,7 +148,7 @@ namespace Super.Aspects
 		{
 			readonly ISelect<TIn, TOut> _select;
 
-			public Select(ISelect<TIn, TOut> select) => _select = @select;
+			public Select(ISelect<TIn, TOut> select) => _select = select;
 
 			public TO Get(TI parameter) => _select.Get((TIn)parameter);
 		}

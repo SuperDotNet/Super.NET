@@ -7,11 +7,11 @@ namespace Super.Model.Collections {
 		readonly Func<T, TMember>   _select;
 		readonly IComparer<TMember> _member;
 
-		public SelectedComparer(Func<T, TMember> select) : this(@select, SortComparer<TMember>.Default) {}
+		public SelectedComparer(Func<T, TMember> select) : this(select, SortComparer<TMember>.Default) {}
 
 		public SelectedComparer(Func<T, TMember> select, IComparer<TMember> member)
 		{
-			_select = @select;
+			_select = select;
 			_member = member;
 		}
 

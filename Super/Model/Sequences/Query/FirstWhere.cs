@@ -11,11 +11,11 @@ namespace Super.Model.Sequences.Query
 
 		public FirstWhere(ICondition<T> where) : this(where.Get) {}
 
-		public FirstWhere(Func<T, bool> where) : this(@where, Default<T>.Instance.Get) {}
+		public FirstWhere(Func<T, bool> where) : this(where, Default<T>.Instance.Get) {}
 
 		public FirstWhere(Func<T, bool> where, Func<T> @default)
 		{
-			_where   = @where;
+			_where   = where;
 			_default = @default;
 		}
 

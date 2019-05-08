@@ -8,7 +8,7 @@ namespace Super.Model.Results
 		readonly TIn             _parameter;
 		readonly Func<TIn, TOut> _source;
 
-		public FixedSelection(ISelect<TIn, TOut> @select, TIn parameter) : this(@select.Get, parameter) {}
+		public FixedSelection(ISelect<TIn, TOut> select, TIn parameter) : this(select.Get, parameter) {}
 
 		public FixedSelection(Func<TIn, TOut> source, TIn parameter)
 		{

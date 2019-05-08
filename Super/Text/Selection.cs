@@ -13,6 +13,6 @@ namespace Super.Text
 			            .Unless(Pairs.Select(pairs))
 			            .To(NullOrEmpty.Default.Select)) {}
 
-		public Selection(ISelect<string, Func<TIn, TOut>> select) : base(@select) {}
+		public Selection(ISelect<string, Func<TIn, TOut>> select) : base(select) {}
 	}
 }

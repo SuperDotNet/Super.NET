@@ -26,13 +26,13 @@ namespace Super.Model.Selection.Stores
 			readonly Func<TIn, TOut>        _select;
 
 			public Table(IDictionary<TIn, TOut> table, Func<TIn, TOut> select)
-				: this(new Condition<TIn>(table.ContainsKey), table, @select) {}
+				: this(new Condition<TIn>(table.ContainsKey), table, select) {}
 
 			public Table(ICondition<TIn> condition, IDictionary<TIn, TOut> table, Func<TIn, TOut> select)
 			{
 				Condition = condition;
 				_table    = table;
-				_select   = @select;
+				_select   = select;
 			}
 
 			public TOut Get(TIn parameter)

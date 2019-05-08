@@ -7,7 +7,7 @@ namespace Super.Model.Selection
 	{
 		readonly Func<TIn, Func<TIn, TOut>> _select;
 
-		public SelectedInstanceSelector(Func<TIn, Func<TIn, TOut>> select) => _select = @select;
+		public SelectedInstanceSelector(Func<TIn, Func<TIn, TOut>> select) => _select = select;
 
 		public TOut Get(TIn parameter) => _select(parameter)(parameter);
 	}

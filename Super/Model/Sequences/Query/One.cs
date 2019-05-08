@@ -8,13 +8,13 @@ namespace Super.Model.Sequences.Query
 		readonly Func<ArrayView<T>, ArrayView<T>> _where;
 		readonly Func<T>                          _default;
 
-		public One(Func<T, bool> where) : this(@where, A.Default<T>) {}
+		public One(Func<T, bool> where) : this(where, A.Default<T>) {}
 
 		public One(Func<T, bool> where, Func<T> @default) : this(new Where<T>(where).Get, @default) {}
 
 		public One(Func<ArrayView<T>, ArrayView<T>> where, Func<T> @default)
 		{
-			_where   = @where;
+			_where   = where;
 			_default = @default;
 		}
 

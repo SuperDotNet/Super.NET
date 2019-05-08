@@ -84,7 +84,7 @@ namespace Super.Runtime
 
 	public class IsAssigned<TIn, TOut> : Condition<TIn> where TOut : class
 	{
-		protected IsAssigned(Func<TIn, TOut> @select) : this(@select.Start()) {}
+		protected IsAssigned(Func<TIn, TOut> select) : this(select.Start()) {}
 
 		protected IsAssigned(ISelect<TIn, TOut> source) : base(source.Select(IsAssigned.Default)) {}
 	}

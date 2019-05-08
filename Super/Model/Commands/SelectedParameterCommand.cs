@@ -10,7 +10,7 @@ namespace Super.Model.Commands
 
 		public SelectedParameterCommand(Action<TTo> source, Func<TFrom, TTo> select)
 		{
-			_select = @select;
+			_select = select;
 			_source  = source;
 		}
 

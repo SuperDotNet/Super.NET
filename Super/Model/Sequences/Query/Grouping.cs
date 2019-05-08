@@ -8,7 +8,7 @@ namespace Super.Model.Sequences.Query
 	{
 		readonly Func<T, TKey> _select;
 
-		public Grouping(Func<T, TKey> select) => _select = @select;
+		public Grouping(Func<T, TKey> select) => _select = select;
 
 		public IArrayMap<TKey, T> Get(Array<T> parameter)
 			=> new ArrayMap<TKey, T>(parameter.Open().GroupBy(_select).ToDictionary().ToStore());

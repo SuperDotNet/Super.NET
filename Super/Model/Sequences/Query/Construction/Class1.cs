@@ -327,7 +327,7 @@ namespace Super.Model.Sequences.Query.Construction
 
 	sealed class Element<T> : Element<T, T>
 	{
-		public Element(ISelect<ArrayView<T>, T> @select) : base(@select) {}
+		public Element(ISelect<ArrayView<T>, T> select) : base(select) {}
 	}
 
 	class Element<TIn, TOut> : ISelect<Store<TIn>, TOut>
@@ -335,11 +335,11 @@ namespace Super.Model.Sequences.Query.Construction
 		readonly ISelect<ArrayView<TIn>, TOut> _select;
 		readonly Action<TIn[]>                 _return;
 
-		public Element(ISelect<ArrayView<TIn>, TOut> select) : this(@select, Return<TIn>.Default.Execute) {}
+		public Element(ISelect<ArrayView<TIn>, TOut> select) : this(select, Return<TIn>.Default.Execute) {}
 
 		public Element(ISelect<ArrayView<TIn>, TOut> select, Action<TIn[]> @return)
 		{
-			_select = @select;
+			_select = select;
 			_return = @return;
 		}
 

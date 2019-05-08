@@ -15,7 +15,7 @@ namespace Super.Application
 	{
 		readonly IDisposable _disposable;
 
-		public ApplicationContext(ISelect<TIn, TOut> @select, IDisposable disposable) : base(@select)
+		public ApplicationContext(ISelect<TIn, TOut> select, IDisposable disposable) : base(select)
 			=> _disposable = disposable;
 
 		public void Dispose()

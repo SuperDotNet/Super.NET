@@ -26,9 +26,9 @@ namespace Super.Model.Selection.Adapters
 		public static implicit operator Selection<TIn, TOut>(Func<TIn, TOut> instance)
 			=> new Selection<TIn, TOut>(instance);
 
-		public Selection(ISelect<TIn, TOut> @select) : base(@select.Get) {}
+		public Selection(ISelect<TIn, TOut> select) : base(select.Get) {}
 
-		public Selection(Func<TIn, TOut> @select) : base(@select) {}
+		public Selection(Func<TIn, TOut> select) : base(select) {}
 	}
 
 	public class ResultDelegateSelector<_, T> : Selector<_, Func<T>>
