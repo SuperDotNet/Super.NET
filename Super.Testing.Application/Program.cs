@@ -1,5 +1,5 @@
 ﻿using Super.Application.Hosting.BenchmarkDotNet;
-using Super.Testing.Application.Model.Selection;
+using Super.Testing.Application.Model.Sequences.Query.Temp;
 using System.Linq;
 
 namespace Super.Testing.Application
@@ -14,7 +14,7 @@ namespace Super.Testing.Application
 		}
 	}
 
-	sealed class Run : Run<SelectionTests.Benchmarks>
+	sealed class Run : Run<SequenceContextTests.Benchmarks>
 	{
 		public static Run Default { get; } = new Run();
 

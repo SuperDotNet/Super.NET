@@ -1,8 +1,14 @@
 ﻿using Super.Runtime.Activation;
 using System;
+using System.Linq.Expressions;
 
 namespace Super.Model.Selection
 {
+	public class Compile<TIn, TOut> : Select<TIn, TOut>
+	{
+		public Compile(Expression<Func<TIn, TOut>> select) : base(select.Compile()) {}
+	}
+
 	public class Select<TIn, TOut> : ISelect<TIn, TOut>,
 	                                 IActivateUsing<Func<TIn, TOut>>
 	{

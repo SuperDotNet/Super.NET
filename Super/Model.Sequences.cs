@@ -25,6 +25,7 @@ namespace Super
 
 		/**/
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static uint Length<T>(in this Model.Sequences.Store<T> @this)
 			=> @this.Length.Or((uint)@this.Instance.Length);
 
@@ -46,9 +47,11 @@ namespace Super
 
 		/**/
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] ToArray<T>(in this ArrayView<T> @this)
 			=> @this.Length == 0 ? Empty<T>.Array : @this.ToArray(new T[@this.Length]);
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] ToArray<T>(in this ArrayView<T> @this, T[] into)
 			=> @this.Array.CopyInto(into, @this.Start, @this.Length);
 
@@ -65,8 +68,18 @@ namespace Super
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] CopyInto<T>(this T[] @this, T[] result, uint start, uint length, uint offset = 0)
 		{
-			Array.Copy(@this, start,
-			           result, offset, length);
+			if (length < 32)
+			{
+				for (var i = 0; i < length; i++)
+				{
+					result[i + offset] = @this[start + i];
+				}
+			}
+			else
+			{
+				Array.Copy(@this, start,
+				           result, offset, length);
+			}
 			return result;
 		}
 
