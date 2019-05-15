@@ -16,11 +16,11 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 				8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9
 			};
 
-			new Skip<int>(10).Get(EmptyProject<int>.Default)
-			                 .Get(elements)
-			                 .ToArray()
-			                 .Should()
-			                 .Equal(elements.Skip(10));
+			new Build.Skip<int>(10).Get()
+			                        .Get(elements)
+			                        .ToArray()
+			                        .Should()
+			                        .Equal(elements.Skip(10));
 		}
 	}
 }

@@ -11,7 +11,7 @@ namespace Super.Model.Sequences.Query
 
 		DistinctDefinition() : this(EqualityComparer<T>.Default) {}
 
-		public DistinctDefinition(IEqualityComparer<T> comparer) : base(Leased<T>.Default, new Distinct<T>(comparer)) {}
+		public DistinctDefinition(IEqualityComparer<T> comparer) : base(Lease<T>.Default, new Distinct<T>(comparer)) {}
 	}
 
 	sealed class Default

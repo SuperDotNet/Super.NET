@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace Super.Model
+﻿namespace Super.Model
 {
 	public readonly struct Assigned<T> where T : struct
 	{
@@ -19,12 +17,6 @@ namespace Super.Model
 		public T Instance { get; }
 
 		public bool IsAssigned { get; }
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public T Or(T defaultValue) => IsAssigned ? Instance : defaultValue;
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public T Or(in T defaultValue) => IsAssigned ? Instance : defaultValue;
 
 		public override int GetHashCode() => Instance.GetHashCode();
 

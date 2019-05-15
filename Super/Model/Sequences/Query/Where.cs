@@ -39,7 +39,7 @@ namespace Super.Model.Sequences.Query
 
 	sealed class WhereDefinition<T> : Definition<T>
 	{
-		public WhereDefinition(Func<T, bool> where) : base(Leased<T>.Default, new Where<T>(where)) {}
+		public WhereDefinition(Func<T, bool> where) : base(Lease<T>.Default, new Where<T>(where)) {}
 	}
 
 	public class Where<T> : IProject<T>
@@ -96,7 +96,7 @@ namespace Super.Model.Sequences.Query
 			var other     = _others.Get();
 			var source    = other.Instance;
 			var @in       = parameter.Instance;
-			var length    = parameter.Length.Or((uint)@in.Length);
+			var length    = parameter.Length();
 			var appending = other.Length;
 			var total     = length + appending;
 			var result    = _stores.Get(total);

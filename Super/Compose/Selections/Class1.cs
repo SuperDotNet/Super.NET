@@ -133,6 +133,7 @@ namespace Super.Compose.Selections
 		public ISelect<T, Func<TIn, TOut>> Delegate<TIn, TOut>(Func<T, Func<TIn, TOut>> select)
 			=> new Select<T, Func<TIn, TOut>>(select);
 
+
 		public ISelect<T, TOut> Activation<TOut>() => Activator<TOut>.Default.ToSelect(I.A<T>());
 
 		public ISelect<T, TOut> StoredActivation<TOut>() where TOut : IActivateUsing<T> => Activations<T, TOut>.Default;
@@ -140,7 +141,7 @@ namespace Super.Compose.Selections
 		public ISelect<T, TOut> Singleton<TOut>()
 			=> Runtime.Activation.Singleton<TOut>.Default.ToSelect(I.A<T>());
 
-		public ISelect<T, TOut> Instantiation<TOut>() => New<TOut>.Default.ToSelect(I.A<T>());
+		public ISelect<T, TOut> Instantiation<TOut>() => New<T, TOut>.Default;
 
 		public Location<T, TOut> Location<TOut>() => Location<T, TOut>.Default;
 	}

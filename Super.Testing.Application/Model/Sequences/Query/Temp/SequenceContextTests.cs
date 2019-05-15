@@ -2,6 +2,8 @@
 using FluentAssertions;
 using Super.Compose;
 using Super.Model.Selection;
+using Super.Model.Sequences;
+using Super.Model.Sequences.Query.Construction;
 using Super.Model.Sequences.Query.Temp;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,11 +25,44 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 		void Verify()
 		{
 			var sequence = new SequenceNode<int[], int>(A.Self<int[]>());
-			sequence.Get(new Skip<int>(skip))
-			        .Get(new Take<int>(take))
+			sequence.Get(new Build.Skip<int>(skip))
+			        .Get(new Build.Take<int>(take))
 			        .Get(data)
 			        .Should()
 			        .Equal(data.Skip(skip).Take(take));
+
+			new Build.Take<int>(take).Get(new Build.Skip<int>(skip).Get())
+			                         .Select()
+			                         .Get(data)
+			                         .Should()
+			                         .Equal(data.Skip(skip).Take(take));
+		}
+
+		[Fact]
+		void VerifyWhere()
+		{
+			A.Self<int[]>()
+			 .Select(Lease<int>.Default)
+			 .Select(new Build.Where<int>(x => x > 8).Get().Select())
+			 .Get(data)
+			 .Should()
+			 .Equal(data.Where(x => x > 8));
+		}
+
+		[Fact]
+		void VerifyActivation()
+		{
+			Start.A.Selection.Of.Type<int>()
+			     .As.Sequence.Array.By.StoredActivation<Store<int>>()
+			     .Get(data)
+			     .Instance.Should()
+			     .Equal(data);
+
+			Start.A.Selection.Of.Type<int>()
+			     .As.Sequence.Array.By.Instantiation<Store<int>>()
+			     .Get(data)
+			     .Instance.Should()
+			     .Equal(data);
 		}
 
 		/*[Fact]
@@ -75,11 +110,18 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 			readonly ISelect<int[], int[]> _subject;
 			readonly IEnumerable<int>      _classic;
 
-			public Benchmarks() : this(new SequenceNode<int[], int>(A.Self<int[]>())
-			                           .Get(new Skip<int>(skip))
-			                           .Get(new Take<int>(take))
-			                           .Get(),
-			                           data.Skip(skip).Take(take)) {}
+			public Benchmarks() : this( /*new Build.Take<int>(take).Get(new Build.Skip<int>(skip).Get())
+			                                                     .Select()
+			                                                     .To(Start.A.Selection.Of.Type<int>()
+			                                                              .As.Sequence.Array.By
+			                                                              .Instantiation<Store<int>>()
+			                                                              .Select)*/
+			                           A.Self<int[]>()
+			                            .Select(Lease<int>.Default)
+			                            .Select(new Build.Where<int>(x => x > 8).Get().Select())
+			                           ,
+			                           /*data.Skip(skip).Take(take)*/
+			                           data.Where(x => x > 8)) {}
 
 			public Benchmarks(ISelect<int[], int[]> subject, IEnumerable<int> classic)
 			{

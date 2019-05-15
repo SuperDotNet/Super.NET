@@ -30,10 +30,10 @@ namespace Super.Model.Sequences.Query.Construction
 			=> new Node<_, T, TTo>(_open.Select(Enter<T>.Default), projections);
 
 		public ISelect<_, T> Get(IElement<T> parameter)
-			=> _open.Select(Leased<T>.Default).Select(new Element<T>(parameter));
+			=> _open.Select(Lease<T>.Default).Select(new Element<T>(parameter));
 
 		public ISelect<_, TTo> Get<TTo>(IElement<T, TTo> parameter)
-			=> _open.Select(Leased<T>.Default).Select(new Element<T, TTo>(parameter));
+			=> _open.Select(Lease<T>.Default).Select(new Element<T, TTo>(parameter));
 	}
 
 	sealed class Open<_, T> : INode<_, T>
@@ -64,10 +64,10 @@ namespace Super.Model.Sequences.Query.Construction
 			=> new Node<_, T>(_input.Select(_enter), _content).Get(projections);
 
 		public ISelect<_, T> Get(IElement<T> parameter)
-			=> new Node<_, T>(_input.Select(Leased<T>.Default), _content).Get(parameter);
+			=> new Node<_, T>(_input.Select(Lease<T>.Default), _content).Get(parameter);
 
 		public ISelect<_, TTo> Get<TTo>(IElement<T, TTo> parameter)
-			=> new Node<_, T>(_input.Select(Leased<T>.Default), _content).Get(parameter);
+			=> new Node<_, T>(_input.Select(Lease<T>.Default), _content).Get(parameter);
 	}
 
 	sealed class Store<_, T> : INode<_, T>
@@ -225,15 +225,15 @@ namespace Super.Model.Sequences.Query.Construction
 		Enter() : base(x => new Store<T>(x)) {}
 	}
 
-	sealed class Leased<T> : IEnter<T>
+	sealed class Lease<T> : IEnter<T>
 	{
-		public static Leased<T> Default { get; } = new Leased<T>();
+		public static Lease<T> Default { get; } = new Lease<T>();
 
-		Leased() : this(ArrayPool<T>.Shared) {}
+		Lease() : this(ArrayPool<T>.Shared) {}
 
 		readonly ArrayPool<T> _pool;
 
-		public Leased(ArrayPool<T> pool) => _pool = pool;
+		public Lease(ArrayPool<T> pool) => _pool = pool;
 
 		public Store<T> Get(T[] parameter)
 			=> new Store<T>(parameter.CopyInto(_pool.Rent(parameter.Length)), (uint)parameter.Length);

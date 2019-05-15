@@ -1,10 +1,11 @@
 ﻿using Super.Model.Commands;
 using Super.Runtime;
+using Super.Runtime.Activation;
 using System;
 
 namespace Super.Model.Sequences
 {
-	public readonly struct Store<T>
+	public readonly struct Store<T> : IActivateUsing<T[]>
 	{
 		public static implicit operator Store<T>(T[] instance) => new Store<T>(instance);
 
