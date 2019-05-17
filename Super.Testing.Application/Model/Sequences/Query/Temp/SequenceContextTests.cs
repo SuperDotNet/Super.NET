@@ -3,7 +3,6 @@ using FluentAssertions;
 using Super.Compose;
 using Super.Model.Selection;
 using Super.Model.Sequences;
-using Super.Model.Sequences.Query.Construction;
 using Super.Model.Sequences.Query.Temp;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +23,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 		[Fact]
 		void Verify()
 		{
-			var sequence = new SequenceNode<int[], int>(A.Self<int[]>());
+			var sequence = new Shaped<int[], int>(A.Self<int[]>());
 			sequence.Get(new Build.Skip<int>(skip))
 			        .Get(new Build.Take<int>(take))
 			        .Get(data)
