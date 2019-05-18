@@ -1,10 +1,7 @@
-﻿using BenchmarkDotNet.Attributes;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Super.Compose;
-using Super.Model.Selection;
 using Super.Model.Sequences;
 using Super.Model.Sequences.Query.Temp;
-using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -100,6 +97,19 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 		}
 
 		[Fact]
+		void VerifyComparison()
+		{
+			Start.A.Selection.Of.Type<int>()
+			     .As.Sequence.Array.By.Self.Query()
+			     .Where(x => x > 8)
+			     .Select(x => x.ToString())
+			     .Get(data)
+			     .Open()
+			     .Should()
+			     .Equal(data.Where(x => x > 8).Select(x => x.ToString()));
+		}
+
+		[Fact]
 		void VerifyActivation()
 		{
 			Start.A.Selection.Of.Type<int>()
@@ -113,6 +123,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 			     .Get(data)
 			     .Instance.Should()
 			     .Equal(data);
+			//Enumerable
 		}
 
 		/*[Fact]
@@ -157,24 +168,37 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 
 		public class Benchmarks
 		{
-			readonly ISelect<int[], int[]> _subject;
-			readonly IEnumerable<int>      _classic;
+			/*readonly ISelect<int[], string[]> _subject;
+			readonly ISelect<int[], string[]> _other;
+			readonly IEnumerable<string>      _classic;
 
-			public Benchmarks() : this(new Start<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x > 8))
-			                                                                 .Get(),
-			                           data.Where(x => x > 8)) {}
+			public Benchmarks() : this(new Start<int[], int>(A.Self<int[]>())
+			                           .Get(new Build.Where<int>(x => x > 8))
+			                           .Get(new Build.Select<int, string>(x => x.ToString()))
+			                           .Get(),
+			                           Start.A.Selection.Of.Type<int>()
+			                                .As.Sequence.Array.By.Self.Query()
+			                                .Where(x => x > 8)
+			                                .Select(x => x.ToString())
+			                                .Out(),
+			                           data.Where(x => x > 8).Select(x => x.ToString())) {}
 
-			public Benchmarks(ISelect<int[], int[]> subject, IEnumerable<int> classic)
+			public Benchmarks(ISelect<int[], string[]> subject, ISelect<int[], string[]> other,
+			                  IEnumerable<string> classic)
 			{
 				_subject = subject;
+				_other   = other;
 				_classic = classic;
 			}
 
 			[Benchmark(Baseline = true)]
-			public int[] Classic() => _classic.ToArray();
+			public string[] Classic() => data.Where(x => x > 8).Select(x => x.ToString()).ToArray();
 
 			[Benchmark]
-			public int[] Subject() => _subject.Get(data);
+			public string[] Other() => _other.Get(data);*/
+
+			/*[Benchmark]
+			public string[] Subject() => _subject.Get(data);*/
 		}
 	}
 }

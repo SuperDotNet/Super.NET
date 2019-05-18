@@ -1,5 +1,4 @@
-﻿using Super.Model;
-using Super.Model.Collections;
+﻿using Super.Model.Collections;
 using Super.Model.Selection;
 using Super.Runtime;
 using System;
@@ -7,7 +6,6 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace Super
 {
@@ -15,14 +13,6 @@ namespace Super
 
 	public static partial class ExtensionMethods
 	{
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T Or<T>(this Assigned<T> @this, T defaultValue) where T : struct
-			=> @this.IsAssigned ? @this.Instance : defaultValue;
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T Or<T>(this Assigned<T> @this, in T defaultValue) where T : struct
-			=> @this.IsAssigned ? @this.Instance : defaultValue;
-
 		public static T With<T>(this T @this, Action<T> action)
 		{
 			action(@this);
