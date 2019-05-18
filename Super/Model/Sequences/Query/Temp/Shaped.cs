@@ -10,7 +10,7 @@ namespace Super.Model.Sequences.Query.Temp
 	{
 		public static IShape<T> Get<T>(this IShaper<T> @this) => @this.Get(SelfProjection<T>.Default);
 
-		public static IShape<T> Get<T>(this IShaper<T> @this, IShape<T> previous) => @this.Get(@previous.With());
+		public static IShape<T> Get<T>(this IShaper<T> @this, IShape<T> previous) => @this.Get(previous.With());
 
 		public static ISelect<Storage<T>, T[]> Select<T>(this IShape<T> @this) => new Complete<T, T>(@this);
 
@@ -61,7 +61,7 @@ namespace Super.Model.Sequences.Query.Temp
 	{
 		public Start(ISelect<_, T[]> start) : base(start) {}
 
-		public ISequenceNode<_, T> Get(IShaper<T> parameter) => new Shaped<_, T>(Get(), parameter.Get());
+		public ISequenceNode<_, T> Get(IShaper<T> parameter) => new Shaped<_, T>(Get()).Get(parameter);
 
 		public ISequenceNode<_, TTo> Get<TTo>(IShifter<T, TTo> parameter) => new Shaped<_, T>(Get()).Get(parameter);
 	}
@@ -82,7 +82,13 @@ namespace Super.Model.Sequences.Query.Temp
 		public ISelect<_, T[]> Get() => _start.Select(Enter<T>.Default).Select(new Complete<T, T>(_current));
 
 		public ISequenceNode<_, T> Get(IShaper<T> parameter)
-			=> new Shaped<_, T>(_start, parameter.Get(_current));
+		{
+			var body = parameter.Get(_current);
+			var result = body is IEnterAware<T> enter
+				             ? new ShapedContentNode<_, T>(_start.Select(enter.Enter), body)
+				             : (ISequenceNode<_, T>)new Shaped<_, T>(_start, body);
+			return result;
+		}
 
 		public ISequenceNode<_, TTo> Get<TTo>(IShifter<T, TTo> parameter)
 			=> new ShapedContentNode<_, T, TTo>(_start.Select(Enter<T>.Default), parameter, _current);
@@ -90,6 +96,8 @@ namespace Super.Model.Sequences.Query.Temp
 
 	sealed class ContentNode<_, T> : ISequenceNode<_, T>
 	{
+		readonly static SelfProjection<T> Self = SelfProjection<T>.Default;
+
 		readonly ISelect<_, Storage<T>> _start;
 
 		public ContentNode(ISelect<_, Storage<T>> start) => _start = start;
@@ -99,8 +107,7 @@ namespace Super.Model.Sequences.Query.Temp
 		public ISequenceNode<_, T> Get(IShaper<T> parameter) => new ShapedContentNode<_, T>(_start, parameter.Get());
 
 		public ISequenceNode<_, TTo> Get<TTo>(IShifter<T, TTo> parameter)
-			=> new ContentNode<_, TTo>(_start.Select(parameter.Get(SelfProjection<T>.Default
-			                                                                        .With(Leases<TTo>.Default))));
+			=> new ContentNode<_, TTo>(_start.Select(parameter.Get(Self.With(Leases<TTo>.Default))));
 	}
 
 	sealed class ShapedContentNode<_, T> : ISequenceNode<_, T>
@@ -253,9 +260,9 @@ namespace Super.Model.Sequences.Query.Temp
 			=> new Storage<T>(parameter.CopyInto(_pool.Rent(parameter.Length)), (uint)parameter.Length);
 	}
 
-	public interface IProjection<T> : IProjection<T, T> {}
+	/*public interface IProjection<T> : IProjection<T, T> {}
 
-	public interface IProjection<TIn, TOut> : ISelect<IShape<TIn>, IShape<TOut>> {}
+	public interface IProjection<TIn, TOut> : ISelect<IShape<TIn>, IShape<TOut>> {}*/
 
 	public readonly struct Parameter<TIn, TOut>
 	{
@@ -287,6 +294,18 @@ namespace Super.Model.Sequences.Query.Temp
 
 		public IShape<T> Previous { get; }
 		public Assigned<uint> Limit { get; }
+	}
+
+	public interface IEnterAware<T>
+	{
+		IEnter<T> Enter { get; }
+	}
+
+	class EnterAware<T> : IEnterAware<T>
+	{
+		public EnterAware(IEnter<T> enter) => Enter = enter;
+
+		public IEnter<T> Enter { get; }
 	}
 
 	sealed class SelfProjection<T> : IShape<T>
@@ -357,13 +376,13 @@ namespace Super.Model.Sequences.Query.Temp
 		}
 	}
 
-	sealed class Where<T> : IShape<T>
+	sealed class Where<T> : EnterAware<T>, IShape<T>
 	{
 		readonly IShape<T>      _previous;
 		readonly Func<T, bool>  _where;
 		readonly Assigned<uint> _limit;
 
-		public Where(IShape<T> previous, Func<T, bool> where, Assigned<uint> limit)
+		public Where(IShape<T> previous, Func<T, bool> where, Assigned<uint> limit) : base(Lease<T>.Default)
 		{
 			_previous = previous;
 			_where    = where;
