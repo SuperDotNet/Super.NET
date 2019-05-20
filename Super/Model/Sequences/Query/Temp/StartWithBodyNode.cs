@@ -8,16 +8,8 @@ namespace Super.Model.Sequences.Query.Temp
 {
 	public static class Extensions
 	{
-		/*public static IBody<T> Get<T>(this IBodyBuilder<T> @this) => @this.Get(SelfProjection<T>.Default);*/
-
-		/*public static ISelect<Storage<T>, T[]> Select<T>(this IBody<T> @this) => new Complete<T, T>(@this);*/
-
-		/*public static Parameter<TIn, TOut> With<TIn, TOut>(this IBody<TIn> @this, IStores<TOut> stores)
-			=> @this.With(stores, Assigned<uint>.Unassigned);*/
-
-		/*public static Parameter<TIn, TOut> With<TIn, TOut>(this IBody<TIn> @this,
-		                                                   IStores<TOut> stores, Assigned<uint> limit)
-			=> new Parameter<TIn, TOut>(@this, stores, limit);*/
+		public static IContent<TIn, TOut> Returned<TIn, TOut>(this IContent<TIn, TOut> @this)
+			=> new ReturnedContent<TIn, TOut>(@this);
 	}
 
 	public interface IBodyBuilder<T> : ISelect<Assigned<uint>, IBody<T>> {}
@@ -74,7 +66,8 @@ namespace Super.Model.Sequences.Query.Temp
 		public ISequenceNode<_, TTo> Get<TTo>(IContents<T, TTo> parameter)
 			=> new ContentContainerNode<_, T, TTo>(new Enter<_, T>(Get()), parameter);
 
-		public ISelect<_, TTo> Get<TTo>(IElement<T, TTo> parameter) => null;
+		public ISelect<_, TTo> Get<TTo>(IElement<T, TTo> parameter)
+			=> new Exit<_, T, T, TTo>(new Enter<_, T>(Get()), EmptyContent<T>.Default, parameter);
 	}
 
 	sealed class StartWithBodyNode<_, T> : ISequenceNode<_, T>
@@ -91,15 +84,77 @@ namespace Super.Model.Sequences.Query.Temp
 		public ISelect<_, T[]> Get() => new Exit<_, T>(_origin, _body.Get());
 
 		public ISequenceNode<_, T> Get(IBodyBuilder<T> parameter)
-			=> parameter is IEnterAware<T> enter
-				   ? new StoreWithBodyNode<_, T>(new Enter<_, T>(Get(), enter.Enter),
-				                                 new LinkedBodyBuilder<T>(_body, parameter))
-				   : (ISequenceNode<_, T>)
-				   new StartWithBodyNode<_, T>(_origin, new LinkedBodyBuilder<T>(_body, parameter));
+		{
+			var body = new LinkedBodyBuilder<T>(_body, parameter);
+			var result = parameter is IEnterAware<T> enter
+				             ? new StoreWithBodyNode<_, T>(new Enter<_, T>(_origin, enter.Enter), body)
+				             : (ISequenceNode<_, T>)new StartWithBodyNode<_, T>(_origin, body);
+			return result;
+		}
 
-		public ISequenceNode<_, TTo> Get<TTo>(IContents<T, TTo> parameter) => default;
+		public ISequenceNode<_, TTo> Get<TTo>(IContents<T, TTo> parameter)
+			=> new ContentContainerNode<_, T, TTo>(new Enter<_, T>(_origin),
+			                                       new ContentContainer<T, TTo>(parameter, _body));
 
-		public ISelect<_, TTo> Get<TTo>(IElement<T, TTo> parameter) => null;
+		public ISelect<_, TTo> Get<TTo>(IElement<T, TTo> parameter)
+			=> new Exit<_, T, T, TTo>(new Enter<_, T>(_origin),
+			                          new Content<T>(_body.Get(parameter is ILimitAware limit ? limit.Get() : 2)),
+			                          parameter);
+	}
+
+	sealed class StoreWithBodyNode<_, T> : ISequenceNode<_, T>
+	{
+		readonly ISelect<_, Storage<T>> _origin;
+		readonly IBodyBuilder<T>        _body;
+
+		public StoreWithBodyNode(ISelect<_, Storage<T>> origin, IBodyBuilder<T> body)
+		{
+			_origin = origin;
+			_body   = body;
+		}
+
+		public ISelect<_, T[]> Get() => new Exit<_, T>(_origin, _body.Get());
+
+		public ISequenceNode<_, T> Get(IBodyBuilder<T> parameter)
+			=> new StoreWithBodyNode<_, T>(_origin, new LinkedBodyBuilder<T>(_body, parameter));
+
+		public ISequenceNode<_, TTo> Get<TTo>(IContents<T, TTo> parameter)
+			=> new ContentContainerNode<_, T, TTo>(_origin, new ContentContainer<T, TTo>(parameter, _body));
+
+		public ISelect<_, TTo> Get<TTo>(IElement<T, TTo> parameter)
+			=> new Exit<_, T, T, TTo>(_origin,
+			                          new Content<T>(_body.Get(parameter is ILimitAware limit ? limit.Get() : 2)),
+			                          parameter);
+	}
+
+	sealed class EmptyContent<T> : IContent<T, T>
+	{
+		public static EmptyContent<T> Default { get; } = new EmptyContent<T>();
+
+		EmptyContent() {}
+
+		public Storage<T> Get(Storage<T> parameter) => parameter;
+	}
+
+	sealed class Content<T> : IContent<T, T>
+	{
+		readonly IBody<T>   _body;
+		readonly IStores<T> _stores;
+
+		public Content(IBody<T> body) : this(body, Leases<T>.Default) {}
+
+		public Content(IBody<T> body, IStores<T> stores)
+		{
+			_body   = body;
+			_stores = stores;
+		}
+
+		public Storage<T> Get(Storage<T> parameter)
+		{
+			var view   = _body.Get(new ArrayView<T>(parameter.Instance, 0, parameter.Length));
+			var result = view.Start > 0 || view.Length != parameter.Length ? view.ToStore(_stores) : view.Array;
+			return result;
+		}
 	}
 
 	sealed class Enter<_, T> : ISelect<_, Storage<T>>
@@ -120,47 +175,40 @@ namespace Super.Model.Sequences.Query.Temp
 
 	sealed class Exit<_, T> : ISelect<_, T[]>
 	{
-		readonly ISelect<_, T[]> _origin;
-		readonly IEnter<T>       _enter;
-		readonly IBody<T>        _body;
+		readonly ISelect<_, Storage<T>> _origin;
+		readonly IBody<T>               _body;
 
-		public Exit(ISelect<_, T[]> origin, IBody<T> body) : this(origin, Enter<T>.Default, body) {}
+		public Exit(ISelect<_, T[]> origin, IBody<T> body) : this(new Origin<_, T>(origin), body) {}
 
-		public Exit(ISelect<_, T[]> origin, IEnter<T> enter, IBody<T> body)
+		public Exit(ISelect<_, Storage<T>> origin, IBody<T> body)
 		{
 			_origin = origin;
-			_enter  = enter;
 			_body   = body;
 		}
 
 		public T[] Get(_ parameter)
 		{
-			var storage = _enter.Get(_origin.Get(parameter));
+			var storage = _origin.Get(parameter);
 			var result = _body.Get(new ArrayView<T>(storage.Instance, 0, storage.Length))
 			                  .ToArray();
 			return result;
 		}
 	}
 
-	sealed class StoreWithBodyNode<_, T> : ISequenceNode<_, T>
+	sealed class Origin<_, T> : ISelect<_, Storage<T>>
 	{
-		readonly ISelect<_, Storage<T>> _origin;
-		readonly IBodyBuilder<T>        _body;
+		readonly ISelect<_, T[]> _origin;
+		readonly IEnter<T>       _enter;
 
-		public StoreWithBodyNode(ISelect<_, Storage<T>> origin, IBodyBuilder<T> body)
+		public Origin(ISelect<_, T[]> origin) : this(origin, Enter<T>.Default) {}
+
+		public Origin(ISelect<_, T[]> origin, IEnter<T> enter)
 		{
 			_origin = origin;
-			_body   = body;
+			_enter  = enter;
 		}
 
-		public ISelect<_, T[]> Get() => null;
-
-		public ISequenceNode<_, T> Get(IBodyBuilder<T> parameter) => null;
-
-		public ISequenceNode<_, TTo> Get<TTo>(IContents<T, TTo> parameter)
-			=> new ContentContainerNode<_, T, TTo>(_origin, new ContentContainer<T, TTo>(parameter, _body));
-
-		public ISelect<_, TTo> Get<TTo>(IElement<T, TTo> parameter) => null;
+		public Storage<T> Get(_ parameter) => _enter.Get(_origin.Get(parameter));
 	}
 
 	public interface IContentContainer<TIn, TOut> : ISelect<IStores<TOut>, Assigned<uint>, IContent<TIn, TOut>> {}
@@ -219,7 +267,8 @@ namespace Super.Model.Sequences.Query.Temp
 		public ISelect<_, TOut[]> Get()
 			=> new Exit<_, TIn, TOut>(_origin, _container.Get(DefaultStores<TOut>.Default).Invoke());
 
-		public ISequenceNode<_, TOut> Get(IBodyBuilder<TOut> parameter) => null;
+		public ISequenceNode<_, TOut> Get(IBodyBuilder<TOut> parameter)
+			=> new ContentContainerWithBodyNode<_, TIn, TOut>(_origin, _container, parameter);
 
 		public ISequenceNode<_, TTo> Get<TTo>(IContents<TOut, TTo> parameter)
 		{
@@ -237,7 +286,112 @@ namespace Super.Model.Sequences.Query.Temp
 		}
 	}
 
+	sealed class ContentContainerWithBodyNode<_, TIn, TOut> : ISequenceNode<_, TOut>
+	{
+		readonly ISelect<_, Storage<TIn>>     _origin;
+		readonly IContentContainer<TIn, TOut> _container;
+		readonly IBodyBuilder<TOut>           _body;
+
+		public ContentContainerWithBodyNode(ISelect<_, Storage<TIn>> origin, IContentContainer<TIn, TOut> container,
+		                                    IBodyBuilder<TOut> body)
+		{
+			_origin    = origin;
+			_container = container;
+			_body      = body;
+		}
+
+		public ISelect<_, TOut[]> Get() => new Exit<_, TIn, TOut>(_origin, Content(Assigned<uint>.Unassigned));
+
+		IContent<TIn, TOut> Content(Assigned<uint> limit)
+			=> new Content<TIn, TOut>(_container.Get(Leases<TOut>.Default)(limit), _body.Get(limit)).Returned();
+
+		public ISequenceNode<_, TOut> Get(IBodyBuilder<TOut> parameter)
+			=> new ContentContainerWithBodyNode<_, TIn, TOut>(_origin, _container,
+			                                                  new LinkedBodyBuilder<TOut>(_body, parameter));
+
+		public ISequenceNode<_, TTo> Get<TTo>(IContents<TOut, TTo> parameter)
+		{
+			var select = _container.Get(Leases<TOut>.Default);
+			var container =
+				new LinkedContainer<TIn, TOut, TTo>(select, new ContentContainer<TOut, TTo>(parameter, _body));
+			var result = new ContentContainerNode<_, TIn, TTo>(_origin, container);
+			return result;
+		}
+
+		public ISelect<_, TTo> Get<TTo>(IElement<TOut, TTo> parameter)
+			=> new Exit<_, TIn, TOut, TTo>(_origin, Content(parameter is ILimitAware limit ? limit.Get() : 2),
+			                               parameter);
+	}
+
+	sealed class Content<TIn, TOut> : IContent<TIn, TOut>
+	{
+		readonly IContent<TIn, TOut> _content;
+		readonly IBody<TOut>         _body;
+		readonly IStores<TOut>       _stores;
+
+		public Content(IContent<TIn, TOut> content, IBody<TOut> body)
+			: this(content, body, DefaultStores<TOut>.Default) {}
+
+		public Content(IContent<TIn, TOut> content, IBody<TOut> body, IStores<TOut> stores)
+		{
+			_content = content;
+			_body    = body;
+			_stores  = stores;
+		}
+
+		public Storage<TOut> Get(Storage<TIn> parameter)
+		{
+			var content = _content.Get(parameter);
+			var view    = _body.Get(new ArrayView<TOut>(content.Instance, 0, parameter.Length));
+			var result  = view.ToStore(_stores);
+			return result;
+		}
+	}
+
 	public interface ISelectedContent<TIn, TOut> : ISelect<Assigned<uint>, IContent<TIn, TOut>> {}
+
+	sealed class LinkedContainer<TIn, TOut, TTo> : IContentContainer<TIn, TTo>
+	{
+		readonly Func<Assigned<uint>, IContent<TIn, TOut>> _from;
+		readonly IContentContainer<TOut, TTo>              _to;
+
+		public LinkedContainer(Func<Assigned<uint>, IContent<TIn, TOut>> from, IContentContainer<TOut, TTo> to)
+		{
+			_from = from;
+			_to   = to;
+		}
+
+		public Func<Assigned<uint>, IContent<TIn, TTo>> Get(IStores<TTo> parameter)
+			=> new Next<TIn, TOut, TTo>(_from, _to.Get(parameter)).Get;
+	}
+
+	sealed class Next<TIn, TOut, TTo> : ISelectedContent<TIn, TTo>
+	{
+		readonly Func<Assigned<uint>, IContent<TIn, TOut>> _from;
+		readonly Func<Assigned<uint>, IContent<TOut, TTo>> _to;
+
+		public Next(Func<Assigned<uint>, IContent<TIn, TOut>> from, Func<Assigned<uint>, IContent<TOut, TTo>> to)
+		{
+			_from = from;
+			_to   = to;
+		}
+
+		public IContent<TIn, TTo> Get(Assigned<uint> parameter) => new Content(_from(parameter), _to(parameter));
+
+		sealed class Content : IContent<TIn, TTo>
+		{
+			readonly IContent<TIn, TOut> _previous;
+			readonly IContent<TOut, TTo> _current;
+
+			public Content(IContent<TIn, TOut> previous, IContent<TOut, TTo> current)
+			{
+				_previous = previous;
+				_current  = current;
+			}
+
+			public Storage<TTo> Get(Storage<TIn> parameter) => _current.Get(_previous.Get(parameter));
+		}
+	}
 
 	sealed class LinkedContents<TIn, TOut, TTo> : IContentContainer<TIn, TTo>
 	{
@@ -251,35 +405,7 @@ namespace Super.Model.Sequences.Query.Temp
 		}
 
 		public Func<Assigned<uint>, IContent<TIn, TTo>> Get(IStores<TTo> parameter)
-			=> new Next(_from, new SelectedContent<TOut, TTo>(_to, parameter).Get).Get;
-
-		sealed class Next : ISelectedContent<TIn, TTo>
-		{
-			readonly Func<Assigned<uint>, IContent<TIn, TOut>> _from;
-			readonly Func<Assigned<uint>, IContent<TOut, TTo>> _to;
-
-			public Next(Func<Assigned<uint>, IContent<TIn, TOut>> from, Func<Assigned<uint>, IContent<TOut, TTo>> to)
-			{
-				_from = @from;
-				_to   = to;
-			}
-
-			public IContent<TIn, TTo> Get(Assigned<uint> parameter) => new Content(_from(parameter), _to(parameter));
-
-			sealed class Content : IContent<TIn, TTo>
-			{
-				readonly IContent<TIn, TOut> _previous;
-				readonly IContent<TOut, TTo> _current;
-
-				public Content(IContent<TIn, TOut> previous, IContent<TOut, TTo> current)
-				{
-					_previous = previous;
-					_current  = current;
-				}
-
-				public Storage<TTo> Get(Storage<TIn> parameter) => _current.Get(_previous.Get(parameter));
-			}
-		}
+			=> new Next<TIn, TOut, TTo>(_from, new SelectedContent<TOut, TTo>(_to, parameter).Get).Get;
 	}
 
 	sealed class LinkedBodyBuilder<T> : IBodyBuilder<T>
@@ -318,38 +444,6 @@ namespace Super.Model.Sequences.Query.Temp
 		public T Get(Storage<T> parameter) => parameter.Length > 0 ? parameter.Instance[0] : default;
 	}
 
-	/*public class FirstWhere<T> : IElement<T>
-	{
-		readonly Func<T, bool> _where;
-		readonly Func<T>       _default;
-
-		public FirstWhere(ICondition<T> where) : this(where.Get) {}
-
-		public FirstWhere(Func<T, bool> where) : this(where, () => default) {}
-
-		public FirstWhere(Func<T, bool> where, Func<T> @default)
-		{
-			_where   = where;
-			_default = @default;
-		}
-
-		public T Get(ArrayView<T> parameter)
-		{
-			var length = parameter.Length;
-
-			for (var i = parameter.Start; i < length; i++)
-			{
-				var item = parameter.Array[i];
-				if (_where(item))
-				{
-					return item;
-				}
-			}
-
-			return _default();
-		}
-	}*/
-
 	public interface ILimitAware : IResult<uint> {}
 
 	public interface IElement<T> : IElement<T, T> {}
@@ -361,13 +455,19 @@ namespace Super.Model.Sequences.Query.Temp
 		readonly ISelect<_, Storage<TIn>> _origin;
 		readonly IContent<TIn, TOut>      _content;
 		readonly IElement<TOut, TTo>      _element;
+		readonly Action<TOut[]>           _return;
 
-		public Exit(ISelect<_, Storage<TIn>> origin, IContent<TIn, TOut> content,
-		            IElement<TOut, TTo> element)
+		public Exit(ISelect<_, Storage<TIn>> origin, IContent<TIn, TOut> content, IElement<TOut, TTo> element)
+			: this(origin, content, element, Return<TOut>.Default.Execute) {}
+
+		// ReSharper disable once TooManyDependencies
+		public Exit(ISelect<_, Storage<TIn>> origin, IContent<TIn, TOut> content, IElement<TOut, TTo> element,
+		            Action<TOut[]> @return)
 		{
 			_origin  = origin;
 			_content = content;
 			_element = element;
+			_return  = @return;
 		}
 
 		public TTo Get(_ parameter)
@@ -375,10 +475,9 @@ namespace Super.Model.Sequences.Query.Temp
 			var storage = _content.Get(_origin.Get(parameter));
 			var result  = _element.Get(storage);
 
-			// TODO: Optimize.
 			if (storage.Requested)
 			{
-				Return<TOut>.Default.Execute(storage.Instance);
+				_return(storage.Instance);
 			}
 
 			return result;
@@ -434,6 +533,31 @@ namespace Super.Model.Sequences.Query.Temp
 	                                                                     IStores<TOut> stores, TParameter parameter,
 	                                                                     Assigned<uint> limit);
 
+	sealed class ReturnedContent<TIn, TOut> : IContent<TIn, TOut>
+	{
+		readonly IContent<TIn, TOut> _content;
+		readonly Action<TIn[]>       _return;
+
+		public ReturnedContent(IContent<TIn, TOut> content) : this(content, Return<TIn>.Default.Execute) {}
+
+		public ReturnedContent(IContent<TIn, TOut> content, Action<TIn[]> @return)
+		{
+			_content = content;
+			_return  = @return;
+		}
+
+		public Storage<TOut> Get(Storage<TIn> parameter)
+		{
+			var result = _content.Get(parameter);
+			if (parameter.Requested)
+			{
+				_return(parameter.Instance);
+			}
+
+			return result;
+		}
+	}
+
 	sealed class Selection<TIn, TOut> : IContent<TIn, TOut>
 	{
 		readonly IBody<TIn>      _body;
@@ -463,12 +587,6 @@ namespace Super.Model.Sequences.Query.Temp
 			for (var i = 0u; i < length; i++)
 			{
 				@out[i] = _select(@in[i]);
-			}
-
-			// TODO: Implement in Return decorator.
-			if (parameter.Requested)
-			{
-				Return<TIn>.Default.Execute(parameter.Instance);
 			}
 
 			return result;
@@ -569,7 +687,8 @@ namespace Super.Model.Sequences.Query.Temp
 		public sealed class Select<TIn, TOut> : Builder<TIn, TOut, Func<TIn, TOut>>
 		{
 			public Select(Func<TIn, TOut> argument)
-				: base((shape, stores, parameter, limit) => new Selection<TIn, TOut>(shape, stores, parameter, limit),
+				: base((shape, stores, parameter, limit)
+					       => new Selection<TIn, TOut>(shape, stores, parameter, limit).Returned(),
 				       argument) {}
 		}
 

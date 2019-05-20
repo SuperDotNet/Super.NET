@@ -55,6 +55,18 @@ namespace Super
 		public static T[] ToArray<T>(in this ArrayView<T> @this, T[] into)
 			=> @this.Array.CopyInto(into, @this.Start, @this.Length);
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Model.Sequences.Query.Temp.Storage<T> ToStore<T>(in this ArrayView<T> @this)
+			=> @this.ToStore(Model.Sequences.Query.Temp.Leases<T>.Default);
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Model.Sequences.Query.Temp.Storage<T> ToStore<T>(in this ArrayView<T> @this, Model.Sequences.Query.Temp.IStores<T> stores)
+		{
+			var result = stores.Get(@this.Length - @this.Start);
+			@this.ToArray(result.Instance);
+			return result;
+		}
+
 		// ReSharper disable once TooManyArguments
 		public static T[] CopyInto<T>(this T[] @this, T[] result, in Selection selection, uint offset = 0)
 			=> @this.CopyInto(result, selection.Start, selection.Length.IsAssigned

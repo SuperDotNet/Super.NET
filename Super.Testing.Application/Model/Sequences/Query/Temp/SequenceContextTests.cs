@@ -41,81 +41,84 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 		}
 
 		[Fact]
+		void VerifySkipWhere()
+		{
+			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Skip<int>(skip))
+			                                      .Get(new Build.Where<int>(x => x == 5))
+			                                      .Get(data)
+			                                      .Should()
+			                                      .Equal(data.Skip(skip).Where(x => x == 5))
+			                                      .And.Subject.Should()
+			                                      .NotBeEmpty();
+		}
+
+		[Fact]
 		void VerifySkipTakeWhere()
 		{
-			/*new Start<int[], int>(A.Self<int[]>()).Get(new Build.Skip<int>(skip))
+			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Skip<int>(skip))
 			                                      .Get(new Build.Take<int>(take))
 			                                      .Get(new Build.Where<int>(x => x == 5))
 			                                      .Get(data)
 			                                      .Should()
 			                                      .Equal(data.Skip(skip).Take(take).Where(x => x == 5))
 			                                      .And.Subject.Should()
-			                                      .NotBeEmpty();*/
+			                                      .NotBeEmpty();
 		}
 
 		[Fact]
 		void VerifySkipWhereTake()
 		{
-			/*new Start<int[], int>(A.Self<int[]>()).Get(new Build.Skip<int>(skip))
+			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Skip<int>(skip))
 			                                      .Get(new Build.Where<int>(x => x == 5))
 			                                      .Get(new Build.Take<int>(take))
 			                                      .Get(data)
 			                                      .Should()
 			                                      .Equal(data.Skip(skip).Where(x => x == 5).Take(take))
 			                                      .And.Subject.Should()
-			                                      .NotBeEmpty();*/
+			                                      .NotBeEmpty();
 		}
 
 		[Fact]
 		void VerifyWhere()
 		{
-			/*A.Self<int[]>()
-			 .Select(Lease<int>.Default)
-			 .Select(new Build.Where<int>(x => x > 8).Get().Select())
-			 .Get(data)
-			 .Should()
-			 .Equal(data.Where(x => x > 8))
-			 .And.Subject.Should()
-			 .NotBeEmpty();
-
 			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x > 8))
 			                                      .Get()
 			                                      .Get(data)
 			                                      .Should()
 			                                      .NotBeEmpty()
 			                                      .And.Subject.Should()
-			                                      .Equal(data.Where(x => x > 8));*/
+			                                      .Equal(data.Where(x => x > 8));
 		}
 
 		[Fact]
 		void VerifySelect()
 		{
-			/*new Start<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, string>(x => x.ToString()))
+			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, string>(x => x.ToString()))
 			                                      .Get()
 			                                      .Get(data)
 			                                      .Should()
 			                                      .NotBeEmpty()
 			                                      .And.Subject.Should()
-			                                      .Equal(data.Select(x => x.ToString()));*/
+			                                      .Equal(data.Select(x => x.ToString()));
 		}
 
 		[Fact]
 		void VerifyComparison()
 		{
-			/*Start.A.Selection.Of.Type<int>()
+			Start.A.Selection.Of.Type<int>()
 			     .As.Sequence.Array.By.Self.Query()
 			     .Where(x => x > 8)
 			     .Select(x => x.ToString())
 			     .Get(data)
 			     .Open()
 			     .Should()
-			     .Equal(data.Where(x => x > 8).Select(x => x.ToString()));*/
+			     .Equal(data.Where(x => x > 8).Select(x => x.ToString()));
 		}
 
 		[Fact]
 		void VerifyActivation()
 		{
-			/*Start.A.Selection.Of.Type<int>()
+			Start.A.Selection.Of.Type<int>()
 			     .As.Sequence.Array.By.StoredActivation<Store<int>>()
 			     .Get(data)
 			     .Instance.Should()
@@ -125,7 +128,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 			     .As.Sequence.Array.By.Instantiation<Store<int>>()
 			     .Get(data)
 			     .Instance.Should()
-			     .Equal(data);*/
+			     .Equal(data);
 		}
 
 		[Fact]
