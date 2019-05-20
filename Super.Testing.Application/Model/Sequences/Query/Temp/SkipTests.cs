@@ -17,10 +17,10 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 			};
 
 			new Build.Skip<int>(10).Get()
-			                        .Get(elements)
-			                        .ToArray()
-			                        .Should()
-			                        .Equal(elements.Skip(10));
+			                       .Get(elements)
+			                       .ToArray()
+			                       .Should()
+			                       .Equal(elements.Skip(10));
 		}
 	}
 }

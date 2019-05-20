@@ -1,5 +1,6 @@
 ﻿using Super.Model;
 using Super.Model.Selection;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace Super
@@ -18,5 +19,8 @@ namespace Super
 
 		public static TOut Get<T, TOut>(this ISelect<Assigned<T>, TOut> @this) where T : struct
 			=> @this.Get(Assigned<T>.Unassigned);
+
+		public static TOut Invoke<T, TOut>(this Func<Assigned<T>, TOut> @this) where T : struct
+			=> @this(Assigned<T>.Unassigned);
 	}
 }

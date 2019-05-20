@@ -1,7 +1,10 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Super.Model.Sequences;
 using Super.Testing.Objects;
+using System;
 using System.Collections.Immutable;
+using System.Linq;
+
 // ReSharper disable NotAccessedVariable
 // ReSharper disable RedundantAssignment
 
@@ -13,7 +16,7 @@ namespace Super.Testing.Application
 		readonly Array<string>          _array;
 		readonly string[]               _open;
 
-		public IterationBenchmarks() : this(Data.Default.Get()) {}
+		public IterationBenchmarks() : this(Data.Default.Get().Take(100).ToArray()) {}
 
 		public IterationBenchmarks(Array<string> array) : this(array, array, array) {}
 
@@ -27,36 +30,59 @@ namespace Super.Testing.Application
 		[Benchmark]
 		public void Array()
 		{
-			string current = null;
-			var    array   = _array;
-			var    length  = array.Length;
+			var array  = _array;
+			var length = array.Length;
 			for (var i = 0u; i < length; i++)
 			{
-				current = array[i];
+				Call(array[i]);
 			}
 		}
 
 		[Benchmark]
 		public void Immutable()
 		{
-			string current = null;
-			var    length  = _immutable.Length;
+			var array  = _immutable;
+			var length = array.Length;
 			for (var i = 0; i < length; i++)
 			{
-				current = _immutable[i];
+				Call(array[i]);
+			}
+		}
+
+		[Benchmark(Baseline = true)]
+		public void Open()
+		{
+			var open   = _open;
+			var length = open.Length;
+			for (var i = 0; i < length; i++)
+			{
+				Call(open[i]);
 			}
 		}
 
 		[Benchmark]
-		public void Open()
+		public void Span()
 		{
-			string current = null;
-			var    array   = _open;
-			var    length  = array.Length;
+			Span<string> array  = _open;
+			var          length = array.Length;
 			for (var i = 0; i < length; i++)
 			{
-				current = array[i];
+				Call(array[i]);
 			}
 		}
+
+		[Benchmark]
+		public void Memory()
+		{
+			Memory<string> array     = _open;
+			var            length    = array.Length;
+			var            arraySpan = array.Span;
+			for (var i = 0; i < length; i++)
+			{
+				Call(arraySpan[i]);
+			}
+		}
+
+		static void Call(string parameter) {}
 	}
 }
