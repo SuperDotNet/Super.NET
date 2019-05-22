@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Super.Model.Sequences;
 using Super.Model.Sequences.Query.Temp;
 using System.Linq;
 using Xunit;
@@ -16,11 +17,11 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 				8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9
 			};
 
-			new Build.Skip<int>(10).Get()
-			                       .Get(elements)
-			                       .ToArray()
-			                       .Should()
-			                       .Equal(elements.Skip(10));
+			var selection = new Skip(10).Get(Super.Model.Sequences.Selection.Default);
+			new ArrayView<int>(elements, selection.Start, (uint)elements.Length - selection.Start).ToArray()
+			                                                                                      .Should()
+			                                                                                      .Equal(elements
+				                                                                                             .Skip(10));
 		}
 	}
 }

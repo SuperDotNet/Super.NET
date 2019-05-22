@@ -62,7 +62,7 @@ namespace Super
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Model.Sequences.Query.Temp.Storage<T> ToStore<T>(in this ArrayView<T> @this, Model.Sequences.Query.Temp.IStores<T> stores)
 		{
-			var result = stores.Get(@this.Length - @this.Start);
+			var result = stores.Get(@this.Length);
 			@this.ToArray(result.Instance);
 			return result;
 		}

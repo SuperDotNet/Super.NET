@@ -8,6 +8,8 @@ using Super.Model.Sequences.Query.Temp;
 using System.Linq;
 using Xunit;
 
+// ReSharper disable ReturnValueOfPureMethodIsNotUsed
+
 namespace Super.Testing.Application.Model.Sequences.Query.Temp
 {
 	public sealed class SequenceContextTests
@@ -23,27 +25,19 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 		[Fact]
 		void Verify()
 		{
-			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Skip<int>(skip))
-			                                      .Get(new Build.Take<int>(take))
+			new Start<int[], int>(A.Self<int[]>()).Get(new Skip(skip))
+			                                      .Get(new Take(take))
 			                                      .Get(data)
 			                                      .Should()
 			                                      .Equal(data.Skip(skip).Take(take))
 			                                      .And.Subject.Should()
 			                                      .NotBeEmpty();
-
-			new LinkedBody<int>(new Build.Skip<int>(skip).Get(), new Build.Take<int>(take).Get())
-				.Get(new ArrayView<int>(data))
-				.ToArray()
-				.Should()
-				.Equal(data.Skip(skip).Take(take))
-				.And.Subject.Should()
-				.NotBeEmpty();
 		}
 
 		[Fact]
 		void VerifySkipWhere()
 		{
-			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Skip<int>(skip))
+			new Start<int[], int>(A.Self<int[]>()).Get(new Skip(skip))
 			                                      .Get(new Build.Where<int>(x => x == 5))
 			                                      .Get(data)
 			                                      .Should()
@@ -55,8 +49,8 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 		[Fact]
 		void VerifySkipTakeWhere()
 		{
-			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Skip<int>(skip))
-			                                      .Get(new Build.Take<int>(take))
+			new Start<int[], int>(A.Self<int[]>()).Get(new Skip(skip))
+			                                      .Get(new Take(take))
 			                                      .Get(new Build.Where<int>(x => x == 5))
 			                                      .Get(data)
 			                                      .Should()
@@ -68,9 +62,9 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 		[Fact]
 		void VerifySkipWhereTake()
 		{
-			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Skip<int>(skip))
+			new Start<int[], int>(A.Self<int[]>()).Get(new Skip(skip))
 			                                      .Get(new Build.Where<int>(x => x == 5))
-			                                      .Get(new Build.Take<int>(take))
+			                                      .Get(new Take(take))
 			                                      .Get(data)
 			                                      .Should()
 			                                      .Equal(data.Skip(skip).Where(x => x == 5).Take(take))
@@ -245,6 +239,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 		public class Benchmarks
 		{
 			readonly ISelect<int[], string> _subject;
+			// ReSharper disable once NotAccessedField.Local
 			readonly ISelect<int[], string> _current;
 
 			public Benchmarks() : this(new Start<int[], int>(A.Self<int[]>())

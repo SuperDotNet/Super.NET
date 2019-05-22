@@ -83,6 +83,7 @@ namespace Super.Testing.Application
 			}
 		}
 
+		// ReSharper disable once UnusedParameter.Local
 		static void Call(string parameter) {}
 	}
 }
