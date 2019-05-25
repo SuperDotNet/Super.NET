@@ -2,77 +2,18 @@
 using Super.Model.Selection;
 using Super.Model.Sequences.Query.Construction;
 using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace Super.Model.Sequences.Query
 {
 	public static class Extensions
 	{
-		/*public static IProjections<TIn, TOut> Returned<TIn, TOut>(this IProjections<TIn, TOut> @this)
-			=> new ReturnedProjections<TIn, TOut>(@this);
-
-		*/
-
 		public static IContents<TIn, TOut> Returned<TIn, TOut>(this IContents<TIn, TOut> @this)
 			=> new ReturnedContents<TIn, TOut>(@this);
 
 		public static IContent<TIn, TOut> Returned<TIn, TOut>(this IContent<TIn, TOut> @this)
 			=> new ReturnedContent<TIn, TOut>(@this);
 	}
-
-	/*sealed class Skip<T> : IProject<T>
-	{
-		readonly uint _count;
-
-		public Skip(uint count) => _count = count;
-
-		public ArrayView<T> Get(ArrayView<T> parameter)
-			=> new ArrayView<T>(parameter.Array,
-			                    Math.Min(parameter.Length, parameter.Start + _count),
-			                    Math.Max(parameter.Start, (parameter.Length - (int)_count).Clamp0()));
-	}
-
-	sealed class Take<T> : IProject<T>
-	{
-		readonly uint _count;
-
-		public Take(uint count) => _count = count;
-
-		public ArrayView<T> Get(ArrayView<T> parameter)
-			=> new ArrayView<T>(parameter.Array, parameter.Start, Math.Min(parameter.Length, _count));
-	}*/
-
-	/*sealed class WhereDefinition<T> : Definition<T>
-	{
-		public WhereDefinition(Func<T, bool> where) : base(Lease<T>.Default, new Where<T>(where)) {}
-	}
-
-	public class Where<T> : IProject<T>
-	{
-		readonly Func<T, bool> _where;
-
-		public Where(Func<T, bool> where) => _where = where;
-
-		public ArrayView<T> Get(ArrayView<T> parameter)
-		{
-			var to    = parameter.Start + parameter.Length;
-			var array = parameter.Array;
-			var count = 0u;
-			for (var i = parameter.Start; i < to; i++)
-			{
-				var item = array[i];
-				if (_where(item))
-				{
-					array[count++] = item;
-				}
-			}
-
-			return new ArrayView<T>(parameter.Array, 0, count);
-		}
-	}
-
-	public interface IContinuation<TFrom, TTo> : ISelect<Store<TFrom>, Store<TTo>> {}*/
 
 	sealed class Skip : IPartition
 	{
@@ -122,39 +63,11 @@ namespace Super.Model.Sequences.Query
 
 	public interface IBody<TIn, TOut> : ISelect<ArrayView<TIn>, ArrayView<TOut>> {}
 
-	static class Build
-	{
-		public sealed class Select<TIn, TOut> : Builder<TIn, TOut, Func<TIn, TOut>>
-		{
-			public Select(Func<TIn, TOut> argument)
-				: base((shape, stores, parameter, limit) => new Selection<TIn, TOut>(shape, stores, parameter, limit),
-				       argument) {}
-		}
-
-		public sealed class Where<T> : BodyBuilder<T, Func<T, bool>>
-		{
-			public Where(Func<T, bool> where)
-				: base((parameter, selection, limit) => new Query.Where<T>(parameter, selection, limit), where) {}
-		}
-
-		public sealed class Distinct<T> : BodyBuilder<T, IEqualityComparer<T>>
-		{
-			public static Distinct<T> Default { get; } = new Distinct<T>();
-
-			Distinct() : this(EqualityComparer<T>.Default) {}
-
-			public Distinct(IEqualityComparer<T> comparer)
-				: base((parameter, selection, limit) => new Query.Distinct<T>(parameter), comparer) {}
-		}
-	}
-
 	sealed class Where<T> : IBody<T>
 	{
 		readonly Func<T, bool>  _where;
 		readonly uint           _start;
 		readonly Assigned<uint> _until, _limit;
-
-		public Where(Func<T, bool> where) : this(where, Selection.Default, Assigned<uint>.Unassigned) {}
 
 		public Where(Func<T, bool> where, Selection selection, Assigned<uint> limit)
 			: this(where, selection.Start, selection.Length, limit) {}
@@ -187,237 +100,6 @@ namespace Super.Model.Sequences.Query
 			}
 
 			return new ArrayView<T>(parameter.Array, 0, count);
-		}
-	}
-
-	/*public class Projections<TIn, TOut> : Builder<TIn, TOut, Func<TIn, TOut>>
-	{
-		public Projections(Func<TIn, TOut> parameter)
-			: base((body, stores, func, limit) => new Projection<TIn, TOut>(func, stores), parameter) {}
-	}*/
-
-	public sealed class Concatenations<T> : Builder<T, T, ISequence<T>>
-	{
-		public Concatenations(ISequence<T> parameter)
-			: base((body, stores, sequence, limit) => new Concatenation<T>(sequence, stores), parameter) {}
-	}
-
-	public class Concatenation<T> : IContent<T, T>
-	{
-		readonly ISequence<T> _others;
-		readonly IStores<T>   _stores;
-
-		public Concatenation(ISequence<T> others, IStores<T> stores)
-		{
-			_others = others;
-			_stores = stores;
-		}
-
-		public Store<T> Get(Store<T> parameter)
-		{
-			var other     = _others.Get();
-			var source    = other.Instance;
-			var @in       = parameter.Instance;
-			var length    = parameter.Length;
-			var appending = other.Length;
-			var total     = length + appending;
-			var result    = _stores.Get(total);
-
-			var @out = @in.CopyInto(result.Instance);
-			for (var i = 0; i < appending; i++)
-			{
-				@out[i + length] = source[i];
-			}
-
-			return result;
-		}
-	}
-
-	public sealed class Unions<T> : IContents<T, T>
-	{
-		readonly ISequence<T>         _others;
-		readonly IEqualityComparer<T> _comparer;
-
-		public Unions(ISequence<T> others, IEqualityComparer<T> comparer)
-		{
-			_others   = others;
-			_comparer = comparer;
-		}
-
-		public IContent<T, T> Get(Parameter<T, T> parameter) => new Union<T>(_others, _comparer, parameter.Stores);
-	}
-
-	public class Union<T> : IContent<T, T>
-	{
-		readonly ISequence<T>         _others;
-		readonly IEqualityComparer<T> _comparer;
-		readonly IStores<T>           _stores;
-
-		public Union(ISequence<T> others, IEqualityComparer<T> comparer, IStores<T> stores)
-		{
-			_others   = others;
-			_comparer = comparer;
-			_stores   = stores;
-		}
-
-		public Store<T> Get(Store<T> parameter)
-		{
-			var other     = _others.Get();
-			var source    = other.Instance;
-			var @in       = parameter.Instance;
-			var length    = parameter.Length;
-			var appending = other.Length;
-
-			var set = new Set<T>(_comparer);
-			for (var i = 0u; i < length; i++)
-			{
-				set.Add(in @in[i]);
-			}
-
-			var count = 0u;
-			for (var i = 0u; i < appending; i++)
-			{
-				var item = source[i];
-				if (set.Add(in item))
-				{
-					source[count++] = item;
-				}
-			}
-
-			var result = _stores.Get(length + count);
-
-			var @out = @in.CopyInto(result.Instance);
-			for (var i = 0; i < count; i++)
-			{
-				@out[i + length] = source[i];
-			}
-
-			return result;
-		}
-	}
-
-	public sealed class Intersections<T> : IContents<T, T>
-	{
-		readonly ISequence<T>         _others;
-		readonly IEqualityComparer<T> _comparer;
-
-		public Intersections(ISequence<T> others, IEqualityComparer<T> comparer)
-		{
-			_others   = others;
-			_comparer = comparer;
-		}
-
-		public IContent<T, T> Get(Parameter<T, T> parameter) => new Intersect<T>(_others, _comparer, parameter.Stores);
-	}
-
-	public class Intersect<T> : IContent<T, T>
-	{
-		readonly ISequence<T>         _others;
-		readonly IEqualityComparer<T> _comparer;
-		readonly IStores<T>           _stores;
-
-		public Intersect(ISequence<T> others, IEqualityComparer<T> comparer, IStores<T> stores)
-		{
-			_others   = others;
-			_comparer = comparer;
-			_stores   = stores;
-		}
-
-		public Store<T> Get(Store<T> parameter)
-		{
-			var other     = _others.Get();
-			var source    = other.Instance;
-			var @in       = parameter.Instance;
-			var length    = parameter.Length;
-			var appending = other.Length;
-
-			var set = new Set<T>(_comparer);
-			for (var i = 0u; i < length; i++)
-			{
-				set.Add(in @in[i]);
-			}
-
-			var count = 0u;
-			for (var i = 0u; i < appending; i++)
-			{
-				var item = source[i];
-				if (!set.Add(in item))
-				{
-					source[count++] = item;
-				}
-			}
-
-			var result = _stores.Get(count);
-
-			source.CopyInto(result.Instance, 0, count);
-
-			return result;
-		}
-	}
-
-	/*public class Projection<TFrom, TTo> : IContent<TFrom, TTo>
-	{
-		readonly Func<TFrom, TTo> _project;
-		readonly IStores<TTo>     _stores;
-
-		public Projection(Func<TFrom, TTo> project, IStores<TTo> stores)
-		{
-			_project = project;
-			_stores  = stores;
-		}
-
-		public Store<TTo> Get(Store<TFrom> parameter)
-		{
-			var @in    = parameter.Instance;
-			var length = parameter.Length;
-			var result = _stores.Get(length);
-
-			var @out = result.Instance;
-			for (var i = 0; i < length; i++)
-			{
-				@out[i] = _project(@in[i]);
-			}
-
-			return result;
-		}
-	}*/
-
-	public class SelectManyContents<TIn, TOut> : Builder<TIn, TOut, Func<TIn, IEnumerable<TOut>>>
-	{
-		public SelectManyContents(Func<TIn, IEnumerable<TOut>> parameter)
-			: base((body, stores, func, limit) => new ProjectionMany<TIn, TOut>(func, stores), parameter) {}
-	}
-
-	public class ProjectionMany<TIn, TOut> : IContent<TIn, TOut>
-	{
-		readonly Func<TIn, IEnumerable<TOut>> _project;
-		readonly IStores<TOut>                _stores;
-		readonly IIterate<TOut>               _iterate;
-
-		public ProjectionMany(Func<TIn, IEnumerable<TOut>> project, IStores<TOut> stores)
-			: this(project, stores, Iterate<TOut>.Default) {}
-
-		public ProjectionMany(Func<TIn, IEnumerable<TOut>> project, IStores<TOut> stores, IIterate<TOut> iterate)
-		{
-			_project = project;
-			_stores  = stores;
-			_iterate = iterate;
-		}
-
-		public Store<TOut> Get(Store<TIn> parameter)
-		{
-			var @in    = parameter.Instance;
-			var length = parameter.Length;
-			var store  = new DynamicStore<TOut>(1024);
-			for (var i = 0; i < length; i++)
-			{
-				var enumerable = _project(@in[i]);
-				var page       = _iterate.Get(enumerable);
-				store = store.Add(in page);
-			}
-
-			var result = store.Get(_stores);
-			return result;
 		}
 	}
 
@@ -493,14 +175,6 @@ namespace Super.Model.Sequences.Query
 				               current.Length + filled);
 			return new DynamicStore<T>(_stores, new Selection(_position.Start, _position.Length + filled), _index);
 		}
-	}
-
-	public class InlineProjections<TIn, TOut> : Builder<TIn, TOut, Expression<Func<TIn, TOut>>>
-	{
-		public InlineProjections(Expression<Func<TIn, TOut>> parameter)
-			: base((body, stores, expression, limit)
-				       => new InlineProjection<TIn, TOut>(body, expression, stores, limit),
-			       parameter) {}
 	}
 
 	sealed class Selection<TIn, TOut> : IContent<TIn, TOut>

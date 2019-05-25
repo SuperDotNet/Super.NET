@@ -5,6 +5,7 @@ using Super.Model.Selection;
 using Super.Model.Sequences.Query;
 using Super.Model.Sequences.Query.Construction;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -355,34 +356,27 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 		public class Benchmarks
 		{
 			readonly ISelect<int[], int[]> _subject;
-			readonly ISelect<int[], int[]> _current;
+			readonly IEnumerable<int>      _classic;
 
-			public Benchmarks()
-				: this(new Start<int[], int>(A.Self<int[]>()).Get(new Skip(6))
-				                                             .Get(new Take(5))
-				                                             .Get(new Build.Where<int>(x => x > 2))
-				                                             .Get(),
-				       Start.A.Selection.Of.Type<int>()
-				            .As.Sequence.Array.By.Self.Query()
-				            .Skip(6)
-				            .Take(5)
-				            .Where(x => x > 2)
-				            .Out()) {}
+			public Benchmarks() : this(Start.A.Selection.Of.Type<int>()
+			                                .As.Sequence.Array.By.Self.Query()
+			                                .Skip(6)
+			                                .Take(5)
+			                                .Where(x => x > 2)
+			                                .Out(),
+			                           data.Skip(6).Take(5).Where(x => x > 2)) {}
 
-			public Benchmarks(ISelect<int[], int[]> subject, ISelect<int[], int[]> current)
+			public Benchmarks(ISelect<int[], int[]> subject, IEnumerable<int> classic)
 			{
 				_subject = subject;
-				_current = current;
+				_classic = classic;
 			}
 
 			[Benchmark(Baseline = true)]
+			public Array Classic() => _classic.ToArray();
+
+			[Benchmark]
 			public Array Subject() => _subject.Get(data);
-
-			[Benchmark]
-			public Array Current() => _current.Get(data);
-
-			[Benchmark]
-			public object Measure() => data.Skip(6).Take(5).Where(x => x > 2).ToArray();
 		}
 	}
 }

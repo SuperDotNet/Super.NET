@@ -49,17 +49,17 @@ namespace Super.Model.Selection.Adapters
 
 		public Query<_, T> Select(Sequences.Selection selection) => Skip(selection.Start).Take(selection.Length);
 
-		public Query<_, T> Append(ISequence<T> others) => Select(new Concatenations<T>(others).Returned());
+		public Query<_, T> Append(ISequence<T> others) => Select(new Build.Concatenation<T>(others).Returned());
 
 		public Query<_, T> Union(ISequence<T> others) => Union(others, EqualityComparer<T>.Default);
 
 		public Query<_, T> Union(ISequence<T> others, IEqualityComparer<T> comparer)
-			=> Select(new Unions<T>(others, comparer).Returned());
+			=> Select(new Build.Union<T>(others, comparer).Returned());
 
 		public Query<_, T> Intersect(ISequence<T> others) => Intersect(others, EqualityComparer<T>.Default);
 
 		public Query<_, T> Intersect(ISequence<T> others, IEqualityComparer<T> comparer)
-			=> Select(new Intersections<T>(others, comparer).Returned());
+			=> Select(new Build.Intersect<T>(others, comparer).Returned());
 
 		public Query<_, T> Distinct() => new Query<_, T>(_node.Get(Build.Distinct<T>.Default));
 

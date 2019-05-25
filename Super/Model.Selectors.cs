@@ -21,6 +21,7 @@ namespace Super
 		public static ISelect<TIn, IResult<TOut>> AsDefined<TIn, TOut>(this ISelect<TIn, IResult<TOut>> @this) => @this;
 
 		/**/
+
 		public static OperationSelector<_, T> Then<_, T>(this ISelect<_, ValueTask<T>> @this)
 			=> new OperationSelector<_, T>(@this);
 
@@ -92,7 +93,7 @@ namespace Super
 			=> @this.Select(select.ToDelegate());
 
 		public static Query<_, TOut> SelectBy<_, T, TOut>(this Query<_, T> @this, Expression<Func<T, TOut>> select)
-			=> @this.Select(new InlineProjections<T, TOut>(select).Returned());
+			=> @this.Select(new Build.InlineSelect<T, TOut>(select).Returned());
 
 		public static Query<_, TOut> Select<_, T, TOut>(this Query<_, T> @this, Func<T, TOut> select)
 			=> @this.Select(new Build.Select<T, TOut>(select).Returned());
@@ -102,7 +103,7 @@ namespace Super
 			=> @this.SelectMany(select.Compile());
 
 		public static Query<_, TOut> SelectMany<_, T, TOut>(this Query<_, T> @this, Func<T, IEnumerable<TOut>> select)
-			=> @this.Select(new SelectManyContents<T, TOut>(select).Returned());
+			=> @this.Select(new Build.SelectMany<T, TOut>(select).Returned());
 
 		public static Query<_, T> WhereBy<_, T>(this Query<_, T> @this, Expression<Func<T, bool>> where)
 			=> @this.Where(where.Compile());
