@@ -10,7 +10,8 @@ namespace Super.Model.Sequences.Query
 
 		public One(Func<T, bool> where) : this(where, A.Default<T>) {}
 
-		public One(Func<T, bool> where, Func<T> @default) : this(new Where<T>(where).Get, @default) {}
+		public One(Func<T, bool> where, Func<T> @default)
+			: this(new Where<T>(where, Selection.Default, 2).Get, @default) {}
 
 		public One(Func<ArrayView<T>, ArrayView<T>> where, Func<T> @default)
 		{
@@ -18,9 +19,9 @@ namespace Super.Model.Sequences.Query
 			_default = @default;
 		}
 
-		public T Get(ArrayView<T> parameter)
+		public T Get(Store<T> parameter)
 		{
-			var view   = _where(parameter);
+			var view   = _where(new ArrayView<T>(parameter.Instance, 0, parameter.Length));
 			var result = view.Length == 1 ? view.Array[0] : _default();
 			return result;
 		}

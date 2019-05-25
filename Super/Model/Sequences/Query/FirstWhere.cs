@@ -19,13 +19,12 @@ namespace Super.Model.Sequences.Query
 			_default = @default;
 		}
 
-		public T Get(ArrayView<T> parameter)
+		public T Get(Store<T> parameter)
 		{
 			var length = parameter.Length;
-
-			for (var i = parameter.Start; i < length; i++)
+			for (var i = 0u; i < length; i++)
 			{
-				var item = parameter.Array[i];
+				var item = parameter.Instance[i];
 				if (_where(item))
 				{
 					return item;

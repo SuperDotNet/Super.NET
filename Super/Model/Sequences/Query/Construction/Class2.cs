@@ -1,17 +1,11 @@
 ﻿using Super.Model.Results;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
-using Super.Model.Sequences.Query.Construction;
 using System;
+using System.Buffers;
 
-namespace Super.Model.Sequences.Query.Temp
+namespace Super.Model.Sequences.Query.Construction
 {
-	public static class Extensions
-	{
-		public static IContent<TIn, TOut> Returned<TIn, TOut>(this IContent<TIn, TOut> @this)
-			=> new ReturnedContent<TIn, TOut>(@this);
-	}
-
 	public interface INode<in _, T> : IResult<ISelect<_, T[]>>,
 	                                          ISelect<IPartition, INode<_, T>>,
 	                                          ISelect<IBodyBuilder<T>, INode<_, T>>
@@ -32,7 +26,7 @@ namespace Super.Model.Sequences.Query.Temp
 		public INode<_, T> Get(IPartition parameter) => new Open<_, T>(Get(), _partition.Get(parameter));
 
 		public INode<_, T> Get(IBodyBuilder<T> parameter)
-			=> new PartitionedNode<_, T>(new Enter<_, T>(Get(), Lease<T>.Default),
+			=> new Node<_, T>(new Enter<_, T>(Get(), Lease<T>.Default),
 			                             new PartitionedBuilder<T>(_partition, parameter));
 
 		public INode<_, TTo> Get<TTo>(IContents<T, TTo> parameter)
@@ -61,7 +55,7 @@ namespace Super.Model.Sequences.Query.Temp
 		public INode<_, T> Get(IPartition parameter) => new Open<_, T>(_origin, _partition.Get(parameter));
 
 		public INode<_, T> Get(IBodyBuilder<T> parameter)
-			=> new PartitionedNode<_, T>(new Enter<_, T>(_origin, Lease<T>.Default),
+			=> new Node<_, T>(new Enter<_, T>(_origin, Lease<T>.Default),
 			                             new PartitionedBuilder<T>(_partition, parameter));
 
 		public INode<_, TTo> Get<TTo>(IContents<T, TTo> parameter)
@@ -74,15 +68,17 @@ namespace Super.Model.Sequences.Query.Temp
 			                          parameter);
 	}
 
-	sealed class PartitionedNode<_, T> : INode<_, T>
+	sealed class Node<_, T> : INode<_, T>
 	{
 		readonly ISelect<_, Store<T>> _origin;
 		readonly IPartition<T>          _partition;
 
-		public PartitionedNode(ISelect<_, Store<T>> origin, IBodyBuilder<T> builder)
+		public Node(ISelect<_, Store<T>> origin, IBodyBuilder<T> builder)
 			: this(origin, new Partition<T>(builder)) {}
 
-		public PartitionedNode(ISelect<_, Store<T>> origin, IPartition<T> partition)
+		public Node(ISelect<_, Store<T>> origin) : this(origin, Partition<T>.Default) {}
+
+		public Node(ISelect<_, Store<T>> origin, IPartition<T> partition)
 		{
 			_origin    = origin;
 			_partition = partition;
@@ -91,10 +87,10 @@ namespace Super.Model.Sequences.Query.Temp
 		public ISelect<_, T[]> Get() => new Exit<_, T>(_origin, _partition.Get(Assigned<uint>.Unassigned));
 
 		public INode<_, T> Get(IPartition parameter)
-			=> new PartitionedNode<_, T>(_origin, _partition.Get(parameter));
+			=> new Node<_, T>(_origin, _partition.Get(parameter));
 
 		public INode<_, T> Get(IBodyBuilder<T> parameter)
-			=> new PartitionedNode<_, T>(_origin, new PartitionedBuilder<T>(_partition, parameter));
+			=> new Node<_, T>(_origin, new PartitionedBuilder<T>(_partition, parameter));
 
 		public INode<_, TTo> Get<TTo>(IContents<T, TTo> parameter)
 			=> new ContentNode<_, T, TTo>(_origin, new ContentContainer<T, TTo>(_partition, parameter));
@@ -126,6 +122,29 @@ namespace Super.Model.Sequences.Query.Temp
 			var result = view.Start > 0 || view.Length != parameter.Length ? view.ToStore(_stores) : view.Array;
 			return result;
 		}
+	}
+
+	public interface IEnter<T> : ISelect<T[], Store<T>> {}
+
+	sealed class Enter<T> : Select<T[], Store<T>>, IEnter<T>
+	{
+		public static Enter<T> Default { get; } = new Enter<T>();
+
+		Enter() : base(x => new Store<T>(x)) {}
+	}
+
+	sealed class Lease<T> : IEnter<T>
+	{
+		public static Lease<T> Default { get; } = new Lease<T>();
+
+		Lease() : this(ArrayPool<T>.Shared) {}
+
+		readonly ArrayPool<T> _pool;
+
+		public Lease(ArrayPool<T> pool) => _pool = pool;
+
+		public Store<T> Get(T[] parameter)
+			=> new Store<T>(parameter.CopyInto(_pool.Rent(parameter.Length)), (uint)parameter.Length);
 	}
 
 	sealed class Enter<_, T> : ISelect<_, Store<T>>
@@ -414,41 +433,6 @@ namespace Super.Model.Sequences.Query.Temp
 		public ArrayView<T> Get(ArrayView<T> parameter) => _current.Get(_previous.Get(parameter));
 	}
 
-	sealed class FirstOrDefault<T> : Instance<uint>, IElement<T>, ILimitAware
-	{
-		public static FirstOrDefault<T> Default { get; } = new FirstOrDefault<T>();
-
-		FirstOrDefault() : base(1) {}
-
-		public T Get(Store<T> parameter) => parameter.Length > 0 ? parameter.Instance[0] : default;
-	}
-
-	sealed class Skip : IPartition
-	{
-		readonly uint _count;
-
-		public Skip(uint count) => _count = count;
-
-		public Selection Get(Selection parameter)
-		{
-			var count = parameter.Start + _count;
-			var result = new Selection(parameter.Length.IsAssigned ? Math.Min(parameter.Length, count) : count,
-			                           parameter.Length);
-			return result;
-		}
-	}
-
-	sealed class Take : IPartition
-	{
-		readonly uint _count;
-
-		public Take(uint count) => _count = count;
-
-		public Selection Get(Selection parameter)
-			=> new Selection(parameter.Start,
-			                 parameter.Length.IsAssigned ? Math.Min(parameter.Length, _count) : _count);
-	}
-
 	public interface IPartition : IAlteration<Selection> {}
 
 	public readonly struct Partitioning
@@ -488,12 +472,6 @@ namespace Super.Model.Sequences.Query.Temp
 		public IPartition<T> Get(IPartition parameter) => new Partition<T>(_builder, parameter.Get(_selection));
 	}
 
-	public interface ILimitAware : IResult<uint> {}
-
-	public interface IElement<T> : IElement<T, T> {}
-
-	public interface IElement<TFrom, out TTo> : ISelect<Store<TFrom>, TTo> {}
-
 	sealed class Exit<_, TIn, TOut, TTo> : ISelect<_, TTo>
 	{
 		readonly ISelect<_, Store<TIn>> _origin;
@@ -510,11 +488,16 @@ namespace Super.Model.Sequences.Query.Temp
 		public TTo Get(_ parameter) => _element.Get(_content.Get(_origin.Get(parameter)));
 	}
 
+	public sealed class ReturnedContents<TIn, TOut> : IContents<TIn, TOut>
+	{
+		readonly IContents<TIn, TOut> _contents;
 
+		public ReturnedContents(IContents<TIn, TOut> projections) => _contents = projections;
+
+		public IContent<TIn, TOut> Get(Parameter<TIn, TOut> parameter) => _contents.Get(parameter).Returned();
+	}
 
 	public interface IContents<TIn, TOut> : ISelect<Parameter<TIn, TOut>, IContent<TIn, TOut>> {}
-
-	public interface IContent<TIn, TOut> : ISelect<Store<TIn>, Store<TOut>> {}
 
 	public delegate IContent<TIn, TOut> Create<TIn, TOut, in TParameter>(IBody<TIn> body,
 	                                                                     IStores<TOut> stores, TParameter parameter,
@@ -539,41 +522,6 @@ namespace Super.Model.Sequences.Query.Temp
 			if (parameter.Requested)
 			{
 				_return(parameter.Instance);
-			}
-
-			return result;
-		}
-	}
-
-	sealed class Selection<TIn, TOut> : IContent<TIn, TOut>
-	{
-		readonly IBody<TIn>      _body;
-		readonly Func<TIn, TOut> _select;
-		readonly Assigned<uint>  _limit;
-		readonly IStores<TOut>   _stores;
-
-		// ReSharper disable once TooManyDependencies
-		public Selection(IBody<TIn> body, IStores<TOut> stores, Func<TIn, TOut> select, Assigned<uint> limit)
-		{
-			_body   = body;
-			_stores = stores;
-			_select = select;
-			_limit  = limit;
-		}
-
-		public Store<TOut> Get(Store<TIn> parameter)
-		{
-			var body = _body.Get(new ArrayView<TIn>(parameter.Instance, 0, parameter.Length));
-			var length = _limit.IsAssigned
-				             ? Math.Min(_limit.Instance, body.Length)
-				             : body.Length;
-			var result = _stores.Get(length);
-			var @in    = body.Array;
-			var @out   = result.Instance;
-
-			for (var i = 0; i < length; i++)
-			{
-				@out[i] = _select(@in[i + body.Start]);
 			}
 
 			return result;
@@ -633,10 +581,6 @@ namespace Super.Model.Sequences.Query.Temp
 		BodyBuilder() : base(x => new Body<T>(x.Selection)) {}
 	}
 
-	public interface IBody<T> : IBody<T, T> {}
-
-	public interface IBody<TIn, TOut> : ISelect<ArrayView<TIn>, ArrayView<TOut>> {}
-
 	public class Builder<TIn, TOut, TParameter> : IContents<TIn, TOut>
 	{
 		readonly Create<TIn, TOut, TParameter> _create;
@@ -667,63 +611,6 @@ namespace Super.Model.Sequences.Query.Temp
 	}
 
 	public delegate IBody<T> Create<T, in TParameter>(TParameter parameter, Selection selection, Assigned<uint> limit);
-
-	static class Build
-	{
-		public sealed class Select<TIn, TOut> : Builder<TIn, TOut, Func<TIn, TOut>>
-		{
-			public Select(Func<TIn, TOut> argument)
-				: base((shape, stores, parameter, limit)
-					       => new Selection<TIn, TOut>(shape, stores, parameter, limit).Returned(),
-				       argument) {}
-		}
-
-		public sealed class Where<T> : BodyBuilder<T, Func<T, bool>>
-		{
-			public Where(Func<T, bool> where)
-				: base((parameter, selection, limit) => new Temp.Where<T>(parameter, selection, limit), where) {}
-		}
-	}
-
-	sealed class Where<T> : IBody<T>
-	{
-		readonly Func<T, bool>  _where;
-		readonly uint           _start;
-		readonly Assigned<uint> _until, _limit;
-
-		public Where(Func<T, bool> where, Selection selection, Assigned<uint> limit)
-			: this(where, selection.Start, selection.Length, limit) {}
-
-		// ReSharper disable once TooManyDependencies
-		public Where(Func<T, bool> where, uint start, Assigned<uint> until, Assigned<uint> limit)
-		{
-			_where = where;
-			_start = start;
-			_until = until;
-			_limit = limit;
-		}
-
-		public ArrayView<T> Get(ArrayView<T> parameter)
-		{
-			var  to    = parameter.Start + parameter.Length;
-			var  array = parameter.Array;
-			uint count = 0u, start = 0u;
-			var  limit = _limit.Or(_until.Or(parameter.Length));
-			for (var i = parameter.Start; i < to && count < limit; i++)
-			{
-				var item = array[i];
-				if (_where(item))
-				{
-					if (start++ >= _start)
-					{
-						array[count++] = item;
-					}
-				}
-			}
-
-			return new ArrayView<T>(parameter.Array, 0, count);
-		}
-	}
 
 	sealed class Exit<_, TIn, TOut> : ISelect<_, TOut[]>
 	{

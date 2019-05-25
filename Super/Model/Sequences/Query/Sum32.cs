@@ -9,19 +9,18 @@ namespace Super.Model.Sequences.Query
 		Sum32() : base(i => i) {}
 	}
 
-	public class Sum32<T> : IElement<T, int>
+	public class Sum32<T> : Unlimited, IElement<T, int>
 	{
 		readonly Func<T, int> _project;
 
 		public Sum32(Func<T, int> project) => _project = project;
 
-		public int Get(ArrayView<T> parameter)
+		public int Get(Store<T> parameter)
 		{
-			var start  = parameter.Start;
-			var to     = start + parameter.Length;
-			var array  = parameter.Array;
+			var to     = parameter.Length;
+			var array  = parameter.Instance;
 			var result = 0;
-			for (var i = start; i < to; i++)
+			for (var i = 0u; i < to; i++)
 			{
 				result += _project(array[i]);
 			}
@@ -37,19 +36,18 @@ namespace Super.Model.Sequences.Query
 		SumUnsigned32() : base(x => x) {}
 	}
 
-	public class SumUnsigned32<T> : IElement<T, uint>
+	public class SumUnsigned32<T> : Unlimited, IElement<T, uint>
 	{
 		readonly Func<T, uint> _project;
 
 		public SumUnsigned32(Func<T, uint> project) => _project = project;
 
-		public uint Get(ArrayView<T> parameter)
+		public uint Get(Store<T> parameter)
 		{
-			var start  = parameter.Start;
-			var to     = start + parameter.Length;
-			var array  = parameter.Array;
+			var to     = parameter.Length;
+			var array  = parameter.Instance;
 			var result = 0u;
-			for (var i = start; i < to; i++)
+			for (var i = 0u; i < to; i++)
 			{
 				result += _project(array[i]);
 			}
@@ -65,19 +63,18 @@ namespace Super.Model.Sequences.Query
 		Sum64() : base(x => x) {}
 	}
 
-	public class Sum64<T> : IElement<T, long>
+	public class Sum64<T> : Unlimited, IElement<T, long>
 	{
 		readonly Func<T, long> _project;
 
 		public Sum64(Func<T, long> project) => _project = project;
 
-		public long Get(ArrayView<T> parameter)
+		public long Get(Store<T> parameter)
 		{
-			var start  = parameter.Start;
-			var to     = start + parameter.Length;
-			var array  = parameter.Array;
+			var to     = parameter.Length;
+			var array  = parameter.Instance;
 			var result = 0L;
-			for (var i = start; i < to; i++)
+			for (var i = 0u; i < to; i++)
 			{
 				result += _project(array[i]);
 			}
@@ -93,19 +90,18 @@ namespace Super.Model.Sequences.Query
 		SumUnsigned64() : base(x => x) {}
 	}
 
-	public class SumUnsigned64<T> : IElement<T, ulong>
+	public class SumUnsigned64<T> : Unlimited, IElement<T, ulong>
 	{
 		readonly Func<T, ulong> _project;
 
 		public SumUnsigned64(Func<T, ulong> project) => _project = project;
 
-		public ulong Get(ArrayView<T> parameter)
+		public ulong Get(Store<T> parameter)
 		{
-			var start  = parameter.Start;
-			var to     = start + parameter.Length;
-			var array  = parameter.Array;
+			var to     = parameter.Length;
+			var array  = parameter.Instance;
 			var result = 0ul;
-			for (var i = start; i < to; i++)
+			for (var i = 0u; i < to; i++)
 			{
 				result += _project(array[i]);
 			}
@@ -121,19 +117,18 @@ namespace Super.Model.Sequences.Query
 		SumSingle() : base(x => x) {}
 	}
 
-	public class SumSingle<T> : IElement<T, float>
+	public class SumSingle<T> : Unlimited, IElement<T, float>
 	{
 		readonly Func<T, float> _project;
 
 		public SumSingle(Func<T, float> project) => _project = project;
 
-		public float Get(ArrayView<T> parameter)
+		public float Get(Store<T> parameter)
 		{
-			var start  = parameter.Start;
-			var to     = start + parameter.Length;
-			var array  = parameter.Array;
+			var to     = parameter.Length;
+			var array  = parameter.Instance;
 			var result = 0f;
-			for (var i = start; i < to; i++)
+			for (var i = 0u; i < to; i++)
 			{
 				result += _project(array[i]);
 			}
@@ -149,19 +144,18 @@ namespace Super.Model.Sequences.Query
 		SumDouble() : base(x => x) {}
 	}
 
-	public class SumDouble<T> : IElement<T, double>
+	public class SumDouble<T> : Unlimited, IElement<T, double>
 	{
 		readonly Func<T, double> _project;
 
 		public SumDouble(Func<T, double> project) => _project = project;
 
-		public double Get(ArrayView<T> parameter)
+		public double Get(Store<T> parameter)
 		{
-			var start  = parameter.Start;
-			var to     = start + parameter.Length;
-			var array  = parameter.Array;
+			var to     = parameter.Length;
+			var array  = parameter.Instance;
 			var result = 0d;
-			for (var i = start; i < to; i++)
+			for (var i = 0u; i < to; i++)
 			{
 				result += _project(array[i]);
 			}
@@ -177,19 +171,18 @@ namespace Super.Model.Sequences.Query
 		SumDecimal() : base(x => x) {}
 	}
 
-	public class SumDecimal<T> : IElement<T, decimal>
+	public class SumDecimal<T> : Unlimited, IElement<T, decimal>
 	{
 		readonly Func<T, decimal> _project;
 
 		public SumDecimal(Func<T, decimal> project) => _project = project;
 
-		public decimal Get(ArrayView<T> parameter)
+		public decimal Get(Store<T> parameter)
 		{
-			var start  = parameter.Start;
-			var to     = start + parameter.Length;
-			var array  = parameter.Array;
+			var to     = parameter.Length;
+			var array  = parameter.Instance;
 			var result = 0m;
-			for (var i = start; i < to; i++)
+			for (var i = 0u; i < to; i++)
 			{
 				result += _project(array[i]);
 			}

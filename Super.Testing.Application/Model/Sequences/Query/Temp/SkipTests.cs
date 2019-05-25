@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Super.Model.Sequences;
-using Super.Model.Sequences.Query.Temp;
+using Super.Model.Sequences.Query;
 using System.Linq;
 using Xunit;
 

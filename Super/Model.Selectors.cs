@@ -95,7 +95,7 @@ namespace Super
 			=> @this.Select(new InlineProjections<T, TOut>(select).Returned());
 
 		public static Query<_, TOut> Select<_, T, TOut>(this Query<_, T> @this, Func<T, TOut> select)
-			=> @this.Select(new Projections<T, TOut>(select).Returned());
+			=> @this.Select(new Build.Select<T, TOut>(select).Returned());
 
 		public static Query<_, TOut> SelectManyBy<_, T, TOut>(this Query<_, T> @this,
 		                                                      Expression<Func<T, IEnumerable<TOut>>> select)

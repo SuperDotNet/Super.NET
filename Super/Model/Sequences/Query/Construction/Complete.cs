@@ -1,12 +1,34 @@
-﻿using Super.Model.Results;
-using Super.Model.Selection;
-using Super.Runtime.Invocation;
+﻿using Super.Model.Selection;
 using System;
-using System.Buffers;
 
 namespace Super.Model.Sequences.Query.Construction
 {
-	public interface INode<in _, T> : IResult<ISelect<_, T[]>>,
+	sealed class Complete<T> : ISelect<Store<T>, T[]>
+	{
+		public static Complete<T> Default { get; } = new Complete<T>();
+
+		Complete() : this(Return<T>.Default.Execute) {}
+
+		readonly Action<T[]> _return;
+
+		public Complete(Action<T[]> @return) => _return = @return;
+
+		public T[] Get(Store<T> parameter)
+		{
+			if (parameter.Requested)
+			{
+				var result = parameter.Instance.CopyInto(new T[parameter.Length], 0, parameter.Length);
+				_return(parameter.Instance);
+				return result;
+			}
+
+			return parameter.Instance;
+		}
+	}
+
+
+
+	/*public interface INode<in _, T> : IResult<ISelect<_, T[]>>,
 	                                  ISelect<IProject<T>, INode<_, T>>,
 	                                  ISelect<IDefinition<T>, INode<_, T>>,
 	                                  ISelect<IElement<T>, ISelect<_, T>>
@@ -216,28 +238,7 @@ namespace Super.Model.Sequences.Query.Construction
 		}
 	}
 
-	public interface IEnter<T> : ISelect<T[], Store<T>> {}
 
-	sealed class Enter<T> : Select<T[], Store<T>>, IEnter<T>
-	{
-		public static Enter<T> Default { get; } = new Enter<T>();
-
-		Enter() : base(x => new Store<T>(x)) {}
-	}
-
-	sealed class Lease<T> : IEnter<T>
-	{
-		public static Lease<T> Default { get; } = new Lease<T>();
-
-		Lease() : this(ArrayPool<T>.Shared) {}
-
-		readonly ArrayPool<T> _pool;
-
-		public Lease(ArrayPool<T> pool) => _pool = pool;
-
-		public Store<T> Get(T[] parameter)
-			=> new Store<T>(parameter.CopyInto(_pool.Rent(parameter.Length)), (uint)parameter.Length);
-	}
 
 	sealed class Continuation<TIn, TOut> : IContinuation<TIn, TOut>
 	{
@@ -302,28 +303,7 @@ namespace Super.Model.Sequences.Query.Construction
 		}
 	}
 
-	sealed class Complete<T> : ISelect<Store<T>, T[]>
-	{
-		public static Complete<T> Default { get; } = new Complete<T>();
 
-		Complete() : this(Return<T>.Default.Execute) {}
-
-		readonly Action<T[]> _return;
-
-		public Complete(Action<T[]> @return) => _return = @return;
-
-		public T[] Get(Store<T> parameter)
-		{
-			if (parameter.Requested)
-			{
-				var result = parameter.Instance.CopyInto(new T[parameter.Length], 0, parameter.Length);
-				_return(parameter.Instance);
-				return result;
-			}
-
-			return parameter.Instance;
-		}
-	}
 
 	sealed class Element<T> : Element<T, T>
 	{
@@ -356,5 +336,5 @@ namespace Super.Model.Sequences.Query.Construction
 
 			return result;
 		}
-	}
+	}*/
 }

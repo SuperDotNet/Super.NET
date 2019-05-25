@@ -43,7 +43,7 @@ namespace Super.Model.Selection.Adapters
 
 		public Query(ISelect<_, T[]> subject) : this(new Enter<_, T>(subject)) {}
 
-		public Query(ISelect<_, Sequences.Store<T>> subject) : this(new Store<_, T>(subject)) {}
+		public Query(ISelect<_, Sequences.Store<T>> subject) : this(new Node<_, T>(subject)) {}
 
 		public Query(INode<_, T> node) => _node = node;
 
@@ -61,22 +61,26 @@ namespace Super.Model.Selection.Adapters
 		public Query<_, T> Intersect(ISequence<T> others, IEqualityComparer<T> comparer)
 			=> Select(new Intersections<T>(others, comparer).Returned());
 
-		public Query<_, T> Distinct() => new Query<_, T>(_node.Get(DistinctDefinition<T>.Default));
+		public Query<_, T> Distinct() => new Query<_, T>(_node.Get(Build.Distinct<T>.Default));
 
 		public Query<_, T> Distinct(IEqualityComparer<T> comparer)
-			=> new Query<_, T>(_node.Get(new DistinctDefinition<T>(comparer)));
+			=> new Query<_, T>(_node.Get(new Build.Distinct<T>(comparer)));
 
-		public Query<_, T> Select(IProject<T> project) => new Query<_, T>(_node.Get(project));
+		public Query<_, T> Skip(uint count) => Select(new Skip(count));
 
-		public Query<_, T> Skip(uint count) => Select(new Skip<T>(count));
-
-		public Query<_, T> Take(uint count) => Select(new Take<T>(count));
-
-		public Query<_, TOut> Select<TOut>(IProjections<T, TOut> select) => new Query<_, TOut>(_node.Get(select));
+		public Query<_, T> Take(uint count) => Select(new Take(count));
 
 		public Query<_, T> Where(ISelect<T, bool> where) => Where(where.Get);
 
-		public Query<_, T> Where(Func<T, bool> where) => new Query<_, T>(_node.Get(new WhereDefinition<T>(where)));
+		public Query<_, T> Where(Func<T, bool> where) => new Query<_, T>(_node.Get(new Build.Where<T>(where)));
+
+
+		public Query<_, T> Select(IBodyBuilder<T> builder) => new Query<_, T>(_node.Get(builder));
+
+		public Query<_, T> Select(IPartition partition) => new Query<_, T>(_node.Get(partition));
+
+
+		public Query<_, TOut> Select<TOut>(IContents<T, TOut> select) => new Query<_, TOut>(_node.Get(select));
 
 		public ISelect<_, T> Select(IElement<T> select) => _node.Get(select);
 

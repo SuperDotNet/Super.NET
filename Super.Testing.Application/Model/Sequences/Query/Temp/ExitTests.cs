@@ -2,7 +2,8 @@
 using FluentAssertions;
 using Super.Compose;
 using Super.Model.Selection;
-using Super.Model.Sequences.Query.Temp;
+using Super.Model.Sequences.Query;
+using Super.Model.Sequences.Query.Construction;
 using System;
 using System.Linq;
 using Xunit;

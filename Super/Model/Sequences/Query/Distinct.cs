@@ -1,25 +1,24 @@
-﻿using Super.Model.Sequences.Query.Construction;
-using System;
+﻿using System;
 using System.Buffers;
 using System.Collections.Generic;
 
 namespace Super.Model.Sequences.Query
 {
-	sealed class DistinctDefinition<T> : Definition<T>
+	/*sealed class DistinctDefinition<T> : Definition<T>
 	{
 		public static DistinctDefinition<T> Default { get; } = new DistinctDefinition<T>();
 
 		DistinctDefinition() : this(EqualityComparer<T>.Default) {}
 
 		public DistinctDefinition(IEqualityComparer<T> comparer) : base(Lease<T>.Default, new Distinct<T>(comparer)) {}
-	}
+	}*/
 
 	sealed class Default
 	{
 		public static ArrayPool<int> Numbers { get; } = ArrayPool<int>.Shared;
 	}
 
-	sealed class Distinct<T> : IProject<T>
+	sealed class Distinct<T> : IBody<T>
 	{
 		readonly IEqualityComparer<T> _comparer;
 

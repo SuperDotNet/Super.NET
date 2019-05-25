@@ -1,4 +1,5 @@
-﻿using Super.Model.Selection;
+﻿using Super.Model.Results;
+using Super.Model.Selection;
 using Super.Model.Sequences.Query.Construction;
 using System;
 using System.Collections.Generic;
@@ -8,14 +9,19 @@ namespace Super.Model.Sequences.Query
 {
 	public static class Extensions
 	{
-		public static IProjections<TIn, TOut> Returned<TIn, TOut>(this IProjections<TIn, TOut> @this)
+		/*public static IProjections<TIn, TOut> Returned<TIn, TOut>(this IProjections<TIn, TOut> @this)
 			=> new ReturnedProjections<TIn, TOut>(@this);
 
-		public static IContinuation<TIn, TOut> Returned<TIn, TOut>(this IContinuation<TIn, TOut> @this)
-			=> new ReturnedContinuation<TIn, TOut>(@this);
+		*/
+
+		public static IContents<TIn, TOut> Returned<TIn, TOut>(this IContents<TIn, TOut> @this)
+			=> new ReturnedContents<TIn, TOut>(@this);
+
+		public static IContent<TIn, TOut> Returned<TIn, TOut>(this IContent<TIn, TOut> @this)
+			=> new ReturnedContent<TIn, TOut>(@this);
 	}
 
-	sealed class Skip<T> : IProject<T>
+	/*sealed class Skip<T> : IProject<T>
 	{
 		readonly uint _count;
 
@@ -35,9 +41,9 @@ namespace Super.Model.Sequences.Query
 
 		public ArrayView<T> Get(ArrayView<T> parameter)
 			=> new ArrayView<T>(parameter.Array, parameter.Start, Math.Min(parameter.Length, _count));
-	}
+	}*/
 
-	sealed class WhereDefinition<T> : Definition<T>
+	/*sealed class WhereDefinition<T> : Definition<T>
 	{
 		public WhereDefinition(Func<T, bool> where) : base(Lease<T>.Default, new Where<T>(where)) {}
 	}
@@ -66,21 +72,138 @@ namespace Super.Model.Sequences.Query
 		}
 	}
 
-	public interface IContinuation<TFrom, TTo> : ISelect<Store<TFrom>, Store<TTo>> {}
+	public interface IContinuation<TFrom, TTo> : ISelect<Store<TFrom>, Store<TTo>> {}*/
 
-	public class Projections<TIn, TOut> : Continuations<Func<TIn, TOut>, TIn, TOut>
+	sealed class Skip : IPartition
+	{
+		readonly uint _count;
+
+		public Skip(uint count) => _count = count;
+
+		public Selection Get(Selection parameter)
+		{
+			var count = parameter.Start + _count;
+			var result = new Selection(parameter.Length.IsAssigned ? Math.Min(parameter.Length, count) : count,
+			                           parameter.Length);
+			return result;
+		}
+	}
+
+	sealed class Take : IPartition
+	{
+		readonly uint _count;
+
+		public Take(uint count) => _count = count;
+
+		public Selection Get(Selection parameter)
+			=> new Selection(parameter.Start,
+			                 parameter.Length.IsAssigned ? Math.Min(parameter.Length, _count) : _count);
+	}
+
+	public class Unlimited : LimitAware
+	{
+		public Unlimited() : base(Assigned<uint>.Unassigned) {}
+	}
+
+	public class LimitAware : Instance<Assigned<uint>>, ILimitAware
+	{
+		public LimitAware(Assigned<uint> instance) : base(instance) {}
+	}
+
+	public interface ILimitAware : IResult<Assigned<uint>> {}
+
+	public interface IElement<T> : IElement<T, T> {}
+
+	public interface IElement<TFrom, out TTo> : ISelect<Store<TFrom>, TTo> {}
+
+	public interface IContent<TIn, TOut> : ISelect<Store<TIn>, Store<TOut>> {}
+
+	public interface IBody<T> : IBody<T, T> {}
+
+	public interface IBody<TIn, TOut> : ISelect<ArrayView<TIn>, ArrayView<TOut>> {}
+
+	static class Build
+	{
+		public sealed class Select<TIn, TOut> : Builder<TIn, TOut, Func<TIn, TOut>>
+		{
+			public Select(Func<TIn, TOut> argument)
+				: base((shape, stores, parameter, limit)
+					       => new Selection<TIn, TOut>(shape, stores, parameter, limit).Returned(),
+				       argument) {}
+		}
+
+		public sealed class Where<T> : BodyBuilder<T, Func<T, bool>>
+		{
+			public Where(Func<T, bool> where)
+				: base((parameter, selection, limit) => new Query.Where<T>(parameter, selection, limit), where) {}
+		}
+
+		public sealed class Distinct<T> : BodyBuilder<T, IEqualityComparer<T>>
+		{
+			public static Distinct<T> Default { get; } = new Distinct<T>();
+
+			Distinct() : this(EqualityComparer<T>.Default) {}
+
+			public Distinct(IEqualityComparer<T> comparer)
+				: base((parameter, selection, limit) => new Query.Distinct<T>(parameter), comparer) {}
+		}
+	}
+
+	sealed class Where<T> : IBody<T>
+	{
+		readonly Func<T, bool>  _where;
+		readonly uint           _start;
+		readonly Assigned<uint> _until, _limit;
+
+		public Where(Func<T, bool> where) : this(where, Selection.Default, Assigned<uint>.Unassigned) {}
+
+		public Where(Func<T, bool> where, Selection selection, Assigned<uint> limit)
+			: this(where, selection.Start, selection.Length, limit) {}
+
+		// ReSharper disable once TooManyDependencies
+		public Where(Func<T, bool> where, uint start, Assigned<uint> until, Assigned<uint> limit)
+		{
+			_where = where;
+			_start = start;
+			_until = until;
+			_limit = limit;
+		}
+
+		public ArrayView<T> Get(ArrayView<T> parameter)
+		{
+			var  to    = parameter.Start + parameter.Length;
+			var  array = parameter.Array;
+			uint count = 0u, start = 0u;
+			var  limit = _limit.Or(_until.Or(parameter.Length));
+			for (var i = parameter.Start; i < to && count < limit; i++)
+			{
+				var item = array[i];
+				if (_where(item))
+				{
+					if (start++ >= _start)
+					{
+						array[count++] = item;
+					}
+				}
+			}
+
+			return new ArrayView<T>(parameter.Array, 0, count);
+		}
+	}
+
+	/*public class Projections<TIn, TOut> : Builder<TIn, TOut, Func<TIn, TOut>>
 	{
 		public Projections(Func<TIn, TOut> parameter)
-			: base((x, stores) => new Projection<TIn, TOut>(x, stores), parameter) {}
-	}
+			: base((body, stores, func, limit) => new Projection<TIn, TOut>(func, stores), parameter) {}
+	}*/
 
-	public sealed class Concatenations<T> : Continuations<ISequence<T>, T, T>
+	public sealed class Concatenations<T> : Builder<T, T, ISequence<T>>
 	{
 		public Concatenations(ISequence<T> parameter)
-			: base((sequence, stores) => new Concatenation<T>(sequence, stores), parameter) {}
+			: base((body, stores, sequence, limit) => new Concatenation<T>(sequence, stores), parameter) {}
 	}
 
-	public class Concatenation<T> : IContinuation<T, T>
+	public class Concatenation<T> : IContent<T, T>
 	{
 		readonly ISequence<T> _others;
 		readonly IStores<T>   _stores;
@@ -111,7 +234,7 @@ namespace Super.Model.Sequences.Query
 		}
 	}
 
-	public sealed class Unions<T> : IProjections<T, T>
+	public sealed class Unions<T> : IContents<T, T>
 	{
 		readonly ISequence<T>         _others;
 		readonly IEqualityComparer<T> _comparer;
@@ -122,10 +245,10 @@ namespace Super.Model.Sequences.Query
 			_comparer = comparer;
 		}
 
-		public IContinuation<T, T> Get(IStores<T> parameter) => new Union<T>(_others, _comparer, parameter);
+		public IContent<T, T> Get(Parameter<T, T> parameter) => new Union<T>(_others, _comparer, parameter.Stores);
 	}
 
-	public class Union<T> : IContinuation<T, T>
+	public class Union<T> : IContent<T, T>
 	{
 		readonly ISequence<T>         _others;
 		readonly IEqualityComparer<T> _comparer;
@@ -174,7 +297,7 @@ namespace Super.Model.Sequences.Query
 		}
 	}
 
-	public sealed class Intersections<T> : IProjections<T, T>
+	public sealed class Intersections<T> : IContents<T, T>
 	{
 		readonly ISequence<T>         _others;
 		readonly IEqualityComparer<T> _comparer;
@@ -185,10 +308,10 @@ namespace Super.Model.Sequences.Query
 			_comparer = comparer;
 		}
 
-		public IContinuation<T, T> Get(IStores<T> parameter) => new Intersect<T>(_others, _comparer, parameter);
+		public IContent<T, T> Get(Parameter<T, T> parameter) => new Intersect<T>(_others, _comparer, parameter.Stores);
 	}
 
-	public class Intersect<T> : IContinuation<T, T>
+	public class Intersect<T> : IContent<T, T>
 	{
 		readonly ISequence<T>         _others;
 		readonly IEqualityComparer<T> _comparer;
@@ -233,7 +356,7 @@ namespace Super.Model.Sequences.Query
 		}
 	}
 
-	public class Projection<TFrom, TTo> : IContinuation<TFrom, TTo>
+	/*public class Projection<TFrom, TTo> : IContent<TFrom, TTo>
 	{
 		readonly Func<TFrom, TTo> _project;
 		readonly IStores<TTo>     _stores;
@@ -258,15 +381,50 @@ namespace Super.Model.Sequences.Query
 
 			return result;
 		}
+	}*/
+
+	sealed class Selection<TIn, TOut> : IContent<TIn, TOut>
+	{
+		readonly IBody<TIn>      _body;
+		readonly Func<TIn, TOut> _select;
+		readonly Assigned<uint>  _limit;
+		readonly IStores<TOut>   _stores;
+
+		// ReSharper disable once TooManyDependencies
+		public Selection(IBody<TIn> body, IStores<TOut> stores, Func<TIn, TOut> select, Assigned<uint> limit)
+		{
+			_body   = body;
+			_stores = stores;
+			_select = select;
+			_limit  = limit;
+		}
+
+		public Store<TOut> Get(Store<TIn> parameter)
+		{
+			var body = _body.Get(new ArrayView<TIn>(parameter.Instance, 0, parameter.Length));
+			var length = _limit.IsAssigned
+				             ? Math.Min(_limit.Instance, body.Length)
+				             : body.Length;
+			var result = _stores.Get(length);
+			var @in    = body.Array;
+			var @out   = result.Instance;
+
+			for (var i = 0; i < length; i++)
+			{
+				@out[i] = _select(@in[i + body.Start]);
+			}
+
+			return result;
+		}
 	}
 
-	public class ProjectionManySegment<TIn, TOut> : Continuations<Func<TIn, IEnumerable<TOut>>, TIn, TOut>
+	public class ProjectionManySegment<TIn, TOut> : Builder<TIn, TOut, Func<TIn, IEnumerable<TOut>>>
 	{
 		public ProjectionManySegment(Func<TIn, IEnumerable<TOut>> parameter)
-			: base((x, stores) => new ProjectionMany<TIn, TOut>(x, stores), parameter) {}
+			: base((body, stores, func, limit) => new ProjectionMany<TIn, TOut>(func, stores), parameter) {}
 	}
 
-	public class ProjectionMany<TIn, TOut> : IContinuation<TIn, TOut>
+	public class ProjectionMany<TIn, TOut> : IContent<TIn, TOut>
 	{
 		readonly Func<TIn, IEnumerable<TOut>> _project;
 		readonly IStores<TOut>                _stores;
@@ -373,13 +531,13 @@ namespace Super.Model.Sequences.Query
 		}
 	}
 
-	public class InlineProjections<TIn, TOut> : Continuations<Expression<Func<TIn, TOut>>, TIn, TOut>
+	public class InlineProjections<TIn, TOut> : Builder<TIn, TOut, Expression<Func<TIn, TOut>>>
 	{
 		public InlineProjections(Expression<Func<TIn, TOut>> parameter)
-			: base((expression, stores) => new InlineProjection<TIn, TOut>(expression, stores), parameter) {}
+			: base((body, stores, expression, limit) => new InlineProjection<TIn, TOut>(expression, stores), parameter) {}
 	}
 
-	public sealed class InlineProjection<TFrom, TTo> : IContinuation<TFrom, TTo>
+	public sealed class InlineProjection<TFrom, TTo> : IContent<TFrom, TTo>
 	{
 		readonly Action<TFrom[], TTo[], uint, uint> _apply;
 		readonly IStores<TTo>                       _stores;
