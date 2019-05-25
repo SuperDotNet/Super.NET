@@ -125,7 +125,7 @@ namespace Super.Runtime.Environment
 		public void Execute(Model.Sequences.Store<T> parameter)
 		{
 			var current = _array.Get().Open();
-			var length  = parameter.Length();
+			var length  = parameter.Length;
 			var to      = (uint)current.Length;
 			Array.Resize(ref current, (int)(length + to));
 			parameter.Instance.CopyInto(current, 0, length, to);

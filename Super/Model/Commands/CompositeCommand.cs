@@ -31,7 +31,7 @@ namespace Super.Model.Commands
 
 		public void Execute(Store<T> parameter)
 		{
-			var length = parameter.Length();
+			var length = parameter.Length;
 			var instance = parameter.Instance;
 			for (var i = 0u; i < length; i++)
 			{

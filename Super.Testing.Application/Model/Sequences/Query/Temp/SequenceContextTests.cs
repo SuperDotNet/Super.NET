@@ -3,7 +3,6 @@ using FluentAssertions;
 using Humanizer;
 using Super.Compose;
 using Super.Model.Selection;
-using Super.Model.Sequences;
 using Super.Model.Sequences.Query.Temp;
 using System.Linq;
 using Xunit;
@@ -113,13 +112,13 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 		void VerifyActivation()
 		{
 			Start.A.Selection.Of.Type<int>()
-			     .As.Sequence.Array.By.StoredActivation<Store<int>>()
+			     .As.Sequence.Array.By.StoredActivation<Super.Model.Sequences.Store<int>>()
 			     .Get(data)
 			     .Instance.Should()
 			     .Equal(data);
 
 			Start.A.Selection.Of.Type<int>()
-			     .As.Sequence.Array.By.Instantiation<Store<int>>()
+			     .As.Sequence.Array.By.Instantiation<Super.Model.Sequences.Store<int>>()
 			     .Get(data)
 			     .Instance.Should()
 			     .Equal(data);

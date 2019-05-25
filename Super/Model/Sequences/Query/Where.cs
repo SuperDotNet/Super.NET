@@ -96,7 +96,7 @@ namespace Super.Model.Sequences.Query
 			var other     = _others.Get();
 			var source    = other.Instance;
 			var @in       = parameter.Instance;
-			var length    = parameter.Length();
+			var length    = parameter.Length;
 			var appending = other.Length;
 			var total     = length + appending;
 			var result    = _stores.Get(total);
@@ -143,8 +143,8 @@ namespace Super.Model.Sequences.Query
 			var other     = _others.Get();
 			var source    = other.Instance;
 			var @in       = parameter.Instance;
-			var length    = parameter.Length.Or((uint)@in.Length);
-			var appending = other.Length.Or((uint)source.Length);
+			var length    = parameter.Length;
+			var appending = other.Length;
 
 			var set = new Set<T>(_comparer);
 			for (var i = 0u; i < length; i++)
@@ -206,8 +206,8 @@ namespace Super.Model.Sequences.Query
 			var other     = _others.Get();
 			var source    = other.Instance;
 			var @in       = parameter.Instance;
-			var length    = parameter.Length.Or((uint)@in.Length);
-			var appending = other.Length.Or((uint)source.Length);
+			var length    = parameter.Length;
+			var appending = other.Length;
 
 			var set = new Set<T>(_comparer);
 			for (var i = 0u; i < length; i++)
@@ -247,7 +247,7 @@ namespace Super.Model.Sequences.Query
 		public Store<TTo> Get(Store<TFrom> parameter)
 		{
 			var @in    = parameter.Instance;
-			var length = parameter.Length();
+			var length = parameter.Length;
 			var result = _stores.Get(length);
 
 			var @out = result.Instance;
@@ -285,7 +285,7 @@ namespace Super.Model.Sequences.Query
 		public Store<TOut> Get(Store<TIn> parameter)
 		{
 			var @in    = parameter.Instance;
-			var length = parameter.Length.Or((uint)@in.Length);
+			var length = parameter.Length;
 			var store  = new DynamicStore<TOut>(1024);
 			for (var i = 0; i < length; i++)
 			{
@@ -346,7 +346,7 @@ namespace Super.Model.Sequences.Query
 		{
 			var current  = _stores[_index];
 			var capacity = (uint)current.Instance.Length;
-			var filled   = page.Length();
+			var filled   = page.Length;
 			var size     = filled + current.Length;
 
 			if (size > capacity)
@@ -395,8 +395,7 @@ namespace Super.Model.Sequences.Query
 
 		public Store<TTo> Get(Store<TFrom> parameter)
 		{
-			var @in    = parameter.Instance;
-			var length = parameter.Length.Or((uint)@in.Length);
+			var length = parameter.Length;
 			var result = _stores.Get(length);
 
 			_apply(parameter.Instance, result.Instance, 0, length);

@@ -25,9 +25,9 @@ namespace Super
 
 		/**/
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static uint Length<T>(in this Model.Sequences.Store<T> @this)
-			=> @this.Length.Or((uint)@this.Instance.Length);
+			=> @this.Length.Or((uint)@this.Instance.Length);*/
 
 		/**/
 
@@ -56,11 +56,11 @@ namespace Super
 			=> @this.Array.CopyInto(into, @this.Start, @this.Length);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Model.Sequences.Query.Temp.Storage<T> ToStore<T>(in this ArrayView<T> @this)
-			=> @this.ToStore(Model.Sequences.Query.Temp.Leases<T>.Default);
+		public static Model.Sequences.Store<T> ToStore<T>(in this ArrayView<T> @this) 
+			=> @this.ToStore(Leases<T>.Default);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Model.Sequences.Query.Temp.Storage<T> ToStore<T>(in this ArrayView<T> @this, Model.Sequences.Query.Temp.IStores<T> stores)
+		public static Model.Sequences.Store<T> ToStore<T>(in this ArrayView<T> @this, IStores<T> stores)
 		{
 			var result = stores.Get(@this.Length);
 			@this.ToArray(result.Instance);

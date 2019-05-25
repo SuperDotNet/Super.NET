@@ -63,7 +63,7 @@ namespace Super.Model.Sequences
 		{
 			var size = _length.IsAssigned
 				           ? _length.Instance
-				           : parameter.Length.Or((uint)parameter.Instance.Length) - _start;
+				           : parameter.Length - _start;
 			var result = parameter.Instance.CopyInto(new T[size], _start, size);
 			return result;
 		}

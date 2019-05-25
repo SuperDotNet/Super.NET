@@ -207,7 +207,7 @@ namespace Super.Model.Sequences.Query.Construction
 		public Store<TOut> Get(Store<TIn> parameter)
 		{
 			var result = _continuation.Get(parameter);
-			if (parameter.Length.IsAssigned)
+			if (parameter.Requested)
 			{
 				_return(parameter.Instance);
 			}
@@ -257,7 +257,7 @@ namespace Super.Model.Sequences.Query.Construction
 
 		public Store<TOut> Get(Store<TIn> parameter)
 		{
-			var input = new ArrayView<TIn>(parameter.Instance, 0, parameter.Length.Or((uint)parameter.Instance.Length));
+			var input = new ArrayView<TIn>(parameter.Instance, 0, parameter.Length);
 
 			var view = _project.Get(input);
 
@@ -265,7 +265,7 @@ namespace Super.Model.Sequences.Query.Construction
 
 			view.ToArray(result.Instance);
 
-			if (parameter.Length.IsAssigned)
+			if (parameter.Requested)
 			{
 				_return(parameter.Instance);
 			}
@@ -289,11 +289,11 @@ namespace Super.Model.Sequences.Query.Construction
 
 		public TOut[] Get(Store<TIn> parameter)
 		{
-			var input = new ArrayView<TIn>(parameter.Instance, 0, parameter.Length.Or((uint)parameter.Instance.Length));
+			var input = new ArrayView<TIn>(parameter.Instance, 0, parameter.Length);
 
 			var result = _project.Get(input).ToArray();
 
-			if (parameter.Length.IsAssigned)
+			if (parameter.Requested)
 			{
 				_return(parameter.Instance);
 			}
@@ -314,7 +314,7 @@ namespace Super.Model.Sequences.Query.Construction
 
 		public T[] Get(Store<T> parameter)
 		{
-			if (parameter.Length.IsAssigned)
+			if (parameter.Requested)
 			{
 				var result = parameter.Instance.CopyInto(new T[parameter.Length], 0, parameter.Length);
 				_return(parameter.Instance);
@@ -346,10 +346,10 @@ namespace Super.Model.Sequences.Query.Construction
 		public TOut Get(Store<TIn> parameter)
 		{
 			var @in    = parameter.Instance;
-			var view   = new ArrayView<TIn>(@in, 0, parameter.Length());
+			var view   = new ArrayView<TIn>(@in, 0, parameter.Length);
 			var result = _select.Get(view);
 
-			if (parameter.Length.IsAssigned)
+			if (parameter.Requested)
 			{
 				_return(@in);
 			}

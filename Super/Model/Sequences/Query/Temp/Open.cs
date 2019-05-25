@@ -1,9 +1,8 @@
-﻿using Super.Model.Commands;
-using Super.Model.Results;
+﻿using Super.Model.Results;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
+using Super.Model.Sequences.Query.Construction;
 using System;
-using System.Buffers;
 
 namespace Super.Model.Sequences.Query.Temp
 {
@@ -13,16 +12,16 @@ namespace Super.Model.Sequences.Query.Temp
 			=> new ReturnedContent<TIn, TOut>(@this);
 	}
 
-	public interface ISequenceNode<in _, T> : IResult<ISelect<_, T[]>>,
-	                                          ISelect<IPartition, ISequenceNode<_, T>>,
-	                                          ISelect<IBodyBuilder<T>, ISequenceNode<_, T>>
+	public interface INode<in _, T> : IResult<ISelect<_, T[]>>,
+	                                          ISelect<IPartition, INode<_, T>>,
+	                                          ISelect<IBodyBuilder<T>, INode<_, T>>
 	{
-		ISequenceNode<_, TTo> Get<TTo>(IContents<T, TTo> parameter);
+		INode<_, TTo> Get<TTo>(IContents<T, TTo> parameter);
 
 		ISelect<_, TTo> Get<TTo>(IElement<T, TTo> parameter);
 	}
 
-	sealed class Start<_, T> : Instance<ISelect<_, T[]>>, ISequenceNode<_, T>
+	sealed class Start<_, T> : Instance<ISelect<_, T[]>>, INode<_, T>
 	{
 		readonly IPartition<T> _partition;
 
@@ -30,13 +29,13 @@ namespace Super.Model.Sequences.Query.Temp
 
 		public Start(ISelect<_, T[]> origin, IPartition<T> partition) : base(origin) => _partition = partition;
 
-		public ISequenceNode<_, T> Get(IPartition parameter) => new Open<_, T>(Get(), _partition.Get(parameter));
+		public INode<_, T> Get(IPartition parameter) => new Open<_, T>(Get(), _partition.Get(parameter));
 
-		public ISequenceNode<_, T> Get(IBodyBuilder<T> parameter)
+		public INode<_, T> Get(IBodyBuilder<T> parameter)
 			=> new PartitionedNode<_, T>(new Enter<_, T>(Get(), Lease<T>.Default),
 			                             new PartitionedBuilder<T>(_partition, parameter));
 
-		public ISequenceNode<_, TTo> Get<TTo>(IContents<T, TTo> parameter)
+		public INode<_, TTo> Get<TTo>(IContents<T, TTo> parameter)
 			=> new ContentNode<_, T, TTo>(new Enter<_, T>(Get()),
 			                              new ContentContainer<T, TTo>(_partition, parameter));
 
@@ -46,7 +45,7 @@ namespace Super.Model.Sequences.Query.Temp
 			                          parameter);
 	}
 
-	sealed class Open<_, T> : ISequenceNode<_, T>
+	sealed class Open<_, T> : INode<_, T>
 	{
 		readonly ISelect<_, T[]> _origin;
 		readonly IPartition<T>   _partition;
@@ -59,13 +58,13 @@ namespace Super.Model.Sequences.Query.Temp
 
 		public ISelect<_, T[]> Get() => new Exit<_, T>(_origin, _partition.Get(Assigned<uint>.Unassigned));
 
-		public ISequenceNode<_, T> Get(IPartition parameter) => new Open<_, T>(_origin, _partition.Get(parameter));
+		public INode<_, T> Get(IPartition parameter) => new Open<_, T>(_origin, _partition.Get(parameter));
 
-		public ISequenceNode<_, T> Get(IBodyBuilder<T> parameter)
+		public INode<_, T> Get(IBodyBuilder<T> parameter)
 			=> new PartitionedNode<_, T>(new Enter<_, T>(_origin, Lease<T>.Default),
 			                             new PartitionedBuilder<T>(_partition, parameter));
 
-		public ISequenceNode<_, TTo> Get<TTo>(IContents<T, TTo> parameter)
+		public INode<_, TTo> Get<TTo>(IContents<T, TTo> parameter)
 			=> new ContentNode<_, T, TTo>(new Enter<_, T>(_origin),
 			                              new ContentContainer<T, TTo>(_partition, parameter));
 
@@ -75,15 +74,15 @@ namespace Super.Model.Sequences.Query.Temp
 			                          parameter);
 	}
 
-	sealed class PartitionedNode<_, T> : ISequenceNode<_, T>
+	sealed class PartitionedNode<_, T> : INode<_, T>
 	{
-		readonly ISelect<_, Storage<T>> _origin;
+		readonly ISelect<_, Store<T>> _origin;
 		readonly IPartition<T>          _partition;
 
-		public PartitionedNode(ISelect<_, Storage<T>> origin, IBodyBuilder<T> builder)
+		public PartitionedNode(ISelect<_, Store<T>> origin, IBodyBuilder<T> builder)
 			: this(origin, new Partition<T>(builder)) {}
 
-		public PartitionedNode(ISelect<_, Storage<T>> origin, IPartition<T> partition)
+		public PartitionedNode(ISelect<_, Store<T>> origin, IPartition<T> partition)
 		{
 			_origin    = origin;
 			_partition = partition;
@@ -91,13 +90,13 @@ namespace Super.Model.Sequences.Query.Temp
 
 		public ISelect<_, T[]> Get() => new Exit<_, T>(_origin, _partition.Get(Assigned<uint>.Unassigned));
 
-		public ISequenceNode<_, T> Get(IPartition parameter)
+		public INode<_, T> Get(IPartition parameter)
 			=> new PartitionedNode<_, T>(_origin, _partition.Get(parameter));
 
-		public ISequenceNode<_, T> Get(IBodyBuilder<T> parameter)
+		public INode<_, T> Get(IBodyBuilder<T> parameter)
 			=> new PartitionedNode<_, T>(_origin, new PartitionedBuilder<T>(_partition, parameter));
 
-		public ISequenceNode<_, TTo> Get<TTo>(IContents<T, TTo> parameter)
+		public INode<_, TTo> Get<TTo>(IContents<T, TTo> parameter)
 			=> new ContentNode<_, T, TTo>(_origin, new ContentContainer<T, TTo>(_partition, parameter));
 
 		public ISelect<_, TTo> Get<TTo>(IElement<T, TTo> parameter)
@@ -107,15 +106,6 @@ namespace Super.Model.Sequences.Query.Temp
 			return result;
 		}
 	}
-
-	/*sealed class EmptyContent<T> : IContent<T, T>
-	{
-		public static EmptyContent<T> Default { get; } = new EmptyContent<T>();
-
-		EmptyContent() {}
-
-		public Storage<T> Get(Storage<T> parameter) => parameter;
-	}*/
 
 	sealed class Content<T> : IContent<T, T>
 	{
@@ -130,7 +120,7 @@ namespace Super.Model.Sequences.Query.Temp
 			_stores = stores;
 		}
 
-		public Storage<T> Get(Storage<T> parameter)
+		public Store<T> Get(Store<T> parameter)
 		{
 			var view   = _body.Get(new ArrayView<T>(parameter.Instance, 0, parameter.Length));
 			var result = view.Start > 0 || view.Length != parameter.Length ? view.ToStore(_stores) : view.Array;
@@ -138,7 +128,7 @@ namespace Super.Model.Sequences.Query.Temp
 		}
 	}
 
-	sealed class Enter<_, T> : ISelect<_, Storage<T>>
+	sealed class Enter<_, T> : ISelect<_, Store<T>>
 	{
 		readonly ISelect<_, T[]> _origin;
 		readonly IEnter<T>       _enter;
@@ -151,13 +141,13 @@ namespace Super.Model.Sequences.Query.Temp
 			_enter  = enter;
 		}
 
-		public Storage<T> Get(_ parameter) => _enter.Get(_origin.Get(parameter));
+		public Store<T> Get(_ parameter) => _enter.Get(_origin.Get(parameter));
 	}
 
 	sealed class Exit<_, T> : ISelect<_, T[]>
 	{
 		readonly static Action<T[]>            Return = Return<T>.Default.Execute;
-		readonly        ISelect<_, Storage<T>> _origin;
+		readonly        ISelect<_, Store<T>> _origin;
 		readonly        IBody<T>               _body;
 		readonly        Action<T[]>            _return;
 
@@ -166,9 +156,9 @@ namespace Super.Model.Sequences.Query.Temp
 		public Exit(ISelect<_, T[]> origin, IBody<T> body, Action<T[]> @return)
 			: this(new Origin<_, T>(origin), body, @return) {}
 
-		public Exit(ISelect<_, Storage<T>> origin, IBody<T> body) : this(origin, body, Return) {}
+		public Exit(ISelect<_, Store<T>> origin, IBody<T> body) : this(origin, body, Return) {}
 
-		public Exit(ISelect<_, Storage<T>> origin, IBody<T> body, Action<T[]> @return)
+		public Exit(ISelect<_, Store<T>> origin, IBody<T> body, Action<T[]> @return)
 		{
 			_origin = origin;
 			_body   = body;
@@ -190,7 +180,7 @@ namespace Super.Model.Sequences.Query.Temp
 		}
 	}
 
-	sealed class Origin<_, T> : ISelect<_, Storage<T>>
+	sealed class Origin<_, T> : ISelect<_, Store<T>>
 	{
 		readonly ISelect<_, T[]> _origin;
 		readonly IEnter<T>       _enter;
@@ -203,7 +193,7 @@ namespace Super.Model.Sequences.Query.Temp
 			_enter  = enter;
 		}
 
-		public Storage<T> Get(_ parameter) => _enter.Get(_origin.Get(parameter));
+		public Store<T> Get(_ parameter) => _enter.Get(_origin.Get(parameter));
 	}
 
 	public interface IContentContainer<TIn, TOut> : ISelect<IStores<TOut>, Assigned<uint>, IContent<TIn, TOut>> {}
@@ -212,8 +202,6 @@ namespace Super.Model.Sequences.Query.Temp
 	{
 		readonly IPartition<TIn>      _partition;
 		readonly IContents<TIn, TOut> _contents;
-
-		/*public ContentContainer(IContents<TIn, TOut> contents) : this(Partition<TIn>.Default, contents) {}*/
 
 		public ContentContainer(IPartition<TIn> partition, IContents<TIn, TOut> contents)
 		{
@@ -245,35 +233,28 @@ namespace Super.Model.Sequences.Query.Temp
 			=> _contents.Get(new Parameter<TIn, TOut>(_partition.Get(parameter), _stores, parameter));
 	}
 
-	sealed class ContentNode<_, TIn, TOut> : ISequenceNode<_, TOut>
+	sealed class ContentNode<_, TIn, TOut> : INode<_, TOut>
 	{
-		readonly ISelect<_, Storage<TIn>>     _origin;
+		readonly ISelect<_, Store<TIn>>     _origin;
 		readonly IContentContainer<TIn, TOut> _container;
 
-		/*public ContentContainerNode(ISelect<_, Storage<TIn>> origin, IContents<TIn, TOut> contents)
-			: this(origin, contents, Partition<TOut>.Default) {}
-
-		public ContentContainerNode(ISelect<_, Storage<TIn>> origin, IContents<TIn, TOut> contents,
-		                            IPartition<TOut> partition)
-			: this(origin, new ContentContainer<TIn, TOut>(contents), partition) {}*/
-
-		public ContentNode(ISelect<_, Storage<TIn>> origin, IContentContainer<TIn, TOut> container)
+		public ContentNode(ISelect<_, Store<TIn>> origin, IContentContainer<TIn, TOut> container)
 		{
 			_origin    = origin;
 			_container = container;
 		}
 
-		public ISelect<_, TOut[]> Get() => new Exit<_, TIn, TOut>(_origin, _container.Get(DefaultStores<TOut>.Default)
+		public ISelect<_, TOut[]> Get() => new Exit<_, TIn, TOut>(_origin, _container.Get(Stores<TOut>.Default)
 		                                                                             .Invoke()
 		                                                                             .Returned());
 
-		public ISequenceNode<_, TOut> Get(IPartition parameter)
+		public INode<_, TOut> Get(IPartition parameter)
 			=> new PartitionedContentNode<_, TIn, TOut>(_origin, _container, Partition<TOut>.Default.Get(parameter));
 
-		public ISequenceNode<_, TOut> Get(IBodyBuilder<TOut> parameter)
+		public INode<_, TOut> Get(IBodyBuilder<TOut> parameter)
 			=> new PartitionedContentNode<_, TIn, TOut>(_origin, _container, parameter);
 
-		public ISequenceNode<_, TTo> Get<TTo>(IContents<TOut, TTo> parameter)
+		public INode<_, TTo> Get<TTo>(IContents<TOut, TTo> parameter)
 		{
 			var container = new LinkedContents<TIn, TOut, TTo>(_container.Get(Leases<TOut>.Default), parameter);
 			var result    = new ContentNode<_, TIn, TTo>(_origin, container);
@@ -289,20 +270,20 @@ namespace Super.Model.Sequences.Query.Temp
 		}
 	}
 
-	sealed class PartitionedContentNode<_, TIn, TOut> : ISequenceNode<_, TOut>
+	sealed class PartitionedContentNode<_, TIn, TOut> : INode<_, TOut>
 	{
-		readonly ISelect<_, Storage<TIn>>     _origin;
+		readonly ISelect<_, Store<TIn>>     _origin;
 		readonly IContentContainer<TIn, TOut> _container;
 		readonly IPartition<TOut>             _body;
 
-		public PartitionedContentNode(ISelect<_, Storage<TIn>> origin, IContentContainer<TIn, TOut> container,
+		public PartitionedContentNode(ISelect<_, Store<TIn>> origin, IContentContainer<TIn, TOut> container,
 		                              IBodyBuilder<TOut> builder)
 			: this(origin, container, new Partition<TOut>(builder)) {}
 
-		public PartitionedContentNode(ISelect<_, Storage<TIn>> origin, IContentContainer<TIn, TOut> container)
+		public PartitionedContentNode(ISelect<_, Store<TIn>> origin, IContentContainer<TIn, TOut> container)
 			: this(origin, container, Partition<TOut>.Default) {}
 
-		public PartitionedContentNode(ISelect<_, Storage<TIn>> origin, IContentContainer<TIn, TOut> container,
+		public PartitionedContentNode(ISelect<_, Store<TIn>> origin, IContentContainer<TIn, TOut> container,
 		                              IPartition<TOut> body)
 		{
 			_origin    = origin;
@@ -316,14 +297,14 @@ namespace Super.Model.Sequences.Query.Temp
 
 		public ISelect<_, TOut[]> Get() => new Exit<_, TIn, TOut>(_origin, Content(Assigned<uint>.Unassigned));
 
-		public ISequenceNode<_, TOut> Get(IPartition parameter)
+		public INode<_, TOut> Get(IPartition parameter)
 			=> new PartitionedContentNode<_, TIn, TOut>(_origin, _container, _body.Get(parameter));
 
-		public ISequenceNode<_, TOut> Get(IBodyBuilder<TOut> parameter)
+		public INode<_, TOut> Get(IBodyBuilder<TOut> parameter)
 			=> new PartitionedContentNode<_, TIn, TOut>(_origin, _container,
 			                                            new PartitionedBuilder<TOut>(_body, parameter));
 
-		public ISequenceNode<_, TTo> Get<TTo>(IContents<TOut, TTo> parameter)
+		public INode<_, TTo> Get<TTo>(IContents<TOut, TTo> parameter)
 		{
 			var container = new LinkedContainer<TIn, TOut, TTo>(_container.Get(Leases<TOut>.Default),
 			                                                    new ContentContainer<TOut, TTo>(_body, parameter));
@@ -342,8 +323,7 @@ namespace Super.Model.Sequences.Query.Temp
 		readonly IBody<TOut>         _body;
 		readonly IStores<TOut>       _stores;
 
-		public Content(IContent<TIn, TOut> content, IBody<TOut> body)
-			: this(content, body, DefaultStores<TOut>.Default) {}
+		public Content(IContent<TIn, TOut> content, IBody<TOut> body) : this(content, body, Stores<TOut>.Default) {}
 
 		public Content(IContent<TIn, TOut> content, IBody<TOut> body, IStores<TOut> stores)
 		{
@@ -352,7 +332,7 @@ namespace Super.Model.Sequences.Query.Temp
 			_stores  = stores;
 		}
 
-		public Storage<TOut> Get(Storage<TIn> parameter)
+		public Store<TOut> Get(Store<TIn> parameter)
 		{
 			var content = _content.Get(parameter);
 			var view    = _body.Get(new ArrayView<TOut>(content.Instance, 0, content.Length));
@@ -402,7 +382,7 @@ namespace Super.Model.Sequences.Query.Temp
 				_current  = current;
 			}
 
-			public Storage<TTo> Get(Storage<TIn> parameter) => _current.Get(_previous.Get(parameter));
+			public Store<TTo> Get(Store<TIn> parameter) => _current.Get(_previous.Get(parameter));
 		}
 	}
 
@@ -420,20 +400,6 @@ namespace Super.Model.Sequences.Query.Temp
 		public Func<Assigned<uint>, IContent<TIn, TTo>> Get(IStores<TTo> parameter)
 			=> new Next<TIn, TOut, TTo>(_from, new SelectedContent<TOut, TTo>(_to, parameter).Get).Get;
 	}
-
-	/*sealed class LinkedBodyBuilder<T> : IBodyBuilder<T>
-	{
-		readonly IBodyBuilder<T> _previous, _current;
-
-		public LinkedBodyBuilder(IBodyBuilder<T> previous, IBodyBuilder<T> current)
-		{
-			_previous = previous;
-			_current  = current;
-		}
-
-		public IBody<T> Get(Partitioning parameter)
-			=> new LinkedBody<T>(_previous.Get(parameter), _current.Get(parameter));
-	}*/
 
 	sealed class LinkedBody<T> : IBody<T>
 	{
@@ -454,7 +420,7 @@ namespace Super.Model.Sequences.Query.Temp
 
 		FirstOrDefault() : base(1) {}
 
-		public T Get(Storage<T> parameter) => parameter.Length > 0 ? parameter.Instance[0] : default;
+		public T Get(Store<T> parameter) => parameter.Length > 0 ? parameter.Instance[0] : default;
 	}
 
 	sealed class Skip : IPartition
@@ -526,15 +492,15 @@ namespace Super.Model.Sequences.Query.Temp
 
 	public interface IElement<T> : IElement<T, T> {}
 
-	public interface IElement<TFrom, out TTo> : ISelect<Storage<TFrom>, TTo> {}
+	public interface IElement<TFrom, out TTo> : ISelect<Store<TFrom>, TTo> {}
 
 	sealed class Exit<_, TIn, TOut, TTo> : ISelect<_, TTo>
 	{
-		readonly ISelect<_, Storage<TIn>> _origin;
+		readonly ISelect<_, Store<TIn>> _origin;
 		readonly IContent<TIn, TOut>      _content;
 		readonly IElement<TOut, TTo>      _element;
 
-		public Exit(ISelect<_, Storage<TIn>> origin, IContent<TIn, TOut> content, IElement<TOut, TTo> element)
+		public Exit(ISelect<_, Store<TIn>> origin, IContent<TIn, TOut> content, IElement<TOut, TTo> element)
 		{
 			_origin  = origin;
 			_content = content;
@@ -544,69 +510,11 @@ namespace Super.Model.Sequences.Query.Temp
 		public TTo Get(_ parameter) => _element.Get(_content.Get(_origin.Get(parameter)));
 	}
 
-	public interface IStores<T> : ISelect<uint, Storage<T>> {}
 
-	public sealed class DefaultStores<T> : Select<uint, Storage<T>>, IStores<T>
-	{
-		public static DefaultStores<T> Default { get; } = new DefaultStores<T>();
-
-		DefaultStores() : base(x => new T[x]) {}
-	}
-
-	public class Stores<T> : Select<uint, Storage<T>>, IStores<T>
-	{
-		readonly ICommand<T[]> _return;
-
-		public Stores(IStores<T> stores, ICommand<T[]> @return) : base(stores.Get) => _return = @return;
-
-		public void Execute(T[] parameter)
-		{
-			_return.Execute(parameter);
-		}
-	}
-
-	public sealed class Leases<T> : Stores<T>
-	{
-		public static Leases<T> Default { get; } = new Leases<T>();
-
-		Leases() : base(Allotted<T>.Default, Return<T>.Default) {}
-	}
-
-	public sealed class Allotted<T> : IStores<T>
-	{
-		public static Allotted<T> Default { get; } = new Allotted<T>();
-
-		Allotted() : this(ArrayPool<T>.Shared) {}
-
-		readonly ArrayPool<T> _pool;
-
-		public Allotted(ArrayPool<T> pool) => _pool = pool;
-
-		public Storage<T> Get(uint parameter) => new Storage<T>(_pool.Rent((int)parameter), parameter);
-	}
 
 	public interface IContents<TIn, TOut> : ISelect<Parameter<TIn, TOut>, IContent<TIn, TOut>> {}
 
-	/*sealed class PartitionedContents<TIn, TOut> : IContents<TIn, TOut>
-	{
-		readonly IPartition<TIn>      _partition;
-		readonly IContents<TIn, TOut> _contents;
-
-		public PartitionedContents(IPartition<TIn> partition, IContents<TIn, TOut> contents)
-		{
-			_partition = partition;
-			_contents  = contents;
-		}
-
-		public IContent<TIn, TOut> Get(Parameter<TIn, TOut> parameter) => null;
-	}
-
-	sealed class PartitionedContent<TIn, TOut> : IContent<TIn, TOut>
-	{
-		public Storage<TOut> Get(Storage<TIn> parameter) => default;
-	}*/
-
-	public interface IContent<TIn, TOut> : ISelect<Storage<TIn>, Storage<TOut>> {}
+	public interface IContent<TIn, TOut> : ISelect<Store<TIn>, Store<TOut>> {}
 
 	public delegate IContent<TIn, TOut> Create<TIn, TOut, in TParameter>(IBody<TIn> body,
 	                                                                     IStores<TOut> stores, TParameter parameter,
@@ -625,7 +533,7 @@ namespace Super.Model.Sequences.Query.Temp
 			_return  = @return;
 		}
 
-		public Storage<TOut> Get(Storage<TIn> parameter)
+		public Store<TOut> Get(Store<TIn> parameter)
 		{
 			var result = _content.Get(parameter);
 			if (parameter.Requested)
@@ -653,7 +561,7 @@ namespace Super.Model.Sequences.Query.Temp
 			_limit  = limit;
 		}
 
-		public Storage<TOut> Get(Storage<TIn> parameter)
+		public Store<TOut> Get(Store<TIn> parameter)
 		{
 			var body = _body.Get(new ArrayView<TIn>(parameter.Instance, 0, parameter.Length));
 			var length = _limit.IsAssigned
@@ -672,38 +580,8 @@ namespace Super.Model.Sequences.Query.Temp
 		}
 	}
 
-	public interface IEnter<T> : ISelect<T[], Storage<T>> {}
-
-	sealed class Enter<T> : IEnter<T>
-	{
-		public static Enter<T> Default { get; } = new Enter<T>();
-
-		Enter() {}
-
-		public Storage<T> Get(T[] parameter) => parameter;
-	}
-
-	sealed class Lease<T> : IEnter<T>
-	{
-		public static Lease<T> Default { get; } = new Lease<T>();
-
-		Lease() : this(ArrayPool<T>.Shared) {}
-
-		readonly ArrayPool<T> _pool;
-
-		public Lease(ArrayPool<T> pool) => _pool = pool;
-
-		public Storage<T> Get(T[] parameter)
-			=> new Storage<T>(parameter.CopyInto(_pool.Rent(parameter.Length)), (uint)parameter.Length);
-	}
-
 	public readonly struct Parameter<TIn, TOut>
 	{
-		/*public Parameter(IStores<TOut> stores) : this(stores, Assigned<uint>.Unassigned) {}
-
-		public Parameter(IStores<TOut> stores, Assigned<uint> limit)
-			: this(EmptyBody<TIn>.Default, stores, limit) {}*/
-
 		public Parameter(IBody<TIn> body, IStores<TOut> stores, Assigned<uint> limit)
 		{
 			Body   = body;
@@ -717,20 +595,6 @@ namespace Super.Model.Sequences.Query.Temp
 
 		public Assigned<uint> Limit { get; }
 	}
-
-	/*public interface IEnterAware<T>
-	{
-		IEnter<T> Enter { get; }
-	}
-
-	sealed class EmptyBody<T> : IBody<T>
-	{
-		public static EmptyBody<T> Default { get; } = new EmptyBody<T>();
-
-		EmptyBody() {}
-
-		public ArrayView<T> Get(ArrayView<T> parameter) => parameter;
-	}*/
 
 	public interface IBodyBuilder<T> : ISelect<Partitioning, IBody<T>> {}
 
@@ -773,26 +637,6 @@ namespace Super.Model.Sequences.Query.Temp
 
 	public interface IBody<TIn, TOut> : ISelect<ArrayView<TIn>, ArrayView<TOut>> {}
 
-	public readonly struct Storage<T>
-	{
-		public static implicit operator Storage<T>(T[] instance) => new Storage<T>(instance);
-
-		public Storage(T[] instance) : this(instance, (uint)instance.Length, false) {}
-
-		public Storage(T[] instance, uint length, bool requested = true)
-		{
-			Instance  = instance;
-			Length    = length;
-			Requested = requested;
-		}
-
-		public T[] Instance { get; }
-
-		public uint Length { get; }
-
-		public bool Requested { get; }
-	}
-
 	public class Builder<TIn, TOut, TParameter> : IContents<TIn, TOut>
 	{
 		readonly Create<TIn, TOut, TParameter> _create;
@@ -824,7 +668,7 @@ namespace Super.Model.Sequences.Query.Temp
 
 	public delegate IBody<T> Create<T, in TParameter>(TParameter parameter, Selection selection, Assigned<uint> limit);
 
-	public static class Build
+	static class Build
 	{
 		public sealed class Select<TIn, TOut> : Builder<TIn, TOut, Func<TIn, TOut>>
 		{
@@ -881,40 +725,17 @@ namespace Super.Model.Sequences.Query.Temp
 		}
 	}
 
-	sealed class Complete<T> : ISelect<Storage<T>, T[]>
-	{
-		public static Complete<T> Default { get; } = new Complete<T>();
-
-		Complete() : this(Return<T>.Default.Execute) {}
-
-		readonly Action<T[]> _return;
-
-		public Complete(Action<T[]> @return) => _return = @return;
-
-		public T[] Get(Storage<T> parameter)
-		{
-			if (parameter.Requested)
-			{
-				var result = parameter.Instance.CopyInto(new T[parameter.Length], 0, parameter.Length);
-				_return(parameter.Instance);
-				return result;
-			}
-
-			return parameter.Instance;
-		}
-	}
-
 	sealed class Exit<_, TIn, TOut> : ISelect<_, TOut[]>
 	{
-		readonly ISelect<_, Storage<TIn>>       _origin;
+		readonly ISelect<_, Store<TIn>>       _origin;
 		readonly IContent<TIn, TOut>            _content;
-		readonly ISelect<Storage<TOut>, TOut[]> _complete;
+		readonly ISelect<Store<TOut>, TOut[]> _complete;
 
-		public Exit(ISelect<_, Storage<TIn>> origin, IContent<TIn, TOut> content)
+		public Exit(ISelect<_, Store<TIn>> origin, IContent<TIn, TOut> content)
 			: this(origin, content, Complete<TOut>.Default) {}
 
-		public Exit(ISelect<_, Storage<TIn>> origin, IContent<TIn, TOut> content,
-		            ISelect<Storage<TOut>, TOut[]> complete)
+		public Exit(ISelect<_, Store<TIn>> origin, IContent<TIn, TOut> content,
+		            ISelect<Store<TOut>, TOut[]> complete)
 		{
 			_origin   = origin;
 			_content  = content;
