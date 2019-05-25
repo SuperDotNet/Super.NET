@@ -122,8 +122,39 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 		}
 
 		[Fact]
+		void VerifyWhereWhere()
+		{
+			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x > 3 && x < 7))
+			                                      .Get(new Build.Where<int>(x => x == 4))
+			                                      .Get(data)
+			                                      .Should()
+			                                      .Equal(data.Where(x => x > 3 && x < 7)
+			                                                 .Where(x => x == 4));
+		}
+
+		[Fact]
+		void VerifyWhereWhereFirst()
+		{
+			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x > 3 && x < 7))
+			                                      .Get(new Build.Where<int>(x => x == 4))
+			                                      .Get(FirstOrDefault<int>.Default)
+			                                      .Get(data)
+			                                      .Should()
+			                                      .Be(data.Where(x => x > 3 && x < 7).First(x => x == 4));
+		}
+
+		[Fact]
 		void VerifyWhereSkipWhere()
 		{
+			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x > 3 && x < 7))
+			                                      .Get(new Skip(3))
+			                                      .Get(new Build.Where<int>(x => x == 4))
+			                                      .Get(data)
+			                                      .Should()
+			                                      .Equal(data.Where(x => x > 3 && x < 7)
+			                                                 .Skip(3)
+			                                                 .Where(x => x == 4));
+
 			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x > 3 && x < 7))
 			                                      .Get(new Skip(3))
 			                                      .Get(new Take(5))
@@ -249,6 +280,33 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 		// ContentContainerWithBodyNode
 
 		[Fact]
+		void VerifySelectWhereWhere()
+		{
+			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, int>(x => x))
+			                                      .Get(new Build.Where<int>(x => x > 3 && x < 7))
+			                                      .Get(new Build.Where<int>(x => x == 4))
+			                                      .Get(data)
+			                                      .Should()
+			                                      .Equal(data.Select(x => x)
+			                                                 .Where(x => x > 3 && x < 7)
+			                                                 .Where(x => x == 4));
+		}
+
+		[Fact]
+		void VerifySelectWhereWhereFirst()
+		{
+			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, int>(x => x))
+			                                      .Get(new Build.Where<int>(x => x > 3 && x < 7))
+			                                      .Get(new Build.Where<int>(x => x == 4))
+			                                      .Get(FirstOrDefault<int>.Default)
+			                                      .Get(data)
+			                                      .Should()
+			                                      .Be(data.Select(x => x)
+			                                              .Where(x => x > 3 && x < 7)
+			                                              .First(x => x == 4));
+		}
+
+		[Fact]
 		void VerifySelectSkipTake()
 		{
 			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, string>(x => x.ToString()))
@@ -288,8 +346,9 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 			                                      .Get(data)
 			                                      .Should()
 			                                      .Be(data.Select(x => x.ToString())
-			                                                 .Skip(5)
-			                                                 .Take(4).First());
+			                                              .Skip(5)
+			                                              .Take(4)
+			                                              .First());
 		}
 
 		public class Benchmarks
