@@ -10,7 +10,7 @@ using Xunit;
 
 // ReSharper disable ReturnValueOfPureMethodIsNotUsed
 
-namespace Super.Testing.Application.Model.Sequences.Query.Temp
+namespace Super.Testing.Application.Model.Sequences.Query.Construction
 {
 	public sealed class SequenceContextTests
 	{

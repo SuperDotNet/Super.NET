@@ -127,8 +127,7 @@ namespace Super.Model.Sequences.Query
 		public sealed class Select<TIn, TOut> : Builder<TIn, TOut, Func<TIn, TOut>>
 		{
 			public Select(Func<TIn, TOut> argument)
-				: base((shape, stores, parameter, limit)
-					       => new Selection<TIn, TOut>(shape, stores, parameter, limit).Returned(),
+				: base((shape, stores, parameter, limit) => new Selection<TIn, TOut>(shape, stores, parameter, limit),
 				       argument) {}
 		}
 
@@ -383,44 +382,9 @@ namespace Super.Model.Sequences.Query
 		}
 	}*/
 
-	sealed class Selection<TIn, TOut> : IContent<TIn, TOut>
+	public class SelectManyContents<TIn, TOut> : Builder<TIn, TOut, Func<TIn, IEnumerable<TOut>>>
 	{
-		readonly IBody<TIn>      _body;
-		readonly Func<TIn, TOut> _select;
-		readonly Assigned<uint>  _limit;
-		readonly IStores<TOut>   _stores;
-
-		// ReSharper disable once TooManyDependencies
-		public Selection(IBody<TIn> body, IStores<TOut> stores, Func<TIn, TOut> select, Assigned<uint> limit)
-		{
-			_body   = body;
-			_stores = stores;
-			_select = select;
-			_limit  = limit;
-		}
-
-		public Store<TOut> Get(Store<TIn> parameter)
-		{
-			var body = _body.Get(new ArrayView<TIn>(parameter.Instance, 0, parameter.Length));
-			var length = _limit.IsAssigned
-				             ? Math.Min(_limit.Instance, body.Length)
-				             : body.Length;
-			var result = _stores.Get(length);
-			var @in    = body.Array;
-			var @out   = result.Instance;
-
-			for (var i = 0; i < length; i++)
-			{
-				@out[i] = _select(@in[i + body.Start]);
-			}
-
-			return result;
-		}
-	}
-
-	public class ProjectionManySegment<TIn, TOut> : Builder<TIn, TOut, Func<TIn, IEnumerable<TOut>>>
-	{
-		public ProjectionManySegment(Func<TIn, IEnumerable<TOut>> parameter)
+		public SelectManyContents(Func<TIn, IEnumerable<TOut>> parameter)
 			: base((body, stores, func, limit) => new ProjectionMany<TIn, TOut>(func, stores), parameter) {}
 	}
 
@@ -534,29 +498,76 @@ namespace Super.Model.Sequences.Query
 	public class InlineProjections<TIn, TOut> : Builder<TIn, TOut, Expression<Func<TIn, TOut>>>
 	{
 		public InlineProjections(Expression<Func<TIn, TOut>> parameter)
-			: base((body, stores, expression, limit) => new InlineProjection<TIn, TOut>(expression, stores), parameter) {}
+			: base((body, stores, expression, limit)
+				       => new InlineProjection<TIn, TOut>(body, expression, stores, limit),
+			       parameter) {}
 	}
 
-	public sealed class InlineProjection<TFrom, TTo> : IContent<TFrom, TTo>
+	sealed class Selection<TIn, TOut> : IContent<TIn, TOut>
 	{
-		readonly Action<TFrom[], TTo[], uint, uint> _apply;
-		readonly IStores<TTo>                       _stores;
+		readonly IBody<TIn>      _body;
+		readonly Func<TIn, TOut> _select;
+		readonly Assigned<uint>  _limit;
+		readonly IStores<TOut>   _stores;
 
-		public InlineProjection(Expression<Func<TFrom, TTo>> select, IStores<TTo> stores)
-			: this(InlineSelections<TFrom, TTo>.Default.Get(select).Compile(), stores) {}
-
-		public InlineProjection(Action<TFrom[], TTo[], uint, uint> apply, IStores<TTo> stores)
+		// ReSharper disable once TooManyDependencies
+		public Selection(IBody<TIn> body, IStores<TOut> stores, Func<TIn, TOut> select, Assigned<uint> limit)
 		{
-			_apply  = apply;
+			_body   = body;
 			_stores = stores;
+			_select = select;
+			_limit  = limit;
 		}
 
-		public Store<TTo> Get(Store<TFrom> parameter)
+		public Store<TOut> Get(Store<TIn> parameter)
 		{
-			var length = parameter.Length;
+			var body = _body.Get(new ArrayView<TIn>(parameter.Instance, 0, parameter.Length));
+			var length = _limit.IsAssigned
+				             ? Math.Min(_limit.Instance, body.Length)
+				             : body.Length;
 			var result = _stores.Get(length);
+			var @in    = body.Array;
+			var @out   = result.Instance;
 
-			_apply(parameter.Instance, result.Instance, 0, length);
+			for (var i = 0; i < length; i++)
+			{
+				@out[i] = _select(@in[i + body.Start]);
+			}
+
+			return result;
+		}
+	}
+
+	public sealed class InlineProjection<TIn, TOut> : IContent<TIn, TOut>
+	{
+		readonly IBody<TIn>      _body;
+		readonly Copy<TIn, TOut> _apply;
+		readonly IStores<TOut>   _stores;
+		readonly Assigned<uint>  _limit;
+
+		// ReSharper disable once TooManyDependencies
+		public InlineProjection(IBody<TIn> body, Expression<Func<TIn, TOut>> select, IStores<TOut> stores,
+		                        Assigned<uint> limit)
+			: this(body, InlineSelections<TIn, TOut>.Default.Get(select).Compile(), stores, limit) {}
+
+		// ReSharper disable once TooManyDependencies
+		public InlineProjection(IBody<TIn> body, Copy<TIn, TOut> apply,
+		                        IStores<TOut> stores, Assigned<uint> limit)
+		{
+			_body   = body;
+			_apply  = apply;
+			_stores = stores;
+			_limit  = limit;
+		}
+
+		public Store<TOut> Get(Store<TIn> parameter)
+		{
+			var body = _body.Get(new ArrayView<TIn>(parameter.Instance, 0, parameter.Length));
+
+			var result = _stores.Get(body.Length);
+
+			var bodyStart = body.Start + _limit.Or(body.Length);
+			_apply(body.Array, result.Instance, body.Start, bodyStart, 0);
 
 			return result;
 		}

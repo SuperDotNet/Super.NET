@@ -1,5 +1,5 @@
 ﻿using Super.Application.Hosting.BenchmarkDotNet;
-using Super.Testing.Application.Model.Sequences.Query.Temp;
+using Super.Testing.Application.Model.Sequences.Query.Construction;
 using System.Linq;
 
 namespace Super.Testing.Application

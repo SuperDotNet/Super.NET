@@ -21,8 +21,8 @@ namespace Super.Testing.Application.Model.Sequences.Query
 			Start.A.Selection.Of.Type<string>()
 			     .As.Sequence.Array.By.Self.Query()
 			     .SelectBy(x => x.Length)
-			     .Out()
 			     .Get(Source)
+			     .Open()
 			     .Should()
 			     .Equal(Source.Select(x => x.Length));
 		}
@@ -38,6 +38,20 @@ namespace Super.Testing.Application.Model.Sequences.Query
 			     .Get(Source)
 			     .Should()
 			     .Equal(Source.Where(x => x.Contains("ab")).Select(x => x.Length));
+		}
+
+		[Fact]
+		void VerifyWhereSkip()
+		{
+			Start.A.Selection.Of.Type<string>()
+			     .As.Sequence.Array.By.Self.Query()
+			     .WhereBy(x => x.Contains("ab"))
+			     .Skip(10)
+			     .SelectBy(x => x.Length)
+			     .Out()
+			     .Get(Source)
+			     .Should()
+			     .Equal(Source.Where(x => x.Contains("ab")).Skip(10).Select(x => x.Length));
 		}
 
 		[Fact]

@@ -6,55 +6,55 @@ using System.Linq.Expressions;
 
 namespace Super.Model.Sequences.Query
 {
-	sealed class InlineSelections<TFrom, TTo>
-		: ISelect<Expression<Func<TFrom, TTo>>, Expression<Action<TFrom[], TTo[], uint, uint>>>
+	public delegate void Copy<in TIn, in TOut>(TIn[] source, TOut[] destination, uint from, uint to, uint offset);
+
+	sealed class InlineSelections<TFrom, TTo> : ISelect<Expression<Func<TFrom, TTo>>, Expression<Copy<TFrom, TTo>>>
 	{
 		public static InlineSelections<TFrom, TTo> Default { get; } = new InlineSelections<TFrom, TTo>();
 
-		InlineSelections() : this(Expression.Variable(typeof(uint), "index"),
-		                          Expression.Parameter(typeof(TFrom[]), "source"),
+		InlineSelections() : this(Expression.Parameter(typeof(TFrom[]), "source"),
 		                          Expression.Parameter(typeof(TTo[]), "destination"),
 		                          Expression.Parameter(typeof(uint), "start"),
-		                          Expression.Parameter(typeof(uint), "finish")) {}
+		                          Expression.Parameter(typeof(uint), "finish"),
+		                          Expression.Parameter(typeof(uint), "to")) {}
 
-		readonly ParameterExpression                  _index;
 		readonly IEnumerable<ParameterExpression>     _input;
 		readonly ISelect<string, ParameterExpression> _parameters;
 
-		public InlineSelections(ParameterExpression index, params ParameterExpression[] parameters)
-			: this(index, parameters.AsEnumerable(), parameters.ToDictionary(x => x.Name).ToTable()) {}
+		public InlineSelections(params ParameterExpression[] parameters)
+			: this(parameters, parameters.ToDictionary(x => x.Name).ToTable()) {}
 
-		public InlineSelections(ParameterExpression index, IEnumerable<ParameterExpression> input,
-		                        ISelect<string, ParameterExpression> parameters)
+		public InlineSelections(IEnumerable<ParameterExpression> input, ISelect<string, ParameterExpression> parameters)
 		{
-			_index      = index;
 			_input      = input;
 			_parameters = parameters;
 		}
 
-		public Expression<Action<TFrom[], TTo[], uint, uint>> Get(Expression<Func<TFrom, TTo>> parameter)
+		public Expression<Copy<TFrom, TTo>> Get(Expression<Func<TFrom, TTo>> parameter)
 		{
-			var label = Expression.Label();
-			var cast = Expression.Convert(_index, typeof(int));
-			var from = Expression.ArrayAccess(_parameters.Get("source"), cast);
-			var to   = Expression.ArrayAccess(_parameters.Get("destination"), cast);
+			var from  = _parameters.Get("start");
+			var @in   = Expression.ArrayAccess(_parameters.Get("source"), Expression.Convert(from, typeof(int)));
+			var to    = _parameters.Get("to");
+			var @out  = Expression.ArrayAccess(_parameters.Get("destination"), Expression.Convert(to, typeof(int)));
 
-			var inline = new InlineVisitor(parameter.Parameters[0], from).Visit(parameter.Body)
+			var inline = new InlineVisitor(parameter.Parameters[0], @in).Visit(parameter.Body)
 			             ??
 			             throw new InvalidOperationException("Inline expression was not found");
 
-			var body = Expression.Block(_index.Yield(),
-			                            Expression.Assign(_index, Expression.Subtract(_parameters.Get("start"),
-			                                                                          Expression.Constant(1u))),
+			var label = Expression.Label();
+			var body = Expression.Block(Expression.PostDecrementAssign(from),
 			                            Expression.Loop(Expression
 				                                            .IfThenElse(Expression
-					                                                        .LessThan(Expression.PreIncrementAssign(_index),
+					                                                        .LessThan(Expression.PreIncrementAssign(from),
 					                                                                  _parameters.Get("finish")),
-				                                                        Expression.Assign(to, inline),
+				                                                        Expression
+					                                                        .Block(Expression.Assign(@out, inline),
+					                                                               Expression.PostIncrementAssign(to)
+					                                                              ),
 				                                                        Expression.Break(label)),
 			                                            label));
 
-			var result = Expression.Lambda<Action<TFrom[], TTo[], uint, uint>>(body, _input);
+			var result = Expression.Lambda<Copy<TFrom, TTo>>(body, _input);
 			return result;
 		}
 	}

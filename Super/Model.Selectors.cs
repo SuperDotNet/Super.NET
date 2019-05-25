@@ -102,7 +102,7 @@ namespace Super
 			=> @this.SelectMany(select.Compile());
 
 		public static Query<_, TOut> SelectMany<_, T, TOut>(this Query<_, T> @this, Func<T, IEnumerable<TOut>> select)
-			=> @this.Select(new ProjectionManySegment<T, TOut>(select).Returned());
+			=> @this.Select(new SelectManyContents<T, TOut>(select).Returned());
 
 		public static Query<_, T> WhereBy<_, T>(this Query<_, T> @this, Expression<Func<T, bool>> where)
 			=> @this.Where(where.Compile());
