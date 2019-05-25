@@ -43,13 +43,13 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 			                                      .And.Subject.Should()
 			                                      .Be(data.Skip(11).FirstOrDefault());
 
-			/*new Start<int[], int>(A.Self<int[]>()).Get(new Skip(10))
+			new Start<int[], int>(A.Self<int[]>()).Get(new Skip(10))
 			                                      .Get(FirstOrDefault<int>.Default)
 			                                      .Get(data)
 			                                      .Should()
 			                                      .Be(4)
 			                                      .And.Subject.Should()
-			                                      .Be(data.Skip(10).FirstOrDefault());*/
+			                                      .Be(data.Skip(10).FirstOrDefault());
 		}
 
 		// StartWithBodyNode
@@ -70,13 +70,11 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 		void VerifySkipSelect()
 		{
 			new Start<int[], int>(A.Self<int[]>()).Get(new Skip(skip))
-			                                      .Get(new Build.Select<int, string
-			                                           >(x => x.ToString()))
+			                                      .Get(new Build.Select<int, string>(x => x.ToString()))
 			                                      .Get(data)
 			                                      .Should()
 			                                      .Equal(data.Skip(skip)
-			                                                 .Select(x => x
-				                                                         .ToString()))
+			                                                 .Select(x => x.ToString()))
 			                                      .And.Subject.Should()
 			                                      .NotBeEmpty();
 		}
@@ -112,29 +110,46 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 		[Fact]
 		void VerifyWhereSkip()
 		{
-			new Start<int[], int>(A.Self<int[]>())
-				.Get(new Build.Where<int>(x => x == 5))
-				.Get(new Skip(2))
-				.Get(data)
-				.Should()
-				.Equal(data.Where(x => x == 5).Skip(2))
-				.And.Subject.Should()
-				.HaveCount(3)
-				.And.Subject.Should()
-				.AllBeEquivalentTo(5);
+			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x == 5))
+			                                      .Get(new Skip(2))
+			                                      .Get(data)
+			                                      .Should()
+			                                      .Equal(data.Where(x => x == 5).Skip(2))
+			                                      .And.Subject.Should()
+			                                      .HaveCount(3)
+			                                      .And.Subject.Should()
+			                                      .AllBeEquivalentTo(5);
+		}
+
+		[Fact]
+		void VerifyWhereSkipWhere()
+		{
+			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x > 3 && x < 7))
+			                                      .Get(new Skip(3))
+			                                      .Get(new Take(5))
+			                                      .Get(new Build.Where<int>(x => x == 4))
+			                                      .Get(data)
+			                                      .Should()
+			                                      .Equal(data.Where(x => x > 3 && x < 7)
+			                                                 .Skip(3)
+			                                                 .Take(5)
+			                                                 .Where(x => x == 4))
+			                                      .And.Subject.Should()
+			                                      .HaveCount(1)
+			                                      .And.Subject.Should()
+			                                      .AllBeEquivalentTo(4);
 		}
 
 		[Fact]
 		void VerifyWhereSelect()
 		{
-			new Start<int[], int>(A.Self<int[]>())
-				.Get(new Build.Where<int>(x => x > 8))
-				.Get(new Build.Select<int, string>(x => x.ToString()))
-				.Get(data)
-				.Should()
-				.Equal(data.Where(x => x > 8).Select(x => x.ToString()))
-				.And.Subject.Should()
-				.NotBeEmpty();
+			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x > 8))
+			                                      .Get(new Build.Select<int, string>(x => x.ToString()))
+			                                      .Get(data)
+			                                      .Should()
+			                                      .Equal(data.Where(x => x > 8).Select(x => x.ToString()))
+			                                      .And.Subject.Should()
+			                                      .NotBeEmpty();
 		}
 
 		[Fact]
@@ -185,24 +200,97 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 		// ContentContainerNode
 
 		[Fact]
-		void VerifySelectSkip() {}
+		void VerifySelectSkip()
+		{
+			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, string>(x => x.ToString()))
+			                                      .Get(new Skip(5))
+			                                      .Get(new Take(4))
+			                                      .Get(data)
+			                                      .Should()
+			                                      .Equal(data.Select(x => x.ToString()).Skip(5).Take(4))
+			                                      .And.Subject.Should()
+			                                      .NotBeEmpty();
+		}
 
 		[Fact]
-		void VerifySelectSelect() {}
+		void VerifySelectSelect()
+		{
+			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, string>(x => x.ToString()))
+			                                      .Get(new Build.Select<string, int>(x => x.Length))
+			                                      .Get(data)
+			                                      .Should()
+			                                      .Equal(data.Select(x => x.ToString()).Select(x => x.Length));
+
+			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, string>(x => x.ToString()))
+			                                      .Get(new Build.Select<string, int>(x => x.Length))
+			                                      .Get(new Skip(5))
+			                                      .Get(new Take(4))
+			                                      .Get(data)
+			                                      .Should()
+			                                      .Equal(data.Select(x => x.ToString())
+			                                                 .Select(x => x.Length)
+			                                                 .Skip(5)
+			                                                 .Take(4))
+			                                      .And.Subject.Should()
+			                                      .NotBeEmpty();
+		}
 
 		[Fact]
-		void VerifySelectWhereFirst() {}
+		void VerifySelectWhereFirst()
+		{
+			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, string>(x => x.ToString()))
+			                                      .Get(new Build.Where<string>(x => x == "5"))
+			                                      .Get(FirstOrDefault<string>.Default)
+			                                      .Get(data)
+			                                      .Should()
+			                                      .Be(data.Select(x => x.ToString()).First(x => x == "5"));
+		}
 
 		// ContentContainerWithBodyNode
 
 		[Fact]
-		void VerifySelectSkipTake() {}
+		void VerifySelectSkipTake()
+		{
+			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, string>(x => x.ToString()))
+			                                      .Get(new Skip(5))
+			                                      .Get(new Take(4))
+			                                      .Get(data)
+			                                      .Should()
+			                                      .Equal(data.Select(x => x.ToString())
+			                                                 .Skip(5)
+			                                                 .Take(4))
+			                                      .And.Subject.Should()
+			                                      .NotBeEmpty();
+		}
 
 		[Fact]
-		void VerifySelectSkipSelect() {}
+		void VerifySelectSkipSelect()
+		{
+			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, string>(x => x.ToString()))
+			                                      .Get(new Skip(5))
+			                                      .Get(new Build.Select<string, int>(x => x.Length))
+			                                      .Get(data)
+			                                      .Should()
+			                                      .Equal(data.Select(x => x.ToString())
+			                                                 .Skip(5)
+			                                                 .Select(x => x.Length))
+			                                      .And.Subject.Should()
+			                                      .NotBeEmpty();
+		}
 
 		[Fact]
-		void VerifySelectSkipTakeFirst() {}
+		void VerifySelectSkipTakeFirst()
+		{
+			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, string>(x => x.ToString()))
+			                                      .Get(new Skip(5))
+			                                      .Get(new Take(4))
+			                                      .Get(FirstOrDefault<string>.Default)
+			                                      .Get(data)
+			                                      .Should()
+			                                      .Be(data.Select(x => x.ToString())
+			                                                 .Skip(5)
+			                                                 .Take(4).First());
+		}
 
 		public class Benchmarks
 		{
@@ -211,9 +299,9 @@ namespace Super.Testing.Application.Model.Sequences.Query.Temp
 
 			public Benchmarks()
 				: this(new Start<int[], int>(A.Self<int[]>()).Get(new Skip(6))
-				                                                  .Get(new Take(5))
-				                                                  .Get(new Build.Where<int>(x => x > 2))
-				                                                  .Get(),
+				                                             .Get(new Take(5))
+				                                             .Get(new Build.Where<int>(x => x > 2))
+				                                             .Get(),
 				       Start.A.Selection.Of.Type<int>()
 				            .As.Sequence.Array.By.Self.Query()
 				            .Skip(6)
