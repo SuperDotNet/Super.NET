@@ -1,12 +1,13 @@
-﻿using Super.Model.Results;
+﻿using System;
+using System.Reflection;
+using Super.Compose;
+using Super.Model.Results;
 using Super.Model.Selection;
 using Super.Model.Selection.Conditions;
 using Super.Model.Sequences.Query;
 using Super.Reflection;
 using Super.Reflection.Types;
 using Super.Runtime.Activation;
-using System;
-using System.Reflection;
 
 namespace Super.Runtime.Environment
 {
@@ -14,8 +15,8 @@ namespace Super.Runtime.Environment
 	{
 		public static Selections Default { get; } = new Selections();
 
-		Selections() : this(Compose.Start.A.Selection.Of.System.Type.By.Returning(Default<Type, Type>.Instance)
-		                           .Unless(IsDefinedGenericType.Default, Make.Instance)) {}
+		Selections() : this(Start.A.Selection.Of.System.Type.By.Returning(Default<Type, Type>.Instance)
+		                         .Unless(IsDefinedGenericType.Default, Make.Instance)) {}
 
 		readonly ISelect<Type, ISelect<Type, Type>> _default;
 
@@ -50,12 +51,13 @@ namespace Super.Runtime.Environment
 			public static Make Instance { get; } = new Make();
 
 			Make() : this(Specifications.Instance.Get(),
-			              source: GenericArguments.Default.Then().Activate<GenericTypeBuilder>().Get(),
+			              GenericArguments.Default.Then().Activate<GenericTypeBuilder>().Get(),
 			              IsGenericTypeDefinition.Default) {}
 
-			readonly ISelect<Type, ICondition<Type>>    _specification;
 			readonly ISelect<Type, ISelect<Type, Type>> _source;
-			readonly ICondition<Type>                   _valid;
+
+			readonly ISelect<Type, ICondition<Type>> _specification;
+			readonly ICondition<Type>                _valid;
 
 			public Make(ISelect<Type, ICondition<Type>> specification,
 			            ISelect<Type, ISelect<Type, Type>> source, ICondition<Type> valid)

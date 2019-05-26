@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 
 namespace Super.Runtime
@@ -7,7 +8,7 @@ namespace Super.Runtime
 	{
 		public static T[] Array { get; } = System.Array.Empty<T>();
 
-		public static System.ArraySegment<T> Segment { get; } = new System.ArraySegment<T>(Array);
+		public static ArraySegment<T> Segment { get; } = new ArraySegment<T>(Array);
 
 		public static IEnumerable<T> Enumerable { get; } = System.Linq.Enumerable.Empty<T>();
 

@@ -1,7 +1,7 @@
-using Super.Model.Selection.Conditions;
-using Super.Runtime;
 using System;
 using System.Runtime.CompilerServices;
+using Super.Model.Selection.Conditions;
+using Super.Runtime;
 
 namespace Super.Model.Selection.Stores
 {
@@ -13,19 +13,19 @@ namespace Super.Model.Selection.Stores
 
 		ReferenceValueTables() : this(Default<TIn, TOut>.Instance.ToDelegate()) {}
 
+		ReferenceValueTables(ConditionalWeakTable<TIn, TOut>.CreateValueCallback callback) => _callback = callback;
+
 		readonly ConditionalWeakTable<TIn, TOut>.CreateValueCallback _callback;
 
 		public ReferenceValueTables(Func<TIn, TOut> callback)
 			: this(new ConditionalWeakTable<TIn, TOut>.CreateValueCallback(callback)) {}
 
-		ReferenceValueTables(ConditionalWeakTable<TIn, TOut>.CreateValueCallback callback) => _callback = callback;
-
 		public ITable<TIn, TOut> Get(ConditionalWeakTable<TIn, TOut> parameter) => new Table(parameter, _callback);
 
 		sealed class Table : ITable<TIn, TOut>
 		{
-			readonly ConditionalWeakTable<TIn, TOut>                     _table;
 			readonly ConditionalWeakTable<TIn, TOut>.CreateValueCallback _callback;
+			readonly ConditionalWeakTable<TIn, TOut>                     _table;
 
 			public Table(ConditionalWeakTable<TIn, TOut> table,
 			             ConditionalWeakTable<TIn, TOut>.CreateValueCallback callback)

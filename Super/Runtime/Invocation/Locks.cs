@@ -1,8 +1,8 @@
-﻿using Super.Model.Selection;
-using Super.Model.Sequences;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
+using Super.Model.Selection;
+using Super.Model.Sequences;
 
 namespace Super.Runtime.Invocation
 {
@@ -20,9 +20,9 @@ namespace Super.Runtime.Invocation
 	/// <typeparam name="TLock"></typeparam>
 	public class Locks<TKey, TLock> : ISelect<TKey, TLock>
 	{
+		readonly IEqualityComparer<TKey> _comparer;
 		readonly int                     _mask;
 		readonly ImmutableArray<TLock>   _stripes;
-		readonly IEqualityComparer<TKey> _comparer;
 
 		public Locks(int stripes) : this(LockItem<TLock>.Default.Get(stripes), EqualityComparer<TKey>.Default) {}
 
@@ -36,6 +36,8 @@ namespace Super.Runtime.Invocation
 			_comparer = comparer;
 		}
 
+		public TLock Get(TKey parameter) => _stripes[GetStripe(parameter)];
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		int GetStripe(TKey key) => SmearHashCode(_comparer.GetHashCode(key) & int.MaxValue) & _mask;
 
@@ -43,10 +45,8 @@ namespace Super.Runtime.Invocation
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		static int SmearHashCode(int hashCode)
 		{
-			hashCode ^= hashCode >> 20 ^ hashCode >> 12;
-			return hashCode ^ hashCode >> 7 ^ hashCode >> 4;
+			hashCode ^= (hashCode >> 20) ^ (hashCode >> 12);
+			return hashCode ^ (hashCode >> 7) ^ (hashCode >> 4);
 		}
-
-		public TLock Get(TKey parameter) => _stripes[GetStripe(parameter)];
 	}
 }

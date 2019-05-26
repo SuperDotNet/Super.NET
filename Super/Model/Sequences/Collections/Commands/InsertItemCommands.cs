@@ -13,9 +13,9 @@ namespace Super.Model.Sequences.Collections.Commands
 
 		InsertItemCommands() : this(DeclaredGroupIndexes<T>.Default.Condition, DeclaredGroupIndexes<T>.Default.Get) {}
 
-		readonly Func<T, int> _index;
-
 		readonly ICondition<T> _condition;
+
+		readonly Func<T, int> _index;
 
 		public InsertItemCommands(ICondition<T> condition, Func<T, int> index)
 		{

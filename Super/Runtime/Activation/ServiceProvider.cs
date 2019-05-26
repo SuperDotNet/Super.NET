@@ -1,22 +1,35 @@
-﻿using Super.Model.Selection.Conditions;
+﻿using System;
+using Super.Model.Selection.Conditions;
 using Super.Model.Sequences;
-using System;
 
 namespace Super.Runtime.Activation
 {
 	public class ServiceProvider : IServiceProvider, ICondition<Type>
 	{
+		ServiceProvider(Array<object> services, uint length)
+		{
+			_services = services;
+			_length   = length;
+		}
+
+		readonly uint          _length;
 		readonly Array<object> _services;
-		readonly uint _length;
 
 		public ServiceProvider(params object[] services) : this(new Array<object>(services)) {}
 
 		public ServiceProvider(Array<object> services) : this(services, services.Length) {}
 
-		ServiceProvider(Array<object> services, uint length)
+		public bool Get(Type parameter)
 		{
-			_services = services;
-			_length = length;
+			for (var i = 0u; i < _length; i++)
+			{
+				if (parameter.IsInstanceOfType(_services[i]))
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		public object GetService(Type serviceType)
@@ -31,19 +44,6 @@ namespace Super.Runtime.Activation
 			}
 
 			return null;
-		}
-
-		public bool Get(Type parameter)
-		{
-			for (var i = 0u; i < _length; i++)
-			{
-				if (parameter.IsInstanceOfType(_services[i]))
-				{
-					return true;
-				}
-			}
-
-			return false;
 		}
 	}
 }

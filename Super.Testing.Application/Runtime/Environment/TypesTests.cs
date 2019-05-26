@@ -1,33 +1,27 @@
-﻿using FluentAssertions;
-using Super.Model.Sequences;
-using Super.Runtime.Execution;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentAssertions;
+using Super.Model.Sequences;
+using Super.Runtime.Execution;
 using Xunit;
+
 // ReSharper disable All
 
 namespace Super.Testing.Application.Runtime.Environment
 {
 	public sealed class TypesTests
 	{
-		[Fact]
-		void Verify()
+		sealed class Types : ArrayInstance<Type>
 		{
-			var types = Super.Runtime.Environment.Types.Default;
-			types.Execute(GetType().Yield().ToArray());
-
-			types.Get().Open().Should().HaveCount(1);
-			types.Execute(default);
-
-			types.Get().Open().Should().HaveCountGreaterThan(1);
+			public Types(Counter counter, IEnumerable<Type> types) : base(types.Select(counter.Parameter)) {}
 		}
 
 		[Fact]
 		void Count()
 		{
 			var counter = new Counter();
-			var source = typeof(object).Yield();
+			var source  = typeof(object).Yield();
 			counter.Get().Should().Be(0);
 			var types = new Types(counter, source);
 			counter.Get().Should().Be(1);
@@ -43,9 +37,16 @@ namespace Super.Testing.Application.Runtime.Environment
 			counter.Get().Should().Be(1);
 		}
 
-		sealed class Types : ArrayInstance<Type>
+		[Fact]
+		void Verify()
 		{
-			public Types(Counter counter, IEnumerable<Type> types) : base(types.Select(counter.Parameter)) {}
+			var types = Super.Runtime.Environment.Types.Default;
+			types.Execute(GetType().Yield().ToArray());
+
+			types.Get().Open().Should().HaveCount(1);
+			types.Execute(default);
+
+			types.Get().Open().Should().HaveCountGreaterThan(1);
 		}
 	}
 }

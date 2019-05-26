@@ -10,12 +10,12 @@ namespace Super.Testing.Application.Reflection
 		public void AccountForNullable()
 		{
 			AccountForUnassignedType.Default.Get(typeof(int?))
-			                              .Should()
-			                              .Be<int>();
+			                        .Should()
+			                        .Be<int>();
 
 			AccountForUnassignedType.Default.Get(GetType())
-			                              .Should()
-			                              .Be(GetType());
+			                        .Should()
+			                        .Be(GetType());
 		}
 	}
 }

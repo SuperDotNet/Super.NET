@@ -1,7 +1,7 @@
-﻿using Super.Compose;
-using Super.Model.Selection;
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
+using Super.Compose;
+using Super.Model.Selection;
 
 namespace Super.Reflection.Assemblies
 {

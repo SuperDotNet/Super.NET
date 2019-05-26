@@ -7,38 +7,29 @@ namespace Super.Testing.Application.Compose
 {
 	public sealed class StartTests
 	{
+		sealed class Instance {}
+
+		sealed class Singleton
+		{
+			public static Singleton Default { get; } = new Singleton();
+
+			Singleton() {}
+		}
+
+		sealed class Activated
+		{
+			public static Activated Default { get; } = new Activated();
+
+			[UsedImplicitly]
+			public Activated() {}
+		}
+
 		[Fact]
 		void Verify()
 		{
 			var instance = new Instance();
 
 			Start.A.Result(instance)
-			     .Get()
-			     .Should()
-			     .BeSameAs(instance);
-		}
-
-		[Fact]
-		void VerifyCalling()
-		{
-			var instance = new Instance();
-
-			Start.A.Result
-			     .Of<Instance>()
-			     .By
-			     .Calling(instance.Self)
-			     .Get()
-			     .Should()
-			     .BeSameAs(instance);
-		}
-
-		[Fact]
-		void VerifyBasicExtent()
-		{
-			var instance = new Instance();
-
-			Start.An.Extent<Instance>()
-			     .Into.Result.Using(instance)
 			     .Get()
 			     .Should()
 			     .BeSameAs(instance);
@@ -69,21 +60,30 @@ namespace Super.Testing.Application.Compose
 			         .NotBeNull();
 		}
 
-		sealed class Instance {}
-
-		sealed class Singleton
+		[Fact]
+		void VerifyBasicExtent()
 		{
-			public static Singleton Default { get; } = new Singleton();
+			var instance = new Instance();
 
-			Singleton() {}
+			Start.An.Extent<Instance>()
+			     .Into.Result.Using(instance)
+			     .Get()
+			     .Should()
+			     .BeSameAs(instance);
 		}
 
-		sealed class Activated
+		[Fact]
+		void VerifyCalling()
 		{
-			public static Activated Default { get; } = new Activated();
+			var instance = new Instance();
 
-			[UsedImplicitly]
-			public Activated() {}
+			Start.A.Result
+			     .Of<Instance>()
+			     .By
+			     .Calling(instance.Self)
+			     .Get()
+			     .Should()
+			     .BeSameAs(instance);
 		}
 	}
 }

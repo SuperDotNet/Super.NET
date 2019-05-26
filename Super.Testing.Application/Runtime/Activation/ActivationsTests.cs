@@ -1,7 +1,7 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using Super.Model.Selection;
 using Super.Runtime.Activation;
-using System;
 using Xunit;
 
 // ReSharper disable All

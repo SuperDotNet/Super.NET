@@ -1,7 +1,7 @@
-﻿using Super.Compose;
+﻿using System;
+using Super.Compose;
 using Super.Model.Selection;
 using Super.Runtime;
-using System;
 
 namespace Super.Text
 {

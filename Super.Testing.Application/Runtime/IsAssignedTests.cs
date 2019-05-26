@@ -1,6 +1,6 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Immutable;
+using FluentAssertions;
 using Super.Runtime;
-using System.Collections.Immutable;
 using Xunit;
 
 namespace Super.Testing.Application.Runtime
@@ -8,16 +8,18 @@ namespace Super.Testing.Application.Runtime
 	public sealed class IsAssignedTests
 	{
 		[Fact]
+		void VerifyImmutableArrays()
+		{
+			IsAssigned<ImmutableArray<object>>.Default.Get(default).Should().BeFalse();
+			IsAssigned<ImmutableArray<object>>.Default.Get(ImmutableArray<object>.Empty).Should().BeTrue();
+			IsAssigned<ImmutableArray<object>>.Default.Get(ImmutableArray.Create(new object())).Should().BeTrue();
+		}
+
+		[Fact]
 		void VerifyReferences()
 		{
 			IsAssigned<object>.Default.Get(new object()).Should().BeTrue();
-			IsAssigned<object>.Default.Get(null).Should().BeFalse();}
-
-		[Fact]
-		void VerifyValues()
-		{
-			IsAssigned<int>.Default.Get(1).Should().BeTrue();
-			IsAssigned<int>.Default.Get(0).Should().BeFalse();
+			IsAssigned<object>.Default.Get(null).Should().BeFalse();
 		}
 
 		[Fact]
@@ -29,11 +31,10 @@ namespace Super.Testing.Application.Runtime
 		}
 
 		[Fact]
-		void VerifyImmutableArrays()
+		void VerifyValues()
 		{
-			IsAssigned<ImmutableArray<object>>.Default.Get(default).Should().BeFalse();
-			IsAssigned<ImmutableArray<object>>.Default.Get(ImmutableArray<object>.Empty).Should().BeTrue();
-			IsAssigned<ImmutableArray<object>>.Default.Get(ImmutableArray.Create(new object())).Should().BeTrue();
+			IsAssigned<int>.Default.Get(1).Should().BeTrue();
+			IsAssigned<int>.Default.Get(0).Should().BeFalse();
 		}
 	}
 }

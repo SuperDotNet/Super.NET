@@ -1,12 +1,12 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using FluentAssertions;
 using Super.Model.Commands;
 using Super.Model.Results;
 using Super.Reflection.Collections;
 using Super.Runtime;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
 namespace Super.Testing.Application.Reflection

@@ -1,8 +1,8 @@
-﻿using BenchmarkDotNet.Configs;
+﻿using System;
+using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
 using Super.Model.Selection;
-using System;
 
 namespace Super.Application.Hosting.BenchmarkDotNet
 {
@@ -10,6 +10,6 @@ namespace Super.Application.Hosting.BenchmarkDotNet
 	{
 		protected Run() : this(BenchmarkRunner.Run<T>) {}
 
-		public Run(Func<IConfig, Summary> @select) : base(@select) {}
+		public Run(Func<IConfig, Summary> select) : base(select) {}
 	}
 }

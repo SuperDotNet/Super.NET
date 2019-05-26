@@ -8,8 +8,7 @@ namespace Super.Testing.Application.Runtime.Activation
 {
 	public class NewTests
 	{
-		[Theory]
-		[AutoData]
+		[Theory, AutoData]
 		public void Verify(int number)
 		{
 			var subject = I<Subject>.Default.New(number);
@@ -19,15 +18,13 @@ namespace Super.Testing.Application.Runtime.Activation
 			       .NotBeSameAs(New<int, Subject>.Default.Get(number));
 		}
 
-		[Theory]
-		[AutoData]
+		[Theory, AutoData]
 		public void Default(int number)
 		{
 			I<Subject>.Default.New(number).Number.Should().Be(number);
 		}
 
-		[Theory]
-		[AutoData]
+		[Theory, AutoData]
 		public void MultipleParameters(int number)
 		{
 			var subject = I<SubjectWithMultipleParameters>.Default.New(number);

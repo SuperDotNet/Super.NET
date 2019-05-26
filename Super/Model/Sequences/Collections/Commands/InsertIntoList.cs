@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using Super.Model.Commands;
 
-namespace Super.Model.Sequences.Collections.Commands {
+namespace Super.Model.Sequences.Collections.Commands
+{
 	public class InsertIntoList<T> : ICommand<IList<T>>
 	{
-		readonly T                   _item;
 		readonly Func<IList<T>, int> _index;
+		readonly T                   _item;
 
 		public InsertIntoList(T item) : this(item, x => 0) {}
 

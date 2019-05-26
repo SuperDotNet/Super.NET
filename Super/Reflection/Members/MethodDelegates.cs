@@ -1,7 +1,7 @@
-﻿using Super.Model.Selection;
-using Super.Reflection.Types;
-using System;
+﻿using System;
 using System.Reflection;
+using Super.Model.Selection;
+using Super.Reflection.Types;
 
 namespace Super.Reflection.Members
 {

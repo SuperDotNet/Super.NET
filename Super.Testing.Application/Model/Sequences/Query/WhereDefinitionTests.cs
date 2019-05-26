@@ -1,10 +1,10 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿using System.Collections.Generic;
+using System.Linq;
+using BenchmarkDotNet.Attributes;
 using FluentAssertions;
 using Super.Compose;
 using Super.Model.Selection;
 using Super.Testing.Objects;
-using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
 namespace Super.Testing.Application.Model.Sequences.Query
@@ -16,6 +16,30 @@ namespace Super.Testing.Application.Model.Sequences.Query
 
 		readonly static string[] Source = Data.Default.Get().Take((int)Total).ToArray();
 
+		public class Benchmarks
+		{
+			const    string              Value    = "ab";
+			readonly IEnumerable<string> _classic = Source.Skip(skip).Take(take).Where(x => x.Contains(Value));
+
+			readonly string[] _input;
+			readonly ISelect<string[], string[]> _link = Start.A.Selection.Of.Type<string>()
+			                                                  .As.Sequence.Array.By.Self.Query()
+			                                                  .Skip(skip)
+			                                                  .Take(take)
+			                                                  .WhereBy(x => x.Contains(Value))
+			                                                  .Out();
+
+			public Benchmarks() : this(Source.ToArray()) {}
+
+			public Benchmarks(string[] input) => _input = input;
+
+			[Benchmark(Baseline = true)]
+			public string[] Classic() => _classic.ToArray();
+
+			[Benchmark]
+			public string[] Subject() => _link.Get(_input);
+		}
+
 		[Fact]
 		void Verify()
 		{
@@ -26,20 +50,6 @@ namespace Super.Testing.Application.Model.Sequences.Query
 			     .Get(Source)
 			     .Should()
 			     .Equal(Source.Select(x => x.Length));
-		}
-
-		[Fact]
-		void VerifySkipTakeWhere()
-		{
-			Start.A.Selection.Of.Type<string>()
-			     .As.Sequence.Array.By.Self.Query()
-			     .Skip(skip)
-			     .Take(take)
-			     .WhereBy(x => x.Contains("ab"))
-			     .Out()
-			     .Get(Source)
-			     .Should()
-			     .Equal(Source.Skip(skip).Take(take).Where(x => x.Contains("ab")).ToArray());
 		}
 
 		[Fact]
@@ -76,31 +86,18 @@ namespace Super.Testing.Application.Model.Sequences.Query
 			     .Equal(numbers.Skip(10).Take(12).Where(x => x > 5).Where(x => x < 7).Skip(3).Take(3));
 		}
 
-		public class Benchmarks
+		[Fact]
+		void VerifySkipTakeWhere()
 		{
-			const    string              Value    = "ab";
-			readonly IEnumerable<string> _classic = Source.Skip(skip).Take(take).Where(x => x.Contains(Value));
-			readonly ISelect<string[], string[]> _link = Start.A.Selection.Of.Type<string>()
-			                                                  .As.Sequence.Array.By.Self.Query()
-			                                                  .Skip(skip)
-			                                                  .Take(take)
-			                                                  .WhereBy(x => x.Contains(Value))
-			                                                  .Out();
-
-			readonly string[] _input;
-
-			public Benchmarks() : this(Source.ToArray()) {}
-
-			public Benchmarks(string[] input)
-			{
-				_input = input;
-			}
-
-			[Benchmark(Baseline = true)]
-			public string[] Classic() => _classic.ToArray();
-
-			[Benchmark]
-			public string[] Subject() => _link.Get(_input);
+			Start.A.Selection.Of.Type<string>()
+			     .As.Sequence.Array.By.Self.Query()
+			     .Skip(skip)
+			     .Take(take)
+			     .WhereBy(x => x.Contains("ab"))
+			     .Out()
+			     .Get(Source)
+			     .Should()
+			     .Equal(Source.Skip(skip).Take(take).Where(x => x.Contains("ab")).ToArray());
 		}
 	}
 }

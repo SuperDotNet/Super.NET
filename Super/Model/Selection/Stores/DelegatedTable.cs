@@ -1,6 +1,6 @@
+using System;
 using Super.Model.Selection.Conditions;
 using Super.Runtime;
-using System;
 
 namespace Super.Model.Selection.Stores
 {

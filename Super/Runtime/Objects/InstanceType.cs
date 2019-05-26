@@ -1,6 +1,6 @@
-﻿using Super.Model.Selection;
+﻿using System;
+using Super.Model.Selection;
 using Super.Reflection.Types;
-using System;
 
 namespace Super.Runtime.Objects
 {

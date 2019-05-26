@@ -8,11 +8,4 @@ namespace Super.Model.Selection
 
 		ImplementsSelection() : base(typeof(ISelect<,>)) {}
 	}
-
-	public sealed class SelectionImplementations : GenericImplementations
-	{
-		public static SelectionImplementations Default { get; } = new SelectionImplementations();
-
-		SelectionImplementations() : base(typeof(ISelect<,>)) {}
-	}
 }

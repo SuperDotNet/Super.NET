@@ -1,6 +1,6 @@
-﻿using JetBrains.Annotations;
+﻿using System.Threading;
+using JetBrains.Annotations;
 using Super.Model.Results;
-using System.Threading;
 
 namespace Super.Runtime.Execution
 {

@@ -1,7 +1,7 @@
-﻿using BenchmarkDotNet.Attributes;
-using Super.Testing.Objects;
-using System;
+﻿using System;
 using System.Linq;
+using BenchmarkDotNet.Attributes;
+using Super.Testing.Objects;
 
 namespace Super.Testing.Application
 {
@@ -11,6 +11,8 @@ namespace Super.Testing.Application
 		readonly Sequencing<uint>               _subject;
 
 		Enumerations<uint> _classic;
+
+		uint _count;
 
 		uint[] _source;
 
@@ -37,8 +39,6 @@ namespace Super.Testing.Application
 				_source  = _classic.Full.ToArray();
 			}
 		}
-
-		uint _count;
 
 		[Benchmark]
 		public Array Full() => _subject.Full.Get(_source);

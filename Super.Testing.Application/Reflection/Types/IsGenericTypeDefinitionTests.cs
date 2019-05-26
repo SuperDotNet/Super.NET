@@ -6,6 +6,9 @@ namespace Super.Testing.Application.Reflection.Types
 {
 	public sealed class IsGenericTypeDefinitionTests
 	{
+		// ReSharper disable once UnusedTypeParameter
+		sealed class Subject<T> {}
+
 		[Fact]
 		void Verify()
 		{
@@ -13,8 +16,5 @@ namespace Super.Testing.Application.Reflection.Types
 			sut.Get(typeof(Subject<object>)).Should().BeFalse();
 			sut.Get(typeof(Subject<>)).Should().BeTrue();
 		}
-
-		// ReSharper disable once UnusedTypeParameter
-		sealed class Subject<T> {}
 	}
 }

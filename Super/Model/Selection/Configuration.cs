@@ -1,6 +1,6 @@
-﻿using Super.Compose;
+﻿using System;
+using Super.Compose;
 using Super.Model.Commands;
-using System;
 
 namespace Super.Model.Selection
 {
@@ -26,31 +26,11 @@ namespace Super.Model.Selection
 		}
 	}
 
-	public class Configured<TIn, TOut> : ISelect<TIn, TOut>
-	{
-		readonly Action<TIn>     _configure;
-		readonly Func<TIn, TOut> _select;
-
-		public Configured(ISelect<TIn, TOut> select, Action<TIn> configure) : this(select.Get, configure) {}
-
-		public Configured(Func<TIn, TOut> select, Action<TIn> configure)
-		{
-			_select        = select;
-			_configure = configure;
-		}
-
-		public TOut Get(TIn parameter)
-		{
-			_configure(parameter);
-			return _select(parameter);
-		}
-	}
-
 	public class Configuration<TIn, TOut, TOther> : ISelect<TIn, TOut>
 	{
 		readonly Action<TIn, TOther> _configuration;
-		readonly Func<TIn, TOut>     _source;
 		readonly Func<TOut, TOther>  _other;
+		readonly Func<TIn, TOut>     _source;
 
 		public Configuration(ISelect<TIn, TOut> select, IAssign<TIn, TOther> configuration)
 			: this(select, Start.A.Selection<TOut>().AndOf<TOther>().By.Cast, configuration) {}

@@ -8,6 +8,9 @@ namespace Super.Testing.Application.Model.Sequences.Collections
 {
 	public class SortMetadataTests
 	{
+		[Sort(200)]
+		sealed class Subject {}
+
 		[Fact]
 		void Verify()
 		{
@@ -19,8 +22,5 @@ namespace Super.Testing.Application.Model.Sequences.Collections
 		{
 			SortMetadata<TypeInfo>.Default.Get(Type<Subject>.Metadata).Should().Be(200);
 		}
-
-		[Sort(200)]
-		sealed class Subject {}
 	}
 }

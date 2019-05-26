@@ -1,6 +1,6 @@
-using Super.Reflection.Types;
 using System.Collections.Generic;
 using System.Reflection;
+using Super.Reflection.Types;
 
 namespace Super.Reflection.Collections
 {

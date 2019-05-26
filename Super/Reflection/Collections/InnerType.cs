@@ -1,10 +1,10 @@
+using System;
+using System.Reflection;
 using Super.Compose;
 using Super.Model.Selection.Alterations;
 using Super.Model.Selection.Conditions;
 using Super.Model.Sequences;
 using Super.Reflection.Types;
-using System;
-using System.Reflection;
 
 namespace Super.Reflection.Collections
 {
@@ -14,9 +14,10 @@ namespace Super.Reflection.Collections
 
 		InnerType() : this(Always<TypeInfo>.Default) {}
 
+		readonly Func<TypeInfo, bool> _condition;
+
 		readonly Func<TypeInfo, Array<TypeInfo>> _hierarchy;
 		readonly Func<Type[], TypeInfo>          _select;
-		readonly Func<TypeInfo, bool>            _condition;
 
 		public InnerType(ICondition<TypeInfo> condition)
 			: this(HasGenericArguments.Default.Then().And(condition), TypeHierarchy.Default.Get,

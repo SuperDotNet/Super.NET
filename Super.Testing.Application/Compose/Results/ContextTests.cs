@@ -1,67 +1,20 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using Super.Compose;
 using Super.Testing.Objects;
-using System;
 using Xunit;
 
 namespace Super.Testing.Application.Compose.Results
 {
 	public sealed class ContextTests
 	{
-		[Fact]
-		void VerifyNew()
-		{
-			var result = Start.A.Result<Subject>()
-			                  .By.Instantiation();
-			var instance = result.Get();
-			instance.Should()
-			        .NotBeNull();
-			result.Get().Should().NotBeSameAs(instance);
-		}
+		sealed class Subject {}
 
-		[Fact]
-		void VerifySingleton()
+		sealed class SubjectSingleton
 		{
-			Start.A.Result.Of<SubjectSingleton>()
-			     .By.Singleton()
-			     .Get()
-			     .Should()
-			     .BeSameAs(SubjectSingleton.Default);
-		}
+			public static SubjectSingleton Default { get; } = new SubjectSingleton();
 
-		[Fact]
-		void VerifyLocationDefault()
-		{
-			Start.A.Result<int>()
-			     .By.Location
-			     .Get()
-			     .Should()
-			     .Be(0);
-
-			Start.A.Result<int>()
-			     .By.Location.Or.Default(4)
-			     .Get()
-			     .Should()
-			     .Be(4);
-		}
-
-		[Fact]
-		void VerifyLocation()
-		{
-			Start.A.Result<IHelloWorld>()
-			     .By.Location.Get()
-			     .Should()
-			     .NotBeNull();
-		}
-
-		[Fact]
-		void VerifyLocationOrThrow()
-		{
-			Start.A.Result.Of<int>()
-			     .By.Location.Or.Throw()
-			     .Invoking(x => x.Get())
-			     .Should()
-			     .Throw<InvalidOperationException>();
+			SubjectSingleton() {}
 		}
 
 		[Fact]
@@ -91,13 +44,60 @@ namespace Super.Testing.Application.Compose.Results
 			     .BeSameAs(instance);
 		}
 
-		sealed class Subject {}
-
-		sealed class SubjectSingleton
+		[Fact]
+		void VerifyLocation()
 		{
-			public static SubjectSingleton Default { get; } = new SubjectSingleton();
+			Start.A.Result<IHelloWorld>()
+			     .By.Location.Get()
+			     .Should()
+			     .NotBeNull();
+		}
 
-			SubjectSingleton() {}
+		[Fact]
+		void VerifyLocationDefault()
+		{
+			Start.A.Result<int>()
+			     .By.Location
+			     .Get()
+			     .Should()
+			     .Be(0);
+
+			Start.A.Result<int>()
+			     .By.Location.Or.Default(4)
+			     .Get()
+			     .Should()
+			     .Be(4);
+		}
+
+		[Fact]
+		void VerifyLocationOrThrow()
+		{
+			Start.A.Result.Of<int>()
+			     .By.Location.Or.Throw()
+			     .Invoking(x => x.Get())
+			     .Should()
+			     .Throw<InvalidOperationException>();
+		}
+
+		[Fact]
+		void VerifyNew()
+		{
+			var result = Start.A.Result<Subject>()
+			                  .By.Instantiation();
+			var instance = result.Get();
+			instance.Should()
+			        .NotBeNull();
+			result.Get().Should().NotBeSameAs(instance);
+		}
+
+		[Fact]
+		void VerifySingleton()
+		{
+			Start.A.Result.Of<SubjectSingleton>()
+			     .By.Singleton()
+			     .Get()
+			     .Should()
+			     .BeSameAs(SubjectSingleton.Default);
 		}
 	}
 }

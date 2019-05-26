@@ -1,11 +1,11 @@
 ﻿using Super.Model.Selection;
+using Super.Model.Sequences.Collections;
 using Super.Runtime;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Super.Model.Sequences.Collections;
 
 namespace Super
 {
@@ -20,7 +20,7 @@ namespace Super
 		}
 
 		/// Attribution: https://stackoverflow.com/a/55034370/10340424
-		public static uint Clamp0(this long @this) => (uint)(@this & ~@this >> 63);
+		public static uint Clamp0(this long @this) => (uint)(@this & (~@this >> 63));
 
 		public static T[] Lease<T>(this ArrayPool<T> @this, int count)
 		{

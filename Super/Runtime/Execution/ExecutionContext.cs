@@ -1,7 +1,4 @@
-﻿using Super.Compose;
-using Super.Model.Results;
-using Super.Reflection;
-using Super.Runtime.Environment;
+﻿using Super.Model.Results;
 
 namespace Super.Runtime.Execution
 {
@@ -10,30 +7,5 @@ namespace Super.Runtime.Execution
 		public static ExecutionContext Default { get; } = new ExecutionContext();
 
 		ExecutionContext() : base(ExecutionContextStore.Default) {}
-	}
-
-	sealed class ExecutionContextLocator : Result<IExecutionContext>
-	{
-		public static ExecutionContextLocator Default { get; } = new ExecutionContextLocator();
-
-		ExecutionContextLocator() : base(A.This(ComponentTypesDefinition.Default)
-		                                  .Select(x => x.Query().FirstAssigned())
-		                                  .Assume()
-		                                  .To(I<ComponentLocator<IExecutionContext>>.Default)) {}
-	}
-
-	sealed class ExecutionContextStore : SystemStore<object>
-	{
-		public static ExecutionContextStore Default { get; } = new ExecutionContextStore();
-
-		ExecutionContextStore() : this(ExecutionContextLocator.Default) {}
-
-		public ExecutionContextStore(IResult<IResult<object>> result)
-			: base(Start.A.Result(() => new ContextDetails("Default Execution Context"))
-			            .Start()
-			            .Unless(result)
-			            .Then()
-			            .Value()
-			            .Selector()) {}
 	}
 }

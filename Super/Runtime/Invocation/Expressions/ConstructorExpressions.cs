@@ -1,8 +1,8 @@
-﻿using Super.Model.Selection;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Super.Model.Selection;
 
 namespace Super.Runtime.Invocation.Expressions
 {
@@ -21,7 +21,8 @@ namespace Super.Runtime.Invocation.Expressions
 
 		readonly ISelect<ConstructorInfo, IEnumerable<Expression>> _parameters;
 
-		public ConstructorExpressions(ISelect<ConstructorInfo, IEnumerable<Expression>> parameters) => _parameters = parameters;
+		public ConstructorExpressions(ISelect<ConstructorInfo, IEnumerable<Expression>> parameters)
+			=> _parameters = parameters;
 
 		public Expression Get(ConstructorInfo parameter) => new New(_parameters.Get(parameter)).Get(parameter);
 

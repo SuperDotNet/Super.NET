@@ -1,6 +1,6 @@
-﻿using Super.Model.Selection;
+﻿using System;
+using Super.Model.Selection;
 using Super.Runtime.Activation;
-using System;
 using Activator = Super.Runtime.Activation.Activator;
 
 namespace Super.Runtime.Environment

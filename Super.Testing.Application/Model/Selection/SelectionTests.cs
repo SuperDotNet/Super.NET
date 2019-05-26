@@ -8,10 +8,10 @@ namespace Super.Testing.Application.Model.Selection
 	{
 		public class Benchmarks
 		{
-			readonly ISelect<string, string> _subject;
-			readonly ISelect<string, string> _one;
-			readonly ISelect<string, string> _multiple;
 			readonly ISelect<string, string> _extensive;
+			readonly ISelect<string, string> _multiple;
+			readonly ISelect<string, string> _one;
+			readonly ISelect<string, string> _subject;
 
 			public Benchmarks() : this(A.Self<string>()) {}
 

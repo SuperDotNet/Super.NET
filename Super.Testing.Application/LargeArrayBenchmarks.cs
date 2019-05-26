@@ -1,16 +1,20 @@
-﻿using BenchmarkDotNet.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using BenchmarkDotNet.Attributes;
+
 // ReSharper disable All
 
 namespace Super.Testing.Application
 {
 	public class LargeArrayBenchmarks
 	{
-		const uint Total = 10_000u;
+		const uint Total  = 10_000u;
+		uint       _count = Total;
+
+		uint[] _source;
 
 		[Params(Total)]
 		/*[Params( /*1u, 2u, 3u, 4u, 5u, 8u, 16u,#1#32u, 64u, 128u, 256u, 512u, 1024u, 1025u, 2048u, 4096u, 8196u,
@@ -24,9 +28,7 @@ namespace Super.Testing.Application
 				_count  = value;
 				_source = Numbers().ToArray();
 			}
-		}	uint _count = Total;
-
-		uint[] _source;
+		}
 
 		[Benchmark]
 		public Array Enumerable()
@@ -54,7 +56,6 @@ namespace Super.Testing.Application
 
 			return null;
 		}
-
 
 		IEnumerable<uint> Numbers()
 		{
@@ -170,8 +171,8 @@ namespace Super.Testing.Application
 
 #if DEBUG
 // Try to prevent callers from using the ArrayBuilder after ToArray, if _count != 0.
-			_count = -1;
-			_array = null;
+				_count = -1;
+				_array = null;
 #endif
 
 				return result;
@@ -275,7 +276,7 @@ namespace Super.Testing.Application
 			private          T[] _first;       // The first buffer we store items in. Resized until ResizeLimit.
 			private ArrayBuilder<T[]>
 #pragma warning disable 649
-				_buffers;         // After ResizeLimit * 2, we store previous buffers we've filled out here.
+				_buffers; // After ResizeLimit * 2, we store previous buffers we've filled out here.
 #pragma warning restore 649
 			private T[] _current; // Current buffer we're reading into. If _count <= ResizeLimit, this is _first.
 			private int _index;   // Index into the current buffer.
@@ -503,8 +504,8 @@ namespace Super.Testing.Application
 				Debug.Assert(index >= 0 && index < _buffers.Count + 2);
 
 				return index == 0              ? _first :
-					   index <= _buffers.Count ? _buffers[index - 1] :
-												 _current;
+				       index <= _buffers.Count ? _buffers[index - 1] :
+				                                 _current;
 			}
 
 			/// <summary>
@@ -556,7 +557,7 @@ namespace Super.Testing.Application
 
 				Debug.Assert((uint)_maxCapacity > (uint)_count);
 				Debug.Assert(_index == _current.Length,
-							 $"{nameof(AllocateBuffer)} was called, but there's more space.");
+				             $"{nameof(AllocateBuffer)} was called, but there's more space.");
 
 				// If _count is int.MinValue, we want to go down the other path which will raise an exception.
 				if ((uint)_count < (uint)ResizeLimit)

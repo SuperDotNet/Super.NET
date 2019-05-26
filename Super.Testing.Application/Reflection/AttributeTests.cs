@@ -1,12 +1,20 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using Super.Reflection;
-using System;
 using Xunit;
 
 namespace Super.Testing.Application.Reflection
 {
 	public sealed class AttributeTests
 	{
+		sealed class Extend : Root {}
+
+		[Subject]
+		class Root {}
+
+		[AttributeUsage(AttributeTargets.Class)]
+		sealed class SubjectAttribute : Attribute {}
+
 		[Fact]
 		void Verify()
 		{
@@ -19,13 +27,5 @@ namespace Super.Testing.Application.Reflection
 			attribute.Should().NotBeNull();
 			Attribute<SubjectAttribute>.Default.Get(provider).Should().BeSameAs(attribute);
 		}
-
-		sealed class Extend : Root {}
-
-		[Subject]
-		class Root {}
-
-		[AttributeUsage(AttributeTargets.Class)]
-		sealed class SubjectAttribute : Attribute {}
 	}
 }

@@ -1,11 +1,8 @@
-﻿using Super.Compose;
+﻿using System;
 using Super.Model.Commands;
 using Super.Model.Results;
 using Super.Model.Selection;
-using Super.Model.Selection.Conditions;
-using Super.Model.Selection.Stores;
 using Super.Reflection;
-using System;
 
 namespace Super.Runtime.Execution
 {
@@ -15,14 +12,6 @@ namespace Super.Runtime.Execution
 
 		Contexts() : this(DisposeContext.Default, ExecutionContextStore.Default, I<ContextDetails>.Default.From) {}
 
-		readonly ICommand               _dispose;
-		readonly IMutable<object>       _store;
-		readonly Func<string, object>   _context;
-		readonly Func<object, ICommand> _command;
-
-		public Contexts(ICommand dispose, IMutable<object> store, Func<string, object> context)
-			: this(dispose, store, context, store.AsCommand().Then().Out) {}
-
 		// ReSharper disable once TooManyDependencies
 		Contexts(ICommand dispose, IMutable<object> store, Func<string, object> context, Func<object, ICommand> command)
 		{
@@ -31,6 +20,15 @@ namespace Super.Runtime.Execution
 			_context = context;
 			_command = command;
 		}
+
+		readonly Func<object, ICommand> _command;
+		readonly Func<string, object>   _context;
+
+		readonly ICommand         _dispose;
+		readonly IMutable<object> _store;
+
+		public Contexts(ICommand dispose, IMutable<object> store, Func<string, object> context)
+			: this(dispose, store, context, store.AsCommand().Then().Out) {}
 
 		public IDisposable Get(string parameter)
 		{
@@ -42,43 +40,5 @@ namespace Super.Runtime.Execution
 			_store.Execute(_context(parameter));
 			return result;
 		}
-	}
-
-	sealed class DisposeContext : Command<None>, ICommand
-	{
-		public static DisposeContext Default { get; } = new DisposeContext();
-
-		DisposeContext() : this(ExecutionContextStore.Default.Condition, AssociatedResources.Default) {}
-
-		public DisposeContext(ICondition<None> assigned, IConditional<object, IDisposable> resources)
-			: this(assigned, resources.Condition, resources) {}
-
-		public DisposeContext(ICondition<None> assigned, ICondition<object> contains,
-		                      ISelect<object, IDisposable> select)
-			: base(select.Then()
-			             .Terminate(A.Of<DisposeCommand>())
-			             .And(ExecutionContextStore.Default.AsCommand().Then().Input().Any().Get(),
-			                  A.Of<ClearResources>())
-			             .To(x => x.Get().ToSelect())
-			             .If(contains)
-			             .To(x => x.ToCommand().Then())
-			             .Input(ExecutionContextStore.Default)
-			             .To(x => x.Get().ToSelect())
-			             .If(assigned)
-			             .ToAction()) {}
-	}
-
-	sealed class ClearResources : RemoveCommand<object, Disposables>
-	{
-		public static ClearResources Default { get; } = new ClearResources();
-
-		ClearResources() : base(AssociatedResources.Default) {}
-	}
-
-	sealed class AssociatedResources : AssociatedResource<object, Disposables>
-	{
-		public static AssociatedResources Default { get; } = new AssociatedResources();
-
-		AssociatedResources() {}
 	}
 }

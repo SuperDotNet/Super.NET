@@ -8,6 +8,36 @@ namespace Super.Testing.Application.Aspects
 {
 	public sealed class AspectsTests
 	{
+		sealed class Decorated<TIn, TOut> : ISelect<TIn, TOut>
+		{
+			readonly ISelect<TIn, TOut> _select;
+
+			public Decorated(ISelect<TIn, TOut> select) => _select = select;
+
+			public TOut Get(TIn parameter) => _select.Get(parameter);
+		}
+
+		sealed class Decoration<TIn, TOut> : IAspect<TIn, TOut>
+		{
+			public static Decoration<TIn, TOut> Default { get; } = new Decoration<TIn, TOut>();
+
+			Decoration() {}
+
+			public ISelect<TIn, TOut> Get(ISelect<TIn, TOut> parameter) => new Decorated<TIn, TOut>(parameter);
+		}
+
+		[Fact]
+		void After()
+		{
+			AspectRegistry.Default.Get().Open().Should().BeEmpty();
+		}
+
+		[Fact]
+		void Before()
+		{
+			AspectRegistry.Default.Get().Open().Should().BeEmpty();
+		}
+
 		[Fact]
 		void Verify()
 		{
@@ -18,9 +48,14 @@ namespace Super.Testing.Application.Aspects
 		}
 
 		[Fact]
-		void Before()
+		void VerifyCast()
 		{
-			AspectRegistry.Default.Get().Open().Should().BeEmpty();
+			Decoration<object, object>.Default.Registered();
+
+			var self   = A.Self<string>();
+			var aspect = Aspects<string, string>.Default.Get(self);
+			aspect.Should().BeSameAs(Aspects<string, string>.Default.Get(self));
+			aspect.Get(self).Should().BeOfType<Cast<object, object, string, string>.Container>();
 		}
 
 		[Fact]
@@ -34,17 +69,6 @@ namespace Super.Testing.Application.Aspects
 			var aspect = Aspects<object, object>.Default.Get(self);
 			aspect.Should().BeSameAs(Aspects<object, object>.Default.Get(self));
 			aspect.Get(self).Should().BeOfType<Decorated<object, object>>();
-		}
-
-		[Fact]
-		void VerifyCast()
-		{
-			Decoration<object, object>.Default.Registered();
-
-			var self   = A.Self<string>();
-			var aspect = Aspects<string, string>.Default.Get(self);
-			aspect.Should().BeSameAs(Aspects<string, string>.Default.Get(self));
-			aspect.Get(self).Should().BeOfType<Cast<object, object, string, string>.Container>();
 		}
 
 		[Fact]
@@ -63,33 +87,13 @@ namespace Super.Testing.Application.Aspects
 			next.Get(different).Should().BeSameAs(different);
 
 			var specific = Start.A.Selection.Of.Type<object>().AndOf<string>().By.Cast;
-			var aspect      = Aspects<object, string>.Default.Get(specific);
+			var aspect   = Aspects<object, string>.Default.Get(specific);
 			aspect.Should().BeSameAs(Aspects<object, string>.Default.Get(specific));
-			aspect.Get(specific).Should().NotBeSameAs(specific).And.Subject.Should().BeOfType<Decorated<object, string>>();
-		}
-
-		[Fact]
-		void After()
-		{
-			AspectRegistry.Default.Get().Open().Should().BeEmpty();
-		}
-
-		sealed class Decorated<TIn, TOut> : ISelect<TIn, TOut>
-		{
-			readonly ISelect<TIn, TOut> _select;
-
-			public Decorated(ISelect<TIn, TOut> select) => _select = @select;
-
-			public TOut Get(TIn parameter) => _select.Get(parameter);
-		}
-
-		sealed class Decoration<TIn, TOut> : IAspect<TIn, TOut>
-		{
-			public static Decoration<TIn, TOut> Default { get; } = new Decoration<TIn, TOut>();
-
-			Decoration() {}
-
-			public ISelect<TIn, TOut> Get(ISelect<TIn, TOut> parameter) => new Decorated<TIn, TOut>(parameter);
+			aspect.Get(specific)
+			      .Should()
+			      .NotBeSameAs(specific)
+			      .And.Subject.Should()
+			      .BeOfType<Decorated<object, string>>();
 		}
 	}
 }

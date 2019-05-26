@@ -1,9 +1,9 @@
-﻿using Super.Compose;
+﻿using System;
+using Super.Compose;
 using Super.Model.Selection;
 using Super.Model.Selection.Conditions;
 using Super.Model.Selection.Stores;
 using Super.Model.Sequences;
-using System;
 
 namespace Super.Reflection.Types
 {

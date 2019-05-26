@@ -1,6 +1,6 @@
-﻿using Super.Runtime.Activation;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Super.Runtime.Activation;
 
 namespace Super.Model.Sequences
 {

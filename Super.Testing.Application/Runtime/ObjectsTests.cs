@@ -1,25 +1,23 @@
-﻿using AutoFixture.Xunit2;
+﻿using System;
+using System.Linq;
+using AutoFixture.Xunit2;
 using FluentAssertions;
 using Super.Runtime;
 using Super.Runtime.Activation;
-using System;
-using System.Linq;
 using Xunit;
 
 namespace Super.Testing.Application.Runtime
 {
 	public class ObjectsTests
 	{
-		[Theory]
-		[AutoData]
+		[Theory, AutoData]
 		void AsTo(string message)
 		{
 			1.AsTo<string, object>(x => x, () => message).Should().Be(message);
 			1.AsTo<string, object>(x => x).Should().BeNull();
 		}
 
-		[Theory]
-		[AutoData]
+		[Theory, AutoData]
 		public void AsToDefault(char[] expected)
 		{
 			3.AsTo<string, char[]>(x => x.ToCharArray(), expected.Self)
@@ -90,10 +88,12 @@ namespace Super.Testing.Application.Runtime
 		[Fact]
 		public void YieldMetadata()
 		{
-			GetType().Yield()
-			         .Where(x => x.Name != string.Empty).Only()
-			         .Should()
-			         .Be(GetType());
+			GetType()
+				.Yield()
+				.Where(x => x.Name != string.Empty)
+				.Only()
+				.Should()
+				.Be(GetType());
 		}
 	}
 }

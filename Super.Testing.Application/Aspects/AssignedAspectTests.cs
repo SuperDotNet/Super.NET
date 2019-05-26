@@ -1,15 +1,35 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿using System;
+using BenchmarkDotNet.Attributes;
 using FluentAssertions;
 using Super.Aspects;
 using Super.Compose;
 using Super.Model.Selection;
-using System;
 using Xunit;
 
 namespace Super.Testing.Application.Aspects
 {
 	public class AssignedAspectTests
 	{
+		public class Benchmarks
+		{
+			readonly ISelect<object, object> _subject;
+
+			public Benchmarks() : this(A.Self<object>()) {}
+
+			public Benchmarks(ISelect<object, object> subject) => _subject = subject;
+
+			[Benchmark(Baseline = true)]
+			public object Once() => _subject.Configured();
+		}
+
+		[Fact]
+		void RuntimeRegistration()
+		{
+			var single    = new Registration(typeof(AssignedAspect<,>));
+			var parameter = new[] {A.Type<string>(), A.Type<string>()};
+			single.Get(parameter).Should().BeSameAs(AssignedAspect<string, string>.Default);
+		}
+
 		[Fact]
 		void Verify()
 		{
@@ -21,26 +41,6 @@ namespace Super.Testing.Application.Aspects
 			       .Invoking(x => x.Get(null))
 			       .Should()
 			       .Throw<InvalidOperationException>();
-		}
-
-		[Fact]
-		void RuntimeRegistration()
-		{
-			var single    = new Registration(typeof(AssignedAspect<,>));
-			var parameter = new[] {A.Type<string>(), A.Type<string>()};
-			single.Get(parameter).Should().BeSameAs(AssignedAspect<string, string>.Default);
-		}
-
-		public class Benchmarks
-		{
-			readonly ISelect<object, object> _subject;
-
-			public Benchmarks() : this(A.Self<object>()) {}
-
-			public Benchmarks(ISelect<object, object> subject) => _subject = subject;
-
-			[Benchmark(Baseline = true)]
-			public object Once() => _subject.Configured();
 		}
 	}
 }

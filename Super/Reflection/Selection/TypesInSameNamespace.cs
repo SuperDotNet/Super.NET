@@ -1,6 +1,6 @@
-﻿using Super.Model.Sequences;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Super.Model.Sequences;
 
 namespace Super.Reflection.Selection
 {

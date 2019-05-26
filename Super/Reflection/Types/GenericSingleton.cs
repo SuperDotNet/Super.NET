@@ -1,9 +1,9 @@
-﻿using Super.Model.Sequences;
-using Super.Runtime.Activation;
-using System;
+﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Super.Model.Sequences;
+using Super.Runtime.Activation;
 
 namespace Super.Reflection.Types
 {
@@ -19,7 +19,7 @@ namespace Super.Reflection.Types
 
 		public GenericSingleton(MethodInfo method, IArray<ParameterExpression> expressions)
 		{
-			_method = method;
+			_method    = method;
 			Parameters = expressions;
 		}
 

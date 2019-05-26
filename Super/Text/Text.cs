@@ -8,11 +8,4 @@ namespace Super.Text
 
 		public override string ToString() => Get();
 	}
-
-	sealed class None : Text
-	{
-		public static None Default { get; } = new None();
-
-		None() : base("N/A") {}
-	}
 }

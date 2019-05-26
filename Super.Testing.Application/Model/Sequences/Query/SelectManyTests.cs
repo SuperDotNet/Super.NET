@@ -1,9 +1,9 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿using System.Collections.Generic;
+using System.Linq;
+using BenchmarkDotNet.Attributes;
 using FluentAssertions;
 using Super.Compose;
 using Super.Model.Selection;
-using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
 namespace Super.Testing.Application.Model.Sequences.Query
@@ -16,55 +16,6 @@ namespace Super.Testing.Application.Model.Sequences.Query
 			new Numbers(5, 6, 7, 8),
 			new Numbers(9, 10)
 		};
-
-		[Fact]
-		void Verify()
-		{
-			Start.A.Selection<Numbers>()
-			     .As.Sequence.Array.By.Self.Query()
-			     .SelectManyBy(x => x.Elements)
-			     .Out()
-			     .Get(Data)
-			     .Should()
-			     .Equal(Data.SelectMany(x => x.Elements));
-		}
-
-		[Fact]
-		void VerifyBody()
-		{
-			Start.A.Selection<Numbers>()
-			     .As.Sequence.Array.By.Self.Query()
-			     .Skip(2)
-			     .SelectManyBy(x => x.Elements)
-			     .Out()
-			     .Get(Data)
-			     .Should()
-			     .Equal(Data.Skip(2).SelectMany(x => x.Elements));
-		}
-
-
-		[Fact]
-		void VerifyBodyFirst()
-		{
-			Start.A.Selection<Numbers>()
-			     .As.Sequence.Array.By.Self.Query()
-			     .Skip(1)
-			     .SelectManyBy(x => x.Elements)
-			     .First()
-			     .Get(Data)
-			     .Should()
-			     .Be(Data.Skip(1).SelectMany(x => x.Elements).First());
-
-			Start.A.Selection<Numbers>()
-			     .As.Sequence.Array.By.Self.Query()
-			     .Skip(1)
-			     .SelectManyBy(x => x.Elements)
-			     .Skip(2)
-			     .First()
-			     .Get(Data)
-			     .Should()
-			     .Be(Data.Skip(1).SelectMany(x => x.Elements).Skip(2).First());
-		}
 
 		public sealed class Numbers
 		{
@@ -95,6 +46,54 @@ namespace Super.Testing.Application.Model.Sequences.Query
 
 			[Benchmark]
 			public int[] Subject() => _subject.Get(Data);
+		}
+
+		[Fact]
+		void Verify()
+		{
+			Start.A.Selection<Numbers>()
+			     .As.Sequence.Array.By.Self.Query()
+			     .SelectManyBy(x => x.Elements)
+			     .Out()
+			     .Get(Data)
+			     .Should()
+			     .Equal(Data.SelectMany(x => x.Elements));
+		}
+
+		[Fact]
+		void VerifyBody()
+		{
+			Start.A.Selection<Numbers>()
+			     .As.Sequence.Array.By.Self.Query()
+			     .Skip(2)
+			     .SelectManyBy(x => x.Elements)
+			     .Out()
+			     .Get(Data)
+			     .Should()
+			     .Equal(Data.Skip(2).SelectMany(x => x.Elements));
+		}
+
+		[Fact]
+		void VerifyBodyFirst()
+		{
+			Start.A.Selection<Numbers>()
+			     .As.Sequence.Array.By.Self.Query()
+			     .Skip(1)
+			     .SelectManyBy(x => x.Elements)
+			     .First()
+			     .Get(Data)
+			     .Should()
+			     .Be(Data.Skip(1).SelectMany(x => x.Elements).First());
+
+			Start.A.Selection<Numbers>()
+			     .As.Sequence.Array.By.Self.Query()
+			     .Skip(1)
+			     .SelectManyBy(x => x.Elements)
+			     .Skip(2)
+			     .First()
+			     .Get(Data)
+			     .Should()
+			     .Be(Data.Skip(1).SelectMany(x => x.Elements).Skip(2).First());
 		}
 	}
 }

@@ -1,6 +1,6 @@
-﻿using Super.Compose;
+﻿using System;
+using Super.Compose;
 using Super.Reflection.Types;
-using System;
 
 namespace Super.Model.Selection.Stores
 {

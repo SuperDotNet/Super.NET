@@ -1,8 +1,8 @@
-﻿using Super.Model.Sequences;
-using System;
+﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Super.Model.Sequences;
 
 namespace Super.Reflection.Types
 {

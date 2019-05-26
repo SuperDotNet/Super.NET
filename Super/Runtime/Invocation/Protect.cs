@@ -1,6 +1,6 @@
-﻿using Super.Model.Selection;
+﻿using System;
+using Super.Model.Selection;
 using Super.Runtime.Activation;
-using System;
 
 namespace Super.Runtime.Invocation
 {

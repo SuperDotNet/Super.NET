@@ -1,6 +1,6 @@
-﻿using Super.Runtime.Activation;
-using System;
+﻿using System;
 using System.Globalization;
+using Super.Runtime.Activation;
 
 namespace Super.Text.Formatting
 {

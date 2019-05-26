@@ -1,5 +1,5 @@
-﻿using Super.Model.Selection;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
+using Super.Model.Selection;
 
 namespace Super.Runtime.Invocation.Expressions
 {

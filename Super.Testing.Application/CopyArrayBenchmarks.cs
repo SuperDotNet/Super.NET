@@ -1,7 +1,7 @@
-﻿using AutoFixture;
-using BenchmarkDotNet.Attributes;
-using System;
+﻿using System;
 using System.Linq;
+using AutoFixture;
+using BenchmarkDotNet.Attributes;
 
 namespace Super.Testing.Application
 {

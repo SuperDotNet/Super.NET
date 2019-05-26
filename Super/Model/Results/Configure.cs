@@ -18,7 +18,7 @@ namespace Super.Model.Results
 		public TOut Get()
 		{
 			var instance = _instance();
-			var result = _select(instance);
+			var result   = _select(instance);
 			_configuration(instance, result);
 			return result;
 		}

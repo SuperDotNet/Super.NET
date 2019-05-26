@@ -4,15 +4,15 @@ namespace Super.Model.Commands
 {
 	class ConditionalCommand<T> : ICommand<T>
 	{
-		readonly ICommand<T>       _false;
 		readonly ICondition<T> _condition;
-		readonly ICommand<T>       _true;
+		readonly ICommand<T>   _false;
+		readonly ICommand<T>   _true;
 
 		public ConditionalCommand(ICondition<T> condition, ICommand<T> @true, ICommand<T> @false)
 		{
 			_condition = condition;
-			_true          = @true;
-			_false         = @false;
+			_true      = @true;
+			_false     = @false;
 		}
 
 		public void Execute(T parameter)

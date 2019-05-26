@@ -1,6 +1,6 @@
-﻿using Super.Model.Results;
+﻿using System;
+using Super.Model.Results;
 using Super.Reflection.Types;
-using System;
 
 namespace Super.Runtime.Invocation.Expressions
 {

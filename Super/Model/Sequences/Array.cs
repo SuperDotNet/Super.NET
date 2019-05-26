@@ -1,7 +1,7 @@
+using System.Collections.Immutable;
 using JetBrains.Annotations;
 using Super.Model.Results;
 using Super.Runtime;
-using System.Collections.Immutable;
 
 namespace Super.Model.Sequences
 {

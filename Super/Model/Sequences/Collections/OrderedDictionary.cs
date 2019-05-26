@@ -179,7 +179,8 @@ namespace Super.Model.Sequences.Collections
 		{
 			if (index < 0 || index >= _delegatedKeyedCollection.Count)
 			{
-				throw new ArgumentException("The index was outside the bounds of the dictionary: {0}".FormatWith(index));
+				throw new ArgumentException("The index was outside the bounds of the dictionary: {0}"
+					                            .FormatWith(index));
 			}
 
 			return _delegatedKeyedCollection[index];
@@ -224,7 +225,8 @@ namespace Super.Model.Sequences.Collections
 		{
 			if (index < 0 || index >= _delegatedKeyedCollection.Count)
 			{
-				throw new ArgumentException("The index was outside the bounds of the dictionary: {0}".FormatWith(index));
+				throw new ArgumentException("The index was outside the bounds of the dictionary: {0}"
+					                            .FormatWith(index));
 			}
 
 			_delegatedKeyedCollection.RemoveAt(index);
@@ -333,7 +335,8 @@ namespace Super.Model.Sequences.Collections
 		bool ICollection<KeyValuePair<TKey, TValue>>.Remove(KeyValuePair<TKey, TValue> item)
 			=> _delegatedKeyedCollection.Remove(item);
 
-		IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator() => GetEnumerator();
+		IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator()
+			=> GetEnumerator();
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
@@ -403,8 +406,10 @@ namespace Super.Model.Sequences.Collections
 		{
 			Comparer = comparer;
 			_delegatedKeyedCollection = comparer != null
-				                            ? new DelegatedKeyedCollection<TKey, KeyValuePair<TKey, TValue>>(x => x.Key, comparer)
-				                            : new DelegatedKeyedCollection<TKey, KeyValuePair<TKey, TValue>>(x => x.Key);
+				                            ? new DelegatedKeyedCollection<TKey, KeyValuePair<TKey, TValue>>(x => x.Key,
+				                                                                                             comparer)
+				                            : new DelegatedKeyedCollection<TKey, KeyValuePair<TKey, TValue>
+				                            >(x => x.Key);
 		}
 	}
 }

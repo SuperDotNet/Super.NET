@@ -6,32 +6,13 @@ namespace Super.Testing.Application
 {
 	public sealed class StartTests
 	{
-		[Fact]
-		void VerifySubject()
-		{
-			var source = Start.A.Result<Subject>().By.Activation();
-			var first  = source.Get();
-			first.Should().NotBeNull();
-			source.Get().Should().NotBeNull().And.Subject.Should().NotBeSameAs(first);
-		}
+		sealed class Subject {}
 
-		[Fact]
-		void VerifySingleton()
+		sealed class SingletonSubject
 		{
-			var source = Start.A.Result<SingletonSubject>().By.Activation();
-			var first  = source.Get();
-			first.Should().Be(SingletonSubject.Default);
-			source.Get().Should().BeSameAs(first);
-		}
+			public static SingletonSubject Default { get; } = new SingletonSubject();
 
-		[Fact]
-		void VerifyDefault()
-		{
-			Start.A.Result<Subject>()
-			     .By.Default()
-			     .Get()
-			     .Should()
-			     .BeNull();
+			SingletonSubject() {}
 		}
 
 		[Fact]
@@ -50,13 +31,32 @@ namespace Super.Testing.Application
 			     .HaveCount(4);
 		}
 
-		sealed class Subject {}
-
-		sealed class SingletonSubject
+		[Fact]
+		void VerifyDefault()
 		{
-			public static SingletonSubject Default { get; } = new SingletonSubject();
+			Start.A.Result<Subject>()
+			     .By.Default()
+			     .Get()
+			     .Should()
+			     .BeNull();
+		}
 
-			SingletonSubject() {}
+		[Fact]
+		void VerifySingleton()
+		{
+			var source = Start.A.Result<SingletonSubject>().By.Activation();
+			var first  = source.Get();
+			first.Should().Be(SingletonSubject.Default);
+			source.Get().Should().BeSameAs(first);
+		}
+
+		[Fact]
+		void VerifySubject()
+		{
+			var source = Start.A.Result<Subject>().By.Activation();
+			var first  = source.Get();
+			first.Should().NotBeNull();
+			source.Get().Should().NotBeNull().And.Subject.Should().NotBeSameAs(first);
 		}
 	}
 }

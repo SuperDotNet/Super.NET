@@ -1,8 +1,5 @@
-using Super.Reflection.Types;
-using Super.Runtime;
 using System;
-using System.Reflection;
-using Super.Model.Selection.Conditions;
+using Super.Runtime;
 
 namespace Super.Reflection
 {
@@ -13,17 +10,10 @@ namespace Super.Reflection
 		IsAssignableStructure() : base(Nullable.GetUnderlyingType) {}
 	}
 
-	sealed class IsReference : InverseCondition<TypeInfo>
-	{
-		public static IsReference Default { get; } = new IsReference();
-		IsReference() : base(IsValueType.Default) {}
-	}
-
 	/*sealed class CanBeAssigned : AnySpecification<TypeInfo>
 	{
 		public static CanBeAssigned Default { get; } = new CanBeAssigned();
 
 		CanBeAssigned() : base(IsAssignableStructure.Default, IsReference.Default) {}
 	}*/
-
 }

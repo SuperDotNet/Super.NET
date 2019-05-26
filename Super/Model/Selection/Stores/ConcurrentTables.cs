@@ -1,8 +1,8 @@
+using System;
+using System.Collections.Concurrent;
 using Super.Model.Selection.Conditions;
 using Super.Runtime;
 using Super.Runtime.Activation;
-using System;
-using System.Collections.Concurrent;
 
 namespace Super.Model.Selection.Stores
 {
@@ -21,9 +21,8 @@ namespace Super.Model.Selection.Stores
 
 		sealed class Table : ITable<TIn, TOut>
 		{
-			public ICondition<TIn> Condition { get; }
-			readonly ConcurrentDictionary<TIn, TOut> _table;
 			readonly Func<TIn, TOut>                 _select;
+			readonly ConcurrentDictionary<TIn, TOut> _table;
 
 			public Table(ConcurrentDictionary<TIn, TOut> table, Func<TIn, TOut> select)
 				: this(new Condition<TIn>(table.ContainsKey), table, select) {}
@@ -34,6 +33,8 @@ namespace Super.Model.Selection.Stores
 				_table    = table;
 				_select   = select;
 			}
+
+			public ICondition<TIn> Condition { get; }
 
 			public TOut Get(TIn parameter) => _table.GetOrAdd(parameter, _select);
 

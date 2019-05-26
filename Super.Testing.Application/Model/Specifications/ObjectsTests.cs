@@ -1,6 +1,6 @@
-﻿using FluentAssertions;
-using System;
+﻿using System;
 using System.Reflection;
+using FluentAssertions;
 using Super.Model.Selection.Conditions;
 using Xunit;
 

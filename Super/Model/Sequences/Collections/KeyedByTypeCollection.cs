@@ -28,6 +28,7 @@ namespace Super.Model.Sequences.Collections
 			{
 				Dictionary.Remove(key);
 			}
+
 			base.InsertItem(index, item);
 		}
 	}

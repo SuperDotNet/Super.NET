@@ -5,7 +5,7 @@ namespace Super.Model.Selection
 	public class Decorator<TIn, TOut> : ISelect<TIn, TOut>
 	{
 		readonly Func<Decoration<TIn, TOut>, TOut> _decorator;
-		readonly Func<TIn, TOut>                      _source;
+		readonly Func<TIn, TOut>                   _source;
 
 		public Decorator(ISelect<Decoration<TIn, TOut>, TOut> decorator,
 		                 ISelect<TIn, TOut> select)

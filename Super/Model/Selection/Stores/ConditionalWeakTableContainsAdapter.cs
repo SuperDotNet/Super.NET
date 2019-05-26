@@ -1,5 +1,5 @@
-using Super.Model.Selection.Conditions;
 using System.Runtime.CompilerServices;
+using Super.Model.Selection.Conditions;
 
 namespace Super.Model.Selection.Stores
 {

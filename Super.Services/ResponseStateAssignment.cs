@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Super.Model.Commands;
-using Super.Runtime;
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Http;
+using Microsoft.AspNetCore.Http;
+using Super.Model.Commands;
+using Super.Runtime;
 
 namespace Super.Services
 {

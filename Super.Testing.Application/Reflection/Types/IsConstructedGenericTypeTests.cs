@@ -1,12 +1,17 @@
 ﻿using FluentAssertions;
 using Super.Reflection.Types;
 using Xunit;
+
 // ReSharper disable UnusedTypeParameter
 
 namespace Super.Testing.Application.Reflection.Types
 {
 	public sealed class IsConstructedGenericTypeTests
 	{
+		sealed class Subject<T> {}
+
+		interface ISubject<T> {}
+
 		[Fact]
 		void Verify()
 		{
@@ -22,9 +27,5 @@ namespace Super.Testing.Application.Reflection.Types
 			sut.Get(typeof(ISubject<object>)).Should().BeTrue();
 			sut.Get(typeof(ISubject<>)).Should().BeFalse();
 		}
-
-		sealed class Subject<T> {}
-
-		interface ISubject<T> {}
 	}
 }

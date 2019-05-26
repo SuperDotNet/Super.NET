@@ -1,7 +1,7 @@
-﻿using Super.Model.Sequences;
-using Super.Runtime.Activation;
-using System;
+﻿using System;
 using System.Reflection;
+using Super.Model.Sequences;
+using Super.Runtime.Activation;
 
 namespace Super.Reflection.Selection
 {

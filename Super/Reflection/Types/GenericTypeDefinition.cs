@@ -1,5 +1,5 @@
-using Super.Model.Selection.Alterations;
 using System;
+using Super.Model.Selection.Alterations;
 
 namespace Super.Reflection.Types
 {

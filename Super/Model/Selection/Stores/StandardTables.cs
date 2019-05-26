@@ -1,8 +1,8 @@
+using System;
+using System.Collections.Generic;
 using Super.Model.Selection.Conditions;
 using Super.Runtime;
 using Super.Runtime.Activation;
-using System;
-using System.Collections.Generic;
 
 namespace Super.Model.Selection.Stores
 {
@@ -21,9 +21,8 @@ namespace Super.Model.Selection.Stores
 
 		sealed class Table : ITable<TIn, TOut>
 		{
-			public ICondition<TIn> Condition { get; }
-			readonly IDictionary<TIn, TOut> _table;
 			readonly Func<TIn, TOut>        _select;
+			readonly IDictionary<TIn, TOut> _table;
 
 			public Table(IDictionary<TIn, TOut> table, Func<TIn, TOut> select)
 				: this(new Condition<TIn>(table.ContainsKey), table, select) {}
@@ -34,6 +33,8 @@ namespace Super.Model.Selection.Stores
 				_table    = table;
 				_select   = select;
 			}
+
+			public ICondition<TIn> Condition { get; }
 
 			public TOut Get(TIn parameter)
 			{

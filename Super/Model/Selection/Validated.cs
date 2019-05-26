@@ -1,12 +1,12 @@
-﻿using Super.Model.Selection.Conditions;
-using System;
+﻿using System;
+using Super.Model.Selection.Conditions;
 
 namespace Super.Model.Selection
 {
 	public class Validated<TIn, TOut> : ISelect<TIn, TOut>
 	{
 		readonly Func<TIn, TOut> _source, _fallback;
-		readonly Func<TIn, bool>    _specification;
+		readonly Func<TIn, bool> _specification;
 
 		public Validated(ICondition<TIn> condition, ISelect<TIn, TOut> select)
 			: this(condition, select, Default<TIn, TOut>.Instance) {}

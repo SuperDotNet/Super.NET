@@ -1,13 +1,14 @@
+using System;
+using System.Runtime.CompilerServices;
 using Super.Model.Selection.Conditions;
 using Super.Runtime;
 using Super.Runtime.Activation;
-using System;
-using System.Runtime.CompilerServices;
 
 namespace Super.Model.Selection.Stores
 {
-	public sealed class StructureValueTables<TIn, TOut> : ISelect<ConditionalWeakTable<TIn, Tuple<TOut>>, ITable<TIn, TOut>>,
-		  IActivateUsing<Func<TIn, TOut>>
+	public sealed class StructureValueTables<TIn, TOut> :
+		ISelect<ConditionalWeakTable<TIn, Tuple<TOut>>, ITable<TIn, TOut>>,
+		IActivateUsing<Func<TIn, TOut>>
 		where TIn : class
 		where TOut : struct
 	{
@@ -28,8 +29,8 @@ namespace Super.Model.Selection.Stores
 
 		sealed class Table : ITable<TIn, TOut>
 		{
-			readonly ConditionalWeakTable<TIn, Tuple<TOut>>                     _table;
 			readonly ConditionalWeakTable<TIn, Tuple<TOut>>.CreateValueCallback _callback;
+			readonly ConditionalWeakTable<TIn, Tuple<TOut>>                     _table;
 
 			public Table(ConditionalWeakTable<TIn, Tuple<TOut>> table,
 			             ConditionalWeakTable<TIn, Tuple<TOut>>.CreateValueCallback callback)

@@ -1,4 +1,8 @@
-﻿using Super.Model.Commands;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+using Super.Model.Commands;
 using Super.Model.Results;
 using Super.Model.Selection;
 using Super.Model.Selection.Adapters;
@@ -8,10 +12,7 @@ using Super.Model.Sequences;
 using Super.Model.Sequences.Query;
 using Super.Operations;
 using Super.Runtime;
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
+using Action = System.Action;
 
 namespace Super
 {
@@ -102,7 +103,8 @@ namespace Super
 		                                                      Expression<Func<T, IEnumerable<TOut>>> select)
 			=> @this.SelectMany(select.Compile());
 
-		public static Query<_, TOut> SelectMany<_, T, TOut>(this Query<_, T> @this, ISelect<T, IEnumerable<TOut>> select)
+		public static Query<_, TOut> SelectMany<_, T, TOut>(this Query<_, T> @this,
+		                                                    ISelect<T, IEnumerable<TOut>> select)
 			=> @this.SelectMany(select.Get);
 
 		public static Query<_, TOut> SelectMany<_, T, TOut>(this Query<_, T> @this, Func<T, IEnumerable<TOut>> select)
@@ -137,9 +139,9 @@ namespace Super
 
 		public static Func<TIn, TOut> Selector<TIn, TOut>(this Selector<TIn, TOut> @this) => @this;
 
-		public static System.Action Selector(this CommandSelector @this) => @this;
+		public static Action Selector(this CommandSelector @this) => @this;
 
-		public static System.Action Selector(this CommandSelector<None> @this) => @this.Get().Execute;
+		public static Action Selector(this CommandSelector<None> @this) => @this.Get().Execute;
 
 		public static System.Action<T> Selector<T>(this CommandSelector<T> @this) => @this;
 

@@ -1,22 +1,14 @@
-﻿using Super.Model.Sequences;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Super.Model.Sequences;
 
 namespace Super.Model.Selection.Stores
 {
-	public interface ITableValues<TIn, TOut> : ITable<TIn, TOut>
-	{
-		IArray<TOut> Values { get; }
-	}
-
 	public class TableValues<TIn, TOut> : DecoratedTable<TIn, TOut>, ITableValues<TIn, TOut>
 	{
 		public TableValues(IDictionary<TIn, TOut> store)
 			: this(new Table<TIn, TOut>(store), new DeferredArray<TOut>(store.Values)) {}
 
-		public TableValues(ITable<TIn, TOut> source, IArray<TOut> values) : base(source)
-		{
-			Values = values;
-		}
+		public TableValues(ITable<TIn, TOut> source, IArray<TOut> values) : base(source) => Values = values;
 
 		public IArray<TOut> Values { get; }
 	}

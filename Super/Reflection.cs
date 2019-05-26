@@ -1,7 +1,7 @@
-﻿using Super.Model.Selection;
-using Super.Reflection;
-using System;
+﻿using System;
 using System.Reflection;
+using Super.Model.Selection;
+using Super.Reflection;
 
 namespace Super
 {

@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using JetBrains.Annotations;
 using Super.Aspects;
 using Super.Compose;
@@ -6,13 +7,28 @@ using Super.Model.Selection;
 using Super.Model.Selection.Conditions;
 using Super.Model.Sequences;
 using Super.Reflection.Types;
-using System;
 using Xunit;
 
 namespace Super.Testing.Application.Aspects
 {
 	public class AspectRegistryTests
 	{
+		sealed class Aspect<TIn, TOut> : IAspect<TIn, TOut>
+		{
+			[UsedImplicitly]
+			public static Aspect<TIn, TOut> Default { get; } = new Aspect<TIn, TOut>();
+
+			Aspect() {}
+
+			public ISelect<TIn, TOut> Get(ISelect<TIn, TOut> parameter) => null;
+		}
+
+		[Fact]
+		void After()
+		{
+			AspectRegistry.Default.Get().Open().Should().BeEmpty();
+		}
+
 		[Fact]
 		void Before()
 		{
@@ -48,22 +64,6 @@ namespace Super.Testing.Application.Aspects
 			                                .Open()
 			                                .Should()
 			                                .BeEmpty();
-		}
-
-		[Fact]
-		void After()
-		{
-			AspectRegistry.Default.Get().Open().Should().BeEmpty();
-		}
-
-		sealed class Aspect<TIn, TOut> : IAspect<TIn, TOut>
-		{
-			[UsedImplicitly]
-			public static Aspect<TIn, TOut> Default { get; } = new Aspect<TIn, TOut>();
-
-			Aspect() {}
-
-			public ISelect<TIn, TOut> Get(ISelect<TIn, TOut> parameter) => null;
 		}
 	}
 }

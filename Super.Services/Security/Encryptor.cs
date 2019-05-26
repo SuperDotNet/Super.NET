@@ -1,9 +1,9 @@
-﻿using Super.Model.Selection.Alterations;
-using System;
+﻿using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using Super.Model.Selection.Alterations;
 
 namespace Super.Services.Security
 {

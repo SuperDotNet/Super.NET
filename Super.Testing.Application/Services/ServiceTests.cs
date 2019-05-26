@@ -1,6 +1,6 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using Super.Services;
-using System;
 using Xunit;
 
 namespace Super.Testing.Application.Services

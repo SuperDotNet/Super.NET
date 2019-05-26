@@ -1,5 +1,5 @@
-﻿using Super.Model.Results;
-using System;
+﻿using System;
+using Super.Model.Results;
 
 namespace Super.Runtime
 {

@@ -1,6 +1,7 @@
 ﻿using Super.Text;
 
-namespace Super.Runtime.Execution {
+namespace Super.Runtime.Execution
+{
 	sealed class TaskDetailsFormatter : IFormatter<TaskDetails>
 	{
 		public static TaskDetailsFormatter Default { get; } = new TaskDetailsFormatter();

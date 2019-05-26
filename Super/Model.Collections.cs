@@ -2,8 +2,5 @@
 {
 	// ReSharper disable once MismatchedFileName
 
-	public static partial class ExtensionMethods
-	{
-		
-	}
+	public static partial class ExtensionMethods {}
 }

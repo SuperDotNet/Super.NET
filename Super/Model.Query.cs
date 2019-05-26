@@ -1,9 +1,9 @@
-﻿using Super.Model.Selection;
+﻿using System;
+using System.Collections.Generic;
+using Super.Model.Selection;
 using Super.Model.Selection.Adapters;
 using Super.Model.Sequences;
 using Super.Model.Sequences.Query;
-using System;
-using System.Collections.Generic;
 
 namespace Super
 {

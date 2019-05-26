@@ -1,25 +1,12 @@
-﻿using FluentAssertions;
+﻿using System.Linq;
+using FluentAssertions;
 using Super.Compose;
-using System.Linq;
 using Xunit;
 
 namespace Super.Testing.Application.Model.Sequences
 {
 	public sealed class SequenceTests
 	{
-		[Fact]
-		void Verify()
-		{
-			var array = new[] {1, 2, 3};
-
-			Start.A.Selection<int>()
-			     .As.Sequence.Array.By.Self.Query()
-			     .Out()
-			     .Get(array)
-			     .Should()
-			     .Equal(array);
-		}
-
 		[Fact]
 		void Skip()
 		{
@@ -29,6 +16,22 @@ namespace Super.Testing.Application.Model.Sequences
 			Start.A.Selection<int>()
 			     .As.Sequence.Array.By.Self.Query()
 			     .Skip(1)
+			     .Out()
+			     .Get(array)
+			     .Should()
+			     .Equal(expected);
+		}
+
+		[Fact]
+		void SkipTake()
+		{
+			var array    = new[] {1, 2, 3, 4, 5};
+			var expected = array.Skip(3).Take(2).ToArray();
+
+			Start.A.Selection<int>()
+			     .As.Sequence.Array.By.Self.Query()
+			     .Skip(3)
+			     .Take(2)
 			     .Out()
 			     .Get(array)
 			     .Should()
@@ -51,19 +54,16 @@ namespace Super.Testing.Application.Model.Sequences
 		}
 
 		[Fact]
-		void SkipTake()
+		void Verify()
 		{
-			var array    = new[] {1, 2, 3, 4, 5};
-			var expected = array.Skip(3).Take(2).ToArray();
+			var array = new[] {1, 2, 3};
 
 			Start.A.Selection<int>()
 			     .As.Sequence.Array.By.Self.Query()
-			     .Skip(3)
-			     .Take(2)
 			     .Out()
 			     .Get(array)
 			     .Should()
-			     .Equal(expected);
+			     .Equal(array);
 		}
 	}
 }

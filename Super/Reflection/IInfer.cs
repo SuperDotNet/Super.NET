@@ -1,5 +1,5 @@
-﻿using Super.Model.Results;
-using System.Reflection;
+﻿using System.Reflection;
+using Super.Model.Results;
 
 namespace Super.Reflection
 {

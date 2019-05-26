@@ -1,9 +1,9 @@
-﻿using Super.Model.Results;
+﻿using System;
+using System.Collections.Generic;
+using Super.Model.Results;
 using Super.Model.Selection;
 using Super.Model.Selection.Stores;
 using Super.Runtime.Activation;
-using System;
-using System.Collections.Generic;
 
 namespace Super.Model.Sequences
 {

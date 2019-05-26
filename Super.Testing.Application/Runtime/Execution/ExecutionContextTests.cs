@@ -6,11 +6,11 @@ namespace Super.Testing.Application.Runtime.Execution
 {
 	public sealed class ExecutionContextTests
 	{
-		readonly object _context;
-
 		public ExecutionContextTests() : this(ExecutionContext.Default.Get()) {}
 
 		ExecutionContextTests(object context) => _context = context;
+
+		readonly object _context;
 
 		[Fact]
 		void Verify()

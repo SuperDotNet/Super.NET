@@ -1,6 +1,7 @@
-﻿using Super.Model.Sequences;
+﻿using System;
+using Super.Compose;
+using Super.Model.Sequences;
 using Super.Reflection.Types;
-using System;
 
 namespace Super.Model.Selection.Stores
 {
@@ -12,10 +13,10 @@ namespace Super.Model.Selection.Stores
 			                         ? typeof(StructureValueTable<,>)
 			                         : typeof(ReferenceValueTable<,>)) {}
 
-		public ReferenceTables(Type type) : base(Compose.Start.A.Generic(type)
-		                                                .Of.Type<ITable<TIn, TOut>>()
-		                                                .WithParameterOf<Func<TIn, TOut>>()
-		                                                .In(new Array<Type>(typeof(TIn), typeof(TOut)))
-		                                                .Assume()) {}
+		public ReferenceTables(Type type) : base(Start.A.Generic(type)
+		                                              .Of.Type<ITable<TIn, TOut>>()
+		                                              .WithParameterOf<Func<TIn, TOut>>()
+		                                              .In(new Array<Type>(typeof(TIn), typeof(TOut)))
+		                                              .Assume()) {}
 	}
 }

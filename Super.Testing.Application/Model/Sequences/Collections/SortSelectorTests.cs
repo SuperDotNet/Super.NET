@@ -6,6 +6,16 @@ namespace Super.Testing.Application.Model.Sequences.Collections
 {
 	public sealed class SortSelectorTests
 	{
+		sealed class Subject {}
+
+		sealed class Aware : ISortAware
+		{
+			public int Get() => 6776;
+		}
+
+		[Sort(123)]
+		sealed class Declared {}
+
 		[Fact]
 		void Verify()
 		{
@@ -23,15 +33,5 @@ namespace Super.Testing.Application.Model.Sequences.Collections
 		{
 			SortSelector<Declared>.Default.Get(new Declared()).Should().Be(123);
 		}
-
-		sealed class Subject {}
-
-		sealed class Aware : ISortAware
-		{
-			public int Get() => 6776;
-		}
-
-		[Sort(123)]
-		sealed class Declared {}
 	}
 }

@@ -27,7 +27,7 @@ namespace Super.Testing.Application.Runtime.Environment
 
 			var array = subject.Get();
 			array.Open().Should().BeEmpty();
-			var elements = new[]{new object(), new object(), new object()};
+			var elements = new[] {new object(), new object(), new object()};
 			subject.Execute(elements);
 			var result = subject.Get().Open();
 			result.Should().HaveCount(elements.Length);

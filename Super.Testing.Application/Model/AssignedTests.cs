@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
+using Super.Model;
 
 namespace Super.Testing.Application.Model
 {
@@ -7,9 +8,8 @@ namespace Super.Testing.Application.Model
 		// ReSharper disable ImpureMethodCallOnReadonlyValueField
 		public class Benchmarks
 		{
-			readonly Super.Model.Assigned<uint> _sut = new Super.Model.Assigned<uint>(6776u);
-
-			readonly int _other;
+			readonly int            _other;
+			readonly Assigned<uint> _sut = new Assigned<uint>(6776u);
 
 			public Benchmarks() : this(6776) {}
 
@@ -36,7 +36,7 @@ namespace Super.Testing.Application.Model
 			public uint OrLocalReference()
 			{
 				var assigned = _sut;
-				var other = (uint)_other;
+				var other    = (uint)_other;
 				return assigned.Or(in other);
 			}
 

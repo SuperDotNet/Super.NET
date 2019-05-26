@@ -1,8 +1,8 @@
-﻿using Super.Compose;
+﻿using System;
+using System.Reflection;
+using Super.Compose;
 using Super.Model.Selection;
 using Super.Reflection.Members;
-using System;
-using System.Reflection;
 
 namespace Super.Runtime.Activation
 {

@@ -1,5 +1,5 @@
-﻿using Super.Model.Selection.Conditions;
-using System;
+﻿using System;
+using Super.Model.Selection.Conditions;
 
 namespace Super.Model.Selection
 {

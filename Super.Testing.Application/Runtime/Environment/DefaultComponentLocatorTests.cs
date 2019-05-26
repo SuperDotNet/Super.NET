@@ -1,14 +1,30 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿using System;
+using BenchmarkDotNet.Attributes;
 using FluentAssertions;
 using Super.Runtime.Environment;
 using Super.Testing.Objects;
-using System;
 using Xunit;
 
 namespace Super.Testing.Application.Runtime.Environment
 {
 	public sealed class DefaultComponentLocatorTests
 	{
+		interface IInvalid {}
+
+		public class Benchmarks
+		{
+			readonly static DefaultComponentLocator<string> DefaultComponentLocator =
+				DefaultComponentLocator<string>.Default;
+
+			public Benchmarks()
+			{
+				DefaultComponentLocator.Get();
+			}
+
+			[Benchmark]
+			public string Measure() => DefaultComponentLocator.Get();
+		}
+
 		[Fact]
 		void VerifyEnvironment()
 		{
@@ -32,22 +48,6 @@ namespace Super.Testing.Application.Runtime.Environment
 			DefaultComponentLocator<string>.Default.Get()
 			                               .Should()
 			                               .Be($"Hello World from {AppContext.TargetFrameworkName}!");
-		}
-
-		interface IInvalid {}
-
-		public class Benchmarks
-		{
-			readonly static DefaultComponentLocator<string> DefaultComponentLocator =
-				DefaultComponentLocator<string>.Default;
-
-			public Benchmarks()
-			{
-				DefaultComponentLocator.Get();
-			}
-
-			[Benchmark]
-			public string Measure() => DefaultComponentLocator.Get();
 		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using Super.Compose;
+﻿using System;
+using Super.Compose;
 using Super.Model.Commands;
 using Super.Model.Results;
 using Super.Model.Selection;
@@ -10,8 +11,7 @@ using Super.Reflection;
 using Super.Reflection.Types;
 using Super.Runtime;
 using Super.Runtime.Objects;
-using System;
-using None = Super.Runtime.None;
+using Action = Super.Model.Selection.Adapters.Action;
 
 namespace Super
 {
@@ -130,7 +130,7 @@ namespace Super
 		public static ICommand<T> ToCommand<T>(this ISelect<T, None> @this) => new InvokeParameterCommand<T>(@this.Get);
 
 		public static ICommand ToAction(this ISelect<None, None> @this)
-			=> new Model.Selection.Adapters.Action(@this.ToCommand().Execute);
+			=> new Action(@this.ToCommand().Execute);
 
 		public static IResult<T> ToResult<T>(this ISelect<None, T> @this) => @this as IResult<T> ??
 		                                                                     new Model.Results.Result<T>(@this.Get);

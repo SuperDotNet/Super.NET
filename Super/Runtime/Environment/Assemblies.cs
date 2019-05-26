@@ -1,7 +1,7 @@
-﻿using Super.Compose;
+﻿using System.Reflection;
+using Super.Compose;
 using Super.Model.Sequences;
 using Super.Reflection.Assemblies;
-using System.Reflection;
 
 namespace Super.Runtime.Environment
 {

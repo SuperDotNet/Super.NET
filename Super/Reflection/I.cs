@@ -1,7 +1,7 @@
-﻿using Super.Model.Results;
+﻿using System.Reflection;
+using Super.Model.Results;
 using Super.Reflection.Types;
 using Super.Runtime;
-using System.Reflection;
 
 namespace Super.Reflection
 {

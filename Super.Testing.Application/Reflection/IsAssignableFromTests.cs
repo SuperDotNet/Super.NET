@@ -1,8 +1,7 @@
-﻿using FluentAssertions;
+﻿using System.IO;
+using FluentAssertions;
 using Super.Reflection.Types;
-using System.IO;
 using Xunit;
-using Stream = System.IO.Stream;
 
 namespace Super.Testing.Application.Reflection
 {

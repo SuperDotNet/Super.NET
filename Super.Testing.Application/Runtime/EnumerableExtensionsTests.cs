@@ -1,8 +1,8 @@
-﻿using AutoFixture.Xunit2;
-using FluentAssertions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoFixture.Xunit2;
+using FluentAssertions;
 using Xunit;
 
 // ReSharper disable PossibleMultipleEnumeration
@@ -11,8 +11,7 @@ namespace Super.Testing.Application.Runtime
 {
 	public class EnumerableExtensionsTests
 	{
-		[Theory]
-		[AutoData]
+		[Theory, AutoData]
 		public void Prepend(IEnumerable<object> sut, object[] items)
 		{
 			var prepended = sut.Prepend(items);
@@ -21,8 +20,7 @@ namespace Super.Testing.Application.Runtime
 			Assert.True(items.All(x => prepended.Contains(x)));
 		}
 
-		[Theory]
-		[AutoData]
+		[Theory, AutoData]
 		public void PrependItem(object sut, IEnumerable<object> items)
 		{
 			var prepended = items.Append(sut);
@@ -30,8 +28,7 @@ namespace Super.Testing.Application.Runtime
 			Assert.Same(prepended.Last(), sut);
 		}
 
-		[Theory]
-		[AutoData]
+		[Theory, AutoData]
 		public void EachWithFunc(IEnumerable<object> sut)
 		{
 			var                copy   = sut.ToList();
@@ -42,8 +39,7 @@ namespace Super.Testing.Application.Runtime
 			//Assert.All(results, b => b.IsFalse(() => { throw new InvalidOperationException("was not true."); }));
 		}
 
-		[Theory]
-		[AutoData]
+		[Theory, AutoData]
 		void Adding(object[] sut, object item)
 		{
 			var items = Enumerable.Append(sut, item);

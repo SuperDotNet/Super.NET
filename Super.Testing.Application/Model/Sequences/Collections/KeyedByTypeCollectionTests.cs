@@ -6,12 +6,18 @@ namespace Super.Testing.Application.Model.Sequences.Collections
 {
 	public sealed class KeyedByTypeCollectionTests
 	{
+		public interface ISubject {}
+
+		sealed class Subject : ISubject {}
+
+		sealed class Other : ISubject {}
+
 		[Fact]
 		void Verify()
 		{
-			var first = new Subject();
+			var first  = new Subject();
 			var second = new Subject();
-			var other = new Other();
+			var other  = new Other();
 
 			var sut = new KeyedByTypeCollection<ISubject>();
 			sut.Add(first);
@@ -21,11 +27,5 @@ namespace Super.Testing.Application.Model.Sequences.Collections
 			sut[typeof(Other)].Should().BeSameAs(other);
 			sut[typeof(Subject)].Should().BeSameAs(second);
 		}
-
-		public interface ISubject {}
-
-		sealed class Subject : ISubject {}
-
-		sealed class Other : ISubject {}
 	}
 }

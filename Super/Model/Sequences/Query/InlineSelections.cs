@@ -1,8 +1,8 @@
-using Super.Model.Selection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Super.Model.Selection;
 
 namespace Super.Model.Sequences.Query
 {

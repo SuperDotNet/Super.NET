@@ -1,5 +1,5 @@
-﻿using Super.Runtime;
-using System;
+﻿using System;
+using Super.Runtime;
 
 namespace Super.Model.Selection
 {
@@ -18,5 +18,4 @@ namespace Super.Model.Selection
 
 		public Select(Func<T, Func<TIn, TOut>> select) : base(select) {}
 	}
-
 }

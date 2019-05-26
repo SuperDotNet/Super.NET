@@ -1,6 +1,6 @@
-﻿using Super.Model.Selection.Stores;
-using System;
+﻿using System;
 using System.Diagnostics;
+using Super.Model.Selection.Stores;
 
 namespace Super.Diagnostics
 {

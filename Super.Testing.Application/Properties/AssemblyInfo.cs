@@ -1,7 +1,7 @@
-﻿using Super.Application.Hosting.xUnit;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Super.Application.Hosting.xUnit;
 using Xunit;
 
 // General Information about an assembly is controlled through the following

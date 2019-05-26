@@ -1,6 +1,6 @@
-﻿using Super.Model.Selection.Stores;
-using System;
+﻿using System;
 using Super.Compose;
+using Super.Model.Selection.Stores;
 
 namespace Super.Runtime.Activation
 {

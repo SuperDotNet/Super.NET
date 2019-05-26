@@ -9,12 +9,12 @@ namespace Super.Testing.Application.Model.Sequences.Collections
 	{
 		[Fact]
 		public void Has() => HasAny.Default.Get(new[] {new object()})
-		                                          .Should()
-		                                          .BeTrue();
+		                           .Should()
+		                           .BeTrue();
 
 		[Fact]
 		public void HasNot() => HasAny.Default.Get(Empty<object>.Array)
-		                                             .Should()
-		                                             .BeFalse();
+		                              .Should()
+		                              .BeFalse();
 	}
 }

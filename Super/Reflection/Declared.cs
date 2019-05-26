@@ -1,6 +1,6 @@
-﻿using Super.Model.Selection.Conditions;
-using System;
+﻿using System;
 using System.Reflection;
+using Super.Model.Selection.Conditions;
 
 namespace Super.Reflection
 {

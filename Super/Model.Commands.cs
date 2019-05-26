@@ -1,9 +1,9 @@
-﻿using Super.Model.Commands;
-using Super.Model.Selection;
-using Super.Runtime;
-using System;
+﻿using System;
 using System.Collections.Immutable;
+using Super.Model.Commands;
+using Super.Model.Selection;
 using Super.Model.Sequences.Collections;
+using Super.Runtime;
 
 // ReSharper disable TooManyArguments
 
@@ -77,7 +77,6 @@ namespace Super
 		public static IAlteration<T> ToConfiguration<T>(this ICommand<T> @this)
 			=> @this.To(I<ConfiguringAlteration<T>>.Default);
 */
-
 
 		public static ISelect<T, None> ToSelect<T>(this ICommand<T> @this)
 			=> new Model.Selection.Adapters.Action<T>(@this.Execute);

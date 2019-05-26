@@ -11,7 +11,7 @@ namespace Super.Testing.Application.Runtime.Environment
 		[Fact]
 		void Verify()
 		{
-			var details = PrimaryAssemblyDetails.Default.Get();
+			var details  = PrimaryAssemblyDetails.Default.Get();
 			var assembly = Assembly.GetExecutingAssembly();
 			details.Version.Should().BeEquivalentTo(assembly.GetName().Version);
 			details.Title.Should().NotBeNull().And.Be(AssemblyTitle.Default.Get(assembly));

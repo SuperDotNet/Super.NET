@@ -1,12 +1,12 @@
-﻿using Super.Model.Selection;
-using Super.Model.Selection.Stores;
-using Super.Reflection;
-using Super.Runtime;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Super.Model.Selection;
 using Super.Model.Selection.Conditions;
+using Super.Model.Selection.Stores;
+using Super.Reflection;
+using Super.Runtime;
 
 namespace Super
 {

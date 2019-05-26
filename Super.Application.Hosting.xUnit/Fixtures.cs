@@ -9,12 +9,13 @@ namespace Super.Application.Hosting.xUnit
 
 		Fixtures() : this(EngineParts.Default, DefaultCustomization.Default) {}
 
-		readonly DefaultRelays _relays;
 		readonly ICustomization _customization;
+
+		readonly DefaultRelays _relays;
 
 		public Fixtures(DefaultRelays relays, ICustomization customization)
 		{
-			_relays    = relays;
+			_relays        = relays;
 			_customization = customization;
 		}
 

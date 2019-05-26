@@ -1,5 +1,5 @@
-﻿using Super.Model.Selection;
-using System.Reflection;
+﻿using System.Reflection;
+using Super.Model.Selection;
 
 namespace Super.Reflection.Assemblies
 {

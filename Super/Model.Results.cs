@@ -1,4 +1,5 @@
-﻿using Super.Compose;
+﻿using System;
+using Super.Compose;
 using Super.Model.Results;
 using Super.Model.Selection;
 using Super.Model.Selection.Adapters;
@@ -7,7 +8,6 @@ using Super.Model.Sequences;
 using Super.Reflection;
 using Super.Runtime;
 using Super.Runtime.Execution;
-using System;
 
 namespace Super
 {
@@ -17,7 +17,6 @@ namespace Super
 		public static IResult<IResult<T>> AsDefined<T>(this IResult<IResult<T>> @this) => @this;
 
 		public static IResult<ISelect<TIn, TOut>> AsDefined<TIn, TOut>(this IResult<ISelect<TIn, TOut>> @this) => @this;
-
 
 		public static IResult<T> Start<T>(this T @this) => Compose.Start.A.Result(@this);
 

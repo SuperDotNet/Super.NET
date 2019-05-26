@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using Microsoft.AspNetCore.Http;
 using Super.Compose;
 using Super.Model.Selection.Stores;
 using Super.Runtime;
-using System;
 
 namespace Super.Services.Security
 {
@@ -14,9 +14,9 @@ namespace Super.Services.Security
 		                                    .Select(Authority.Default)
 		                                    .Select(Uris.Default)
 		                                    .Unless(A.Of<Uris>()
-		                                         .Assigned()
-		                                         .In(A.Of<AuthenticationBaseAddress>().Get)
-		                                         .ToDelegate())
+		                                             .Assigned()
+		                                             .In(A.Of<AuthenticationBaseAddress>().Get)
+		                                             .ToDelegate())
 		                                    .Get) {}
 	}
 }

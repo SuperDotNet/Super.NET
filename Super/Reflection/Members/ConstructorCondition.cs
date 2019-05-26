@@ -1,7 +1,7 @@
-﻿using Super.Compose;
-using Super.Model.Selection.Conditions;
-using System;
+﻿using System;
 using System.Reflection;
+using Super.Compose;
+using Super.Model.Selection.Conditions;
 
 namespace Super.Reflection.Members
 {

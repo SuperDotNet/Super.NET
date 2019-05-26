@@ -22,7 +22,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Diagnostics\Logging\Defaults.cs" />
+    <Compile Include="Diagnostics\Logging\OutputTemplate.cs" />
+    <Compile Include="Diagnostics\Logging\TemplateHeader.cs" />
+    <Compile Include="Diagnostics\Logging\TimestampFormat.cs" />
+    <Compile Include="Diagnostics\Logging\TimestampFormatter.cs" />
   </ItemGroup>
 
   <ItemGroup>

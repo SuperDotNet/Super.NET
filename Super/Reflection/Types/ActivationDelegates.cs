@@ -1,10 +1,10 @@
-﻿using Super.Model.Selection;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using Super.Model.Selection;
 using Super.Model.Selection.Stores;
 using Super.Runtime.Invocation;
 using Super.Runtime.Invocation.Expressions;
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
 
 namespace Super.Reflection.Types
 {

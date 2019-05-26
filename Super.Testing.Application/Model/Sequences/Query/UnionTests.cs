@@ -1,7 +1,7 @@
-﻿using FluentAssertions;
+﻿using System.Linq;
+using FluentAssertions;
 using Super.Compose;
 using Super.Model.Sequences;
-using System.Linq;
 using Xunit;
 
 namespace Super.Testing.Application.Model.Sequences.Query
@@ -38,7 +38,6 @@ namespace Super.Testing.Application.Model.Sequences.Query
 			     .Should()
 			     .Equal(first.Skip(4).Union(second));
 		}
-
 
 		[Fact]
 		void VerifyBodyFirst()

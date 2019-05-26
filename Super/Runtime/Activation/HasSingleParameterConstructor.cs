@@ -1,10 +1,10 @@
-﻿using Super.Compose;
+﻿using System.Reflection;
+using Super.Compose;
 using Super.Model.Selection;
 using Super.Model.Selection.Conditions;
 using Super.Model.Sequences;
 using Super.Reflection.Members;
 using Super.Reflection.Types;
-using System.Reflection;
 
 namespace Super.Runtime.Activation
 {

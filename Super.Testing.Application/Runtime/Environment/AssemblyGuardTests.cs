@@ -1,8 +1,8 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Reflection;
+using FluentAssertions;
 using Super.Compose;
 using Super.Runtime.Environment;
-using System;
-using System.Reflection;
 using Xunit;
 
 namespace Super.Testing.Application.Runtime.Environment
@@ -20,18 +20,6 @@ namespace Super.Testing.Application.Runtime.Environment
 		}
 
 		[Fact]
-		void VerifyGuard()
-		{
-			Start.A.Result<Assembly>()
-			     .By.Calling(() => null)
-			     .ToSelect()
-			     .Select(PrimaryAssemblyMessage.Default.AsGuard())
-			     .Invoking(x => x.Get())
-			     .Should()
-			     .Throw<InvalidOperationException>();
-		}
-
-		[Fact]
 		void VerifyAssigned()
 		{
 			Start.A.Result<Assembly>()
@@ -41,6 +29,18 @@ namespace Super.Testing.Application.Runtime.Environment
 			     .Invoking(x => x.Get())
 			     .Should()
 			     .NotThrow();
+		}
+
+		[Fact]
+		void VerifyGuard()
+		{
+			Start.A.Result<Assembly>()
+			     .By.Calling(() => null)
+			     .ToSelect()
+			     .Select(PrimaryAssemblyMessage.Default.AsGuard())
+			     .Invoking(x => x.Get())
+			     .Should()
+			     .Throw<InvalidOperationException>();
 		}
 	}
 }

@@ -1,9 +1,10 @@
-﻿using Super.Compose;
+﻿using System;
+using System.Collections.Concurrent;
+using Super.Compose;
 using Super.Model.Sequences;
+using Super.Reflection;
 using Super.Reflection.Types;
 using Super.Runtime.Activation;
-using System;
-using System.Collections.Concurrent;
 
 namespace Super.Model.Selection.Stores
 {
@@ -11,7 +12,7 @@ namespace Super.Model.Selection.Stores
 	{
 		public static Tables<TIn, TOut> Default { get; } = new Tables<TIn, TOut>();
 
-		Tables() : base(Reflection.IsReference.Default.Get(Type<TIn>.Instance)
+		Tables() : base(IsReference.Default.Get(Type<TIn>.Instance)
 			                ? Start.A.Generic(typeof(ReferenceTables<,>))
 			                       .Of.Type<ISelect<Func<TIn, TOut>, ITable<TIn, TOut>>>()
 			                       .In(new Array<Type>(typeof(TIn), typeof(TOut)))

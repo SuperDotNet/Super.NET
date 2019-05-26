@@ -1,8 +1,8 @@
-﻿using Super.Model.Selection;
-using Super.Model.Selection.Conditions;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Super.Model.Selection;
+using Super.Model.Selection.Conditions;
 
 namespace Super.Reflection.Members
 {
@@ -12,8 +12,9 @@ namespace Super.Reflection.Members
 
 		ConstructorLocator() : this(ConstructorCondition.Default) {}
 
+		readonly ICondition<ConstructorInfo> _condition;
+
 		readonly ISelect<TypeInfo, IEnumerable<ConstructorInfo>> _constructors;
-		readonly ICondition<ConstructorInfo>                     _condition;
 
 		public ConstructorLocator(ICondition<ConstructorInfo> condition)
 			: this(condition, InstanceConstructors.Default) {}

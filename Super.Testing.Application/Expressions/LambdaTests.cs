@@ -12,10 +12,12 @@ namespace Super.Testing.Application.Expressions
 		[Fact]
 		void Verify()
 		{
-			Lambda<Func<object>>.Default.Get(ConstructorExpressions.Default.Get(Type<object>.Instance.GetConstructor(Empty<Type>.Array)))
-			                    .Compile()()
-			                    .Should()
-			                    .NotBeNull();
+			Lambda<Func<object>>
+				.Default
+				.Get(ConstructorExpressions.Default.Get(Type<object>.Instance.GetConstructor(Empty<Type>.Array)))
+				.Compile()()
+				.Should()
+				.NotBeNull();
 		}
 	}
 }

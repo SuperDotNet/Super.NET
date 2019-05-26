@@ -1,9 +1,9 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
 using Super.Model.Results;
 using Super.Model.Sequences;
 using Super.Reflection.Types;
-using System;
-using System.Runtime.CompilerServices;
 
 namespace Super.Platform
 {

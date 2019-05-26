@@ -1,8 +1,7 @@
-﻿using Super.Compose;
+﻿using System;
+using Super.Compose;
 using Super.Model.Results;
 using Super.Model.Selection;
-using Super.Reflection.Types;
-using System;
 
 namespace Super.Runtime.Activation
 {
@@ -26,10 +25,5 @@ namespace Super.Runtime.Activation
 		public static Activator<T> Default { get; } = new Activator<T>();
 
 		Activator() : base(New<T>.Default.Unless(Singleton<T>.Default).Get) {}
-	}
-
-	public class FixedActivator<T> : FixedSelection<Type, T>, IActivator<T>
-	{
-		public FixedActivator(ISelect<Type, T> select) : base(select, Type<T>.Instance) {}
 	}
 }

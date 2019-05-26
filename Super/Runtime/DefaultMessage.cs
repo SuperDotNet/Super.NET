@@ -1,5 +1,5 @@
-﻿using Super.Text;
-using System;
+﻿using System;
+using Super.Text;
 
 namespace Super.Runtime
 {

@@ -1,11 +1,11 @@
-﻿using Super.Model.Results;
-using Super.Model.Selection;
-using Super.Model.Sequences;
-using Super.Runtime;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Super.Model.Results;
+using Super.Model.Selection;
+using Super.Model.Sequences;
+using Super.Runtime;
 
 namespace Super
 {
@@ -80,6 +80,7 @@ namespace Super
 				Array.Copy(@this, start,
 				           result, offset, length);
 			}
+
 			return result;
 		}
 

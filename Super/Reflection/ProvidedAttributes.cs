@@ -1,9 +1,9 @@
-﻿using Super.Model.Selection;
-using Super.Model.Sequences;
-using Super.Reflection.Types;
-using System;
+﻿using System;
 using System.Linq;
 using System.Reflection;
+using Super.Model.Selection;
+using Super.Model.Sequences;
+using Super.Reflection.Types;
 
 namespace Super.Reflection
 {

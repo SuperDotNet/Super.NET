@@ -1,9 +1,9 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿using System.Collections.Generic;
+using System.Linq;
+using BenchmarkDotNet.Attributes;
+using FluentAssertions;
 using Super.Compose;
 using Super.Model.Selection;
-using System.Collections.Generic;
-using System.Linq;
-using FluentAssertions;
 using Xunit;
 
 namespace Super.Testing.Application.Model.Sequences.Query
@@ -12,19 +12,6 @@ namespace Super.Testing.Application.Model.Sequences.Query
 	{
 		readonly static int[] Numbers
 			= {1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7};
-
-		[Fact]
-		void Verify()
-		{
-			Start.A.Selection.Of.Type<int>()
-			     .As.Sequence.Array.By.Self.Query()
-			     .Distinct()
-			     .Out()
-			     .Get(Numbers)
-			     .Should()
-			     .Equal(Numbers.Distinct());
-
-		}
 
 		public class Benchmarks
 		{
@@ -47,6 +34,18 @@ namespace Super.Testing.Application.Model.Sequences.Query
 
 			[Benchmark]
 			public int[] Subject() => _subject.Get(Numbers);
+		}
+
+		[Fact]
+		void Verify()
+		{
+			Start.A.Selection.Of.Type<int>()
+			     .As.Sequence.Array.By.Self.Query()
+			     .Distinct()
+			     .Out()
+			     .Get(Numbers)
+			     .Should()
+			     .Equal(Numbers.Distinct());
 		}
 	}
 }

@@ -5,7 +5,6 @@ namespace Super.Model.Selection.Stores
 {
 	public class DecoratedTable<TIn, TOut> : ITable<TIn, TOut>
 	{
-		public ICondition<TIn> Condition { get; }
 		readonly ITable<TIn, TOut> _source;
 
 		public DecoratedTable(ITable<TIn, TOut> source) : this(source.Condition, source) {}
@@ -13,8 +12,10 @@ namespace Super.Model.Selection.Stores
 		public DecoratedTable(ICondition<TIn> condition, ITable<TIn, TOut> source)
 		{
 			Condition = condition;
-			_source = source;
+			_source   = source;
 		}
+
+		public ICondition<TIn> Condition { get; }
 
 		public void Execute(Pair<TIn, TOut> parameter) => _source.Execute(parameter);
 

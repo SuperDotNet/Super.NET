@@ -1,6 +1,4 @@
-﻿using Super.Model.Results;
-using Super.Runtime;
-using System;
+﻿using Super.Runtime;
 
 namespace Super.Model.Commands
 {
@@ -10,6 +8,4 @@ namespace Super.Model.Commands
 	{
 		void Execute(T parameter);
 	}
-
-	public interface IDelegateAware<in T> : IResult<Action<T>> {}
 }

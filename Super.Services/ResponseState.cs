@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Super.Model.Selection;
-using System;
+﻿using System;
 using System.Net;
+using Microsoft.AspNetCore.Http;
+using Super.Model.Selection;
 
 namespace Super.Services
 {

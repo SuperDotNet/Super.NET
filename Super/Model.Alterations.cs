@@ -1,8 +1,8 @@
-﻿using Super.Model.Selection;
-using Super.Model.Selection.Alterations;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Super.Model.Selection;
+using Super.Model.Selection.Alterations;
 
 namespace Super
 {

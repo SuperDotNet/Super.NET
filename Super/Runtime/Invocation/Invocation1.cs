@@ -1,12 +1,12 @@
-﻿using Super.Model.Selection;
-using System;
+﻿using System;
+using Super.Model.Selection;
 
 namespace Super.Runtime.Invocation
 {
 	public class Invocation1<T1, T2, TOut> : ISelect<T2, TOut>
 	{
 		readonly Func<T1, T2, TOut> _delegate;
-		readonly T1                    _parameter;
+		readonly T1                 _parameter;
 
 		public Invocation1(Func<T1, T2, TOut> @delegate, T1 parameter)
 		{

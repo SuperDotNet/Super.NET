@@ -1,11 +1,11 @@
-﻿using Super.Compose;
+﻿using System;
+using System.Linq.Expressions;
+using Super.Compose;
 using Super.Model.Selection;
 using Super.Runtime;
 using Super.Runtime.Objects;
 using Super.Text;
 using Super.Text.Formatting;
-using System;
-using System.Linq.Expressions;
 
 namespace Super
 {

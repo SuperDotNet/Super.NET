@@ -1,6 +1,6 @@
-﻿using Super.Model.Selection;
+﻿using System;
+using Super.Model.Selection;
 using Super.Runtime.Activation;
-using System;
 
 namespace Super.Runtime.Invocation
 {
@@ -8,8 +8,8 @@ namespace Super.Runtime.Invocation
 	{
 		readonly static Func<TIn, object> Lock = Locks<TIn>.Default.Get;
 
-		readonly Func<TIn, object>  _lock;
-		readonly Func<TIn, TOut> _source;
+		readonly Func<TIn, object> _lock;
+		readonly Func<TIn, TOut>   _source;
 
 		public Stripe(Func<TIn, TOut> source) : this(Lock, source) {}
 

@@ -31,12 +31,6 @@ namespace Super.Testing.Application.Runtime.Execution
 			}
 		}
 
-		[Fact]
-		void VerifyBasic()
-		{
-			Start.A.Selection<int>().AndOf<Counter>().By.Instantiation.Get(1);
-		}
-
 		[Theory, AutoData]
 		void VerifyEquality(Counter<int> sut, int first, int second)
 		{
@@ -49,6 +43,12 @@ namespace Super.Testing.Application.Runtime.Execution
 			{
 				sut.Get(second).Should().Be(i + 1);
 			}
+		}
+
+		[Fact]
+		void VerifyBasic()
+		{
+			Start.A.Selection<int>().AndOf<Counter>().By.Instantiation.Get(1);
 		}
 	}
 }

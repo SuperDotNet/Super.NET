@@ -1,8 +1,8 @@
-﻿using FluentAssertions;
+﻿using System.Reflection;
+using FluentAssertions;
+using Super.Model.Selection.Conditions;
 using Super.Reflection.Collections;
 using Super.Reflection.Types;
-using System.Reflection;
-using Super.Model.Selection.Conditions;
 using Xunit;
 
 namespace Super.Testing.Application.Reflection

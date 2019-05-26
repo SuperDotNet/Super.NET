@@ -8,14 +8,7 @@ namespace Super.Testing.Application.Model.Selection.Structure
 {
 	public class SelectionsTests
 	{
-		[Fact]
-		void VerifyType()
-		{
-			typeof(IService<>).IsAssignableFrom(typeof(Service<>)).Should().BeFalse();
-			typeof(IService<MyStruct>).IsAssignableFrom(typeof(Service<MyStruct>))
-			                             .Should()
-			                             .BeTrue();
-		}
+		readonly struct MyStruct {}
 
 		[Fact]
 		void VerifySelections()
@@ -26,6 +19,13 @@ namespace Super.Testing.Application.Model.Selection.Structure
 			          .Be(typeof(Service<MyStruct>));
 		}
 
-		readonly struct MyStruct {}
+		[Fact]
+		void VerifyType()
+		{
+			typeof(IService<>).IsAssignableFrom(typeof(Service<>)).Should().BeFalse();
+			typeof(IService<MyStruct>).IsAssignableFrom(typeof(Service<MyStruct>))
+			                          .Should()
+			                          .BeTrue();
+		}
 	}
 }

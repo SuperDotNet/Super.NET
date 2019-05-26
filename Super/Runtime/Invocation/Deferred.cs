@@ -1,11 +1,11 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using Super.Compose;
 using Super.Model.Commands;
 using Super.Model.Results;
 using Super.Model.Selection;
 using Super.Model.Selection.Stores;
 using Super.Runtime.Activation;
-using System;
 
 namespace Super.Runtime.Invocation
 {

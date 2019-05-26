@@ -1,5 +1,5 @@
-﻿using Super.Model.Sequences;
-using System;
+﻿using System;
+using Super.Model.Sequences;
 
 namespace Super.Reflection.Selection
 {
@@ -14,6 +14,5 @@ namespace Super.Reflection.Selection
 	{
 		public AllTypesInSameNamespace(Type referenceType)
 			: base(new TypesInSameNamespace(referenceType, new AllAssemblyTypes(referenceType).Get().Open())) {}
-
 	}
 }

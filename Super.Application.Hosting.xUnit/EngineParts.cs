@@ -1,18 +1,10 @@
-﻿using AutoFixture;
+﻿using System.Collections.Generic;
+using AutoFixture;
 using AutoFixture.Kernel;
 using JetBrains.Annotations;
-using Super.Model.Sequences;
-using System.Collections.Generic;
 
 namespace Super.Application.Hosting.xUnit
 {
-	sealed class DefaultTransformations : ArrayInstance<ISpecimenBuilderTransformation>
-	{
-		public static DefaultTransformations Default { get; } = new DefaultTransformations();
-
-		DefaultTransformations() : base(OptionalParameterAlteration.Default, GreedyConstructorAlteration.Default) {}
-	}
-
 	public sealed class EngineParts : DefaultEngineParts
 	{
 		public static EngineParts Default { get; } = new EngineParts();

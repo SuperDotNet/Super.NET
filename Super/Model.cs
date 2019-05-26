@@ -1,7 +1,7 @@
-﻿using Super.Model;
-using Super.Model.Selection;
-using System;
+﻿using System;
 using System.Runtime.CompilerServices;
+using Super.Model;
+using Super.Model.Selection;
 
 namespace Super
 {

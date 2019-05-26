@@ -1,6 +1,6 @@
-﻿using Super.Model.Selection.Adapters;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using Super.Model.Selection.Adapters;
 
 namespace Super.Services
 {

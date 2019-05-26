@@ -1,7 +1,7 @@
-﻿using FluentAssertions;
+﻿using System.Linq;
+using FluentAssertions;
 using Super.Compose;
 using Super.Testing.Objects;
-using System.Linq;
 using Xunit;
 
 namespace Super.Testing.Application.Model.Sequences.Query

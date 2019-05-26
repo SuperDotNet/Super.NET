@@ -1,9 +1,9 @@
-﻿using BenchmarkDotNet.Attributes;
-using Super.Model.Sequences;
-using Super.Testing.Objects;
-using System;
+﻿using System;
 using System.Collections.Immutable;
 using System.Linq;
+using BenchmarkDotNet.Attributes;
+using Super.Model.Sequences;
+using Super.Testing.Objects;
 
 // ReSharper disable NotAccessedVariable
 // ReSharper disable RedundantAssignment
@@ -12,8 +12,8 @@ namespace Super.Testing.Application
 {
 	public class IterationBenchmarks
 	{
-		readonly ImmutableArray<string> _immutable;
 		readonly Array<string>          _array;
+		readonly ImmutableArray<string> _immutable;
 		readonly string[]               _open;
 
 		public IterationBenchmarks() : this(Data.Default.Get().Take(100).ToArray()) {}

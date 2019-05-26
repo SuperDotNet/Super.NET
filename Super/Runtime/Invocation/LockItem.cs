@@ -1,7 +1,7 @@
-﻿using Super.Model.Selection;
-using Super.Model.Sequences;
-using System;
+﻿using System;
 using System.Runtime.CompilerServices;
+using Super.Model.Selection;
+using Super.Model.Sequences;
 
 namespace Super.Runtime.Invocation
 {

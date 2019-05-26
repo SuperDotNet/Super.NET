@@ -1,6 +1,6 @@
-﻿using Super.Model.Selection.Conditions;
+﻿using System.Reflection;
+using Super.Model.Selection.Conditions;
 using Super.Reflection;
-using System.Reflection;
 
 namespace Super.Runtime.Environment
 {

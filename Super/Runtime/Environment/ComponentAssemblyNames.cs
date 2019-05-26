@@ -1,9 +1,9 @@
-using Super.Model.Selection;
-using Super.Model.Selection.Alterations;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection;
+using Super.Model.Selection;
+using Super.Model.Selection.Alterations;
 
 namespace Super.Runtime.Environment
 {
@@ -14,15 +14,16 @@ namespace Super.Runtime.Environment
 		ComponentAssemblyNames() : this(EnvironmentAssemblyName.Default, PlatformAssemblyName.Default) {}
 
 		readonly Func<AssemblyName, IEnumerable<AssemblyName>> _expand;
-		readonly ImmutableArray<IAlteration<AssemblyName>> _names;
+		readonly ImmutableArray<IAlteration<AssemblyName>>     _names;
 
 		public ComponentAssemblyNames(params IAlteration<AssemblyName>[] names)
 			: this(ComponentAssemblyCandidates.Default.Get, names.ToImmutableArray()) {}
 
-		public ComponentAssemblyNames(Func<AssemblyName, IEnumerable<AssemblyName>> expand, ImmutableArray<IAlteration<AssemblyName>> names)
+		public ComponentAssemblyNames(Func<AssemblyName, IEnumerable<AssemblyName>> expand,
+		                              ImmutableArray<IAlteration<AssemblyName>> names)
 		{
 			_expand = expand;
-			_names = names;
+			_names  = names;
 		}
 
 		public IEnumerable<AssemblyName> Get(AssemblyName parameter)

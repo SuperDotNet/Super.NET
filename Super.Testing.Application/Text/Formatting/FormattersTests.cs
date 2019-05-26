@@ -1,6 +1,6 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using Super.Text.Formatting;
-using System;
 using Xunit;
 
 namespace Super.Testing.Application.Text.Formatting

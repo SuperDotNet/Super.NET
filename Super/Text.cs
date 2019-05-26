@@ -1,8 +1,8 @@
-﻿using Super.Model.Results;
+﻿using System;
+using Super.Model.Results;
 using Super.Model.Selection.Conditions;
 using Super.Text;
 using Super.Text.Formatting;
-using System;
 
 namespace Super
 {

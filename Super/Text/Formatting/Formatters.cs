@@ -1,5 +1,5 @@
-﻿using Super.Runtime.Invocation;
-using System;
+﻿using System;
+using Super.Runtime.Invocation;
 
 namespace Super.Text.Formatting
 {

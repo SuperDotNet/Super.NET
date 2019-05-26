@@ -1,5 +1,5 @@
-﻿using Super.Model.Selection.Stores;
-using System;
+﻿using System;
+using Super.Model.Selection.Stores;
 
 namespace Super.Model.Results
 {

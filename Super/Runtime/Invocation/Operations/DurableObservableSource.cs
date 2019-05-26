@@ -1,9 +1,6 @@
-﻿using Polly;
-using Super.Model.Selection;
-using Super.Runtime.Execution;
-using System;
-using System.Threading;
+﻿using System;
 using System.Threading.Tasks;
+using Polly;
 
 namespace Super.Runtime.Invocation.Operations
 {
@@ -68,8 +65,6 @@ namespace Super.Runtime.Invocation.Operations
 		public Subscriber(IObservable<T> instance) : base(instance) {}
 	}*/
 
-	public interface IObserve<T> : ISelect<Task<T>, T> {}
-
 	public class DurableObservableSource<T> : IObserve<T>
 	{
 		readonly Func<Func<T>, T> _policy;
@@ -81,29 +76,6 @@ namespace Super.Runtime.Invocation.Operations
 		public DurableObservableSource(Func<Func<T>, T> policy) => _policy = policy;
 
 		public T Get(Task<T> parameter) => _policy(parameter.Wait);
-	}
-
-	public static class Extensions
-	{
-		public static T Wait<T>(this Task<T> @this)
-		{
-			@this.Wait();
-			return @this.Result;
-		}
-	}
-
-	sealed class TaskSelector : Select<Action, Task>
-	{
-		public static TaskSelector Default { get; } = new TaskSelector();
-
-		TaskSelector() : base(Task.Run) {}
-	}
-
-	sealed class TaskSelector<T> : Select<Func<T>, Task<T>>
-	{
-		public static TaskSelector<T> Default { get; } = new TaskSelector<T>();
-
-		TaskSelector() : base(Task.Run) {}
 	}
 
 	/*sealed class InvokeTaskSelector : Invoke<Task>
@@ -161,20 +133,4 @@ namespace Super.Runtime.Invocation.Operations
 			return null;
 		}
 	}*/
-
-	sealed class OperationState
-	{
-		public OperationState(string name, CancellationToken token = new CancellationToken())
-			: this(new ContextDetails(name), token) {}
-
-		public OperationState(ContextDetails contextDetails, CancellationToken token = new CancellationToken())
-		{
-			ContextDetails = contextDetails;
-			Token          = token;
-		}
-
-		public ContextDetails ContextDetails { get; }
-
-		public CancellationToken Token { get; }
-	}
 }

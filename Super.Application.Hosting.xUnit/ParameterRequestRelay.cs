@@ -1,5 +1,5 @@
-﻿using AutoFixture.Kernel;
-using System.Reflection;
+﻿using System.Reflection;
+using AutoFixture.Kernel;
 
 namespace Super.Application.Hosting.xUnit
 {

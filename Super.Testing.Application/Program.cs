@@ -1,6 +1,5 @@
-﻿using Super.Application.Hosting.BenchmarkDotNet;
-using Super.Testing.Application.Model.Sequences.Query.Construction;
-using System.Linq;
+﻿using System.Linq;
+using Super.Application.Hosting.BenchmarkDotNet;
 
 namespace Super.Testing.Application
 {
@@ -12,12 +11,5 @@ namespace Super.Testing.Application
 			   .In(arguments.Any() ? Quick.Default : Deployed.Default)
 			   .Get();
 		}
-	}
-
-	sealed class Run : Run<ExitTests.Benchmarks>
-	{
-		public static Run Default { get; } = new Run();
-
-		Run() {}
 	}
 }

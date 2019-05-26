@@ -1,5 +1,5 @@
-﻿using FluentAssertions;
-using System.Linq;
+﻿using System.Linq;
+using FluentAssertions;
 using Super.Model.Sequences.Collections;
 using Xunit;
 

@@ -1,6 +1,6 @@
-﻿using Super.Runtime;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Super.Model.Commands;
+using Super.Runtime;
 using Xunit;
 
 namespace Super.Testing.Application.Model.Commands

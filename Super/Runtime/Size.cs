@@ -1,8 +1,8 @@
+using System;
 using Super.Model.Results;
 using Super.Model.Sequences;
 using Super.Reflection.Types;
 using Super.Runtime.Environment;
-using System;
 
 namespace Super.Runtime
 {

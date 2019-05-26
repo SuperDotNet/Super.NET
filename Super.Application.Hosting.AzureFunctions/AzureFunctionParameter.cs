@@ -7,7 +7,8 @@ namespace Super.Application.Hosting.AzureFunctions
 {
 	public readonly struct AzureFunctionParameter
 	{
-		public AzureFunctionParameter(HttpRequest request, TraceWriter writer) : this(request, writer, Empty<object>.Array) {}
+		public AzureFunctionParameter(HttpRequest request, TraceWriter writer) : this(request, writer,
+		                                                                              Empty<object>.Array) {}
 
 		public AzureFunctionParameter(HttpRequest request, TraceWriter writer, params object[] services)
 			: this(request, writer, services.ToImmutableArray()) {}

@@ -11,9 +11,9 @@ namespace Super.Model.Sequences.Collections
 		                           .By.Returning(-1)
 		                           .Unless(SortMetadata<T>.Default)
 		                           .UnlessIsOf(Start.A.Selection<ISortAware>()
-		                                          .By.Self.AsDefined()
-		                                          .Then()
-		                                          .Value()
-		                                          .Get())) {}
+		                                            .By.Self.AsDefined()
+		                                            .Then()
+		                                            .Value()
+		                                            .Get())) {}
 	}
 }

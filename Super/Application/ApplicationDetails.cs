@@ -1,5 +1,5 @@
-﻿using Super.Reflection.Assemblies;
-using System;
+﻿using System;
+using Super.Reflection.Assemblies;
 
 namespace Super.Application
 {
@@ -7,7 +7,7 @@ namespace Super.Application
 	{
 		public ApplicationDetails(AssemblyDetails assembly, Uri companyUri, DateTimeOffset? deployment)
 		{
-			Assembly = assembly;
+			Assembly   = assembly;
 			CompanyUri = companyUri;
 			Deployment = deployment;
 		}

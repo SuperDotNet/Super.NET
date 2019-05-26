@@ -1,9 +1,8 @@
-﻿using Super.Compose;
+﻿using System;
+using System.Reflection;
 using Super.Model.Results;
 using Super.Model.Selection;
 using Super.Model.Selection.Conditions;
-using System;
-using System.Reflection;
 
 namespace Super.Reflection
 {
@@ -14,13 +13,5 @@ namespace Super.Reflection
 		protected InstanceMetadata(ISelect<TIn, ICustomAttributeProvider> select,
 		                           IConditional<ICustomAttributeProvider, TOut> value)
 			: base(select.Select(value.Condition).Get, select.Select(value.Get).Get) {}
-	}
-
-	sealed class AttributeProvider<T> : Select<T, ICustomAttributeProvider>
-	{
-		public static AttributeProvider<T> Default { get; } = new AttributeProvider<T>();
-
-		AttributeProvider() : base(Start.A.Selection<T>()
-		                                .By.Metadata.UnlessIsOf(Start.A.Selection<ICustomAttributeProvider>().By.Self)) {}
 	}
 }

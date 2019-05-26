@@ -1,7 +1,7 @@
-using Super.Model.Selection;
-using Super.Model.Sequences;
 using System.Collections.Generic;
 using System.Reflection;
+using Super.Model.Selection;
+using Super.Model.Sequences;
 
 namespace Super.Reflection.Types
 {

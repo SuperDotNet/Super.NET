@@ -4,8 +4,8 @@ namespace Super.Model.Selection.Conditions
 {
 	public class SelectedConditional<TFrom, TTo, TOut> : IConditional<TFrom, TOut>
 	{
+		readonly Func<TFrom, TTo>        _select;
 		readonly IConditional<TTo, TOut> _source;
-		readonly Func<TFrom, TTo>          _select;
 
 		public SelectedConditional(IConditional<TTo, TOut> source, Func<TFrom, TTo> select)
 			: this(new Condition<TFrom>(select.ToSelect().Select(source.Condition).Get), source, select) {}
@@ -13,8 +13,8 @@ namespace Super.Model.Selection.Conditions
 		public SelectedConditional(ICondition<TFrom> condition, IConditional<TTo, TOut> source, Func<TFrom, TTo> select)
 		{
 			Condition = condition;
-			_select        = select;
-			_source = source;
+			_select   = select;
+			_source   = source;
 		}
 
 		public ICondition<TFrom> Condition { get; }

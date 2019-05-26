@@ -1,8 +1,8 @@
-﻿using FluentAssertions;
+﻿using System.Threading.Tasks;
+using FluentAssertions;
 using Super.Application.Hosting.xUnit;
 using Super.Runtime.Execution;
 using Super.Testing.Objects;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Super.Testing.Application.Runtime
@@ -33,7 +33,6 @@ namespace Super.Testing.Application.Runtime
 			ExecutionContextStore.Default.Condition.Get().Should().BeFalse();
 		}
 
-
 		static CountingDisposable Child(object resource, object instance, string name)
 		{
 			using (Contexts.Default.Get(name))
@@ -63,17 +62,16 @@ namespace Super.Testing.Application.Runtime
 			Contextual() : base(() => new CountingDisposable()) {}
 		}
 
+		[Fact]
+		void VerifyExternalToInner()
+		{
+			Resource.Default.Get().Should().BeSameAs(Task.Run(() => Resource.Default.Get()).Result);
+		}
 
 		[Fact]
 		void VerifyInnerToExternal()
 		{
 			Task.Run(() => Resource.Default.Get()).Result.Should().NotBeSameAs(Resource.Default.Get());
-		}
-
-		[Fact]
-		void VerifyExternalToInner()
-		{
-			Resource.Default.Get().Should().BeSameAs(Task.Run(() => Resource.Default.Get()).Result);
 		}
 	}
 }

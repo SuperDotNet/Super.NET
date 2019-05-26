@@ -1,6 +1,7 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Immutable;
+using System.Linq;
+using FluentAssertions;
 using Super.Runtime;
-using System.Collections.Immutable;
 using Xunit;
 
 namespace Super.Testing.Application.Reflection
@@ -11,7 +12,7 @@ namespace Super.Testing.Application.Reflection
 		public void Coverage()
 		{
 			Empty<int>.Enumerable.Should()
-			          .BeSameAs(System.Linq.Enumerable.Empty<int>());
+			          .BeSameAs(Enumerable.Empty<int>());
 			Empty<int>.Immutable.Should().BeEquivalentTo(ImmutableArray<int>.Empty);
 		}
 	}

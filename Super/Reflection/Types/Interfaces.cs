@@ -1,9 +1,9 @@
-﻿using Super.Model.Selection;
-using Super.Runtime.Activation;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Super.Model.Selection;
+using Super.Runtime.Activation;
 
 namespace Super.Reflection.Types
 {

@@ -8,29 +8,25 @@ namespace Super.Testing.Application.Runtime.Activation
 {
 	public class ActivatorTests
 	{
-		[Theory]
-		[AutoData]
+		[Theory, AutoData]
 		void Verify(Activator<Subject> sut)
 		{
 			sut.Get().Should().BeSameAs(Subject.Default);
 		}
 
-		[Theory]
-		[AutoData]
+		[Theory, AutoData]
 		void VerifyNew(Activator<New> sut)
 		{
 			sut.Get().Should().NotBeSameAs(sut.Get());
 		}
 
-		[Theory]
-		[AutoData]
+		[Theory, AutoData]
 		void VerifyMoq(Mock<IActivator<New>> sut)
 		{
 			sut.Object.Get().Should().NotBeNull();
 		}
 
-		[Theory]
-		[AutoFixture.Xunit2.AutoData]
+		[Theory, AutoFixture.Xunit2.AutoData]
 		void VerifyNativeMoq(Mock<IActivator<New>> sut)
 		{
 			sut.Object.Get().Should().BeNull();

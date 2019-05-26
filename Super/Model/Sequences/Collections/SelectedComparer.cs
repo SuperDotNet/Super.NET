@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 
-namespace Super.Model.Sequences.Collections {
+namespace Super.Model.Sequences.Collections
+{
 	public class SelectedComparer<T, TMember> : IComparer<T>
 	{
-		readonly Func<T, TMember>   _select;
 		readonly IComparer<TMember> _member;
+		readonly Func<T, TMember>   _select;
 
 		public SelectedComparer(Func<T, TMember> select) : this(select, SortComparer<TMember>.Default) {}
 

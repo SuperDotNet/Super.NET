@@ -1,15 +1,14 @@
-﻿using AutoFixture.Xunit2;
+﻿using System;
+using AutoFixture.Xunit2;
 using FluentAssertions;
 using Super.Runtime.Activation;
-using System;
 using Xunit;
 
 namespace Super.Testing.Application.Runtime.Activation
 {
 	public class ServiceProviderTests
 	{
-		[Theory]
-		[AutoData]
+		[Theory, AutoData]
 		public void Verify(int number)
 		{
 			var sut = new ServiceProvider(number);

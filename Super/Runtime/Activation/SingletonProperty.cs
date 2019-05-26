@@ -1,10 +1,9 @@
-﻿using Super.Compose;
+﻿using System;
+using System.Reflection;
+using Super.Compose;
 using Super.Model.Results;
-using Super.Model.Selection.Conditions;
 using Super.Model.Selection.Stores;
 using Super.Model.Sequences;
-using System;
-using System.Reflection;
 
 namespace Super.Runtime.Activation
 {
@@ -23,14 +22,5 @@ namespace Super.Runtime.Activation
 			            .Where(IsSingletonProperty.Default)
 			            .FirstAssigned()
 			            .Get) {}
-	}
-
-	sealed class IsSingletonProperty : AllCondition<PropertyInfo>
-	{
-		public static IsSingletonProperty Default { get; } = new IsSingletonProperty();
-
-		IsSingletonProperty() : base(Start.A.Condition.Of.Any.By.Assigned,
-		                             Start.A.Condition<PropertyInfo>()
-		                                  .By.Calling(y => y.CanRead && y.GetMethod.IsStatic)) {}
 	}
 }
