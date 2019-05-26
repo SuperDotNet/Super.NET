@@ -117,8 +117,8 @@ namespace Super.Application
 	{
 		public DependencyCandidates(Type type) : base(A.This(TypeMetadata.Default)
 		                                               .Select(Constructors.Default)
-		                                               .Select(Parameters.Default.Open().Many())
 		                                               .Query()
+		                                               .SelectMany(Parameters.Default.Open())
 		                                               .Select(ParameterType.Default)
 		                                               .Select(new GenericTypeDependencySelector(type))
 		                                               .Where(IsClass.Default)

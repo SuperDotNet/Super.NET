@@ -1,7 +1,6 @@
 ﻿using Super.Model.Results;
 using Super.Model.Selection;
 using Super.Model.Sequences;
-using Super.Model.Sequences.Query;
 using Super.Runtime;
 using System;
 using System.Collections.Generic;
@@ -25,17 +24,6 @@ namespace Super
 
 		/**/
 
-		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static uint Length<T>(in this Model.Sequences.Store<T> @this)
-			=> @this.Length.Or((uint)@this.Instance.Length);*/
-
-		/**/
-
-		public static ISelect<IEnumerable<TFrom>, IEnumerable<TTo>> Many<TFrom, TTo>(
-			this ISelect<TFrom, IEnumerable<TTo>> @this) => new SelectManySelector<TFrom, TTo>(@this.Get);
-
-		/**/
-
 		public static ISequence<T> And<T>(this IResult<T> @this, params IResult<T>[] others)
 			=> Sequence.From(others.Prepend(@this).ToArray());
 
@@ -56,7 +44,7 @@ namespace Super
 			=> @this.Array.CopyInto(into, @this.Start, @this.Length);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Model.Sequences.Store<T> ToStore<T>(in this ArrayView<T> @this) 
+		public static Model.Sequences.Store<T> ToStore<T>(in this ArrayView<T> @this)
 			=> @this.ToStore(Leases<T>.Default);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]

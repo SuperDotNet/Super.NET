@@ -102,6 +102,9 @@ namespace Super
 		                                                      Expression<Func<T, IEnumerable<TOut>>> select)
 			=> @this.SelectMany(select.Compile());
 
+		public static Query<_, TOut> SelectMany<_, T, TOut>(this Query<_, T> @this, ISelect<T, IEnumerable<TOut>> select)
+			=> @this.SelectMany(select.Get);
+
 		public static Query<_, TOut> SelectMany<_, T, TOut>(this Query<_, T> @this, Func<T, IEnumerable<TOut>> select)
 			=> @this.Select(new Build.SelectMany<T, TOut>(select).Returned());
 
