@@ -1,12 +1,12 @@
-﻿using Super.Compose;
-using System;
+﻿using System;
+using Super.Compose;
 
 namespace Super.Model.Sequences.Query
 {
 	public class One<T> : IReduce<T>
 	{
-		readonly Func<ArrayView<T>, ArrayView<T>> _where;
 		readonly Func<T>                          _default;
+		readonly Func<ArrayView<T>, ArrayView<T>> _where;
 
 		public One(Func<T, bool> where) : this(where, A.Default<T>) {}
 

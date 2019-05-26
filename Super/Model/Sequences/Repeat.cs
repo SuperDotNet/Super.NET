@@ -1,5 +1,5 @@
-﻿using Super.Runtime.Activation;
-using System;
+﻿using System;
+using Super.Runtime.Activation;
 
 namespace Super.Model.Sequences
 {
@@ -9,7 +9,7 @@ namespace Super.Model.Sequences
 
 		Repeat() : this(New<T>.Default.Get) {}
 
-		readonly Func<T>   _create;
+		readonly Func<T> _create;
 
 		public Repeat(Func<T> create) => _create = create;
 

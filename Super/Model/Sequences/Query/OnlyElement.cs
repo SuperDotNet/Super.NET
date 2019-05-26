@@ -1,9 +1,9 @@
-﻿using Super.Model.Selection;
-using Super.Runtime.Activation;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Super.Model.Selection;
 using Super.Model.Selection.Conditions;
+using Super.Runtime.Activation;
 
 namespace Super.Model.Sequences.Query
 {

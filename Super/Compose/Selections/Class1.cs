@@ -110,7 +110,7 @@ namespace Super.Compose.Selections
 		public ISelect<T, TypeInfo> Metadata => InstanceMetadata<T>.Default;
 		public ISelect<T, Type> Type => InstanceType<T>.Default;
 
-		public ISelect<T, TOut> Calling<TOut>(Func<T, TOut> select) => new Select<T, TOut>(select);
+		public ISelect<T, TOut> Calling<TOut>(Func<T, TOut> select) => new Model.Selection.Select<T, TOut>(select);
 
 		public ISelect<T, TOut> Calling<TOut>(Func<TOut> result) => new DelegatedResult<T, TOut>(result);
 
@@ -131,7 +131,7 @@ namespace Super.Compose.Selections
 		public ISelect<T, Array<T>> Array() => Self.Select(Yield<T>.Default).Result();
 
 		public ISelect<T, Func<TIn, TOut>> Delegate<TIn, TOut>(Func<T, Func<TIn, TOut>> select)
-			=> new Select<T, Func<TIn, TOut>>(select);
+			=> new Model.Selection.Select<T, Func<TIn, TOut>>(select);
 
 
 		public ISelect<T, TOut> Activation<TOut>() => Activator<TOut>.Default.ToSelect(I.A<T>());
@@ -209,7 +209,7 @@ namespace Super.Compose.Selections
 		public ISelect<TIn, TOut> Returning(Func<TOut> result) => new DelegatedResult<TIn, TOut>(result);
 	}
 
-	public sealed class Location<TIn, TOut> : Select<TIn, TOut>
+	public sealed class Location<TIn, TOut> : Model.Selection.Select<TIn, TOut>
 	{
 		public static Location<TIn, TOut> Default { get; } = new Location<TIn, TOut>();
 
@@ -249,7 +249,7 @@ namespace Super.Compose.Selections
 		public IAction<TIn> Action(System.Action<TIn> body) => new Model.Selection.Adapters.Action<TIn>(body);
 	}
 
-	public sealed class Cast<TIn, TOut> : Select<TIn, TOut>
+	public sealed class Cast<TIn, TOut> : Model.Selection.Select<TIn, TOut>
 	{
 		public static Cast<TIn, TOut> Default { get; } = new Cast<TIn, TOut>();
 

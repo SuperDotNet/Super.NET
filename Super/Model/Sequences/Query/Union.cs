@@ -6,10 +6,10 @@ namespace Super.Model.Sequences.Query
 	public class Union<T> : IContent<T, T>
 	{
 		readonly IBody<T>             _body;
-		readonly ISequence<T>         _others;
 		readonly IEqualityComparer<T> _comparer;
-		readonly IStores<T>           _stores;
 		readonly Assigned<uint>       _limit;
+		readonly ISequence<T>         _others;
+		readonly IStores<T>           _stores;
 
 		// ReSharper disable once TooManyDependencies
 		public Union(IBody<T> body, ISequence<T> others, IEqualityComparer<T> comparer, IStores<T> stores,

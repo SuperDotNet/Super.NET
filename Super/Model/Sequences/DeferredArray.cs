@@ -12,9 +12,4 @@ namespace Super.Model.Sequences
 
 		public Array<T> Get() => _enumerable.ToArray();
 	}
-
-	public class DeferredResultArray<T> : IArray<T>
-	{
-		public Array<T> Get() => default;
-	}
 }

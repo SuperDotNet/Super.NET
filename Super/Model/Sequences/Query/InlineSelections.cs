@@ -6,8 +6,6 @@ using System.Linq.Expressions;
 
 namespace Super.Model.Sequences.Query
 {
-	public delegate void Copy<in TIn, in TOut>(TIn[] source, TOut[] destination, uint from, uint to, uint offset);
-
 	sealed class InlineSelections<TFrom, TTo> : ISelect<Expression<Func<TFrom, TTo>>, Expression<Copy<TFrom, TTo>>>
 	{
 		public static InlineSelections<TFrom, TTo> Default { get; } = new InlineSelections<TFrom, TTo>();
@@ -32,10 +30,10 @@ namespace Super.Model.Sequences.Query
 
 		public Expression<Copy<TFrom, TTo>> Get(Expression<Func<TFrom, TTo>> parameter)
 		{
-			var from  = _parameters.Get("start");
-			var @in   = Expression.ArrayAccess(_parameters.Get("source"), Expression.Convert(from, typeof(int)));
-			var to    = _parameters.Get("to");
-			var @out  = Expression.ArrayAccess(_parameters.Get("destination"), Expression.Convert(to, typeof(int)));
+			var from = _parameters.Get("start");
+			var @in  = Expression.ArrayAccess(_parameters.Get("source"), Expression.Convert(from, typeof(int)));
+			var to   = _parameters.Get("to");
+			var @out = Expression.ArrayAccess(_parameters.Get("destination"), Expression.Convert(to, typeof(int)));
 
 			var inline = new InlineVisitor(parameter.Parameters[0], @in).Visit(parameter.Body)
 			             ??

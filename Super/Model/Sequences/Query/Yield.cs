@@ -1,8 +1,6 @@
-﻿using Super.Model.Selection;
-
-namespace Super.Model.Sequences.Query
+﻿namespace Super.Model.Sequences.Query
 {
-	public sealed class Yield<T> : Select<T, T[]>
+	public sealed class Yield<T> : Model.Selection.Select<T, T[]>
 	{
 		public static Yield<T> Default { get; } = new Yield<T>();
 

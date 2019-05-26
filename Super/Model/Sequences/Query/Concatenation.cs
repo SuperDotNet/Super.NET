@@ -5,9 +5,9 @@ namespace Super.Model.Sequences.Query
 	public class Concatenation<T> : IContent<T, T>
 	{
 		readonly IBody<T>       _body;
+		readonly Assigned<uint> _limit;
 		readonly ISequence<T>   _others;
 		readonly IStores<T>     _stores;
-		readonly Assigned<uint> _limit;
 
 		// ReSharper disable once TooManyDependencies
 		public Concatenation(IBody<T> body, ISequence<T> others, IStores<T> stores, Assigned<uint> limit)

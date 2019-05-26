@@ -41,7 +41,7 @@ namespace Super.Model.Selection.Adapters
 	{
 		readonly INode<_, T> _node;
 
-		public Query(ISelect<_, T[]> subject) : this(new Start<_, T>(subject)) {}
+		public Query(ISelect<_, T[]> subject) : this(new StartNode<_, T>(subject)) {}
 
 		public Query(ISelect<_, Sequences.Store<T>> subject) : this(new Node<_, T>(subject)) {}
 

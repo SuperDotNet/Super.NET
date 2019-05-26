@@ -1,7 +1,7 @@
-﻿using Super.Model.Sequences.Query.Construction;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Super.Model.Sequences.Query.Construction;
 
 namespace Super.Model.Sequences.Query
 {
@@ -16,8 +16,8 @@ namespace Super.Model.Sequences.Query
 
 		public sealed class Union<T> : IContents<T, T>
 		{
-			readonly ISequence<T>         _others;
 			readonly IEqualityComparer<T> _comparer;
+			readonly ISequence<T>         _others;
 
 			public Union(ISequence<T> others, IEqualityComparer<T> comparer)
 			{
@@ -31,8 +31,8 @@ namespace Super.Model.Sequences.Query
 
 		public sealed class Intersect<T> : IContents<T, T>
 		{
-			readonly ISequence<T>         _others;
 			readonly IEqualityComparer<T> _comparer;
+			readonly ISequence<T>         _others;
 
 			public Intersect(ISequence<T> others, IEqualityComparer<T> comparer)
 			{
@@ -62,7 +62,7 @@ namespace Super.Model.Sequences.Query
 		public sealed class Select<TIn, TOut> : Builder<TIn, TOut, Func<TIn, TOut>>
 		{
 			public Select(Func<TIn, TOut> argument)
-				: base((shape, stores, parameter, limit) => new Selection<TIn, TOut>(shape, stores, parameter, limit),
+				: base((shape, stores, parameter, limit) => new Query.Select<TIn, TOut>(shape, stores, parameter, limit),
 				       argument) {}
 		}
 

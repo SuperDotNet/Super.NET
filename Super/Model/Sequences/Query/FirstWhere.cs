@@ -6,8 +6,8 @@ namespace Super.Model.Sequences.Query
 {
 	public class FirstWhere<T> : IReduce<T>
 	{
-		readonly Func<T, bool> _where;
 		readonly Func<T>       _default;
+		readonly Func<T, bool> _where;
 
 		public FirstWhere(ICondition<T> where) : this(where.Get) {}
 
@@ -31,7 +31,7 @@ namespace Super.Model.Sequences.Query
 				}
 			}
 
-			return _default.Invoke();
+			return _default();
 		}
 	}
 }

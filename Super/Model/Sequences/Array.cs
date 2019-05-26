@@ -1,10 +1,6 @@
 using JetBrains.Annotations;
 using Super.Model.Results;
-using Super.Model.Selection;
-using Super.Reflection.Types;
 using Super.Runtime;
-using Super.Runtime.Environment;
-using System;
 using System.Collections.Immutable;
 
 namespace Super.Model.Sequences
@@ -42,13 +38,4 @@ namespace Super.Model.Sequences
 		[Pure]
 		public T[] Open() => _reference;
 	}
-
-	sealed class Size<T> : FixedSelectedSingleton<Type, uint>
-	{
-		public static Size<T> Default { get; } = new Size<T>();
-
-		Size() : base(DefaultComponentLocator<ISize>.Default.Assume(), Type<T>.Instance) {}
-	}
-
-	public interface ISize : ISelect<Type, uint> {}
 }

@@ -1,5 +1,5 @@
-﻿using Super.Model.Selection;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Super.Model.Selection;
 
 namespace Super.Model.Sequences
 {

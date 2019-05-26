@@ -6,10 +6,10 @@ namespace Super.Model.Sequences.Query
 	public class SelectMany<TIn, TOut> : IContent<TIn, TOut>
 	{
 		readonly IBody<TIn>                   _body;
-		readonly Func<TIn, IEnumerable<TOut>> _project;
-		readonly IStores<TOut>                _stores;
 		readonly IIterate<TOut>               _iterate;
 		readonly Assigned<uint>               _limit;
+		readonly Func<TIn, IEnumerable<TOut>> _project;
+		readonly IStores<TOut>                _stores;
 
 		// ReSharper disable once TooManyDependencies
 		public SelectMany(IBody<TIn> body, Func<TIn, IEnumerable<TOut>> project, IStores<TOut> stores,

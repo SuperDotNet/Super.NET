@@ -1,7 +1,7 @@
-﻿using Super.Runtime.Activation;
-using Super.Runtime.Invocation;
-using System;
+﻿using System;
 using Super.Model.Selection.Conditions;
+using Super.Runtime.Activation;
+using Super.Runtime.Invocation;
 
 namespace Super.Model.Sequences.Query
 {

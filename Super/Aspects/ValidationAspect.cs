@@ -27,7 +27,7 @@ namespace Super.Aspects
 
 	public interface IAspect<TIn, TOut> : IAlteration<ISelect<TIn, TOut>> {}
 
-	public sealed class Aspects<TIn, TOut> : Select<ISelect<TIn, TOut>, IAspect<TIn, TOut>>
+	public sealed class Aspects<TIn, TOut> : Model.Selection.Select<ISelect<TIn, TOut>, IAspect<TIn, TOut>>
 	{
 		public static Aspects<TIn, TOut> Default { get; } = new Aspects<TIn, TOut>();
 
@@ -297,7 +297,7 @@ namespace Super.Aspects
 		AssignedAspect() : base(DefaultGuard<TIn>.Default.Execute) {}
 	}
 
-	public sealed class EmptyAspect<TIn, TOut> : Select<ISelect<TIn, TOut>, ISelect<TIn, TOut>>, IAspect<TIn, TOut>
+	public sealed class EmptyAspect<TIn, TOut> : Model.Selection.Select<ISelect<TIn, TOut>, ISelect<TIn, TOut>>, IAspect<TIn, TOut>
 	{
 		public static EmptyAspect<TIn, TOut> Default { get; } = new EmptyAspect<TIn, TOut>();
 

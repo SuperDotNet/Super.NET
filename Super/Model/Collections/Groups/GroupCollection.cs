@@ -1,4 +1,3 @@
-using Super.Model.Selection;
 using Super.Model.Sequences;
 using Super.Model.Sequences.Query;
 using Super.Reflection;
@@ -7,7 +6,7 @@ using System.Linq;
 
 namespace Super.Model.Collections.Groups
 {
-	public class GroupCollection<T> : Select<GroupName, IList<T>>, IGroupCollection<T>
+	public class GroupCollection<T> : Selection.Select<GroupName, IList<T>>, IGroupCollection<T>
 	{
 		public GroupCollection(IEnumerable<IGroup<T>> groups) : this(groups, GroupPairs<T>.Default) {}
 

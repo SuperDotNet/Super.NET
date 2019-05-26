@@ -26,7 +26,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 		[Fact]
 		void VerifyTake()
 		{
-			new Start<int[], int>(A.Self<int[]>()).Get(new Take(take))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Take(take))
 			                                      .Get(data)
 			                                      .Should()
 			                                      .Equal(data.Take(take))
@@ -37,7 +37,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 		[Fact]
 		void VerifyFirst()
 		{
-			new Start<int[], int>(A.Self<int[]>()).Get(new Skip(11))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Skip(11))
 			                                      .Get(FirstOrDefault<int>.Default)
 			                                      .Get(data)
 			                                      .Should()
@@ -45,7 +45,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 			                                      .And.Subject.Should()
 			                                      .Be(data.Skip(11).FirstOrDefault());
 
-			new Start<int[], int>(A.Self<int[]>()).Get(new Skip(10))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Skip(10))
 			                                      .Get(FirstOrDefault<int>.Default)
 			                                      .Get(data)
 			                                      .Should()
@@ -59,7 +59,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 		[Fact]
 		void VerifySkipTake()
 		{
-			new Start<int[], int>(A.Self<int[]>()).Get(new Skip(skip))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Skip(skip))
 			                                      .Get(new Take(take))
 			                                      .Get(data)
 			                                      .Should()
@@ -71,7 +71,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 		[Fact]
 		void VerifySkipSelect()
 		{
-			new Start<int[], int>(A.Self<int[]>()).Get(new Skip(skip))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Skip(skip))
 			                                      .Get(new Build.Select<int, string>(x => x.ToString()))
 			                                      .Get(data)
 			                                      .Should()
@@ -84,7 +84,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 		[Fact]
 		void VerifySkipTakeFirst()
 		{
-			new Start<int[], int>(A.Self<int[]>()).Get(new Skip(4))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Skip(4))
 			                                      .Get(new Take(3))
 			                                      .Get(FirstOrDefault<int>.Default)
 			                                      .Get(data)
@@ -95,7 +95,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 			                                              .Take(3)
 			                                              .FirstOrDefault());
 
-			new Start<int[], int>(A.Self<int[]>()).Get(new Skip(3))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Skip(3))
 			                                      .Get(new Take(3))
 			                                      .Get(FirstOrDefault<int>.Default)
 			                                      .Get(data)
@@ -112,7 +112,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 		[Fact]
 		void VerifyWhereSkip()
 		{
-			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x == 5))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x == 5))
 			                                      .Get(new Skip(2))
 			                                      .Get(data)
 			                                      .Should()
@@ -126,7 +126,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 		[Fact]
 		void VerifyWhereWhere()
 		{
-			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x > 3 && x < 7))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x > 3 && x < 7))
 			                                      .Get(new Build.Where<int>(x => x == 4))
 			                                      .Get(data)
 			                                      .Should()
@@ -137,7 +137,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 		[Fact]
 		void VerifyWhereWhereFirst()
 		{
-			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x > 3 && x < 7))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x > 3 && x < 7))
 			                                      .Get(new Build.Where<int>(x => x == 4))
 			                                      .Get(FirstOrDefault<int>.Default)
 			                                      .Get(data)
@@ -148,7 +148,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 		[Fact]
 		void VerifyWhereSkipWhere()
 		{
-			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x > 3 && x < 7))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x > 3 && x < 7))
 			                                      .Get(new Skip(3))
 			                                      .Get(new Build.Where<int>(x => x == 4))
 			                                      .Get(data)
@@ -157,7 +157,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 			                                                 .Skip(3)
 			                                                 .Where(x => x == 4));
 
-			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x > 3 && x < 7))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x > 3 && x < 7))
 			                                      .Get(new Skip(3))
 			                                      .Get(new Take(5))
 			                                      .Get(new Build.Where<int>(x => x == 4))
@@ -176,7 +176,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 		[Fact]
 		void VerifyWhereSelect()
 		{
-			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x > 8))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x > 8))
 			                                      .Get(new Build.Select<int, string>(x => x.ToString()))
 			                                      .Get(data)
 			                                      .Should()
@@ -188,7 +188,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 		[Fact]
 		void VerifySkipTakeWhere()
 		{
-			var node = new Start<int[], int>(A.Self<int[]>()).Get(new Skip(6))
+			var node = new StartNode<int[], int>(A.Self<int[]>()).Get(new Skip(6))
 			                                                 .Get(new Take(5))
 			                                                 .Get(new Build.Where<int>(x => x > 2));
 			node.Get(data).Should().Equal(data.Skip(6).Take(5).Where(x => x > 2));
@@ -208,21 +208,21 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 		[Fact]
 		void VerifyWhereSkipFirst()
 		{
-			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x == 5))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x == 5))
 			                                      .Get(new Skip(2))
 			                                      .Get(FirstOrDefault<int>.Default)
 			                                      .Get(data)
 			                                      .Should()
 			                                      .Be(5);
 
-			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x > 3 && x < 6))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x > 3 && x < 6))
 			                                      .Get(new Skip(4))
 			                                      .Get(FirstOrDefault<int>.Default)
 			                                      .Get(data)
 			                                      .Should()
 			                                      .Be(5);
 
-			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x > 3 && x < 6))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Build.Where<int>(x => x > 3 && x < 6))
 			                                      .Get(new Skip(3))
 			                                      .Get(FirstOrDefault<int>.Default)
 			                                      .Get(data)
@@ -235,7 +235,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 		[Fact]
 		void VerifySelectSkip()
 		{
-			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, string>(x => x.ToString()))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, string>(x => x.ToString()))
 			                                      .Get(new Skip(5))
 			                                      .Get(new Take(4))
 			                                      .Get(data)
@@ -248,13 +248,13 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 		[Fact]
 		void VerifySelectSelect()
 		{
-			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, string>(x => x.ToString()))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, string>(x => x.ToString()))
 			                                      .Get(new Build.Select<string, int>(x => x.Length))
 			                                      .Get(data)
 			                                      .Should()
 			                                      .Equal(data.Select(x => x.ToString()).Select(x => x.Length));
 
-			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, string>(x => x.ToString()))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, string>(x => x.ToString()))
 			                                      .Get(new Build.Select<string, int>(x => x.Length))
 			                                      .Get(new Skip(5))
 			                                      .Get(new Take(4))
@@ -271,7 +271,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 		[Fact]
 		void VerifySelectWhereFirst()
 		{
-			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, string>(x => x.ToString()))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, string>(x => x.ToString()))
 			                                      .Get(new Build.Where<string>(x => x == "5"))
 			                                      .Get(FirstOrDefault<string>.Default)
 			                                      .Get(data)
@@ -284,7 +284,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 		[Fact]
 		void VerifySelectWhereWhere()
 		{
-			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, int>(x => x))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, int>(x => x))
 			                                      .Get(new Build.Where<int>(x => x > 3 && x < 7))
 			                                      .Get(new Build.Where<int>(x => x == 4))
 			                                      .Get(data)
@@ -297,7 +297,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 		[Fact]
 		void VerifySelectWhereWhereFirst()
 		{
-			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, int>(x => x))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, int>(x => x))
 			                                      .Get(new Build.Where<int>(x => x > 3 && x < 7))
 			                                      .Get(new Build.Where<int>(x => x == 4))
 			                                      .Get(FirstOrDefault<int>.Default)
@@ -311,7 +311,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 		[Fact]
 		void VerifySelectSkipTake()
 		{
-			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, string>(x => x.ToString()))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, string>(x => x.ToString()))
 			                                      .Get(new Skip(5))
 			                                      .Get(new Take(4))
 			                                      .Get(data)
@@ -326,7 +326,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 		[Fact]
 		void VerifySelectSkipSelect()
 		{
-			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, string>(x => x.ToString()))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, string>(x => x.ToString()))
 			                                      .Get(new Skip(5))
 			                                      .Get(new Build.Select<string, int>(x => x.Length))
 			                                      .Get(data)
@@ -341,7 +341,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 		[Fact]
 		void VerifySelectSkipTakeFirst()
 		{
-			new Start<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, string>(x => x.ToString()))
+			new StartNode<int[], int>(A.Self<int[]>()).Get(new Build.Select<int, string>(x => x.ToString()))
 			                                      .Get(new Skip(5))
 			                                      .Get(new Take(4))
 			                                      .Get(FirstOrDefault<string>.Default)

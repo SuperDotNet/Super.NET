@@ -6,12 +6,12 @@ namespace Super.Model.Sequences.Query
 {
 	sealed class GroupMap<T, TKey> : IReduce<T, IArrayMap<TKey, T>>
 	{
-		readonly Func<T, TKey> _key;
 		readonly IEqualityComparer<TKey> _comparer;
+		readonly Func<T, TKey>           _key;
 
 		public GroupMap(Func<T, TKey> key, IEqualityComparer<TKey> comparer)
 		{
-			_key = key;
+			_key      = key;
 			_comparer = comparer;
 		}
 
