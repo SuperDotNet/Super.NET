@@ -7,7 +7,7 @@
 		FirstOrDefault() : base(Always<T>.Default) {}
 	}*/
 
-	sealed class FirstOrDefault<T> : LimitAware, IElement<T>
+	sealed class FirstOrDefault<T> : LimitAware, IReduce<T>
 	{
 		public static FirstOrDefault<T> Default { get; } = new FirstOrDefault<T>();
 

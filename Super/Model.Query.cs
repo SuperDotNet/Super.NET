@@ -44,6 +44,13 @@ namespace Super
 		public static Query<_, T> Where<_, T>(this Query<_, T> @this, Func<T, bool> where)
 			=> @this.Select(new Build.Where<T>(where));
 
+		public static ISelect<_, IArrayMap<TKey, T>> GroupMap<_, T, TKey>(
+			this Query<_, T> @this, ISelect<T, TKey> select)
+			=> @this.GroupMap(select.Get);
+
+		public static ISelect<_, IArrayMap<TKey, T>> GroupMap<_, T, TKey>(this Query<_, T> @this, Func<T, TKey> select)
+			=> @this.Select(new GroupMap<T, TKey>(select));
+
 		public static ISelect<_, T> Only<_, T>(this Query<_, T> @this)
 			=> @this.Select(Model.Sequences.Query.Only<T>.Default);
 

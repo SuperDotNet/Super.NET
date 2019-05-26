@@ -53,9 +53,9 @@ namespace Super.Model.Sequences.Query
 
 	public interface ILimitAware : IResult<Assigned<uint>> {}
 
-	public interface IElement<T> : IElement<T, T> {}
+	public interface IReduce<T> : IReduce<T, T> {}
 
-	public interface IElement<TFrom, out TTo> : ISelect<Store<TFrom>, TTo> {}
+	public interface IReduce<TIn, out TOut> : ISelect<Store<TIn>, TOut> {}
 
 	public interface IContent<TIn, TOut> : ISelect<Store<TIn>, Store<TOut>> {}
 

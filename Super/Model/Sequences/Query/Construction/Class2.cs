@@ -12,7 +12,7 @@ namespace Super.Model.Sequences.Query.Construction
 	{
 		INode<_, TTo> Get<TTo>(IContents<T, TTo> parameter);
 
-		ISelect<_, TTo> Get<TTo>(IElement<T, TTo> parameter);
+		ISelect<_, TTo> Get<TTo>(IReduce<T, TTo> parameter);
 	}
 
 	sealed class Start<_, T> : Instance<ISelect<_, T[]>>, INode<_, T>
@@ -33,7 +33,7 @@ namespace Super.Model.Sequences.Query.Construction
 			=> new ContentNode<_, T, TTo>(new Enter<_, T>(Get()),
 			                              new ContentContainer<T, TTo>(_partition, parameter));
 
-		public ISelect<_, TTo> Get<TTo>(IElement<T, TTo> parameter)
+		public ISelect<_, TTo> Get<TTo>(IReduce<T, TTo> parameter)
 			=> new Exit<_, T, T, TTo>(new Enter<_, T>(Get()),
 			                          new Content<T>(_partition.Get(parameter is ILimitAware aware ? aware.Get() : 2)),
 			                          parameter);
@@ -62,7 +62,7 @@ namespace Super.Model.Sequences.Query.Construction
 			=> new ContentNode<_, T, TTo>(new Enter<_, T>(_origin),
 			                              new ContentContainer<T, TTo>(_partition, parameter));
 
-		public ISelect<_, TTo> Get<TTo>(IElement<T, TTo> parameter)
+		public ISelect<_, TTo> Get<TTo>(IReduce<T, TTo> parameter)
 			=> new Exit<_, T, T, TTo>(new Enter<_, T>(_origin),
 			                          new Content<T>(_partition.Get(parameter is ILimitAware limit ? limit.Get() : 2)),
 			                          parameter);
@@ -95,7 +95,7 @@ namespace Super.Model.Sequences.Query.Construction
 		public INode<_, TTo> Get<TTo>(IContents<T, TTo> parameter)
 			=> new ContentNode<_, T, TTo>(_origin, new ContentContainer<T, TTo>(_partition, parameter));
 
-		public ISelect<_, TTo> Get<TTo>(IElement<T, TTo> parameter)
+		public ISelect<_, TTo> Get<TTo>(IReduce<T, TTo> parameter)
 		{
 			var content = new Content<T>(_partition.Get(parameter is ILimitAware limit ? limit.Get() : 2)).Returned();
 			var result  = new Exit<_, T, T, TTo>(_origin, content, parameter);
@@ -280,7 +280,7 @@ namespace Super.Model.Sequences.Query.Construction
 			return result;
 		}
 
-		public ISelect<_, TTo> Get<TTo>(IElement<TOut, TTo> parameter)
+		public ISelect<_, TTo> Get<TTo>(IReduce<TOut, TTo> parameter)
 		{
 			var content = _container.Get(Leases<TOut>.Default)(parameter is ILimitAware limit ? limit.Get() : 2)
 			                        .Returned();
@@ -331,7 +331,7 @@ namespace Super.Model.Sequences.Query.Construction
 			return result;
 		}
 
-		public ISelect<_, TTo> Get<TTo>(IElement<TOut, TTo> parameter)
+		public ISelect<_, TTo> Get<TTo>(IReduce<TOut, TTo> parameter)
 			=> new Exit<_, TIn, TOut, TTo>(_origin, Content(parameter is ILimitAware limit ? limit.Get() : 2),
 			                               parameter);
 	}
@@ -476,16 +476,16 @@ namespace Super.Model.Sequences.Query.Construction
 	{
 		readonly ISelect<_, Store<TIn>> _origin;
 		readonly IContent<TIn, TOut>      _content;
-		readonly IElement<TOut, TTo>      _element;
+		readonly IReduce<TOut, TTo>      _reduce;
 
-		public Exit(ISelect<_, Store<TIn>> origin, IContent<TIn, TOut> content, IElement<TOut, TTo> element)
+		public Exit(ISelect<_, Store<TIn>> origin, IContent<TIn, TOut> content, IReduce<TOut, TTo> reduce)
 		{
 			_origin  = origin;
 			_content = content;
-			_element = element;
+			_reduce = reduce;
 		}
 
-		public TTo Get(_ parameter) => _element.Get(_content.Get(_origin.Get(parameter)));
+		public TTo Get(_ parameter) => _reduce.Get(_content.Get(_origin.Get(parameter)));
 	}
 
 	public sealed class ReturnedContents<TIn, TOut> : IContents<TIn, TOut>

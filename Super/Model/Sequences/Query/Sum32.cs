@@ -9,7 +9,7 @@ namespace Super.Model.Sequences.Query
 		Sum32() : base(i => i) {}
 	}
 
-	public class Sum32<T> : Unlimited, IElement<T, int>
+	public class Sum32<T> : Unlimited, IReduce<T, int>
 	{
 		readonly Func<T, int> _project;
 
@@ -36,7 +36,7 @@ namespace Super.Model.Sequences.Query
 		SumUnsigned32() : base(x => x) {}
 	}
 
-	public class SumUnsigned32<T> : Unlimited, IElement<T, uint>
+	public class SumUnsigned32<T> : Unlimited, IReduce<T, uint>
 	{
 		readonly Func<T, uint> _project;
 
@@ -63,7 +63,7 @@ namespace Super.Model.Sequences.Query
 		Sum64() : base(x => x) {}
 	}
 
-	public class Sum64<T> : Unlimited, IElement<T, long>
+	public class Sum64<T> : Unlimited, IReduce<T, long>
 	{
 		readonly Func<T, long> _project;
 
@@ -90,7 +90,7 @@ namespace Super.Model.Sequences.Query
 		SumUnsigned64() : base(x => x) {}
 	}
 
-	public class SumUnsigned64<T> : Unlimited, IElement<T, ulong>
+	public class SumUnsigned64<T> : Unlimited, IReduce<T, ulong>
 	{
 		readonly Func<T, ulong> _project;
 
@@ -117,7 +117,7 @@ namespace Super.Model.Sequences.Query
 		SumSingle() : base(x => x) {}
 	}
 
-	public class SumSingle<T> : Unlimited, IElement<T, float>
+	public class SumSingle<T> : Unlimited, IReduce<T, float>
 	{
 		readonly Func<T, float> _project;
 
@@ -144,7 +144,7 @@ namespace Super.Model.Sequences.Query
 		SumDouble() : base(x => x) {}
 	}
 
-	public class SumDouble<T> : Unlimited, IElement<T, double>
+	public class SumDouble<T> : Unlimited, IReduce<T, double>
 	{
 		readonly Func<T, double> _project;
 
@@ -171,7 +171,7 @@ namespace Super.Model.Sequences.Query
 		SumDecimal() : base(x => x) {}
 	}
 
-	public class SumDecimal<T> : Unlimited, IElement<T, decimal>
+	public class SumDecimal<T> : Unlimited, IReduce<T, decimal>
 	{
 		readonly Func<T, decimal> _project;
 

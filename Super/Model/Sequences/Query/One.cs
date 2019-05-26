@@ -3,7 +3,7 @@ using System;
 
 namespace Super.Model.Sequences.Query
 {
-	public class One<T> : IElement<T>
+	public class One<T> : IReduce<T>
 	{
 		readonly Func<ArrayView<T>, ArrayView<T>> _where;
 		readonly Func<T>                          _default;

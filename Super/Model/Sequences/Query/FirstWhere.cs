@@ -4,7 +4,7 @@ using System;
 
 namespace Super.Model.Sequences.Query
 {
-	public class FirstWhere<T> : IElement<T>
+	public class FirstWhere<T> : IReduce<T>
 	{
 		readonly Func<T, bool> _where;
 		readonly Func<T>       _default;
