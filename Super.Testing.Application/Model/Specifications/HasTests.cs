@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
-using Super.Model.Collections;
 using System.Linq;
+using Super.Model.Sequences.Collections;
 using Xunit;
 
 namespace Super.Testing.Application.Model.Specifications

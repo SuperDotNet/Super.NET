@@ -1,12 +1,12 @@
 ﻿using AutoFixture;
 using AutoFixture.Kernel;
-using Super.Model.Collections.Commands;
 using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Selection.Conditions;
 using Super.Runtime.Activation;
 using System;
 using System.Collections.Generic;
+using Super.Model.Sequences.Collections.Commands;
 
 namespace Super.Application.Hosting.xUnit
 {

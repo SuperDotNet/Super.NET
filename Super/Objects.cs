@@ -1,11 +1,11 @@
-﻿using Super.Model.Collections;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
 using Super.Runtime;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Super.Model.Sequences.Collections;
 
 namespace Super
 {

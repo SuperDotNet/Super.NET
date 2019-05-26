@@ -1,11 +1,11 @@
-﻿using Super.Model.Collections;
-using Super.Model.Sequences;
+﻿using Super.Model.Sequences;
 using Super.Model.Sequences.Query;
 using Super.Reflection;
 using Super.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Super.Model.Sequences.Collections;
 
 // ReSharper disable TooManyArguments
 // ReSharper disable once PossibleInvalidOperationException

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Super.Model.Collections;
 using Super.Model.Selection.Alterations;
+using Super.Model.Sequences.Collections;
 
 namespace Super.Model.Sequences.Query
 {

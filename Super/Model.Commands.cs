@@ -1,9 +1,9 @@
-﻿using Super.Model.Collections;
-using Super.Model.Commands;
+﻿using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Runtime;
 using System;
 using System.Collections.Immutable;
+using Super.Model.Sequences.Collections;
 
 // ReSharper disable TooManyArguments
 

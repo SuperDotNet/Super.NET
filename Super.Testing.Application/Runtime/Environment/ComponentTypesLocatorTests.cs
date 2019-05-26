@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
 using Super.Compose;
-using Super.Model.Collections;
 using Super.Reflection.Selection;
 using Super.Runtime.Environment;
 using Super.Runtime.Execution;
 using System;
 using System.Linq;
+using Super.Model.Sequences.Collections;
 using Xunit;
 
 // ReSharper disable All

@@ -1,10 +1,10 @@
-﻿using Super.Model.Collections;
-using Super.Model.Results;
+﻿using Super.Model.Results;
 using Super.Model.Sequences;
 using Super.Model.Sequences.Query;
 using Super.Model.Sequences.Query.Construction;
 using System;
 using System.Collections.Generic;
+using Super.Model.Sequences.Collections;
 
 namespace Super.Model.Selection.Adapters
 {
