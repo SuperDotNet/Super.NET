@@ -45,11 +45,18 @@ namespace Super
 			=> @this.Select(new Build.Where<T>(where));
 
 		public static ISelect<_, IArrayMap<TKey, T>> GroupMap<_, T, TKey>(
-			this Query<_, T> @this, ISelect<T, TKey> select)
-			=> @this.GroupMap(select.Get);
+			this Query<_, T> @this, ISelect<T, TKey> key) => @this.GroupMap(key, EqualityComparer<TKey>.Default);
 
-		public static ISelect<_, IArrayMap<TKey, T>> GroupMap<_, T, TKey>(this Query<_, T> @this, Func<T, TKey> select)
-			=> @this.Select(new GroupMap<T, TKey>(select));
+		public static ISelect<_, IArrayMap<TKey, T>> GroupMap<_, T, TKey>(
+			this Query<_, T> @this, ISelect<T, TKey> key, IEqualityComparer<TKey> comparer)
+			=> @this.GroupMap(key.Get, comparer);
+
+		public static ISelect<_, IArrayMap<TKey, T>> GroupMap<_, T, TKey>(this Query<_, T> @this, Func<T, TKey> key)
+			=> @this.GroupMap(key, EqualityComparer<TKey>.Default);
+
+		public static ISelect<_, IArrayMap<TKey, T>> GroupMap<_, T, TKey>(this Query<_, T> @this, Func<T, TKey> key,
+		                                                                  IEqualityComparer<TKey> comparer)
+			=> @this.Select(new GroupMap<T, TKey>(key, comparer));
 
 		public static ISelect<_, T> Only<_, T>(this Query<_, T> @this)
 			=> @this.Select(Model.Sequences.Query.Only<T>.Default);
