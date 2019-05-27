@@ -4,7 +4,7 @@ using Super.Model.Results;
 
 namespace Super.Application.Hosting.BenchmarkDotNet
 {
-	sealed class Deployed : FixedSelectedSingleton<Job, IConfig>
+	public sealed class Deployed : FixedSelectedSingleton<Job, IConfig>
 	{
 		public static Deployed Default { get; } = new Deployed();
 

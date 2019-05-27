@@ -5,7 +5,7 @@ using Super.Model.Results;
 
 namespace Super.Application.Hosting.BenchmarkDotNet
 {
-	sealed class Quick : FixedSelectedSingleton<Job, IConfig>
+	public sealed class Quick : FixedSelectedSingleton<Job, IConfig>
 	{
 		public static IResult<IConfig> Default { get; } = new Quick();
 
