@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Immutable;
-using Super.Model.Commands;
+﻿using Super.Model.Commands;
 using Super.Model.Selection;
 using Super.Model.Sequences.Collections;
 using Super.Runtime;
+using System;
+using System.Collections.Immutable;
 
 // ReSharper disable TooManyArguments
 
@@ -57,26 +57,6 @@ namespace Super
 		{
 			@this.Execute(None.Default);
 		}
-
-		/**/
-
-		/*public static IAny Any(this ICommand<None> @this) => I<Any>.Default.From(@this);
-
-		public static ICommand Select<T>(this ICommand<T> @this, IResult<T> parameter)
-			=> new DelegatedParameterCommand<T>(@this.Execute, parameter.Get);
-
-		public static ICommand<T> And<T>(this ICommand<T> @this, params ICommand<T>[] commands)
-			=> new CompositeCommand<T>(@this.Yield().Concat(commands).ToImmutableArray());
-
-		/*public static IAny Clear<T>(this ICommand<T> @this) => @this.Then().ToCommand(default(T)).Any();#1#
-
-
-		public static IAssignable<TIn, TOut> ToAssignment<TIn, TOut>(this ISelect<TIn, ICommand<TOut>> @this)
-			=> new SelectedAssignment<TIn, TOut>(@this.Get);
-		
-		public static IAlteration<T> ToConfiguration<T>(this ICommand<T> @this)
-			=> @this.To(I<ConfiguringAlteration<T>>.Default);
-*/
 
 		public static ISelect<T, None> ToSelect<T>(this ICommand<T> @this)
 			=> new Model.Selection.Adapters.Action<T>(@this.Execute);

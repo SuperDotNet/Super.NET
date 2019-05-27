@@ -80,7 +80,7 @@ namespace Super.Testing.Application.Model.Sequences.Query
 			     .As.Sequence.Array.By.Self.Query()
 			     .Skip(1)
 			     .SelectManyBy(x => x.Elements)
-			     .First()
+			     .FirstOrDefault()
 			     .Get(Data)
 			     .Should()
 			     .Be(Data.Skip(1).SelectMany(x => x.Elements).First());
@@ -90,7 +90,7 @@ namespace Super.Testing.Application.Model.Sequences.Query
 			     .Skip(1)
 			     .SelectManyBy(x => x.Elements)
 			     .Skip(2)
-			     .First()
+			     .FirstOrDefault()
 			     .Get(Data)
 			     .Should()
 			     .Be(Data.Skip(1).SelectMany(x => x.Elements).Skip(2).First());

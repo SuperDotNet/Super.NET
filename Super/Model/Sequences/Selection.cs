@@ -1,14 +1,5 @@
 ﻿namespace Super.Model.Sequences
 {
-	/*public interface IProject<T> : IProject<T, T> {}*/
-
-	/*class Project<T> : Select<ArrayView<T>, ArrayView<T>>, IProject<T>
-	{
-		public Project(ISelect<ArrayView<T>, ArrayView<T>> select) : base(select.Get) {}
-	}*/
-
-	/*public interface IProject<TIn, TOut> : ISelect<ArrayView<TIn>, ArrayView<TOut>> {}*/
-
 	public readonly struct Selection
 	{
 		public static Selection Default { get; } = new Selection(0);

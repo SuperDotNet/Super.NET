@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using Super.Model.Commands;
+﻿using Super.Model.Commands;
 using Super.Model.Results;
 using Super.Model.Selection;
 using Super.Model.Selection.Adapters;
@@ -12,6 +8,10 @@ using Super.Model.Sequences;
 using Super.Model.Sequences.Query;
 using Super.Operations;
 using Super.Runtime;
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Action = System.Action;
 
 namespace Super
@@ -21,14 +21,10 @@ namespace Super
 	{
 		public static ISelect<TIn, IResult<TOut>> AsDefined<TIn, TOut>(this ISelect<TIn, IResult<TOut>> @this) => @this;
 
-		/**/
-
 		public static OperationSelector<_, T> Then<_, T>(this ISelect<_, ValueTask<T>> @this)
 			=> new OperationSelector<_, T>(@this);
 
 		public static TaskSelector<_, T> Then<_, T>(this ISelect<_, Task<T>> @this) => new TaskSelector<_, T>(@this);
-
-		/**/
 
 		public static Selector<TIn, TOut> Then<TIn, TOut>(this ISelect<TIn, TOut> @this)
 			=> new Selector<TIn, TOut>(@this);
@@ -63,8 +59,6 @@ namespace Super
 
 		public static ExpressionSelector<T> Then<T>(this ISelect<T, Expression> @this)
 			=> new ExpressionSelector<T>(@this);
-
-		/*---*/
 
 		public static CollectionSelector<_, T> Then<_, T>(this ISelect<_, ICollection<T>> @this)
 			=> new CollectionSelector<_, T>(@this);
@@ -134,8 +128,6 @@ namespace Super
 		public static ISelect<_, double> Sum<_>(this Query<_, double> @this) => @this.Select(SumDouble.Default);
 
 		public static ISelect<_, decimal> Sum<_>(this Query<_, decimal> @this) => @this.Select(SumDecimal.Default);
-
-		/**/
 
 		public static Func<TIn, TOut> Selector<TIn, TOut>(this Selector<TIn, TOut> @this) => @this;
 

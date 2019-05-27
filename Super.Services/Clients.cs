@@ -1,7 +1,7 @@
-﻿using System;
-using System.Net.Http;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
 using Super.Model.Selection.Stores;
+using System;
+using System.Net.Http;
 
 namespace Super.Services
 {

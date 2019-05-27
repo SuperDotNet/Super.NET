@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
 using Super.Model.Selection.Adapters;
 using Super.Model.Sequences;
 using Super.Model.Sequences.Query;
+using System;
+using System.Collections.Generic;
 
 namespace Super
 {
@@ -64,9 +64,10 @@ namespace Super
 		public static ISelect<_, T> Only<_, T>(this Query<_, T> @this, Func<T, bool> where)
 			=> @this.Select(new Only<T>(where));
 
-		public static ISelect<_, T> First<_, T>(this Query<_, T> @this) => @this.Select(FirstOrDefault<T>.Default);
+		public static ISelect<_, T> FirstOrDefault<_, T>(this Query<_, T> @this)
+			=> @this.Select(FirstOrDefault<T>.Default);
 
-		public static ISelect<_, T> First<_, T>(this Query<_, T> @this, Func<T, bool> where)
+		public static ISelect<_, T> FirstOrDefault<_, T>(this Query<_, T> @this, Func<T, bool> where)
 			=> @this.Select(new FirstWhere<T>(where));
 
 		public static ISelect<_, T> Single<_, T>(this Query<_, T> @this) => @this.Select(Single<T>.Default);

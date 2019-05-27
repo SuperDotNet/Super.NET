@@ -1,5 +1,4 @@
-﻿using System;
-using Super.Compose;
+﻿using Super.Compose;
 using Super.Model.Results;
 using Super.Model.Selection;
 using Super.Model.Selection.Adapters;
@@ -8,6 +7,7 @@ using Super.Model.Sequences;
 using Super.Reflection;
 using Super.Runtime;
 using Super.Runtime.Execution;
+using System;
 
 namespace Super
 {
@@ -43,8 +43,6 @@ namespace Super
 		public static IResult<T> Unless<T>(this IResult<T> @this, Condition condition, IResult<T> then)
 			=> new Validated<T>(condition, then, @this);
 
-		/**/
-
 		public static TOut Get<TIn, TOut>(this IResult<ISelect<TIn, TOut>> @this, TIn parameter)
 			=> @this.Get().Get(parameter);
 
@@ -62,8 +60,6 @@ namespace Super
 		public static IResult<T> ToContextual<T>(this IResult<T> @this)
 			=> new Contextual<T>(@this.ToDelegateReference());
 
-		/**/
-
 		public static IResult<TOut> Select<TIn, TOut>(this IResult<TIn> @this, ISelect<TIn, TOut> select)
 			=> @this.Select(select.Get);
 
@@ -75,8 +71,6 @@ namespace Super
 			        .Select(select)
 			        .Get()
 			        .Out();
-
-		/**/
 
 		public static Func<T> ToDelegate<T>(this IResult<T> @this) => @this.Get;
 

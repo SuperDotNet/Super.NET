@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
-using BenchmarkDotNet.Attributes;
+﻿using BenchmarkDotNet.Attributes;
 using Super.Testing.Objects;
+using System;
+using System.Linq;
 
 namespace Super.Testing.Application
 {
@@ -43,17 +43,5 @@ namespace Super.Testing.Application
 
 		[Benchmark]
 		public Array FullClassic() => _classic.Full.ToArray();
-
-		/*[Benchmark]
-		public Array Near() => _subject.Near.Get(_source);
-
-		[Benchmark]
-		public Array NearClassic() => _classic.Near.ToArray();
-
-		[Benchmark]
-		public Array Far() => _subject.Far.Get(_source);
-
-		[Benchmark]
-		public Array FarClassic() => _classic.Far.ToArray();*/
 	}
 }

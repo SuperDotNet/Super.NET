@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Super.Model.Selection;
+using System;
 using System.Threading.Tasks;
-using Super.Model.Selection;
 
 namespace Super.Services
 {
@@ -8,7 +8,7 @@ namespace Super.Services
 	{
 		public static Request<T> Default { get; } = new Request<T>();
 
-		Request() : base( /*Retry<T>.Default*/x => x.Result) {}
+		Request() : base(x => x.Result) {}
 	}
 
 	sealed class Request<TIn, TOut> : Select<TIn, Task<TOut>>

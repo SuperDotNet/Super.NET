@@ -1,8 +1,8 @@
-﻿using System;
+﻿using AutoFixture.Xunit2;
+using FluentAssertions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using AutoFixture.Xunit2;
-using FluentAssertions;
 using Xunit;
 
 // ReSharper disable PossibleMultipleEnumeration
@@ -84,15 +84,6 @@ namespace Super.Testing.Application.Runtime
 			var sut = new[] {new Func<int, bool>(i => i == 7)};
 			Assert.True(sut.Introduce(7).Only());
 		}
-
-		/*[Fact]
-		public void IntroduceImmutableArrayFactory()
-		{
-			var sut = new Func<int, int>[] {x => x + 1}.ToImmutableArray().Introduce(1);
-			sut.Only()
-			   .Should()
-			   .Be(2);
-		}*/
 
 		[Fact]
 		public void IntroduceTuple()

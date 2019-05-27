@@ -1,6 +1,6 @@
-﻿using System;
-using Super.Compose;
+﻿using Super.Compose;
 using Super.Model.Selection.Stores;
+using System;
 
 namespace Super.Services
 {

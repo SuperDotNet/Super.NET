@@ -50,7 +50,7 @@ namespace Super.Testing.Application.Model.Sequences.Query
 			     .Skip(4)
 			     .Union(Sequence.From(second))
 			     .Skip(3)
-			     .First()
+			     .FirstOrDefault()
 			     .Get(first)
 			     .Should()
 			     .Be(first.Skip(4).Union(second).Skip(3).First());
@@ -59,7 +59,7 @@ namespace Super.Testing.Application.Model.Sequences.Query
 			     .As.Sequence.Array.By.Self.Query()
 			     .Skip(4)
 			     .Union(Sequence.From(second))
-			     .First()
+			     .FirstOrDefault()
 			     .Get(first)
 			     .Should()
 			     .Be(first.Skip(4).Union(second).First());

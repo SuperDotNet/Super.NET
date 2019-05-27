@@ -1,5 +1,5 @@
-using System;
 using Super.Runtime;
+using System;
 
 namespace Super.Reflection
 {
@@ -9,11 +9,4 @@ namespace Super.Reflection
 
 		IsAssignableStructure() : base(Nullable.GetUnderlyingType) {}
 	}
-
-	/*sealed class CanBeAssigned : AnySpecification<TypeInfo>
-	{
-		public static CanBeAssigned Default { get; } = new CanBeAssigned();
-
-		CanBeAssigned() : base(IsAssignableStructure.Default, IsReference.Default) {}
-	}*/
 }

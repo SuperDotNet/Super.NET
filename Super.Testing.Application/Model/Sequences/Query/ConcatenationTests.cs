@@ -49,7 +49,7 @@ namespace Super.Testing.Application.Model.Sequences.Query
 			     .Skip(skip)
 			     .Append(Sequence.From(1, 2, 3))
 			     .Skip(skip)
-			     .First()
+			     .FirstOrDefault()
 			     .Get(data)
 			     .Should()
 			     .Be(data.Skip(skip).Concat(new[] {1, 2, 3}).Skip(skip).First());
@@ -58,7 +58,7 @@ namespace Super.Testing.Application.Model.Sequences.Query
 			     .As.Sequence.Array.By.Self.Query()
 			     .Skip(skip)
 			     .Append(Sequence.From(1, 2, 3))
-			     .First()
+			     .FirstOrDefault()
 			     .Get(data)
 			     .Should()
 			     .Be(data.Skip(skip).Concat(new[] {1, 2, 3}).First());

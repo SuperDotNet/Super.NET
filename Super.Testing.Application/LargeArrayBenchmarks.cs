@@ -1,9 +1,9 @@
-﻿using System;
+﻿using BenchmarkDotNet.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using BenchmarkDotNet.Attributes;
 
 // ReSharper disable All
 
@@ -17,9 +17,6 @@ namespace Super.Testing.Application
 		uint[] _source;
 
 		[Params(Total)]
-		/*[Params( /*1u, 2u, 3u, 4u, 5u, 8u, 16u,#1#32u, 64u, 128u, 256u, 512u, 1024u, 1025u, 2048u, 4096u, 8196u,
-			10_000u,
-			100_000u, 1_000_000u, 10_000_000u, 100_000_000u)]*/
 		public uint Count
 		{
 			get => _count;

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using BenchmarkDotNet.Attributes;
+﻿using BenchmarkDotNet.Attributes;
 using FluentAssertions;
 using Humanizer;
 using Super.Compose;
@@ -7,6 +6,8 @@ using Super.Model.Selection;
 using Super.Model.Sequences;
 using Super.Model.Sequences.Query;
 using Super.Model.Sequences.Query.Construction;
+using Super.Testing.Objects;
+using System.Linq;
 using Xunit;
 
 // ReSharper disable ReturnValueOfPureMethodIsNotUsed
@@ -23,7 +24,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 			8, 9, 9, 9, 9, 9, 9, 9, 9, 9
 		};
 
-		/*[Fact]
+		[Fact]
 		void Count()
 		{
 			var first = 0;
@@ -57,11 +58,11 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 				             second++;
 				             return x;
 			             })
-			     .First()
+			     .FirstOrDefault()
 			     .Get(Data.Default.Get());
 
-			second.Should().Be(4);
-		}*/
+			second.Should().Be(2);
+		}
 
 		public class Benchmarks
 		{
@@ -70,15 +71,13 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 			readonly ISelect<int[], string> _subject;
 
 			public Benchmarks() : this(new StartNode<int[], int>(A.Self<int[]>())
-			                           //.Get(new Build.Where<int>(x => x > 8))
 			                           .Get(new Build.Select<int, string>(x => x.ToString()))
 			                           .Get(FirstOrDefault<string>.Default)
 			                           ,
 			                           Start.A.Selection.Of.Type<int>()
 			                                .As.Sequence.Array.By.Self.Query()
-			                                //   .Where(x => x > 8)
 			                                .Select(x => x.ToString())
-			                                .First()) {}
+			                                .FirstOrDefault()) {}
 
 			public Benchmarks(ISelect<int[], string> subject, ISelect<int[], string> current)
 			{
@@ -87,10 +86,7 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 			}
 
 			[Benchmark(Baseline = true)]
-			public string Classic() => data /*.Where(x => x > 8)*/.Select(x => x.ToString()).FirstOrDefault();
-
-			/*[Benchmark]
-			public string Current() => _current.Get(data);*/
+			public string Classic() => data.Select(x => x.ToString()).FirstOrDefault();
 
 			[Benchmark]
 			public string Proposed() => _subject.Get(data);
@@ -270,66 +266,5 @@ namespace Super.Testing.Application.Model.Sequences.Query.Construction
 			                                          .Should()
 			                                          .Equal(data.Where(x => x > 8).Select(x => x.ToString()));
 		}
-
-		/*public class Benchmarks
-		{
-			readonly ISelect<int[], string[]> _subject;
-			readonly ISelect<int[], string[]> _current;
-
-			public Benchmarks() : this(new Start<int[], int>(A.Self<int[]>())
-			                           .Get(new Build.Where<int>(x => x > 8))
-			                           .Get(new Build.Select<int, string>(x => x.ToString()))
-			                           .Get(),
-			                           Start.A.Selection.Of.Type<int>()
-			                                .As.Sequence.Array.By.Self.Query()
-			                                .Where(x => x > 8)
-			                                .Select(x => x.ToString())
-			                                .Out()) {}
-
-			public Benchmarks(ISelect<int[], string[]> subject, ISelect<int[], string[]> current)
-			{
-				_subject = subject;
-				_current = current;
-			}
-
-			[Benchmark(Baseline = true)]
-			public Array Classic() => data.Where(x => x > 8).Select(x => x.ToString()).ToArray();
-
-			[Benchmark]
-			public Array Current() => _current.Get(data);
-
-			[Benchmark]
-			public Array Proposed() => _subject.Get(data);
-		}*/
-
-		/*public class Benchmarks
-		{
-			readonly ISelect<int[], int[]> _subject;
-			readonly ISelect<int[], int[]> _current;
-
-			public Benchmarks() : this(new Start<int[], int>(A.Self<int[]>()).Get(new Build.Skip<int>(skip))
-			                                                                 .Get(new Build.Take<int>(take))
-			                                                                 .Get(),
-			                           Start.A.Selection.Of.Type<int>()
-			                                .As.Sequence.Array.By.Self.Query()
-			                                .Skip(skip)
-			                                .Take(take)
-			                                .Out()) {}
-
-			public Benchmarks(ISelect<int[], int[]> subject, ISelect<int[], int[]> current)
-			{
-				_subject = subject;
-				_current = current;
-			}
-
-			[Benchmark(Baseline = true)]
-			public Array Classic() => data.Skip(skip).Take(take).ToArray();
-
-			[Benchmark]
-			public Array Current() => _current.Get(data);
-
-			[Benchmark]
-			public Array Proposed() => _subject.Get(data);
-		}*/
 	}
 }

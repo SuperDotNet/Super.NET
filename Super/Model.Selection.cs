@@ -1,5 +1,4 @@
-﻿using System;
-using Super.Compose;
+﻿using Super.Compose;
 using Super.Model.Commands;
 using Super.Model.Results;
 using Super.Model.Selection;
@@ -11,6 +10,7 @@ using Super.Reflection;
 using Super.Reflection.Types;
 using Super.Runtime;
 using Super.Runtime.Objects;
+using System;
 using Action = Super.Model.Selection.Adapters.Action;
 
 namespace Super
@@ -23,8 +23,6 @@ namespace Super
 
 		public static ISelect<TIn, TOut> Start<TIn, TOut>(this Func<TIn, TOut> @this)
 			=> @this.Target as ISelect<TIn, TOut> ?? new Select<TIn, TOut>(@this);
-
-		/**/
 
 		public static T Get<T>(this ISelect<uint, T> @this, int parameter) => @this.Get((uint)parameter);
 
@@ -41,15 +39,11 @@ namespace Super
 
 		public static IResult<T> Out<T>(this ISelect<None, T> @this) => @this.In(None.Default);
 
-		/**/
-
 		public static ISelect<TIn, TOut> Guard<TIn, TOut>(this ISelect<TIn, TOut> @this)
 			=> DefaultGuard<TIn>.Default.Then().ToConfiguration().Select(@this).Get();
 
 		public static IAlteration<T> AsGuard<T>(this ISelect<T, string> @this)
 			=> new AssignedGuard<T>(@this).Then().Out();
-
-		/**/
 
 		public static ISelect<TIn, TOut> Select<TIn, TOut>(this ISelect<TIn, TOut> @this,
 		                                                   ISelect<Decoration<TIn, TOut>, TOut> other)
@@ -65,8 +59,6 @@ namespace Super
 		public static ISelect<TIn, TTo> Select<TIn, TFrom, TTo>(this ISelect<TIn, TFrom> @this, Func<TFrom, TTo> select)
 			=> new Selection<TIn, TFrom, TTo>(@this.Get, select);
 
-/**/
-
 		public static IResult<TOut> In<TIn, TOut>(this ISelect<TIn, TOut> @this, TIn parameter)
 			=> new FixedSelection<TIn, TOut>(@this, parameter);
 
@@ -75,8 +67,6 @@ namespace Super
 
 		public static IResult<TOut> In<TIn, TOut>(this ISelect<TIn, TOut> @this, IResult<TIn> parameter)
 			=> new DelegatedSelection<TIn, TOut>(@this, parameter);
-
-/**/
 
 		public static ISelect<TIn, TOut> Assigned<TIn, TOut>(this ISelect<TIn, TOut> @this)
 			=> @this.If(IsAssigned<TIn>.Default);
@@ -105,8 +95,6 @@ namespace Super
 		                                                        ISelect<TIn, bool> unless,
 		                                                        ISelect<TIn, TOut> then)
 			=> new Conditional<TIn, TOut>(unless.Get, then.Get, @this.Get);
-
-		/**/
 
 		public static Func<TIn, TOut> ToDelegate<TIn, TOut>(this ISelect<TIn, TOut> @this) => @this.Get;
 

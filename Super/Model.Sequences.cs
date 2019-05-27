@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using Super.Model.Results;
+﻿using Super.Model.Results;
 using Super.Model.Selection;
 using Super.Model.Sequences;
 using Super.Runtime;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Super
 {
@@ -22,8 +22,6 @@ namespace Super
 
 		public static IArray<_, T> ToStore<_, T>(this Func<_, Array<T>> @this) => new ArrayStore<_, T>(@this);
 
-		/**/
-
 		public static ISequence<T> And<T>(this IResult<T> @this, params IResult<T>[] others)
 			=> Sequence.From(others.Prepend(@this).ToArray());
 
@@ -32,8 +30,6 @@ namespace Super
 
 		public static ISequence<T> And<T>(this T @this, params T[] others)
 			=> Sequence.From(others.Prepend(@this).ToArray());
-
-		/**/
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] ToArray<T>(in this ArrayView<T> @this)

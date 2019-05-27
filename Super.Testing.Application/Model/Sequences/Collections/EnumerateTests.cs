@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using BenchmarkDotNet.Attributes;
+﻿using BenchmarkDotNet.Attributes;
 using FluentAssertions;
 using Super.Model.Sequences;
 using Super.Testing.Objects;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace Super.Testing.Application.Model.Sequences.Collections
@@ -13,12 +13,6 @@ namespace Super.Testing.Application.Model.Sequences.Collections
 		[Theory, InlineData(1u), InlineData(2u), InlineData(3u), InlineData(4u), InlineData(5u), InlineData(8u),
 		 InlineData(16u), InlineData(32u), InlineData(64u), InlineData(128u), InlineData(256u), InlineData(512u),
 		 InlineData(1_000u), InlineData(1_024u), InlineData(1_025u)]
-		/*[InlineData(2_048u)]
-		[InlineData(4_096u)]
-		[InlineData(8_192u)]
-		[InlineData(10_000u)]
-		[InlineData(100_000u)]
-		[InlineData(1_000_000u)]*/
 		void Verify(uint count)
 		{
 			var numbers = Numbers.Default.Get(count).Open();

@@ -50,7 +50,7 @@ namespace Super.Testing.Application.Model.Sequences.Query
 			     .Skip(2)
 			     .Intersect(Sequence.From(second))
 			     .Skip(1)
-			     .First()
+			     .FirstOrDefault()
 			     .Get(first)
 			     .Should()
 			     .Be(first.Skip(2).Intersect(second).Skip(1).First());
@@ -59,7 +59,7 @@ namespace Super.Testing.Application.Model.Sequences.Query
 			     .As.Sequence.Array.By.Self.Query()
 			     .Skip(2)
 			     .Intersect(Sequence.From(second))
-			     .First()
+			     .FirstOrDefault()
 			     .Get(first)
 			     .Should()
 			     .Be(first.Skip(2).Intersect(second).First());

@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Super.Model.Sequences;
+using System;
 using System.Linq;
-using Super.Model.Sequences;
 
 namespace Super.Testing.Objects
 {
@@ -22,11 +22,4 @@ namespace Super.Testing.Objects
 
 		public Array<int> Get() => _data.Select(_select).Where(x => x > 0).ToArray();
 	}
-
-	// ReSharper disable all PossibleMultipleEnumeration
-
-	/*sealed class Template : LogMessage<AppDomain>
-	{
-		public Template(ILogger logger) : base(logger, "Hello World: {@AppDomain:F}") {}
-	}*/
 }

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Super.Model.Selection;
+using Super.Model.Selection.Alterations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Super.Model.Selection;
-using Super.Model.Selection.Alterations;
 
 namespace Super
 {
@@ -12,9 +12,6 @@ namespace Super
 	{
 		public static T Alter<T>(this IEnumerable<IAlteration<T>> @this, T seed)
 			=> @this.Aggregate(seed, (current, alteration) => alteration.Get(current));
-
-		/*public static TOut Alter<T, TOut>(this IEnumerable<T> @this, Func<T, TOut> alter)
-			=> @this.Select(alter).Last();*/
 
 		public static IAlteration<T> ToAlteration<T>(this ISelect<T, T> @this) => @this.ToDelegate().ToAlteration();
 
