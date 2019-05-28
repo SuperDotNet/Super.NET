@@ -19,9 +19,6 @@ namespace Super
 			return @this;
 		}
 
-		/// Attribution: https://stackoverflow.com/a/55034370/10340424
-		public static uint Clamp0(this long @this) => (uint)(@this & (~@this >> 63));
-
 		public static T[] Lease<T>(this ArrayPool<T> @this, int count)
 		{
 			var result = @this.Rent(count);
@@ -39,6 +36,12 @@ namespace Super
 		public static TOut To<T, TOut>(this T @this, ISelect<T, TOut> select) => @this.To(select.Get);
 
 		public static TOut To<T, TOut>(this T @this, Func<T, TOut> select) => select(@this);
+
+		public static T To<T>(this T @this, Action<T> action)
+		{
+			action(@this);
+			return @this;
+		}
 
 		public static T If<T>(ref this bool @this, T @true, T @false) => @this ? @true : @false;
 

@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Super.Application.Hosting.BenchmarkDotNet;
+﻿using Super.Application.Hosting.BenchmarkDotNet;
+using Super.Testing.Application.Model.Sequences.Query.Construction;
 
 namespace Super.Testing.Application
 {
@@ -7,9 +7,7 @@ namespace Super.Testing.Application
 	{
 		static void Main(params string[] arguments)
 		{
-			Run.Default
-			   .In(arguments.Any() ? Quick.Default : Deployed.Default)
-			   .Get();
+			Configuration.Default.Get(arguments).To(Run.A<ExitTests.Benchmarks>);
 		}
 	}
 }

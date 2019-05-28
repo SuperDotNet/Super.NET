@@ -213,3 +213,4 @@ __pycache__/
 *.pyc
 *.cmd
 /Super.Testing.Application/BenchmarkDotNet.Artifacts/results
+/Super.Serialization.Testing.Application/BenchmarkDotNet.Artifacts/results

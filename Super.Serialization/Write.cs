@@ -1,6 +1,6 @@
 ﻿namespace Super.Serialization
 {
-	public class Class1
+	public class Write
 	{
 	}
 }

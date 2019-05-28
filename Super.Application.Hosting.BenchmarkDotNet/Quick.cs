@@ -5,9 +5,9 @@ using Super.Model.Results;
 
 namespace Super.Application.Hosting.BenchmarkDotNet
 {
-	public sealed class Quick : FixedSelectedSingleton<Job, IConfig>
+	sealed class Quick : FixedSelectedSingleton<Job, IConfig>
 	{
-		public static IResult<IConfig> Default { get; } = new Quick();
+		public static Quick Default { get; } = new Quick();
 
 		Quick() : base(QuickConfiguration.Default, Job.ShortRun.With(InProcessToolchain.DontLogOutput)) {}
 	}

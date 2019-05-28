@@ -4,10 +4,10 @@ using Super.Model.Results;
 
 namespace Super.Application.Hosting.BenchmarkDotNet
 {
-	public sealed class Deployed : FixedSelectedSingleton<Job, IConfig>
+	sealed class Deployed : FixedSelectedSingleton<Job, IConfig>
 	{
 		public static Deployed Default { get; } = new Deployed();
 
-		Deployed() : base(QuickConfiguration.Default, Job.MediumRun.WithLaunchCount(2)) {}
+		Deployed() : base(QuickConfiguration.Default, Job.MediumRun) {}
 	}
 }
