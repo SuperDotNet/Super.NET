@@ -37,11 +37,32 @@ namespace Super
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] ToArray<T>(in this ArrayView<T> @this, T[] into)
-			=> @this.Array.CopyInto(into, @this.Start, @this.Length);
+			=> @this.Array.CopyInto(@into, @this.Start, @this.Length);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static T[] Complete<T>(in this Model.Sequences.Store<T> @this) => Complete(@this, new T[@this.Length]);
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static T[] Complete<T>(in this Model.Sequences.Store<T> @this, T[] into)
+		{
+			var result = @this.Instance.CopyInto(@into, 0, @this.Length);
+			if (@this.Length < 16)
+			{
+				for (var i = 0u; i < @this.Length; i++)
+				{
+					@this.Instance[i] = default;
+				}
+			}
+			else
+			{
+				Array.Clear(@this.Instance, 0, (int)@this.Length);
+			}
+			return result;
+		}
+
+		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Model.Sequences.Store<T> ToStore<T>(in this ArrayView<T> @this)
-			=> @this.ToStore(Leases<T>.Default);
+			=> @this.ToStore(Leases<T>.Default);*/
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Model.Sequences.Store<T> ToStore<T>(in this ArrayView<T> @this, IStores<T> stores)
@@ -80,11 +101,40 @@ namespace Super
 			return result;
 		}
 
-		public static ArrayView<T> Resize<T>(in this ArrayView<T> @this, uint size) => @this.Resize(@this.Start, size);
+		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void Cleared<T>(this T[] @this) => @this.Cleared((uint)@this.Length);*/
+
+		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void Clear<T>(in this ArrayView<T> @this)
+		{
+
+		}*/
+
+		/*// ReSharper disable once TooManyArguments
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static T[] Copy<T>(this T[] @this, T[] result/*, uint start, uint length, uint offset = 0#1#)
+		{
+			if (@this.Length < 32)
+			{
+				for (var i = 0; i < @this.Length; i++)
+				{
+					result[i] = @this[i];
+				}
+			}
+			else
+			{
+				Array.Copy(@this, 0,
+				           result, 0, @this.Length);
+			}
+
+			return result;
+		}*/
+
+		/*public static ArrayView<T> Resize<T>(in this ArrayView<T> @this, uint size) => @this.Resize(@this.Start, size);
 
 		public static ArrayView<T> Resize<T>(in this ArrayView<T> @this, uint start, uint size)
 			=> start != @this.Start || size != @this.Length
 				   ? new ArrayView<T>(@this.Array, start, size)
-				   : @this;
+				   : @this;*/
 	}
 }

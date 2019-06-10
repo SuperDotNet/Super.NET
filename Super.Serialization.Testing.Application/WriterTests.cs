@@ -1,5 +1,6 @@
 using BenchmarkDotNet.Attributes;
 using FluentAssertions;
+using Super.Model.Sequences;
 using System.Text;
 using System.Text.Json.Serialization;
 using Xunit;
@@ -11,17 +12,23 @@ namespace Super.Serialization.Testing.Application
 		[Fact]
 		public void Simple()
 		{
-			Encoding.UTF8.GetString(NumberWriter.Default.Get(12345u))
+			const uint parameter = 12345u;
+			var expected = JsonSerializer.ToString(parameter);
+			Encoding.UTF8.GetString(NumberWriter.Default.Get(parameter))
 			        .Should()
-			        .Be(JsonSerializer.ToString(12345u));
+			        .Be(expected);
+
+			Encoding.UTF8.GetString(new Writer<uint>(PositiveNumber.Default, Leases<byte>.Default, 10).Get(parameter))
+			        .Should()
+			        .Be(expected);
 		}
 
-		sealed class Value
+		/*sealed class Value
 		{
 			public Value(uint number) => Number = number;
 
 			public uint Number { get; }
-		}
+		}*/
 
 		public class Benchmarks
 		{
@@ -36,8 +43,8 @@ namespace Super.Serialization.Testing.Application
 				_data   = data;
 			}
 
-			[Benchmark(Baseline = true)]
-			public byte[] Native() => JsonSerializer.ToBytes(_data);
+			/*[Benchmark(Baseline = true)]
+			public byte[] Native() => JsonSerializer.ToBytes(_data);*/
 
 			[Benchmark]
 			public byte[] Subject() => _writer.Get(_data);

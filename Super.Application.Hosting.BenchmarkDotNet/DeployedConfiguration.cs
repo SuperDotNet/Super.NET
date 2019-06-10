@@ -1,7 +1,6 @@
 ﻿using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Jobs;
-using BenchmarkDotNet.Order;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
 
@@ -20,7 +19,6 @@ namespace Super.Application.Hosting.BenchmarkDotNet
 		public IConfig Get(Job parameter)
 		{
 			var result = ManualConfig.Create(DefaultConfig.Instance);
-			result.Orderer = new DefaultOrderer();
 			result.Add(parameter);
 			result.Add(parameter.To(_configure));
 			result.Add(MemoryDiagnoser.Default);
