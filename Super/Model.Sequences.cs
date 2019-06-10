@@ -3,6 +3,7 @@ using Super.Model.Selection;
 using Super.Model.Sequences;
 using Super.Runtime;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -33,47 +34,32 @@ namespace Super
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] ToArray<T>(in this ArrayView<T> @this)
-			=> @this.Length == 0 ? Empty<T>.Array : @this.ToArray(new T[@this.Length]);
+			=> @this.Length == 0 ? Empty<T>.Array : @this.Array.CopyInto(new T[@this.Length], @this.Start, @this.Length);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T[] ToArray<T>(in this ArrayView<T> @this, T[] into)
-			=> @this.Array.CopyInto(@into, @this.Start, @this.Length);
+		public static T[] Complete<T>(this in Model.Sequences.Store<T> @this, ArrayPool<T> pool)
+			=> Complete(@this, new T[@this.Length], pool);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T[] Complete<T>(in this Model.Sequences.Store<T> @this) => Complete(@this, new T[@this.Length]);
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T[] Complete<T>(in this Model.Sequences.Store<T> @this, T[] into)
+		public static T[] Complete<T>(in this Model.Sequences.Store<T> @this, T[] into, ArrayPool<T> pool)
 		{
-			var result = @this.Instance.CopyInto(@into, 0, @this.Length);
-			if (@this.Length < 16)
-			{
-				for (var i = 0u; i < @this.Length; i++)
-				{
-					@this.Instance[i] = default;
-				}
-			}
-			else
-			{
-				Array.Clear(@this.Instance, 0, (int)@this.Length);
-			}
+			var result = @this.Instance.CopyInto(into, 0, @this.Length);
+			@this.Instance.Clear(@this.Length);
+			pool.Return(@this.Instance);
 			return result;
 		}
-
-		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Model.Sequences.Store<T> ToStore<T>(in this ArrayView<T> @this)
-			=> @this.ToStore(Leases<T>.Default);*/
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Model.Sequences.Store<T> ToStore<T>(in this ArrayView<T> @this, IStores<T> stores)
 		{
 			var result = stores.Get(@this.Length);
-			@this.ToArray(result.Instance);
+			@this.Array.CopyInto(result.Instance, @this.Start, @this.Length);
 			return result;
 		}
 
 		// ReSharper disable once TooManyArguments
-		public static T[] CopyInto<T>(this T[] @this, T[] result, in Selection selection, uint offset = 0)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static T[] CopyInto<T>(this T[] @this, T[] result, in Selection selection, in uint offset = 0)
 			=> @this.CopyInto(result, selection.Start, selection.Length.IsAssigned
 				                                           ? selection.Length.Instance
 				                                           : (uint)result.Length - offset, offset);
@@ -83,7 +69,7 @@ namespace Super
 
 		// ReSharper disable once TooManyArguments
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T[] CopyInto<T>(this T[] @this, T[] result, uint start, uint length, uint offset = 0)
+		public static T[] CopyInto<T>(this T[] @this, T[] result, in uint start, in uint length, in uint offset = 0)
 		{
 			if (length < 32)
 			{
@@ -101,40 +87,20 @@ namespace Super
 			return result;
 		}
 
-		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Cleared<T>(this T[] @this) => @this.Cleared((uint)@this.Length);*/
-
-		/*[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Clear<T>(in this ArrayView<T> @this)
-		{
-
-		}*/
-
-		/*// ReSharper disable once TooManyArguments
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T[] Copy<T>(this T[] @this, T[] result/*, uint start, uint length, uint offset = 0#1#)
+		public static void Clear<T>(this T[] @this, in uint count)
 		{
-			if (@this.Length < 32)
+			if (count < 16)
 			{
-				for (var i = 0; i < @this.Length; i++)
+				for (var i = 0u; i < count; i++)
 				{
-					result[i] = @this[i];
+					@this[i] = default;
 				}
 			}
 			else
 			{
-				Array.Copy(@this, 0,
-				           result, 0, @this.Length);
+				Array.Clear(@this, 0, (int)count);
 			}
-
-			return result;
-		}*/
-
-		/*public static ArrayView<T> Resize<T>(in this ArrayView<T> @this, uint size) => @this.Resize(@this.Start, size);
-
-		public static ArrayView<T> Resize<T>(in this ArrayView<T> @this, uint start, uint size)
-			=> start != @this.Start || size != @this.Length
-				   ? new ArrayView<T>(@this.Array, start, size)
-				   : @this;*/
+		}
 	}
 }

@@ -1,6 +1,6 @@
 using BenchmarkDotNet.Attributes;
 using FluentAssertions;
-using Super.Model.Sequences;
+using System.Buffers;
 using System.Text;
 using System.Text.Json.Serialization;
 using Xunit;
@@ -18,7 +18,7 @@ namespace Super.Serialization.Testing.Application
 			        .Should()
 			        .Be(expected);
 
-			Encoding.UTF8.GetString(new Writer<uint>(PositiveNumber.Default, Leases<byte>.Default, 10).Get(parameter))
+			Encoding.UTF8.GetString(new Writer<uint>(PositiveNumber.Default, ArrayPool<byte>.Shared, 10).Get(parameter))
 			        .Should()
 			        .Be(expected);
 		}
@@ -43,8 +43,8 @@ namespace Super.Serialization.Testing.Application
 				_data   = data;
 			}
 
-			/*[Benchmark(Baseline = true)]
-			public byte[] Native() => JsonSerializer.ToBytes(_data);*/
+			[Benchmark(Baseline = true)]
+			public byte[] Native() => JsonSerializer.ToBytes(_data);
 
 			[Benchmark]
 			public byte[] Subject() => _writer.Get(_data);
