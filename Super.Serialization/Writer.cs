@@ -1,14 +1,49 @@
 ﻿using Super.Model.Results;
 using Super.Model.Selection;
+using Super.Model.Selection.Alterations;
 using Super.Model.Sequences;
 using System;
 using System.Buffers;
 using System.Buffers.Text;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Super.Serialization
 {
+	static class Extensions
+	{
+		readonly static ArrayPool<byte> Pool = ArrayPool<byte>.Shared;
+
+		readonly static Func<int, byte[]> Rent = Pool.Rent;
+
+		readonly static Action<byte[], bool> Return = Pool.Return;
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static byte[] Copy(this byte[] @this, in uint size)
+		{
+			var result = @this.CopyInto(Rent((int)checked(@this.Length + Math.Max(size, @this.Length))), 0,
+			                            (uint)@this.Length);
+
+			Return(@this, false);
+
+			return result;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Array<byte> Complete(this in Composition @this, ArrayPool<byte> pool)
+			=> Complete(@this, new byte[@this.Index], pool);
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Array<byte> Complete(in this Composition @this, byte[] into, ArrayPool<byte> pool)
+		{
+			var result = @this.Output.CopyInto(into, 0u, @this.Index);
+			@this.Output.Clear(@this.Index);
+			pool.Return(@this.Output);
+			return result;
+		}
+	}
+
 	public interface IWriter<in T> : ISelect<T, Array<byte>> {}
 
 	sealed class NumberWriter : Writer<uint>
@@ -24,6 +59,8 @@ namespace Super.Serialization
 
 		DefaultBufferSize() : base(1024 * 16) {}
 	}
+
+	public interface IAdvance : ISelect<Composition, uint>, IResult<uint> {}
 
 	public interface IAdvance<T> : ISelect<Composition<T>, uint>, IResult<uint> {}
 
@@ -55,122 +92,89 @@ namespace Super.Serialization
 		Marker() : base('/') {}
 	}
 
-	sealed class Declaration<T> : Instance<uint>, IAdvance<T>
+	class Content : Instance<uint>, IAdvance
 	{
-		public static Declaration<T> Default { get; } = new Declaration<T>();
-
-		Declaration() : this(Encoding.UTF8.GetBytes($@"<?xml version=""1.0""?>{Environment.NewLine}")) {}
-
-		
 		readonly byte[] _content;
 
-		public Declaration(byte[] content) : base((uint)content.Length) => _content = content;
+		public Content(string content) : this(Encoding.UTF8.GetBytes(content)) {}
 
-		public uint Get(Composition<T> parameter)
+		public Content(byte[] content) : base((uint)content.Length) => _content = content;
+
+		public uint Get(Composition parameter)
 		{
-			_content.CopyTo(parameter.Output, parameter.Index);
-			return (uint)_content.Length;
+			var length = (uint)_content.Length;
+			_content.CopyInto(parameter.Output, 0, length, parameter.Index);
+			return parameter.Index + length;
 		}
 	}
 
-	sealed class OpenContent<T> : Instance<uint>, IAdvance<T>
+	sealed class Declaration : Content
 	{
-		readonly byte[] _name;
-		readonly byte   _first, _last;
+		public static Declaration Default { get; } = new Declaration();
 
-		public OpenContent(string name) : this(Encoding.UTF8.GetBytes(name), Open.Default, Close.Default) {}
-
-		public OpenContent(byte[] name, byte first, byte last) : base((uint)name.Length + 2u)
-		{
-			_name  = name;
-			_first = first;
-			_last  = last;
-		}
-
-		public uint Get(Composition<T> parameter)
-		{
-			var output = parameter.Output;
-			var result = parameter.Index;
-			output[result++] = _first;
-			_name.CopyTo(output, result);
-			output[result += (uint)_name.Length] = _last;
-			return ++result - parameter.Index;
-		}
+		Declaration() : base($@"<?xml version=""1.0""?>{Environment.NewLine}") {}
 	}
 
-	sealed class CloseContent<T> : Instance<uint>, IAdvance<T>
+	sealed class OpenContent : Content
 	{
-		readonly byte[] _name;
-		readonly byte   _first;
-		readonly byte   _marker;
-		readonly byte   _last;
+		public OpenContent(string name) : base(Encoding.UTF8.GetBytes(name)
+		                                               .Prepend(Open.Default)
+		                                               .Append(Close.Default)
+		                                               .ToArray()) {}
+	}
 
-		// ReSharper disable once TooManyDependencies
-		public CloseContent(string name)
-			: this(Encoding.UTF8.GetBytes(name), Open.Default, Marker.Default, Close.Default) {}
-
-		public CloseContent(byte[] name, byte first, byte marker, byte last) : base((uint)name.Length + 3u)
-		{
-			_name   = name;
-			_first  = first;
-			_marker = marker;
-			_last   = last;
-		}
-
-		public uint Get(Composition<T> parameter)
-		{
-			var output = parameter.Output;
-			var result = parameter.Index;
-			output[result++] = _first;
-			output[result++] = _marker;
-			_name.CopyTo(output, result);
-			output[result += (uint)_name.Length] = _last;
-			return ++result - parameter.Index;
-		}
+	sealed class CloseContent : Content
+	{
+		public CloseContent(string name) : base(Encoding.UTF8.GetBytes(name)
+		                                                .Prepend(Marker.Default)
+		                                                .Prepend(Open.Default)
+		                                                .Append(Close.Default)
+		                                                .ToArray()) {}
 	}
 
 	class XmlElementWriter<T> : ElementWriter<T>
 	{
 		public XmlElementWriter(string name, IEmit<T> content)
-			: base(new Emit<T>(new OpenContent<T>(name)), content, new Emit<T>(new CloseContent<T>(name))) {}
+			: base(new Emit(new OpenContent(name)), content, new Emit(new CloseContent(name))) {}
 	}
 
 	public class XmlDocumentEmitter<T> : IEmit<T>
 	{
-		readonly IEmit<T> _declaration;
+		readonly IEmit    _declaration;
 		readonly IEmit<T> _content;
 
-		public XmlDocumentEmitter(IEmit<T> declaration, IEmit<T> content)
+		public XmlDocumentEmitter(IEmit declaration, IEmit<T> content)
 		{
 			_declaration = declaration;
 			_content     = content;
 		}
 
-		public Model.Sequences.Store<byte> Get(Composition<T> parameter)
+		public Composition Get(Composition<T> parameter)
 		{
-			var declaration =
-				_declaration.Get(new Composition<T>(parameter.Output, parameter.Instance, parameter.Index));
-			var result = _content.Get(new Composition<T>(declaration.Instance, parameter.Instance, declaration.Length));
+			var declaration = _declaration.Get(new Composition(parameter.Output, parameter.Index));
+			var result =
+				_content.Get(new Composition<T>(declaration.Output, parameter.Instance, declaration.Index));
 			return result;
 		}
 	}
 
 	class ElementWriter<T> : IEmit<T>
 	{
-		readonly IEmit<T> _start, _content, _finish;
+		readonly IEmit    _start, _finish;
+		readonly IEmit<T> _content;
 
-		public ElementWriter(IEmit<T> start, IEmit<T> content, IEmit<T> finish)
+		public ElementWriter(IEmit start, IEmit<T> content, IEmit finish)
 		{
 			_start   = start;
 			_content = content;
 			_finish  = finish;
 		}
 
-		public Model.Sequences.Store<byte> Get(Composition<T> parameter)
+		public Composition Get(Composition<T> parameter)
 		{
-			var start   = _start.Get(new Composition<T>(parameter.Output, parameter.Instance, parameter.Index));
-			var content = _content.Get(new Composition<T>(start.Instance, parameter.Instance, start.Length));
-			var result  = _finish.Get(new Composition<T>(content.Instance, parameter.Instance, content.Length));
+			var start   = _start.Get(new Composition(parameter.Output, parameter.Index));
+			var content = _content.Get(new Composition<T>(start.Output, parameter.Instance, start.Index));
+			var result  = _finish.Get(new Composition(content.Output, content.Index));
 			return result;
 		}
 	}
@@ -198,12 +202,12 @@ namespace Super.Serialization
 
 	public delegate uint Advance<T>(Composition<T> parameter);
 
+	public delegate uint Advance(Composition parameter);
+
 	class Emit<T> : IEmit<T>
 	{
 		readonly uint       _size;
 		readonly Advance<T> _advance;
-
-		public Emit(IAdvance<T> advance) : this(advance.Get(), advance.Get) {}
 
 		public Emit(uint size, Advance<T> advance)
 		{
@@ -211,17 +215,50 @@ namespace Super.Serialization
 			_advance = advance;
 		}
 
-		public Model.Sequences.Store<byte> Get(Composition<T> parameter)
+		public Composition Get(Composition<T> parameter)
 		{
 			var composition = parameter.Index + _size >= parameter.Output.Length
 				                  ? new Composition<T>(parameter.Output.Copy(in _size), parameter.Instance,
 				                                       parameter.Index)
 				                  : parameter;
-			return new Model.Sequences.Store<byte>(composition.Output, parameter.Index + _advance(composition));
+			return new Composition(composition.Output, _advance(composition));
 		}
 	}
 
-	public interface IEmit<T> : ISelect<Composition<T>, Model.Sequences.Store<byte>> {}
+	class Emit : IEmit
+	{
+		readonly uint    _size;
+		readonly Advance _advance;
+
+		public Emit(IAdvance advance) : this(advance.Get(), advance.Get) {}
+
+		public Emit(uint size, Advance advance)
+		{
+			_size    = size;
+			_advance = advance;
+		}
+
+		public Composition Get(Composition parameter)
+		{
+			var composition = parameter.Index + _size >= parameter.Output.Length
+				                  ? new Composition(parameter.Output.Copy(in _size), parameter.Index)
+				                  : parameter;
+			return new Composition(composition.Output, _advance(composition));
+		}
+	}
+
+	public interface IEmit : IAlteration<Composition> {}
+
+	public interface IEmit<T> : ISelect<Composition<T>, Composition> {}
+
+	sealed class EmptyEmit : IEmit
+	{
+		public static EmptyEmit Default { get; } = new EmptyEmit();
+
+		EmptyEmit() {}
+
+		public Composition Get(Composition parameter) => parameter;
+	}
 
 	sealed class EmptyEmit<T> : IEmit<T>
 	{
@@ -229,8 +266,7 @@ namespace Super.Serialization
 
 		EmptyEmit() {}
 
-		public Model.Sequences.Store<byte> Get(Composition<T> parameter)
-			=> new Model.Sequences.Store<byte>(parameter.Output, parameter.Index);
+		public Composition Get(Composition<T> parameter) => new Composition(parameter.Output, parameter.Index);
 	}
 
 	sealed class PositiveNumber : Emit<uint>
@@ -239,29 +275,22 @@ namespace Super.Serialization
 
 		PositiveNumber()
 			: base(20, x => Utf8Formatter.TryFormat(x.Instance, x.Output.AsSpan((int)x.Index), out var count)
-				                ? (uint)count
+				                ? x.Index + (uint)count
 				                : throw new
 					                  InvalidOperationException($"Could not format '{x.Instance}' into its UTF8 equivalent.")) {}
 	}
 
-	static class Extensions
+	public readonly struct Composition
 	{
-		readonly static ArrayPool<byte> Pool = ArrayPool<byte>.Shared;
-
-		readonly static Func<int, byte[]> Rent = Pool.Rent;
-
-		readonly static Action<byte[], bool> Return = Pool.Return;
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static byte[] Copy(this byte[] @this, in uint size)
+		public Composition(byte[] output, uint index = 0)
 		{
-			var result = @this.CopyInto(Rent((int)checked(@this.Length + Math.Max(size, @this.Length))), 0,
-			                            (uint)@this.Length);
-
-			Return(@this, false);
-
-			return result;
+			Output = output;
+			Index  = index;
 		}
+
+		public byte[] Output { get; }
+
+		public uint Index { get; }
 	}
 
 	public readonly struct Composition<T>

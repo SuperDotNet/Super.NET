@@ -3,7 +3,6 @@ using Super.Model.Selection;
 using Super.Model.Sequences;
 using Super.Runtime;
 using System;
-using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -35,19 +34,6 @@ namespace Super
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] ToArray<T>(in this ArrayView<T> @this)
 			=> @this.Length == 0 ? Empty<T>.Array : @this.Array.CopyInto(new T[@this.Length], @this.Start, @this.Length);
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T[] Complete<T>(this in Model.Sequences.Store<T> @this, ArrayPool<T> pool)
-			=> Complete(@this, new T[@this.Length], pool);
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T[] Complete<T>(in this Model.Sequences.Store<T> @this, T[] into, ArrayPool<T> pool)
-		{
-			var result = @this.Instance.CopyInto(into, 0, @this.Length);
-			@this.Instance.Clear(@this.Length);
-			pool.Return(@this.Instance);
-			return result;
-		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Model.Sequences.Store<T> ToStore<T>(in this ArrayView<T> @this, IStores<T> stores)

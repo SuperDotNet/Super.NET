@@ -37,7 +37,7 @@ namespace Super.Serialization.Testing.Application
 		{
 			public static Subject Default { get; } = new Subject();
 
-			Subject() : base(new XmlDocumentEmitter<uint>(new Emit<uint>(Declaration<uint>.Default),
+			Subject() : base(new XmlDocumentEmitter<uint>(new Emit(Declaration.Default),
 			                                              new XmlElementWriter<uint>("unsignedInt", PositiveNumber.Default))) {}
 		}
 
@@ -49,7 +49,7 @@ namespace Super.Serialization.Testing.Application
 
 			public Benchmarks(XmlSerializer serializer) => _serializer = serializer;
 
-			[Benchmark(Baseline = true)]
+			/*[Benchmark(Baseline = true)]
 			public byte[] Classic()
 			{
 				using (var stream = new MemoryStream())
@@ -57,7 +57,7 @@ namespace Super.Serialization.Testing.Application
 					_serializer.Serialize(stream, 12345u);
 					return stream.ToArray();
 				}
-			}
+			}*/
 
 			[Benchmark]
 			public Array<byte> Measure() => Subject.Default.Get(12345);
