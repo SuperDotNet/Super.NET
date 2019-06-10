@@ -1,6 +1,5 @@
 using BenchmarkDotNet.Attributes;
 using FluentAssertions;
-using System.Buffers;
 using System.Text;
 using System.Text.Json.Serialization;
 using Xunit;
@@ -18,7 +17,7 @@ namespace Super.Serialization.Testing.Application
 			        .Should()
 			        .Be(expected);
 
-			Encoding.UTF8.GetString(new Writer<uint>(PositiveNumber.Default, ArrayPool<byte>.Shared, 10).Get(parameter))
+			Encoding.UTF8.GetString(new Writer<uint>(PositiveNumber.Default, 10).Get(parameter))
 			        .Should()
 			        .Be(expected);
 		}

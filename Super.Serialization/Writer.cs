@@ -26,32 +26,36 @@ namespace Super.Serialization
 
 	class Writer<T> : IWriter<T>
 	{
-		readonly IEmit<T>       _writer;
+		readonly IEmit<T>        _writer;
 		readonly ArrayPool<byte> _pool;
-		readonly uint           _size;
+		readonly uint            _size;
 
-		public Writer(IEmit<T> writer) : this(writer, ArrayPool<byte>.Shared, DefaultBufferSize.Default) {}
+		public Writer(IEmit<T> writer) : this(writer, DefaultBufferSize.Default) {}
+
+		public Writer(IEmit<T> writer, uint size) : this(writer, ArrayPool<byte>.Shared, size) {}
 
 		public Writer(IEmit<T> writer, ArrayPool<byte> pool, uint size)
 		{
-			_writer  = writer;
-			_pool = pool;
-			_size    = size;
+			_writer = writer;
+			_pool   = pool;
+			_size   = size;
 		}
 
 		public Array<byte> Get(T parameter) => _writer.Get(new Composition<T>(_pool.Rent((int)_size), parameter))
 		                                              .Complete(_pool);
 	}
 
+	public delegate uint Advance<T>(Composition<T> parameter);
+
 	class Emit<T> : IEmit<T>
 	{
-		readonly uint                       _size;
-		readonly Func<Composition<T>, uint> _emit;
+		readonly uint       _size;
+		readonly Advance<T> _advance;
 
-		public Emit(uint size, Func<Composition<T>, uint> emit)
+		public Emit(uint size, Advance<T> advance)
 		{
-			_size = size;
-			_emit = emit;
+			_size    = size;
+			_advance = advance;
 		}
 
 		public Model.Sequences.Store<byte> Get(Composition<T> parameter)
@@ -60,7 +64,7 @@ namespace Super.Serialization
 				                  ? new Composition<T>(parameter.Output.Copy(in _size), parameter.Instance,
 				                                       parameter.Index)
 				                  : parameter;
-			return new Model.Sequences.Store<byte>(composition.Output, _emit(composition));
+			return new Model.Sequences.Store<byte>(composition.Output, _advance(composition));
 		}
 	}
 
@@ -71,11 +75,10 @@ namespace Super.Serialization
 		public static PositiveNumber Default { get; } = new PositiveNumber();
 
 		PositiveNumber()
-			: base(20,
-			       x => Utf8Formatter.TryFormat(x.Instance, x.Output.AsSpan((int)x.Index), out var count)
-				            ? (uint)count
-				            : throw new
-					              InvalidOperationException($"Could not format '{x.Instance}' into its UTF8 equivalent.")) {}
+			: base(20, x => Utf8Formatter.TryFormat(x.Instance, x.Output.AsSpan((int)x.Index), out var count)
+					              ? (uint)count
+					              : throw new
+						                InvalidOperationException($"Could not format '{x.Instance}' into its UTF8 equivalent.")) {}
 	}
 
 	static class Extensions
