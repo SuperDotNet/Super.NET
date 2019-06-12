@@ -1,9 +1,9 @@
 ﻿using BenchmarkDotNet.Attributes;
 using FluentAssertions;
 using Super.Model.Sequences;
+using Super.Serialization.Xml;
 using System;
 using System.IO;
-using System.Text;
 using System.Xml.Serialization;
 using Xunit;
 
@@ -16,7 +16,7 @@ namespace Super.Serialization.Testing.Application
 		{
 			Subject.Default.Get(12345)
 			       .Open()
-			       .To(Encoding.UTF8.GetString)
+			       .To(Encoder.Default.Get)
 			       .Should()
 			       .Be($@"<?xml version=""1.0""?>{Environment.NewLine}<unsignedInt>12345</unsignedInt>");
 		}
@@ -43,13 +43,14 @@ namespace Super.Serialization.Testing.Application
 
 		public class Benchmarks
 		{
+			// ReSharper disable once NotAccessedField.Local
 			readonly XmlSerializer _serializer;
 
 			public Benchmarks() : this(new XmlSerializer(typeof(uint))) {}
 
 			public Benchmarks(XmlSerializer serializer) => _serializer = serializer;
 
-			[Benchmark(Baseline = true)]
+			/*[Benchmark(Baseline = true)]
 			public byte[] Classic()
 			{
 				using (var stream = new MemoryStream())
@@ -57,7 +58,7 @@ namespace Super.Serialization.Testing.Application
 					_serializer.Serialize(stream, 12345u);
 					return stream.ToArray();
 				}
-			}
+			}*/
 
 			[Benchmark]
 			public Array<byte> Measure() => Subject.Default.Get(12345);

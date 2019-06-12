@@ -5,7 +5,6 @@ using Super.Model.Sequences;
 using System;
 using System.Buffers;
 using System.Buffers.Text;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -44,6 +43,21 @@ namespace Super.Serialization
 		}
 	}
 
+	public sealed class Encoder : ISelect<byte[], string>, ISelect<string, byte[]>
+	{
+		public static Encoder Default { get; } = new Encoder();
+
+		Encoder() : this(new UTF8Encoding(false, true)) {}
+
+		readonly Encoding _encoding;
+
+		public Encoder(Encoding encoding) => _encoding = encoding;
+
+		public string Get(byte[] parameter) => _encoding.GetString(parameter);
+
+		public byte[] Get(string parameter) => _encoding.GetBytes(parameter);
+	}
+
 	public interface IWriter<in T> : ISelect<T, Array<byte>> {}
 
 	sealed class NumberWriter : Writer<uint>
@@ -62,101 +76,30 @@ namespace Super.Serialization
 
 	public interface IAdvance : ISelect<Composition, uint>, IResult<uint> {}
 
-	public interface IAdvance<T> : ISelect<Composition<T>, uint>, IResult<uint> {}
+	public interface IToken : IResult<byte> {}
 
-	public interface ICharacter : IResult<byte> {}
-
-	public class Character : Instance<byte>, ICharacter
+	public class Token : Instance<byte>, IToken
 	{
-		public Character(char instance) : base((byte)instance) {}
+		public Token(char instance) : base((byte)instance) {}
 	}
 
-	public sealed class Open : Character
-	{
-		public static Open Default { get; } = new Open();
-
-		Open() : base('<') {}
-	}
-
-	public sealed class Close : Character
-	{
-		public static Close Default { get; } = new Close();
-
-		Close() : base('>') {}
-	}
-
-	public sealed class Marker : Character
-	{
-		public static Marker Default { get; } = new Marker();
-
-		Marker() : base('/') {}
-	}
-
-	class Content : Instance<uint>, IAdvance
+	public class Content : Instance<uint>, IAdvance
 	{
 		readonly byte[] _content;
 
-		public Content(string content) : this(Encoding.UTF8.GetBytes(content)) {}
+		public Content(string content) : this(Encoder.Default.Get(content)) {}
 
 		public Content(byte[] content) : base((uint)content.Length) => _content = content;
 
 		public uint Get(Composition parameter)
 		{
-			var length = (uint)_content.Length;
-			_content.CopyInto(parameter.Output, 0, length, parameter.Index);
-			return parameter.Index + length;
-		}
-	}
-
-	sealed class Declaration : Content
-	{
-		public static Declaration Default { get; } = new Declaration();
-
-		Declaration() : base($@"<?xml version=""1.0""?>{Environment.NewLine}") {}
-	}
-
-	sealed class OpenContent : Content
-	{
-		public OpenContent(string name) : base(Encoding.UTF8.GetBytes(name)
-		                                               .Prepend(Open.Default)
-		                                               .Append(Close.Default)
-		                                               .ToArray()) {}
-	}
-
-	sealed class CloseContent : Content
-	{
-		public CloseContent(string name) : base(Encoding.UTF8.GetBytes(name)
-		                                                .Prepend(Marker.Default)
-		                                                .Prepend(Open.Default)
-		                                                .Append(Close.Default)
-		                                                .ToArray()) {}
-	}
-
-	class XmlElementWriter<T> : ElementWriter<T>
-	{
-		public XmlElementWriter(string name, IEmit<T> content)
-			: base(new Emit(new OpenContent(name)), content, new Emit(new CloseContent(name))) {}
-	}
-
-	public class XmlDocumentEmitter<T> : IEmit<T>
-	{
-		readonly IEmit    _declaration;
-		readonly IEmit<T> _content;
-
-		public XmlDocumentEmitter(IEmit declaration, IEmit<T> content)
-		{
-			_declaration = declaration;
-			_content     = content;
-		}
-
-		public Composition Get(Composition<T> parameter)
-		{
-			var declaration = _declaration.Get(new Composition(parameter.Output, parameter.Index));
-			var result =
-				_content.Get(new Composition<T>(declaration.Output, parameter.Instance, declaration.Index));
+			var result = (uint)_content.Length;
+			_content.CopyInto(parameter.Output, 0, result, parameter.Index);
 			return result;
 		}
 	}
+
+
 
 	class ElementWriter<T> : IEmit<T>
 	{
@@ -221,7 +164,7 @@ namespace Super.Serialization
 				                  ? new Composition<T>(parameter.Output.Copy(in _size), parameter.Instance,
 				                                       parameter.Index)
 				                  : parameter;
-			return new Composition(composition.Output, _advance(composition));
+			return new Composition(composition.Output, parameter.Index + _advance(composition));
 		}
 	}
 
@@ -243,7 +186,7 @@ namespace Super.Serialization
 			var composition = parameter.Index + _size >= parameter.Output.Length
 				                  ? new Composition(parameter.Output.Copy(in _size), parameter.Index)
 				                  : parameter;
-			return new Composition(composition.Output, _advance(composition));
+			return new Composition(composition.Output, parameter.Index + _advance(composition));
 		}
 	}
 
@@ -275,7 +218,7 @@ namespace Super.Serialization
 
 		PositiveNumber()
 			: base(20, x => Utf8Formatter.TryFormat(x.Instance, x.Output.AsSpan((int)x.Index), out var count)
-				                ? x.Index + (uint)count
+				                ? (uint)count
 				                : throw new
 					                  InvalidOperationException($"Could not format '{x.Instance}' into its UTF8 equivalent.")) {}
 	}
