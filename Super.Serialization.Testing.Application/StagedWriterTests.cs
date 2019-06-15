@@ -15,7 +15,7 @@ namespace Super.Serialization.Testing.Application
 			using (var stream = new MemoryStream())
 			{
 				await new SingleStagedWriter<uint>(PositiveNumber.Default).Get(new Input<uint>(stream, 12345u));
-				stream.ToArray().Should().Equal(JsonSerializer.ToBytes(12345u));
+				stream.ToArray().Should().Equal(JsonSerializer.ToUtf8Bytes(12345u));
 			}
 		}
 

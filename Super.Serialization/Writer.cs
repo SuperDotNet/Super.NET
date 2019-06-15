@@ -266,12 +266,9 @@ namespace Super.Serialization
 		public async Task Get(Input<T> parameter)
 		{
 			var composition = _compositor.Get(parameter.Instance);
-			//var tasks       = new List<Task>();
 
 			using (var instructions = _instructions.Get(composition))
 			{
-				//var page = ArrayPool<byte>.Shared.Rent((int)DefaultBufferSize.Default.Get());
-
 				var length = instructions.Length;
 				var last   = length - 1;
 				for (uint i = 0u, start = 0u; i < length; i++)
@@ -285,7 +282,6 @@ namespace Super.Serialization
 						                                       parameter.Cancel);
 						if (!task.IsCompleted)
 						{
-							//tasks.Add(task.AsTask());
 							await task;
 						}
 
@@ -303,16 +299,6 @@ namespace Super.Serialization
 					composition = step.Introduce(parameter.Instance);
 				}
 			}
-
-			/*var count = tasks.Count;
-			for (var i = 0; i < count; i++)
-			{
-				var task = tasks[i];
-				if (!task.IsCompleted)
-				{
-					await task;
-				}
-			}*/
 		}
 	}
 

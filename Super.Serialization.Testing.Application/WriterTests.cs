@@ -31,12 +31,9 @@ namespace Super.Serialization.Testing.Application
 			using (var stream = new MemoryStream())
 			{
 				await JsonSerializer.WriteAsync(parameter, stream);
-				stream.ToArray().Should().Equal(JsonSerializer.ToBytes(parameter));
+				stream.ToArray().Should().Equal(JsonSerializer.ToUtf8Bytes(parameter));
 			}
 		}
-
-		/*[Fact]
-		Task Verify() => Task.Factory.ContinueWhenAll(new[]{Task.CompletedTask},_ => 123u);*/
 
 		/*sealed class Value
 		{
@@ -68,61 +65,8 @@ namespace Super.Serialization.Testing.Application
 			[Benchmark]
 			public byte[] Subject() => _writer.Get(_data);
 
-			/*[Benchmark]
-			public Task<uint> VerifyTask() => Task.CompletedTask.ContinueWith(_ => 123u, TaskContinuationOptions.ExecuteSynchronously);*/
-
 			[Benchmark(Baseline = true)]
-			public byte[] Native() => JsonSerializer.ToBytes(_data);
-
-			/*[Benchmark]
-			public object List() => new List<object>();*/
-
-			/*[Benchmark]
-			public object Collection() => new Collection<object>();*/
-
-			/*[Benchmark]
-			public async Task<uint> VerifyTasks()
-			{
-				var list = new List<Task>();
-
-				for (var i = 0u; i < 10; i++)
-				{
-					list.Add(Task.Delay(0));
-				}
-
-				await Task.WhenAll(list).ConfigureAwait(false);
-
-				return 123;
-			}
-
-			[Benchmark]
-			public async Task<uint> VerifyTask()
-			{
-				for (var i = 0u; i < 10; i++)
-				{
-					await Task.Delay(0).ConfigureAwait(true);
-				}
-
-				return 123;
-			}
-
-			[Benchmark]
-			public async Task<uint> VerifyTask2()
-			{
-				for (var i = 0u; i < 10; i++)
-				{
-					await Task.Delay(0).ConfigureAwait(false);
-				}
-
-				return 123;
-			}*/
-
-			/*[Benchmark]
-			public async Task<uint> VerifyTask2()
-			{
-				await Task.CompletedTask.ConfigureAwait(false);
-				return 123;
-			}*/
+			public byte[] Native() => JsonSerializer.ToUtf8Bytes(_data);
 		}
 	}
 }

@@ -47,4 +47,10 @@
   <ItemGroup>
     <Folder Include="Diagnostics\Logging\Configuration\" />
   </ItemGroup>
+
+  <Target Name="WorkaroundNetStandard" AfterTargets="ResolvePackageAssets">
+    <ItemGroup>
+      <TransitiveFrameworkReference Remove="NETStandard.Library" />
+    </ItemGroup>
+  </Target>
 </Project>
