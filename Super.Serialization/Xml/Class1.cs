@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Super.Serialization.Xml
@@ -31,27 +32,29 @@ namespace Super.Serialization.Xml
 		Declaration() : base($@"<?xml version=""1.0""?>{Environment.NewLine}") {}
 	}
 
-	sealed class OpenContent : Content
+	sealed class OpenElement : Content
 	{
-		public OpenContent(string name) : base(Encoder.Default.Get(name)
-		                                              .Prepend(Open.Default)
-		                                              .Append(Close.Default)
-		                                              .ToArray()) {}
+		public OpenElement(string name) : this(Encoder.Default.Get(name)) {}
+
+		public OpenElement(IEnumerable<byte> name) : base(name.Prepend(Open.Default)
+		                                                      .Append(Close.Default)
+		                                                      .ToArray()) {}
 	}
 
-	sealed class CloseContent : Content
+	sealed class CloseElement : Content
 	{
-		public CloseContent(string name) : base(Encoder.Default.Get(name)
-		                                               .Prepend(Complete.Default)
-		                                               .Prepend(Open.Default)
-		                                               .Append(Close.Default)
-		                                               .ToArray()) {}
+		public CloseElement(string name) : this(Encoder.Default.Get(name)) {}
+
+		public CloseElement(IEnumerable<byte> name) : base(name.Prepend(Complete.Default)
+		                                                       .Prepend(Open.Default)
+		                                                       .Append(Close.Default)
+		                                                       .ToArray()) {}
 	}
 
 	class XmlElementWriter<T> : ElementWriter<T>
 	{
 		public XmlElementWriter(string name, IEmit<T> content)
-			: base(new Emit(new OpenContent(name)), content, new Emit(new CloseContent(name))) {}
+			: base(new Emit(new OpenElement(name)), content, new Emit(new CloseElement(name))) {}
 	}
 
 	public class XmlDocumentEmitter<T> : IEmit<T>
@@ -66,10 +69,6 @@ namespace Super.Serialization.Xml
 		}
 
 		public Composition Get(Composition<T> parameter)
-		{
-			var declaration = _declaration.Get(new Composition(parameter.Output, parameter.Index));
-			var result = _content.Get(new Composition<T>(declaration.Output, parameter.Instance, declaration.Index));
-			return result;
-		}
+			=> _content.Get(_declaration.Get(parameter).Introduce(parameter.Instance));
 	}
 }

@@ -1,7 +1,7 @@
-using System.Collections.Immutable;
 using JetBrains.Annotations;
 using Super.Model.Results;
 using Super.Runtime;
+using System.Collections.Immutable;
 
 namespace Super.Model.Sequences
 {
@@ -13,7 +13,7 @@ namespace Super.Model.Sequences
 
 		public static implicit operator Array<T>(T[] source) => new Array<T>(source);
 
-		public static implicit operator T[](Array<T> source) => source.Copy();
+		public static implicit operator T[](Array<T> source) => source.Open();
 
 		readonly T[] _reference;
 

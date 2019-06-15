@@ -7,7 +7,7 @@ namespace Super.Serialization.Testing.Application
 		static void Main(params string[] arguments)
 		{
 			Configuration.Default.Get(arguments)
-			             .To(Run.A<ElementWriterTests.Benchmarks>);
+			             .To(Run.A<StagedWriterTests.Benchmarks>);
 		}
 	}
 }

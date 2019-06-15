@@ -51,7 +51,7 @@ namespace Super.Serialization.Testing.Application
 			public Benchmarks(XmlSerializer serializer) => _serializer = serializer;
 
 			/*[Benchmark(Baseline = true)]
-			public byte[] Classic()
+			public byte[] Xml()
 			{
 				using (var stream = new MemoryStream())
 				{

@@ -1,12 +1,16 @@
-﻿using Super.Model.Results;
+﻿using Super.Model.Commands;
+using Super.Model.Results;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
 using Super.Model.Sequences;
 using System;
 using System.Buffers;
 using System.Buffers.Text;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Super.Serialization
 {
@@ -41,30 +45,24 @@ namespace Super.Serialization
 			pool.Return(@this.Output);
 			return result;
 		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Composition<T> Introduce<T>(in this Composition @this, in T instance)
+			=> new Composition<T>(@this.Output, in instance, @this.Index);
 	}
 
-	public sealed class Encoder : ISelect<byte[], string>, ISelect<string, byte[]>
+	public sealed class Encoder : Select<byte[], string>, ISelect<string, byte[]>
 	{
+		readonly Func<string, byte[]> _parse;
 		public static Encoder Default { get; } = new Encoder();
 
 		Encoder() : this(new UTF8Encoding(false, true)) {}
 
-		readonly Encoding _encoding;
+		public Encoder(Encoding encoding) : this(encoding.GetString, encoding.GetBytes) {}
 
-		public Encoder(Encoding encoding) => _encoding = encoding;
+		public Encoder(Func<byte[], string> format, Func<string, byte[]> parse) : base(format) => _parse = parse;
 
-		public string Get(byte[] parameter) => _encoding.GetString(parameter);
-
-		public byte[] Get(string parameter) => _encoding.GetBytes(parameter);
-	}
-
-	public interface IWriter<in T> : ISelect<T, Array<byte>> {}
-
-	sealed class NumberWriter : Writer<uint>
-	{
-		public static NumberWriter Default { get; } = new NumberWriter();
-
-		NumberWriter() : base(PositiveNumber.Default) {}
+		public byte[] Get(string parameter) => _parse(parameter);
 	}
 
 	public sealed class DefaultBufferSize : Instance<uint>
@@ -99,8 +97,6 @@ namespace Super.Serialization
 		}
 	}
 
-
-
 	class ElementWriter<T> : IEmit<T>
 	{
 		readonly IEmit    _start, _finish;
@@ -115,12 +111,13 @@ namespace Super.Serialization
 
 		public Composition Get(Composition<T> parameter)
 		{
-			var start   = _start.Get(new Composition(parameter.Output, parameter.Index));
-			var content = _content.Get(new Composition<T>(start.Output, parameter.Instance, start.Index));
-			var result  = _finish.Get(new Composition(content.Output, content.Index));
+			var content = _content.Get(_start.Get(parameter).Introduce(parameter.Instance));
+			var result  = _finish.Get(content);
 			return result;
 		}
 	}
+
+	public interface IWriter<in T> : ISelect<T, Array<byte>> {}
 
 	class Writer<T> : IWriter<T>
 	{
@@ -141,6 +138,182 @@ namespace Super.Serialization
 
 		public Array<byte> Get(T parameter) => _emitter.Get(new Composition<T>(_pool.Rent((int)_size), parameter))
 		                                               .Complete(_pool);
+	}
+
+	public readonly struct Input<T>
+	{
+		public Input(Stream stream, T instance, CancellationToken cancel = new CancellationToken())
+		{
+			Stream   = stream;
+			Instance = instance;
+			Cancel   = cancel;
+		}
+
+		public Stream Stream { get; }
+
+		public T Instance { get; }
+
+		public CancellationToken Cancel { get; }
+	}
+
+	public readonly struct Lease<T> : IDisposable
+	{
+		readonly static ArrayPool<T> Pool = ArrayPool<T>.Shared;
+
+		readonly T[] _store;
+
+		public Lease(T[] store, uint length)
+		{
+			_store = store;
+			Length = length;
+		}
+
+		public ref T this[uint index] => ref _store[index];
+
+		public uint Length { get; }
+
+		public void Dispose()
+		{
+			Pool.Return(_store);
+		}
+	}
+
+	/*public readonly struct Compositions
+	{
+		public Compositions(IList<Task> tasks, byte[] output, uint length)
+		{
+			Tasks  = tasks;
+			Output = output;
+			Length = length;
+		}
+
+		public IList<Task> Tasks { get; }
+
+		public byte[] Output { get; }
+
+		public uint Length { get; }
+	}*/
+
+	public interface ICompositor<T> : ISelect<T, Composition<T>>, ICommand<Composition> {}
+
+	sealed class Compositor<T> : ICompositor<T>
+	{
+		public static Compositor<T> Default { get; } = new Compositor<T>();
+
+		Compositor() : this(ArrayPool<byte>.Shared, DefaultBufferSize.Default) {}
+
+		readonly ArrayPool<byte> _pool;
+		readonly uint            _size;
+
+		public Compositor(ArrayPool<byte> pool, uint size)
+		{
+			_pool = pool;
+			_size = size;
+		}
+
+		public Composition<T> Get(T parameter) => new Composition<T>(_pool.Rent((int)_size), parameter);
+
+		public void Execute(Composition parameter)
+		{
+			_pool.Return(parameter.Output);
+			parameter.Output.Clear(parameter.Index);
+		}
+	}
+
+	public interface IStagedWriter<T> : ISelect<Input<T>, Task> {}
+
+	public sealed class SingleStagedWriter<T> : IStagedWriter<T>
+	{
+		readonly IEmit<T>       _instruction;
+		readonly ICompositor<T> _compositor;
+
+		public SingleStagedWriter(IEmit<T> instruction) : this(instruction, Compositor<T>.Default) {}
+
+		public SingleStagedWriter(IEmit<T> instruction, ICompositor<T> compositor)
+		{
+			_instruction = instruction;
+			_compositor  = compositor;
+		}
+
+		public async Task Get(Input<T> parameter)
+		{
+			var composition = _instruction.Get(_compositor.Get(parameter.Instance));
+			var operation = parameter.Stream.WriteAsync(composition.Output, 0, (int)composition.Index,
+			                                            parameter.Cancel);
+
+			if (!operation.IsCompleted)
+			{
+				await operation;
+			}
+
+			_compositor.Execute(composition);
+		}
+	}
+
+	public sealed class StagedWriter<T> : IStagedWriter<T>
+	{
+		readonly IInstructions<T> _instructions;
+		readonly ICompositor<T>   _compositor;
+
+		public StagedWriter(IInstructions<T> instructions) : this(instructions, Compositor<T>.Default) {}
+
+		public StagedWriter(IInstructions<T> instructions, ICompositor<T> compositor)
+		{
+			_instructions = instructions;
+			_compositor   = compositor;
+		}
+
+		public async Task Get(Input<T> parameter)
+		{
+			var composition = _compositor.Get(parameter.Instance);
+			//var tasks       = new List<Task>();
+
+			using (var instructions = _instructions.Get(composition))
+			{
+				//var page = ArrayPool<byte>.Shared.Rent((int)DefaultBufferSize.Default.Get());
+
+				var length = instructions.Length;
+				var last   = length - 1;
+				for (uint i = 0u, start = 0u; i < length; i++)
+				{
+					var step = instructions[i].Get(composition);
+
+					var complete = i == last;
+					if (complete || step.Index >= step.Output.Length * .9)
+					{
+						var task = parameter.Stream.WriteAsync(step.Output, (int)start, (int)step.Index,
+						                                       parameter.Cancel);
+						if (!task.IsCompleted)
+						{
+							//tasks.Add(task.AsTask());
+							await task;
+						}
+
+						step = new Composition(step.Output);
+
+						if (complete)
+						{
+							_compositor.Execute(step);
+							return;
+						}
+
+						start += step.Index;
+					}
+
+					composition = step.Introduce(parameter.Instance);
+				}
+			}
+
+			/*var count = tasks.Count;
+			for (var i = 0; i < count; i++)
+			{
+				var task = tasks[i];
+				if (!task.IsCompleted)
+				{
+					await task;
+				}
+			}*/
+		}
 	}
 
 	public delegate uint Advance<T>(Composition<T> parameter);
@@ -203,6 +376,23 @@ namespace Super.Serialization
 		public Composition Get(Composition parameter) => parameter;
 	}
 
+	// public interface IInstruction<T> : ISelect<Composition<T>>
+
+	public interface IInstructions<T> : ISelect<Composition<T>, Lease<IEmit<T>>> {}
+
+	/*class Instructions : IInstructions<uint>
+	{
+		public static Instructions Default { get; } = new Instructions();
+
+		Instructions() : this(PositiveNumber.Default.Yield<IEmit<uint>>().Result()) {}
+
+		readonly Array<IEmit<uint>> _instructions;
+
+		public Instructions(Array<IEmit<uint>> instructions) => _instructions = instructions;
+
+		public Lease<IEmit<uint>> Get(Composition<uint> parameter) => new Lease<IEmit<uint>>(_instructions, 1);
+	}*/
+
 	sealed class EmptyEmit<T> : IEmit<T>
 	{
 		public static EmptyEmit<T> Default { get; } = new EmptyEmit<T>();
@@ -238,7 +428,10 @@ namespace Super.Serialization
 
 	public readonly struct Composition<T>
 	{
-		public Composition(byte[] output, T instance, uint index = 0)
+		public static implicit operator Composition(Composition<T> instance)
+			=> new Composition(instance.Output, instance.Index);
+
+		public Composition(byte[] output, in T instance, in uint index = 0)
 		{
 			Output   = output;
 			Instance = instance;
