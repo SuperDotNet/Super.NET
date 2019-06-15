@@ -14,8 +14,19 @@ namespace Super.Serialization.Testing.Application
 		{
 			using (var stream = new MemoryStream())
 			{
-				await new SingleStagedWriter<uint>(PositiveNumber.Default).Get(new Input<uint>(stream, 12345u));
+				await new SingleStageWriter<uint>(PositiveNumber.Default).Get(new Input<uint>(stream, 12345u));
 				stream.ToArray().Should().Equal(JsonSerializer.ToUtf8Bytes(12345u));
+			}
+		}
+
+		[Fact]
+		public async Task VerifyNativeAssumption()
+		{
+			const uint parameter = 12345u;
+			using (var stream = new MemoryStream())
+			{
+				await JsonSerializer.WriteAsync(parameter, stream);
+				stream.ToArray().Should().Equal(JsonSerializer.ToUtf8Bytes(parameter));
 			}
 		}
 
@@ -24,7 +35,7 @@ namespace Super.Serialization.Testing.Application
 			readonly IStagedWriter<uint> _writer;
 			readonly uint               _data;
 
-			public Benchmarks() : this(new SingleStagedWriter<uint>(PositiveNumber.Default), 12345u) {}
+			public Benchmarks() : this(new SingleStageWriter<uint>(PositiveNumber.Default), 12345u) {}
 
 			public Benchmarks(IStagedWriter<uint> writer, uint data)
 			{

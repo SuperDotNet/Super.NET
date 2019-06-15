@@ -1,9 +1,7 @@
 using BenchmarkDotNet.Attributes;
 using FluentAssertions;
-using System.IO;
 using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Super.Serialization.Testing.Application
@@ -22,17 +20,6 @@ namespace Super.Serialization.Testing.Application
 			Encoding.UTF8.GetString(new Writer<uint>(PositiveNumber.Default, 10).Get(parameter))
 			        .Should()
 			        .Be(expected);
-		}
-
-		[Fact]
-		public async Task Measure()
-		{
-			const uint parameter = 12345u;
-			using (var stream = new MemoryStream())
-			{
-				await JsonSerializer.WriteAsync(parameter, stream);
-				stream.ToArray().Should().Equal(JsonSerializer.ToUtf8Bytes(parameter));
-			}
 		}
 
 		/*sealed class Value
@@ -54,7 +41,7 @@ namespace Super.Serialization.Testing.Application
 			readonly IWriter<uint> _writer;
 			readonly uint          _data;
 
-			public Benchmarks() : this(Writer.Default, 12345) {}
+			public Benchmarks() : this(Writer.Default, 12345u) {}
 
 			public Benchmarks(IWriter<uint> writer, uint data)
 			{

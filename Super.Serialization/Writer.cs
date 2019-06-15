@@ -222,14 +222,14 @@ namespace Super.Serialization
 
 	public interface IStagedWriter<T> : ISelect<Input<T>, Task> {}
 
-	public sealed class SingleStagedWriter<T> : IStagedWriter<T>
+	public sealed class SingleStageWriter<T> : IStagedWriter<T>
 	{
 		readonly IEmit<T>       _instruction;
 		readonly ICompositor<T> _compositor;
 
-		public SingleStagedWriter(IEmit<T> instruction) : this(instruction, Compositor<T>.Default) {}
+		public SingleStageWriter(IEmit<T> instruction) : this(instruction, Compositor<T>.Default) {}
 
-		public SingleStagedWriter(IEmit<T> instruction, ICompositor<T> compositor)
+		public SingleStageWriter(IEmit<T> instruction, ICompositor<T> compositor)
 		{
 			_instruction = instruction;
 			_compositor  = compositor;
