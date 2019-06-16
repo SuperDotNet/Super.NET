@@ -14,7 +14,7 @@ namespace Super.Serialization.Testing.Application
 		{
 			using (var stream = new MemoryStream())
 			{
-				await new SingleStageWriter<uint>(PositiveNumber.Default).Get(new Input<uint>(stream, 12345u));
+				await new SingleStageWriter<uint>(PositiveInteger.Default).Get(new Input<uint>(stream, 12345u));
 				stream.ToArray().Should().Equal(JsonSerializer.ToUtf8Bytes(12345u));
 			}
 		}
@@ -35,7 +35,7 @@ namespace Super.Serialization.Testing.Application
 			readonly IStagedWriter<uint> _writer;
 			readonly uint               _data;
 
-			public Benchmarks() : this(new SingleStageWriter<uint>(PositiveNumber.Default), 12345u) {}
+			public Benchmarks() : this(new SingleStageWriter<uint>(PositiveInteger.Default), 12345u) {}
 
 			public Benchmarks(IStagedWriter<uint> writer, uint data)
 			{

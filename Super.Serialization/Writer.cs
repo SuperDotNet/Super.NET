@@ -3,6 +3,8 @@ using Super.Model.Results;
 using Super.Model.Selection;
 using Super.Model.Selection.Alterations;
 using Super.Model.Sequences;
+using Super.Runtime.Environment;
+using Super.Text;
 using System;
 using System.Buffers;
 using System.Buffers.Text;
@@ -35,9 +37,21 @@ namespace Super.Serialization
 			return result;
 		}
 
+		public static IInstruction<T> Quoted<T>(this IInstruction<T> @this) => @this.Quoted(DoubleQuote.Default);
+
+		public static IInstruction<T> Quoted<T>(this IInstruction<T> @this, IToken quote)
+			=> new QuotedInstruction<T>(@this, quote.Get());
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Composition<T> Introduce<T>(in this Composition @this, in T instance)
 			=> new Composition<T>(@this.Output, in instance, @this.Index);
+	}
+
+	public sealed class DefaultEncoding : Instance<Encoding>
+	{
+		public static DefaultEncoding Default { get; } = new DefaultEncoding();
+
+		DefaultEncoding() : base(new UTF8Encoding(false, true)) {}
 	}
 
 	public sealed class Encoder : Select<byte[], string>, ISelect<string, byte[]>
@@ -45,7 +59,7 @@ namespace Super.Serialization
 		readonly Func<string, byte[]> _parse;
 		public static Encoder Default { get; } = new Encoder();
 
-		Encoder() : this(new UTF8Encoding(false, true)) {}
+		Encoder() : this(DefaultEncoding.Default) {}
 
 		public Encoder(Encoding encoding) : this(encoding.GetString, encoding.GetBytes) {}
 
@@ -73,16 +87,22 @@ namespace Super.Serialization
 	public class Content : Instance<uint>, IAdvance
 	{
 		readonly byte[] _content;
+		readonly uint   _length;
 
 		public Content(string content) : this(Encoder.Default.Get(content)) {}
 
-		public Content(byte[] content) : base((uint)content.Length) => _content = content;
+		public Content(byte[] content) : this(content, (uint)content.Length) {}
+
+		public Content(byte[] content, uint length) : base(length)
+		{
+			_content = content;
+			_length  = length;
+		}
 
 		public uint Get(Composition parameter)
 		{
-			var result = (uint)_content.Length;
-			_content.CopyInto(parameter.Output, 0, result, parameter.Index);
-			return result;
+			_content.CopyInto(parameter.Output, 0, in _length, parameter.Index);
+			return _length;
 		}
 	}
 
@@ -99,11 +119,7 @@ namespace Super.Serialization
 		}
 
 		public Composition Get(Composition<T> parameter)
-		{
-			var content = _content.Get(_start.Get(parameter).Introduce(parameter.Instance));
-			var result  = _finish.Get(content);
-			return result;
-		}
+			=> _finish.Get(_content.Get(_start.Get(parameter).Introduce(parameter.Instance)));
 	}
 
 	public interface IWriter<in T> : ISelect<T, Array<byte>> {}
@@ -173,22 +189,6 @@ namespace Super.Serialization
 		}
 	}
 
-	/*public readonly struct Compositions
-	{
-		public Compositions(IList<Task> tasks, byte[] output, uint length)
-		{
-			Tasks  = tasks;
-			Output = output;
-			Length = length;
-		}
-
-		public IList<Task> Tasks { get; }
-
-		public byte[] Output { get; }
-
-		public uint Length { get; }
-	}*/
-
 	public interface ICompositor<T> : ISelect<T, Composition<T>>, ICommand<Composition> {}
 
 	sealed class Compositor<T> : ICompositor<T>
@@ -210,8 +210,8 @@ namespace Super.Serialization
 
 		public void Execute(Composition parameter)
 		{
-			_pool.Return(parameter.Output);
 			parameter.Output.Clear(parameter.Index);
+			_pool.Return(parameter.Output);
 		}
 	}
 
@@ -348,16 +348,14 @@ namespace Super.Serialization
 
 	public interface IEmit<T> : ISelect<Composition<T>, Composition> {}
 
-	sealed class EmptyEmit : IEmit
+	/*sealed class EmptyEmit : IEmit
 	{
 		public static EmptyEmit Default { get; } = new EmptyEmit();
 
 		EmptyEmit() {}
 
 		public Composition Get(Composition parameter) => parameter;
-	}
-
-	// public interface IInstruction<T> : ISelect<Composition<T>>
+	}*/
 
 	public interface IInstructions<T> : ISelect<Composition<T>, Lease<IEmit<T>>> {}
 
@@ -374,24 +372,163 @@ namespace Super.Serialization
 		public Lease<IEmit<uint>> Get(Composition<uint> parameter) => new Lease<IEmit<uint>>(_instructions, 1);
 	}*/
 
-	sealed class EmptyEmit<T> : IEmit<T>
+	/*sealed class EmptyEmit<T> : IEmit<T>
 	{
 		public static EmptyEmit<T> Default { get; } = new EmptyEmit<T>();
 
 		EmptyEmit() {}
 
 		public Composition Get(Composition<T> parameter) => new Composition(parameter.Output, parameter.Index);
+	}*/
+
+	public interface IInstruction<T> : ISelect<Composition<T>, uint>, ISelect<T, uint> {}
+
+	public class SingleInstructionWriter<T> : IWriter<T>
+	{
+		readonly IInstruction<T> _instruction;
+		readonly ArrayPool<byte> _pool;
+
+		public SingleInstructionWriter(IInstruction<T> instruction)
+			: this(instruction, ArrayPool<byte>.Shared) {}
+
+		public SingleInstructionWriter(IInstruction<T> instruction, ArrayPool<byte> pool)
+		{
+			_instruction = instruction;
+			_pool        = pool;
+		}
+
+		public Array<byte> Get(T parameter)
+		{
+			var source = _pool.Rent((int)_instruction.Get(parameter));
+			var length = _instruction.Get(new Composition<T>(source, parameter));
+			var result = source.CopyInto(new byte[length], 0, length);
+			source.Clear(length);
+			_pool.Return(source);
+			return result;
+		}
 	}
 
-	sealed class PositiveNumber : Emit<uint>
+	sealed class DoubleQuote : Token
 	{
-		public static PositiveNumber Default { get; } = new PositiveNumber();
+		public static DoubleQuote Default { get; } = new DoubleQuote();
 
-		PositiveNumber()
+		DoubleQuote() : base('"') {}
+	}
+
+	sealed class QuotedInstruction<T> : IInstruction<T>
+	{
+		readonly IInstruction<T> _instruction;
+		readonly byte _quote;
+
+		public QuotedInstruction(IInstruction<T> instruction) : this(instruction, DoubleQuote.Default) {}
+
+		public QuotedInstruction(IInstruction<T> instruction, byte quote)
+		{
+			_instruction = instruction;
+			_quote       = quote;
+		}
+
+		public uint Get(Composition<T> parameter)
+		{
+			var index = parameter.Index;
+
+			parameter.Output[index++] = _quote;
+
+			index += _instruction.Get(new Composition<T>(parameter.Output, parameter.Instance, in index));
+
+			parameter.Output[index++] = _quote;
+
+			return index - parameter.Index;
+		}
+
+		public uint Get(T parameter) => _instruction.Get(parameter) + 2;
+	}
+
+	sealed class StringValueInstruction : IInstruction<string>
+	{
+		public static StringValueInstruction Default { get; } = new StringValueInstruction();
+
+		StringValueInstruction() : this(DefaultComponent<IUtf8>.Default.Get()) {}
+
+		readonly IUtf8 _utf8;
+
+		public StringValueInstruction(IUtf8 utf8) => _utf8 = utf8;
+
+		public uint Get(Composition<string> parameter)
+			=> _utf8.Get(new Utf8Input(parameter.Instance, parameter.Output, parameter.Index));
+
+		public uint Get(string parameter) => (uint)parameter.Length;
+	}
+
+	/*sealed class QuotedStringValueInstruction : IInstruction<string>
+	{
+		public static QuotedStringValueInstruction Default { get; } = new QuotedStringValueInstruction();
+
+		QuotedStringValueInstruction() : this(DefaultComponent<IUtf8>.Default.Get(), DoubleQuote.Default) {}
+
+		readonly IUtf8  _utf8;
+		readonly IToken _quote;
+
+		public QuotedStringValueInstruction(IUtf8 utf8, IToken quote)
+		{
+			_utf8  = utf8;
+			_quote = quote;
+		}
+
+		public uint Get(Composition<string> parameter)
+		{
+			var index = parameter.Index;
+			var quote = _quote.Get();
+
+			parameter.Output[index++] = quote;
+
+			index += _utf8.Get(new Utf8Input(parameter.Instance, parameter.Output, in index));
+
+			parameter.Output[index++] = quote;
+
+			return index - parameter.Index;
+		}
+
+		public uint Get(string parameter) => (uint)parameter.Length + 2u;
+	}*/
+
+	/*sealed class PositiveIntegerInstruction : FixedSizeInstruction<uint>
+	{
+		public static PositiveIntegerInstruction Default { get; } = new PositiveIntegerInstruction();
+
+		PositiveIntegerInstruction()
+			: base(10,
+			       x => Utf8Formatter.TryFormat(x.Instance, x.Output.AsSpan((int)x.Index), out var count)
+				            ? (uint)count
+				            : throw new
+					              InvalidOperationException($"Could not format '{x.Instance}' into its UTF-8 equivalent.")) {}
+	}*/
+
+	sealed class PositiveIntegerInstruction : IInstruction<uint>
+	{
+		public static PositiveIntegerInstruction Default { get; } = new PositiveIntegerInstruction();
+
+		PositiveIntegerInstruction() {}
+
+		public uint Get(Composition<uint> parameter)
+			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
+			                           out var count)
+				   ? (uint)count
+				   : throw new
+					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
+
+		public uint Get(uint parameter) => 10;
+	}
+
+	sealed class PositiveInteger : Emit<uint>
+	{
+		public static PositiveInteger Default { get; } = new PositiveInteger();
+
+		PositiveInteger()
 			: base(10, x => Utf8Formatter.TryFormat(x.Instance, x.Output.AsSpan((int)x.Index), out var count)
 				                ? (uint)count
 				                : throw new
-					                  InvalidOperationException($"Could not format '{x.Instance}' into its UTF8 equivalent.")) {}
+					                  InvalidOperationException($"Could not format '{x.Instance}' into its UTF-8 equivalent.")) {}
 	}
 
 	public readonly struct Composition

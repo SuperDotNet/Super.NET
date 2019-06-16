@@ -37,6 +37,7 @@
     <ProjectReference Include="..\Super.Application.Hosting.BenchmarkDotNet\Super.Application.Hosting.BenchmarkDotNet.csproj" />
     <ProjectReference Include="..\Super.Application.Hosting.xUnit\Super.Application.Hosting.xUnit.csproj" />
     <ProjectReference Include="..\Super.Serialization\Super.Serialization.csproj" />
+    <ProjectReference Include="..\Super.Platform.NetCore\Super.Platform.NetCore.csproj" />
   </ItemGroup>
 
   <Target Name="WorkaroundNetStandard" AfterTargets="ResolvePackageAssets">

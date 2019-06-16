@@ -1,5 +1,5 @@
-﻿using System;
-using Super.Runtime;
+﻿using Super.Runtime;
+using System;
 
 namespace Super.Model.Selection
 {

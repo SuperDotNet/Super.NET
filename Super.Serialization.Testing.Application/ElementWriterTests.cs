@@ -38,7 +38,7 @@ namespace Super.Serialization.Testing.Application
 			public static Subject Default { get; } = new Subject();
 
 			Subject() : base(new XmlDocumentEmitter<uint>(new Emit(Declaration.Default),
-			                                              new XmlElementWriter<uint>("unsignedInt", PositiveNumber.Default))) {}
+			                                              new XmlElementWriter<uint>("unsignedInt", PositiveInteger.Default))) {}
 		}
 
 		public class Benchmarks

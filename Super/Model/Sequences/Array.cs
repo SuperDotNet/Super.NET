@@ -7,13 +7,13 @@ namespace Super.Model.Sequences
 {
 	public readonly struct Array<T> : IResult<ImmutableArray<T>>
 	{
-		public static Array<T> Empty { get; } = new Array<T>(Empty<T>.Array);
-
 		public static implicit operator ImmutableArray<T>(Array<T> source) => source.Get();
 
 		public static implicit operator Array<T>(T[] source) => new Array<T>(source);
 
 		public static implicit operator T[](Array<T> source) => source.Open();
+
+		public static Array<T> Empty { get; } = new Array<T>(Empty<T>.Array);
 
 		readonly T[] _reference;
 

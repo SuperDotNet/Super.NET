@@ -5,6 +5,7 @@
     <AssemblyName>Super.Platform</AssemblyName>
     <RootNamespace>Super.Platform</RootNamespace>
     <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
