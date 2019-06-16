@@ -1,5 +1,6 @@
 using BenchmarkDotNet.Attributes;
 using FluentAssertions;
+using Super.Model.Sequences;
 using System.Text;
 using System.Text.Json.Serialization;
 using Xunit;
@@ -16,24 +17,13 @@ namespace Super.Serialization.Testing.Application
 			Encoding.UTF8.GetString(Writer.Default.Get(parameter))
 			        .Should()
 			        .Be(expected);
-
-			Encoding.UTF8.GetString(new Writer<uint>(PositiveNumber.Default, 10).Get(parameter))
-			        .Should()
-			        .Be(expected);
 		}
-
-		/*sealed class Value
-		{
-			public Value(uint number) => Number = number;
-
-			public uint Number { get; }
-		}*/
 
 		sealed class Writer : Writer<uint>
 		{
 			public static Writer Default { get; } = new Writer();
 
-			Writer() : base(PositiveNumber.Default) {}
+			Writer() : base(PositiveNumber.Default, 10) {}
 		}
 
 		public class Benchmarks
@@ -50,10 +40,10 @@ namespace Super.Serialization.Testing.Application
 			}
 
 			[Benchmark]
-			public byte[] Subject() => _writer.Get(_data);
+			public byte[] Native() => JsonSerializer.ToUtf8Bytes(_data);
 
 			[Benchmark(Baseline = true)]
-			public byte[] Native() => JsonSerializer.ToUtf8Bytes(_data);
+			public Array<byte> Array() => _writer.Get(_data);
 		}
 	}
 }

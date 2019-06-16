@@ -28,21 +28,10 @@ namespace Super.Serialization
 			var result = @this.CopyInto(Rent((int)checked(@this.Length + Math.Max(size, @this.Length))), 0,
 			                            (uint)@this.Length);
 
+			@this.Clear((uint)@this.Length);
+
 			Return(@this, false);
 
-			return result;
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Array<byte> Complete(this in Composition @this, ArrayPool<byte> pool)
-			=> Complete(@this, new byte[@this.Index], pool);
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Array<byte> Complete(in this Composition @this, byte[] into, ArrayPool<byte> pool)
-		{
-			var result = @this.Output.CopyInto(into, 0u, @this.Index);
-			@this.Output.Clear(@this.Index);
-			pool.Return(@this.Output);
 			return result;
 		}
 
@@ -136,8 +125,14 @@ namespace Super.Serialization
 			_size    = size;
 		}
 
-		public Array<byte> Get(T parameter) => _emitter.Get(new Composition<T>(_pool.Rent((int)_size), parameter))
-		                                               .Complete(_pool);
+		public Array<byte> Get(T parameter)
+		{
+			var composition = _emitter.Get(new Composition<T>(_pool.Rent((int)_size), parameter));
+			var result      = composition.Output.CopyInto(new byte[composition.Index], 0, composition.Index);
+			composition.Output.Clear(composition.Index);
+			_pool.Return(composition.Output);
+			return result;
+		}
 	}
 
 	public readonly struct Input<T>
@@ -393,7 +388,7 @@ namespace Super.Serialization
 		public static PositiveNumber Default { get; } = new PositiveNumber();
 
 		PositiveNumber()
-			: base(20, x => Utf8Formatter.TryFormat(x.Instance, x.Output.AsSpan((int)x.Index), out var count)
+			: base(10, x => Utf8Formatter.TryFormat(x.Instance, x.Output.AsSpan((int)x.Index), out var count)
 				                ? (uint)count
 				                : throw new
 					                  InvalidOperationException($"Could not format '{x.Instance}' into its UTF8 equivalent.")) {}
