@@ -66,9 +66,8 @@ namespace Super
 			}
 			else
 			{
-				/*Array.Copy(@this, start,
-				           result, offset, length);*/
-				Buffer.BlockCopy(@this, (int)start, result, (int)offset, (int)length);
+				Array.Copy(@this, start,
+				           result, offset, length);
 			}
 
 			return result;

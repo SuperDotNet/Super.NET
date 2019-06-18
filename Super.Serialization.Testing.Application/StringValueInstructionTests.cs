@@ -1,6 +1,4 @@
-﻿using BenchmarkDotNet.Attributes;
-using FluentAssertions;
-using Super.Model.Sequences;
+﻿using FluentAssertions;
 using System.Text.Json.Serialization;
 using Xunit;
 
@@ -22,24 +20,9 @@ namespace Super.Serialization.Testing.Application
 			QuotedWriter() : base(StringValueInstruction.Default.Quoted()) {}
 		}
 
-		public class Benchmarks
+		public class Benchmarks : Benchmark<string>
 		{
-			readonly IWriter<string> _quoted;
-			readonly string          _data;
-
-			public Benchmarks() : this(QuotedWriter.Default, "Hello World!") {}
-
-			public Benchmarks(IWriter<string> quoted, string data)
-			{
-				_quoted    = quoted;
-				_data      = data;
-			}
-
-			[Benchmark]
-			public byte[] Native() => JsonSerializer.ToUtf8Bytes(_data);
-
-			[Benchmark(Baseline = true)]
-			public Array<byte> Quoted() => _quoted.Get(_data);
+			public Benchmarks() : base(StringValueInstruction.Default, "Hello World!") {}
 		}
 	}
 }

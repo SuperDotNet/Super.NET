@@ -23,10 +23,11 @@ namespace Super.Serialization
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static byte[] Copy(this byte[] @this, in uint size)
 		{
-			var result = @this.CopyInto(Rent((int)checked(@this.Length + Math.Max(size, @this.Length))), 0,
-			                            (uint)@this.Length);
+			var result = Rent((int)checked(@this.Length + Math.Max(size, @this.Length)));
 
-			@this.Clear((uint)@this.Length);
+			Buffer.BlockCopy(@this, 0, result, 0, (int)size);
+
+			@this.Clear(size);
 
 			Return(@this, false);
 
