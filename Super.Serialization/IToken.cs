@@ -9,6 +9,13 @@ namespace Super.Serialization
 		public Token(char instance) : base((byte)instance) {}
 	}
 
+	sealed class Colon : Token
+	{
+		public static Colon Default { get; } = new Colon();
+
+		Colon() : base(':') {}
+	}
+
 	sealed class DoubleQuote : Token
 	{
 		public static DoubleQuote Default { get; } = new DoubleQuote();

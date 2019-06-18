@@ -3,6 +3,7 @@ using Super.Model.Selection;
 using Super.Runtime.Environment;
 using Super.Text;
 using System;
+using System.Buffers;
 using System.Buffers.Text;
 using System.Runtime.CompilerServices;
 
@@ -103,10 +104,10 @@ namespace Super.Serialization
 
 		public uint Get(Composition<uint> parameter)
 			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
-									   out var count)
+			                           out var count)
 				   ? (uint)count
 				   : throw new
-						 InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
+					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
 
 		public uint Get(uint parameter) => _size;
 	}
@@ -123,10 +124,10 @@ namespace Super.Serialization
 
 		public uint Get(Composition<int> parameter)
 			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
-									   out var count)
+			                           out var count)
 				   ? (uint)count
 				   : throw new
-						 InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
+					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
 
 		public uint Get(int parameter) => _size;
 	}
@@ -143,10 +144,10 @@ namespace Super.Serialization
 
 		public uint Get(Composition<byte> parameter)
 			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
-									   out var count)
+			                           out var count)
 				   ? (uint)count
 				   : throw new
-						 InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
+					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
 
 		public uint Get(byte parameter) => _size;
 	}
@@ -163,10 +164,10 @@ namespace Super.Serialization
 
 		public uint Get(Composition<sbyte> parameter)
 			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
-									   out var count)
+			                           out var count)
 				   ? (uint)count
 				   : throw new
-						 InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
+					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
 
 		public uint Get(sbyte parameter) => _size;
 	}
@@ -183,10 +184,10 @@ namespace Super.Serialization
 
 		public uint Get(Composition<ushort> parameter)
 			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
-									   out var count)
+			                           out var count)
 				   ? (uint)count
 				   : throw new
-						 InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
+					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
 
 		public uint Get(ushort parameter) => _size;
 	}
@@ -203,10 +204,10 @@ namespace Super.Serialization
 
 		public uint Get(Composition<short> parameter)
 			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
-									   out var count)
+			                           out var count)
 				   ? (uint)count
 				   : throw new
-						 InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
+					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
 
 		public uint Get(short parameter) => _size;
 	}
@@ -223,10 +224,10 @@ namespace Super.Serialization
 
 		public uint Get(Composition<ulong> parameter)
 			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
-									   out var count)
+			                           out var count)
 				   ? (uint)count
 				   : throw new
-						 InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
+					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
 
 		public uint Get(ulong parameter) => _size;
 	}
@@ -243,10 +244,10 @@ namespace Super.Serialization
 
 		public uint Get(Composition<long> parameter)
 			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
-									   out var count)
+			                           out var count)
 				   ? (uint)count
 				   : throw new
-						 InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
+					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
 
 		public uint Get(long parameter) => _size;
 	}
@@ -292,10 +293,10 @@ namespace Super.Serialization
 
 		public uint Get(Composition<float> parameter)
 			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
-									   out var count)
+			                           out var count)
 				   ? (uint)count
 				   : throw new
-						 InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
+					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
 
 		public uint Get(float parameter) => 128;
 	}
@@ -330,5 +331,155 @@ namespace Super.Serialization
 					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
 
 		public uint Get(decimal parameter) => 31;
+	}
+
+	sealed class DateTimeInstruction : IInstruction<DateTime>
+	{
+		public static DateTimeInstruction Default { get; } = new DateTimeInstruction();
+
+		DateTimeInstruction() : this(Trimmer.Default, 'O') {}
+
+		readonly Trimmer        _trimmer;
+		readonly StandardFormat _format;
+
+		public DateTimeInstruction(Trimmer trimmer, StandardFormat format)
+		{
+			_trimmer = trimmer;
+			_format  = format;
+		}
+
+		public uint Get(Composition<DateTime> parameter)
+		{
+			Span<byte> span   = stackalloc byte[27];
+			var        format = Utf8Formatter.TryFormat(parameter.Instance, span, out var count, _format);
+			if (format)
+			{
+				var result = _trimmer.Get(span.Slice(0, count));
+				span.Slice(0, (int)result)
+				    .CopyTo(parameter.Output.AsSpan((int)parameter.Index));
+				return result;
+			}
+
+			throw new InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
+		}
+
+		public uint Get(DateTime parameter) => 27;
+	}
+
+	sealed class DateTimeOffsetInstruction : IInstruction<DateTimeOffset>
+	{
+		public static DateTimeOffsetInstruction Default { get; } = new DateTimeOffsetInstruction();
+
+		DateTimeOffsetInstruction() : this(Trimmer.Default, 'O') {}
+
+		readonly Trimmer        _trimmer;
+		readonly StandardFormat _format;
+
+		public DateTimeOffsetInstruction(Trimmer trimmer, StandardFormat format)
+		{
+			_trimmer = trimmer;
+			_format  = format;
+		}
+
+		public uint Get(Composition<DateTimeOffset> parameter)
+		{
+			Span<byte> span   = stackalloc byte[33];
+			var        format = Utf8Formatter.TryFormat(parameter.Instance, span, out var count, _format);
+			if (format)
+			{
+				var result = _trimmer.Get(span.Slice(0, count));
+				span.Slice(0, (int)result)
+				    .CopyTo(parameter.Output.AsSpan((int)parameter.Index));
+				return result;
+			}
+
+			throw new InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
+		}
+
+		public uint Get(DateTimeOffset parameter) => 33;
+	}
+
+	/// <summary>
+	/// ATTRIBUTION: https://github.com/dotnet/corefx/blob/11b548176e6889866dee553ea84b92da3916e73b/src/System.Text.Json/src/System/Text/Json/Writer/JsonWriterHelper.Date.cs
+	/// </summary>
+	sealed class Trimmer //: ISelect<Memory<byte>, uint>
+	{
+		public static Trimmer Default { get; } = new Trimmer();
+
+		Trimmer() : this(Colon.Default, '0') {}
+
+		readonly byte _colon;
+		readonly uint _zero;
+
+		public Trimmer(byte colon, uint zero)
+		{
+			_colon = colon;
+			_zero  = zero;
+		}
+
+		// ReSharper disable once MethodTooLong
+		public uint Get(Span<byte> buffer)
+		{
+			var fraction = (buffer[20] - _zero) * 1_000_000 +
+			               (buffer[21] - _zero) * 100_000 +
+			               (buffer[22] - _zero) * 10_000 +
+			               (buffer[23] - _zero) * 1_000 +
+			               (buffer[24] - _zero) * 100 +
+			               (buffer[25] - _zero) * 10 +
+			               (buffer[26] - _zero);
+
+			var index = 19;
+
+			if (fraction > 0)
+			{
+				var numFractionDigits = 7;
+
+				while (true)
+				{
+					var quotient = fraction / 10;
+					if (fraction - quotient * 10 != 0)
+					{
+						break;
+					}
+
+					fraction = quotient;
+					numFractionDigits--;
+				}
+
+				var fractionEnd = 19 + numFractionDigits;
+
+				for (var i = fractionEnd; i > index; i--)
+				{
+					buffer[i] =  (byte)(fraction % 10 + '0');
+					fraction  /= 10;
+				}
+
+				index = fractionEnd + 1;
+			}
+
+			var result = index;
+
+			if (buffer.Length > 27)
+			{
+				buffer[index] = buffer[27];
+
+				result = index + 1;
+
+				if (buffer.Length == 33)
+				{
+					var bufferEnd = index + 5;
+
+					buffer[bufferEnd]     = buffer[32];
+					buffer[bufferEnd - 1] = buffer[31];
+					buffer[bufferEnd - 2] = _colon;
+					buffer[bufferEnd - 3] = buffer[29];
+					buffer[bufferEnd - 4] = buffer[28];
+
+					result = bufferEnd + 1;
+				}
+			}
+
+			return (uint)result;
+		}
 	}
 }
