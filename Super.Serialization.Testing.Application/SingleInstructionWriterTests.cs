@@ -27,11 +27,10 @@ namespace Super.Serialization.Testing.Application
 
 		public class Benchmarks
 		{
-			readonly IWriter<uint> _subject;
-			readonly IWriter<uint> _compare;
+			readonly IWriter<uint> _subject, _compare;
 			readonly uint          _data;
 
-			public Benchmarks() : this(Writer.Default, new Writer<uint>(PositiveInteger.Default, 10), 12345) {}
+			public Benchmarks() : this(Writer.Default, new Writer<uint>(PositiveIntegerInstruction.Default), 12345) {}
 
 			public Benchmarks(IWriter<uint> subject, IWriter<uint> compare, uint data)
 			{
@@ -41,10 +40,10 @@ namespace Super.Serialization.Testing.Application
 			}
 
 			[Benchmark(Baseline = true)]
-			public Array<byte> Compare() => _compare.Get(_data);
+			public Array<byte> Subject() => _subject.Get(_data);
 
 			[Benchmark]
-			public Array<byte> Subject() => _subject.Get(_data);
+			public Array<byte> Compare() => _compare.Get(_data);
 		}
 	}
 }

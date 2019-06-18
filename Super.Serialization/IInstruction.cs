@@ -9,16 +9,16 @@ namespace Super.Serialization
 {
 	public interface IInstruction : ISelect<Composition, uint>, IResult<uint> {}
 
-	public class Content : Instance<uint>, IInstruction
+	public class ContentInstruction : Instance<uint>, IInstruction
 	{
 		readonly byte[] _content;
 		readonly uint   _length;
 
-		public Content(string content) : this(Encoder.Default.Get(content)) {}
+		public ContentInstruction(string content) : this(Encoder.Default.Get(content)) {}
 
-		public Content(byte[] content) : this(content, (uint)content.Length) {}
+		public ContentInstruction(byte[] content) : this(content, (uint)content.Length) {}
 
-		public Content(byte[] content, uint length) : base(length)
+		public ContentInstruction(byte[] content, uint length) : base(length)
 		{
 			_content = content;
 			_length  = length;
@@ -33,12 +33,23 @@ namespace Super.Serialization
 
 	public interface IInstruction<T> : ISelect<Composition<T>, uint>, ISelect<T, uint> {}
 
+	class Adapter<T> : IInstruction<T>
+	{
+		readonly IInstruction _instruction;
+
+		public Adapter(IInstruction instruction) => _instruction = instruction;
+
+		public uint Get(Composition<T> parameter) => _instruction.Get(parameter);
+
+		public uint Get(T parameter) => _instruction.Get();
+	}
+
 	sealed class QuotedInstruction<T> : IInstruction<T>
 	{
 		readonly IInstruction<T> _instruction;
 		readonly byte            _quote;
 
-		public QuotedInstruction(IInstruction<T> instruction) : this(instruction, DoubleQuote.Default) {}
+		/*public QuotedInstruction(IInstruction<T> instruction) : this(instruction, DoubleQuote.Default) {}*/
 
 		public QuotedInstruction(IInstruction<T> instruction, byte quote)
 		{

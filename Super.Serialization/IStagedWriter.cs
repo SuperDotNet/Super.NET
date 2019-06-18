@@ -1,5 +1,5 @@
-﻿using Super.Model.Commands;
-using Super.Model.Selection;
+﻿using Super.Model.Selection;
+using Super.Model.Sequences;
 using System;
 using System.Buffers;
 using System.IO;
@@ -12,33 +12,37 @@ namespace Super.Serialization
 
 	public sealed class SingleStageWriter<T> : IStagedWriter<T>
 	{
-		readonly IEmit<T>       _instruction;
-		readonly ICompositor<T> _compositor;
+		readonly IInstruction<T> _instruction;
+		readonly IStorage<byte>  _storage;
 
-		public SingleStageWriter(IEmit<T> instruction) : this(instruction, Compositor<T>.Default) {}
+		public SingleStageWriter(IInstruction<T> instruction) : this(instruction, Leases<byte>.Default) {}
 
-		public SingleStageWriter(IEmit<T> instruction, ICompositor<T> compositor)
+		public SingleStageWriter(IInstruction<T> instruction, IStorage<byte> storage)
 		{
 			_instruction = instruction;
-			_compositor  = compositor;
+			_storage     = storage;
 		}
 
 		public async Task Get(Input<T> parameter)
 		{
-			var composition = _instruction.Get(_compositor.Get(parameter.Instance));
-			var operation = parameter.Stream.WriteAsync(composition.Output, 0, (int)composition.Index,
-			                                            parameter.Cancel);
-
-			if (!operation.IsCompleted)
+			using (var session = _storage.Session(_instruction.Get(parameter.Instance)))
 			{
-				await operation;
-			}
+				var operation = parameter.Stream
+				                         .WriteAsync(session.Store,
+				                                     0,
+				                                     (int)_instruction.Get(new Composition<T>(session.Store,
+				                                                                              parameter.Instance)),
+				                                     parameter.Cancel);
 
-			_compositor.Execute(composition);
+				if (!operation.IsCompleted)
+				{
+					await operation;
+				}
+			}
 		}
 	}
 
-	public sealed class StagedWriter<T> : IStagedWriter<T>
+	/*public sealed class StagedWriter<T> : IStagedWriter<T>
 	{
 		readonly IInstructions<T> _instructions;
 		readonly ICompositor<T>   _compositor;
@@ -88,9 +92,9 @@ namespace Super.Serialization
 				}
 			}
 		}
-	}
+	}*/
 
-	public interface ICompositor<T> : ISelect<T, Composition<T>>, ICommand<Composition> {}
+	/*public interface ICompositor<T> : ISelect<T, Composition<T>>, ICommand<Composition> {}
 
 	sealed class Compositor<T> : ICompositor<T>
 	{
@@ -116,7 +120,7 @@ namespace Super.Serialization
 		}
 	}
 
-	public interface IInstructions<T> : ISelect<Composition<T>, Lease<IEmit<T>>> {}
+	public interface IInstructions<T> : ISelect<Composition<T>, Lease<IEmit<T>>> {}*/
 
 	/*class Instructions : IInstructions<uint>
 	{

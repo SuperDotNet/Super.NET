@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Super.Serialization.Testing.Application
 {
-	public sealed class ElementWriterTests
+	public sealed class ElementInstructionTests
 	{
 		[Fact]
 		void Verify()
@@ -37,8 +37,9 @@ namespace Super.Serialization.Testing.Application
 		{
 			public static Subject Default { get; } = new Subject();
 
-			Subject() : base(new XmlDocumentEmitter<uint>(new Emit(Declaration.Default),
-			                                              new XmlElementWriter<uint>("unsignedInt", PositiveInteger.Default))) {}
+			Subject() : base(Declaration.Default.For<uint>(),
+			                 new XmlElementInstruction<uint>("unsignedInt",
+			                                                 PositiveIntegerInstruction.Default)) {}
 		}
 
 		public class Benchmarks

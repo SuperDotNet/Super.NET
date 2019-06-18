@@ -13,17 +13,16 @@ namespace Super.Serialization.Testing.Application
 		public void Simple()
 		{
 			const uint parameter = 12345u;
-			var expected = JsonSerializer.ToString(parameter);
 			Encoding.UTF8.GetString(Writer.Default.Get(parameter))
 			        .Should()
-			        .Be(expected);
+			        .Be(JsonSerializer.ToString(parameter));
 		}
 
 		sealed class Writer : Writer<uint>
 		{
 			public static Writer Default { get; } = new Writer();
 
-			Writer() : base(PositiveInteger.Default, 10) {}
+			Writer() : base(PositiveIntegerInstruction.Default) {}
 		}
 
 		public class Benchmarks

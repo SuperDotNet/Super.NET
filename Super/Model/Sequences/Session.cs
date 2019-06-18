@@ -1,5 +1,5 @@
-﻿using System;
-using Super.Model.Commands;
+﻿using Super.Model.Commands;
+using System;
 
 namespace Super.Model.Sequences
 {
@@ -7,17 +7,23 @@ namespace Super.Model.Sequences
 	{
 		readonly ICommand<T[]> _command;
 
-		public Session(Store<T> store, ICommand<T[]> command)
+		public Session(Store<T> store, ICommand<T[]> command) : this(store.Instance, store.Length, command) {}
+
+		public Session(T[] store, ICommand<T[]> command) : this(store, (uint)store.Length, command) {}
+
+		public Session(T[] store, in uint size, ICommand<T[]> command)
 		{
 			Store    = store;
+			Size     = size;
 			_command = command;
 		}
 
-		public Store<T> Store { get; }
+		public T[] Store { get; }
+		public uint Size { get; }
 
 		public void Dispose()
 		{
-			_command?.Execute(Store.Instance);
+			_command?.Execute(Store);
 		}
 	}
 }

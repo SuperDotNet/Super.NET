@@ -30,17 +30,17 @@ namespace Super.Serialization
 
 	public interface IWriter<in T> : ISelect<T, Array<byte>> {}
 
-	class Writer<T> : IWriter<T>
+	/*class Writer<T> : IWriter<T>
 	{
-		readonly IEmit<T>        _emitter;
+		readonly ICompose<T>     _emitter;
 		readonly ArrayPool<byte> _pool;
 		readonly uint            _size;
 
-		public Writer(IEmit<T> emitter) : this(emitter, DefaultBufferSize.Default) {}
+		public Writer(ICompose<T> emitter) : this(emitter, DefaultBufferSize.Default) {}
 
-		public Writer(IEmit<T> emitter, uint size) : this(emitter, ArrayPool<byte>.Shared, size) {}
+		public Writer(ICompose<T> emitter, uint size) : this(emitter, ArrayPool<byte>.Shared, size) {}
 
-		public Writer(IEmit<T> emitter, ArrayPool<byte> pool, uint size)
+		public Writer(ICompose<T> emitter, ArrayPool<byte> pool, uint size)
 		{
 			_emitter = emitter;
 			_pool    = pool;
@@ -54,6 +54,69 @@ namespace Super.Serialization
 			composition.Output.Clear(composition.Index);
 			_pool.Return(composition.Output);
 			return result;
+		}
+	}*/
+
+	public interface ISessions : ISelect<uint, Session<byte>>, IResult<Session<byte>> {}
+
+	public sealed class Sessions : ISessions
+	{
+		public static Sessions Default { get; } = new Sessions();
+
+		Sessions() : this(Leases<byte>.Default, DefaultBufferSize.Default.Get) {}
+
+		readonly IStorage<byte> _storage;
+		readonly Func<uint>     _size;
+
+		public Sessions(IStorage<byte> storage, Func<uint> size)
+		{
+			_storage = storage;
+			_size    = size;
+		}
+
+		public Session<byte> Get(uint parameter) => _storage.Session(parameter);
+
+		public Session<byte> Get() => Get(_size());
+	}
+
+	public class Writer<T> : IWriter<T>
+	{
+		readonly Array<IInstruction<T>> _instructions;
+		readonly ISessions _sessions;
+
+		public Writer(params IInstruction<T>[] instructions) : this(new Array<IInstruction<T>>(instructions)) {}
+
+		public Writer(Array<IInstruction<T>> instructions) : this(instructions, Sessions.Default) {}
+
+		public Writer(Array<IInstruction<T>> instructions, ISessions sessions)
+		{
+			_instructions = instructions;
+			_sessions = sessions;
+		}
+
+		public Array<byte> Get(T parameter)
+		{
+			using (var session = _sessions.Get())
+			{
+				var composition = new Composition<T>(session.Store, parameter);
+				var length = _instructions.Length;
+				for (var i = 0u; i < length; i++)
+				{
+					var instruction = _instructions[i];
+					var size = instruction.Get(parameter);
+					composition = composition.Index + size >= composition.Output.Length
+						                  ? new Composition<T>(composition.Output.Copy(in size), parameter,
+						                                       composition.Index)
+						                  : composition;
+
+					composition = new Composition<T>(composition.Output, parameter,
+					                                 composition.Index + instruction.Get(composition));
+				}
+
+				var result = composition.Output.CopyInto(new byte[composition.Index], 0, composition.Index);
+				composition.Output.Clear(composition.Index);
+				return result;
+			}
 		}
 	}
 

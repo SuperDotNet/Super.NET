@@ -25,14 +25,14 @@ namespace Super.Serialization.Xml
 		Complete() : base('/') {}
 	}
 
-	sealed class Declaration : Content
+	sealed class Declaration : ContentInstruction
 	{
 		public static Declaration Default { get; } = new Declaration();
 
 		Declaration() : base($@"<?xml version=""1.0""?>{Environment.NewLine}") {}
 	}
 
-	sealed class OpenElement : Content
+	sealed class OpenElement : ContentInstruction
 	{
 		public OpenElement(string name) : this(Encoder.Default.Get(name)) {}
 
@@ -41,7 +41,7 @@ namespace Super.Serialization.Xml
 		                                                      .ToArray()) {}
 	}
 
-	sealed class CloseElement : Content
+	sealed class CloseElement : ContentInstruction
 	{
 		public CloseElement(string name) : this(Encoder.Default.Get(name)) {}
 
@@ -51,18 +51,18 @@ namespace Super.Serialization.Xml
 		                                                       .ToArray()) {}
 	}
 
-	class XmlElementWriter<T> : ElementWriter<T>
+	class XmlElementInstruction<T> : ElementInstruction<T>
 	{
-		public XmlElementWriter(string name, IEmit<T> content)
-			: base(new Emit(new OpenElement(name)), content, new Emit(new CloseElement(name))) {}
+		public XmlElementInstruction(string name, IInstruction<T> content)
+			: base(new OpenElement(name), content, new CloseElement(name)) {}
 	}
 
-	public class XmlDocumentEmitter<T> : IEmit<T>
+	/*public class XmlDocumentEmitter<T> : ICompose<T>
 	{
-		readonly IEmit    _declaration;
-		readonly IEmit<T> _content;
+		readonly ICompose    _declaration;
+		readonly ICompose<T> _content;
 
-		public XmlDocumentEmitter(IEmit declaration, IEmit<T> content)
+		public XmlDocumentEmitter(ICompose declaration, ICompose<T> content)
 		{
 			_declaration = declaration;
 			_content     = content;
@@ -70,5 +70,5 @@ namespace Super.Serialization.Xml
 
 		public Composition Get(Composition<T> parameter)
 			=> _content.Get(_declaration.Get(parameter).Introduce(parameter.Instance));
-	}
+	}*/
 }

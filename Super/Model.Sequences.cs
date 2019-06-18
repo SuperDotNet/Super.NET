@@ -88,5 +88,9 @@ namespace Super
 				Array.Clear(@this, 0, (int)count);
 			}
 		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Session<T> Session<T>(this IStorage<T> @this, in uint size)
+			=> new Session<T>(@this.Get(size), @this);
 	}
 }

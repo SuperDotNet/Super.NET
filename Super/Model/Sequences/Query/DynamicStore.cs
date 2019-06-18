@@ -27,7 +27,7 @@ namespace Super.Model.Sequences.Query
 		{
 			var result   = storage.Get(_position.Start + _position.Length);
 			var instance = result.Instance;
-			using (new Session<Store<T>>(new Store<Store<T>>(_stores), Items))
+			using (new Session<Store<T>>(_stores, Items))
 			{
 				var total = _index + 1;
 				for (uint i = 0u, offset = 0u; i < total; i++)
