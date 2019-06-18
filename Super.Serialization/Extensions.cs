@@ -19,7 +19,7 @@ namespace Super.Serialization
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Input<T> For<T>(this Stream @this, in T instance) => new Input<T>(@this, instance);
-		
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static byte[] Copy(this byte[] @this, in uint size)
 		{

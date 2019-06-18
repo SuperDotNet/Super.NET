@@ -4,6 +4,7 @@ using Super.Runtime.Environment;
 using Super.Text;
 using System;
 using System.Buffers.Text;
+using System.Runtime.CompilerServices;
 
 namespace Super.Serialization
 {
@@ -24,6 +25,7 @@ namespace Super.Serialization
 			_length  = length;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public uint Get(Composition parameter)
 		{
 			_content.CopyInto(parameter.Output, 0, in _length, parameter.Index);
@@ -93,7 +95,11 @@ namespace Super.Serialization
 	{
 		public static PositiveIntegerInstruction Default { get; } = new PositiveIntegerInstruction();
 
-		PositiveIntegerInstruction() {}
+		PositiveIntegerInstruction() : this((uint)uint.MaxValue.ToString().Length) {}
+
+		readonly uint _size;
+
+		public PositiveIntegerInstruction(uint size) => _size = size;
 
 		public uint Get(Composition<uint> parameter)
 			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
@@ -102,6 +108,59 @@ namespace Super.Serialization
 				   : throw new
 					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
 
-		public uint Get(uint parameter) => 10;
+		public uint Get(uint parameter) => _size;
+	}
+
+	sealed class FullIntegerInstruction : IInstruction<int>
+	{
+		public static FullIntegerInstruction Default { get; } = new FullIntegerInstruction();
+
+		FullIntegerInstruction() : this((uint)int.MinValue.ToString().Length) {}
+
+		readonly uint _size;
+
+		public FullIntegerInstruction(uint size) => _size = size;
+
+		public uint Get(Composition<int> parameter)
+			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
+			                           out var count)
+				   ? (uint)count
+				   : throw new
+					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
+
+		public uint Get(int parameter) => _size;
+	}
+
+	sealed class TrueInstruction : ContentInstruction
+	{
+		public static TrueInstruction Default { get; } = new TrueInstruction();
+
+		TrueInstruction() : base("true") {}
+	}
+
+	sealed class BooleanInstruction : IInstruction<bool>
+	{
+		public static BooleanInstruction Default { get; } = new BooleanInstruction();
+
+		BooleanInstruction() : this(TrueInstruction.Default.Get, FalseInstruction.Default.Get) {}
+
+		readonly Func<Composition, uint> _true, _false;
+
+		public BooleanInstruction(Func<Composition, uint> @true, Func<Composition, uint> @false)
+		{
+			_true  = @true;
+			_false = @false;
+		}
+
+		public uint Get(Composition<bool> parameter) => parameter.Instance ? _true(parameter) : _false(parameter);
+
+		public uint Get(bool parameter) => 5;
+	}
+
+	sealed class FalseInstruction : ContentInstruction
+	{
+		public static FalseInstruction Default { get; } = new FalseInstruction();
+
+		FalseInstruction() : base("false") {}
 	}
 }
