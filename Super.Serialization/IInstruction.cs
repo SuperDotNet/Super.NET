@@ -315,4 +315,20 @@ namespace Super.Serialization
 
 		public uint Get(double parameter) => 128;
 	}
+
+	sealed class DecimalInstruction : IInstruction<decimal>
+	{
+		public static DecimalInstruction Default { get; } = new DecimalInstruction();
+
+		DecimalInstruction() {}
+
+		public uint Get(Composition<decimal> parameter)
+			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
+			                           out var count)
+				   ? (uint)count
+				   : throw new
+					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
+
+		public uint Get(decimal parameter) => 31;
+	}
 }
