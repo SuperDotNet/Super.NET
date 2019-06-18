@@ -147,6 +147,8 @@ namespace Super.Serialization
 			var source = _lease((int)_instruction.Get(parameter));
 			var length = _instruction.Get(new Composition<T>(source, parameter));
 			var result = source.CopyInto(new byte[length], 0, length);
+			/*var result = new byte[length];
+			Buffer.BlockCopy(source, 0, result, 0, (int)length);*/
 			source.Clear(length);
 			_return(source, false);
 			return result;

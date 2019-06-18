@@ -57,7 +57,7 @@ namespace Super
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] CopyInto<T>(this T[] @this, T[] result, in uint start, in uint length, in uint offset = 0)
 		{
-			if (length < 32)
+			if (length < 16)
 			{
 				for (var i = 0; i < length; i++)
 				{
@@ -66,8 +66,9 @@ namespace Super
 			}
 			else
 			{
-				Array.Copy(@this, start,
-				           result, offset, length);
+				/*Array.Copy(@this, start,
+				           result, offset, length);*/
+				Buffer.BlockCopy(@this, (int)start, result, (int)offset, (int)length);
 			}
 
 			return result;

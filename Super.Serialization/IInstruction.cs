@@ -211,6 +211,46 @@ namespace Super.Serialization
 		public uint Get(short parameter) => _size;
 	}
 
+	sealed class Integer64Instruction : IInstruction<ulong>
+	{
+		public static Integer64Instruction Default { get; } = new Integer64Instruction();
+
+		Integer64Instruction() : this((uint)ulong.MaxValue.ToString().Length) {}
+
+		readonly uint _size;
+
+		public Integer64Instruction(uint size) => _size = size;
+
+		public uint Get(Composition<ulong> parameter)
+			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
+			                           out var count)
+				   ? (uint)count
+				   : throw new
+					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
+
+		public uint Get(ulong parameter) => _size;
+	}
+
+	sealed class FullInteger64Instruction : IInstruction<long>
+	{
+		public static FullInteger64Instruction Default { get; } = new FullInteger64Instruction();
+
+		FullInteger64Instruction() : this((uint)long.MinValue.ToString().Length) {}
+
+		readonly uint _size;
+
+		public FullInteger64Instruction(uint size) => _size = size;
+
+		public uint Get(Composition<long> parameter)
+			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
+			                           out var count)
+				   ? (uint)count
+				   : throw new
+					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
+
+		public uint Get(long parameter) => _size;
+	}
+
 	sealed class TrueInstruction : ContentInstruction
 	{
 		public static TrueInstruction Default { get; } = new TrueInstruction();
