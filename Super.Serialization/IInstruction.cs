@@ -171,6 +171,46 @@ namespace Super.Serialization
 		public uint Get(sbyte parameter) => _size;
 	}
 
+	sealed class ShortInstruction : IInstruction<ushort>
+	{
+		public static ShortInstruction Default { get; } = new ShortInstruction();
+
+		ShortInstruction() : this((uint)ushort.MaxValue.ToString().Length) {}
+
+		readonly uint _size;
+
+		public ShortInstruction(uint size) => _size = size;
+
+		public uint Get(Composition<ushort> parameter)
+			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
+			                           out var count)
+				   ? (uint)count
+				   : throw new
+					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
+
+		public uint Get(ushort parameter) => _size;
+	}
+
+	sealed class FullShortInstruction : IInstruction<short>
+	{
+		public static FullShortInstruction Default { get; } = new FullShortInstruction();
+
+		FullShortInstruction() : this((uint)short.MinValue.ToString().Length) {}
+
+		readonly uint _size;
+
+		public FullShortInstruction(uint size) => _size = size;
+
+		public uint Get(Composition<short> parameter)
+			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
+			                           out var count)
+				   ? (uint)count
+				   : throw new
+					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
+
+		public uint Get(short parameter) => _size;
+	}
+
 	sealed class TrueInstruction : ContentInstruction
 	{
 		public static TrueInstruction Default { get; } = new TrueInstruction();
