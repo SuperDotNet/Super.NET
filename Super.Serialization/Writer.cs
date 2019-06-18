@@ -3,6 +3,7 @@ using Super.Model.Selection;
 using Super.Model.Sequences;
 using System;
 using System.Buffers;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Super.Serialization
@@ -74,6 +75,7 @@ namespace Super.Serialization
 			_size    = size;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public Session<byte> Get(uint parameter) => _storage.Session(parameter);
 
 		public Session<byte> Get() => Get(_size());
@@ -82,7 +84,7 @@ namespace Super.Serialization
 	public class Writer<T> : IWriter<T>
 	{
 		readonly Array<IInstruction<T>> _instructions;
-		readonly ISessions _sessions;
+		readonly ISessions              _sessions;
 
 		public Writer(params IInstruction<T>[] instructions) : this(new Array<IInstruction<T>>(instructions)) {}
 
@@ -91,7 +93,7 @@ namespace Super.Serialization
 		public Writer(Array<IInstruction<T>> instructions, ISessions sessions)
 		{
 			_instructions = instructions;
-			_sessions = sessions;
+			_sessions     = sessions;
 		}
 
 		public Array<byte> Get(T parameter)
@@ -99,15 +101,15 @@ namespace Super.Serialization
 			using (var session = _sessions.Get())
 			{
 				var composition = new Composition<T>(session.Store, parameter);
-				var length = _instructions.Length;
+				var length      = _instructions.Length;
 				for (var i = 0u; i < length; i++)
 				{
 					var instruction = _instructions[i];
-					var size = instruction.Get(parameter);
+					var size        = instruction.Get(parameter);
 					composition = composition.Index + size >= composition.Output.Length
-						                  ? new Composition<T>(composition.Output.Copy(in size), parameter,
-						                                       composition.Index)
-						                  : composition;
+						              ? new Composition<T>(composition.Output.Copy(in size), parameter,
+						                                   composition.Index)
+						              : composition;
 
 					composition = new Composition<T>(composition.Output, parameter,
 					                                 composition.Index + instruction.Get(composition));
@@ -122,25 +124,31 @@ namespace Super.Serialization
 
 	public class SingleInstructionWriter<T> : IWriter<T>
 	{
-		readonly IInstruction<T> _instruction;
-		readonly ArrayPool<byte> _pool;
+		readonly IInstruction<T>      _instruction;
+		readonly Func<int, byte[]>    _lease;
+		readonly Action<byte[], bool> _return;
 
 		public SingleInstructionWriter(IInstruction<T> instruction)
 			: this(instruction, ArrayPool<byte>.Shared) {}
 
 		public SingleInstructionWriter(IInstruction<T> instruction, ArrayPool<byte> pool)
+			: this(instruction, pool.Rent, pool.Return) {}
+
+		public SingleInstructionWriter(IInstruction<T> instruction, Func<int, byte[]> lease,
+		                               Action<byte[], bool> @return)
 		{
 			_instruction = instruction;
-			_pool        = pool;
+			_lease       = lease;
+			_return      = @return;
 		}
 
 		public Array<byte> Get(T parameter)
 		{
-			var source = _pool.Rent((int)_instruction.Get(parameter));
+			var source = _lease((int)_instruction.Get(parameter));
 			var length = _instruction.Get(new Composition<T>(source, parameter));
 			var result = source.CopyInto(new byte[length], 0, length);
 			source.Clear(length);
-			_pool.Return(source);
+			_return(source, false);
 			return result;
 		}
 	}
