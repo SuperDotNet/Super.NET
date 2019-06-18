@@ -333,6 +333,22 @@ namespace Super.Serialization
 		public uint Get(decimal parameter) => 31;
 	}
 
+	sealed class GuidInstruction : IInstruction<Guid>
+	{
+		public static GuidInstruction Default { get; } = new GuidInstruction();
+
+		GuidInstruction() {}
+
+		public uint Get(Composition<Guid> parameter)
+			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
+			                           out var count)
+				   ? (uint)count
+				   : throw new
+					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
+
+		public uint Get(Guid parameter) => 36;
+	}
+
 	sealed class DateTimeInstruction : IInstruction<DateTime>
 	{
 		public static DateTimeInstruction Default { get; } = new DateTimeInstruction();
