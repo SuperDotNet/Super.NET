@@ -91,15 +91,15 @@ namespace Super.Serialization
 		public uint Get(string parameter) => (uint)parameter.Length;
 	}
 
-	sealed class PositiveIntegerInstruction : IInstruction<uint>
+	sealed class IntegerInstruction : IInstruction<uint>
 	{
-		public static PositiveIntegerInstruction Default { get; } = new PositiveIntegerInstruction();
+		public static IntegerInstruction Default { get; } = new IntegerInstruction();
 
-		PositiveIntegerInstruction() : this((uint)uint.MaxValue.ToString().Length) {}
+		IntegerInstruction() : this((uint)uint.MaxValue.ToString().Length) {}
 
 		readonly uint _size;
 
-		public PositiveIntegerInstruction(uint size) => _size = size;
+		public IntegerInstruction(uint size) => _size = size;
 
 		public uint Get(Composition<uint> parameter)
 			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
@@ -129,6 +129,46 @@ namespace Super.Serialization
 					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
 
 		public uint Get(int parameter) => _size;
+	}
+
+	sealed class ByteInstruction : IInstruction<byte>
+	{
+		public static ByteInstruction Default { get; } = new ByteInstruction();
+
+		ByteInstruction() : this((uint)byte.MaxValue.ToString().Length) {}
+
+		readonly uint _size;
+
+		public ByteInstruction(uint size) => _size = size;
+
+		public uint Get(Composition<byte> parameter)
+			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
+			                           out var count)
+				   ? (uint)count
+				   : throw new
+					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
+
+		public uint Get(byte parameter) => _size;
+	}
+
+	sealed class FullByteInstruction : IInstruction<sbyte>
+	{
+		public static FullByteInstruction Default { get; } = new FullByteInstruction();
+
+		FullByteInstruction() : this((uint)sbyte.MinValue.ToString().Length) {}
+
+		readonly uint _size;
+
+		public FullByteInstruction(uint size) => _size = size;
+
+		public uint Get(Composition<sbyte> parameter)
+			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
+			                           out var count)
+				   ? (uint)count
+				   : throw new
+					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
+
+		public uint Get(sbyte parameter) => _size;
 	}
 
 	sealed class TrueInstruction : ContentInstruction

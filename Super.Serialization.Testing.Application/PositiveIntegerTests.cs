@@ -17,7 +17,7 @@ namespace Super.Serialization.Testing.Application
 		[Fact]
 		void VerifyAllocated()
 		{
-			PositiveIntegerInstruction.Default
+			IntegerInstruction.Default
 			                          .Get(new Composition<uint>(new byte[30], 1234567))
 			                          .Should()
 			                          .Be(7);

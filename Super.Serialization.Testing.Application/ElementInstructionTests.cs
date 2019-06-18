@@ -39,7 +39,7 @@ namespace Super.Serialization.Testing.Application
 
 			Subject() : base(Declaration.Default.For<uint>(),
 			                 new XmlElementInstruction<uint>("unsignedInt",
-			                                                 PositiveIntegerInstruction.Default)) {}
+			                                                 IntegerInstruction.Default)) {}
 		}
 
 		public class Benchmarks

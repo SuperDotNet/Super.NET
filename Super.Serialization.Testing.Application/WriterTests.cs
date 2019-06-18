@@ -22,7 +22,7 @@ namespace Super.Serialization.Testing.Application
 		{
 			public static Writer Default { get; } = new Writer();
 
-			Writer() : base(PositiveIntegerInstruction.Default) {}
+			Writer() : base(IntegerInstruction.Default) {}
 		}
 
 		public class Benchmarks

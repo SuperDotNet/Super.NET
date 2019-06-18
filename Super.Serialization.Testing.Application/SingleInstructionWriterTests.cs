@@ -22,7 +22,7 @@ namespace Super.Serialization.Testing.Application
 		{
 			public static Writer Default { get; } = new Writer();
 
-			Writer() : base(PositiveIntegerInstruction.Default) {}
+			Writer() : base(IntegerInstruction.Default) {}
 		}
 
 		public class Benchmarks
@@ -30,7 +30,7 @@ namespace Super.Serialization.Testing.Application
 			readonly IWriter<uint> _subject, _compare;
 			readonly uint          _data;
 
-			public Benchmarks() : this(Writer.Default, new Writer<uint>(PositiveIntegerInstruction.Default), 12345) {}
+			public Benchmarks() : this(Writer.Default, new Writer<uint>(IntegerInstruction.Default), 12345) {}
 
 			public Benchmarks(IWriter<uint> subject, IWriter<uint> compare, uint data)
 			{
