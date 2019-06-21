@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
 
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>8</LangVersion>
     <IsPackable>false</IsPackable>
     <startupobject>Super.Serialization.Testing.Application.Program</startupobject>
 

@@ -86,18 +86,17 @@ namespace Super.Serialization.Writing.Instructions
 
 	public readonly struct Escape
 	{
-		public Escape(ReadOnlyMemory<char> memory, uint index, uint size)
+		public Escape(ReadOnlyMemory<char> source, uint start, char[] destination)
 		{
-			Memory = memory;
-			Index  = index;
-			Size   = size;
+			Source      = source;
+			Start       = start;
+			Destination = destination;
 		}
 
-		public ReadOnlyMemory<char> Memory { get; }
+		public ReadOnlyMemory<char> Source { get; }
 
-		public uint Index { get; }
-
-		public uint Size { get; }
+		public uint Start { get; }
+		public char[] Destination { get; }
 	}
 
 	public interface IEscapeString : ISelect<Escape, ReadOnlyMemory<char>> {}
@@ -107,47 +106,48 @@ namespace Super.Serialization.Writing.Instructions
 	/// </summary>
 	sealed class EscapeString : IEscapeString
 	{
+		const           string Format = "x4";
+		readonly static int    Start  = Ranges.Default.Low.Start.Value;
+
 		public static EscapeString Default { get; } = new EscapeString();
 
-		EscapeString() : this(EscapeIndex.Default, Leases<char>.Default) {}
+		EscapeString() : this(EscapeIndex.Default, Ranges.Default.Normal) {}
 
-		readonly IEscapeIndex   _index;
-		readonly IStorage<char> _storage;
+		readonly IEscapeIndex _index;
+		readonly Range        _normal;
 
-		public EscapeString(IEscapeIndex index, IStorage<char> storage)
+		public EscapeString(IEscapeIndex index, Range normal)
 		{
-			_index   = index;
-			_storage = storage;
+			_index  = index;
+			_normal = normal;
 		}
 
 		// ReSharper disable once ExcessiveIndentation
 		public ReadOnlyMemory<char> Get(Escape parameter)
 		{
-			var length      = parameter.Memory.Length;
-			var size        = (int)parameter.Index;
-			var store       = _storage.Get(parameter.Size);
-			var source      = parameter.Memory.Span;
-			var destination = store.Instance;
+			var index  = (int)parameter.Start;
+			var source = parameter.Source.Span;
 
-			source.Slice(0, size).CopyTo(destination.AsSpan());
+			source.Slice(0, index).CopyTo(parameter.Destination);
 
-			for (var i = size; i < length; i++)
+			var length = parameter.Source.Length;
+			for (var i = index; i < length; i++)
 			{
 				var character = source[i];
 
 				if (_index.Get(character))
 				{
 					var next = -1;
-					if (IsOrWithin(character, 0xD800, 0xDFFF))
+					if (_normal.IsOrBetween(character))
 					{
 						i++;
 
-						if (i < source.Length && character < 0xDC00)
+						if (i < source.Length && character < Start)
 						{
 							throw new InvalidOperationException($"{character} is not a valid escaped character.");
 						}
 
-						if (!IsOrWithin(source[i], 0xDC00, 0xDFFF))
+						if (!Ranges.Default.Low.IsOrBetween(source[i]))
 						{
 							throw
 								new InvalidOperationException($"{source[i]} is not a valid an escaped character.");
@@ -156,31 +156,21 @@ namespace Super.Serialization.Writing.Instructions
 						next = source[i];
 					}
 
-					size += Escape(character, next, destination, size);
+					index += Escape(character, next, parameter.Destination, index);
 				}
 				else
 				{
-					destination[size++] = character;
+					parameter.Destination[index++] = character;
 				}
 			}
 
-			var result = destination.AsMemory(0, size);
-
-			_storage.Execute(destination);
-
-			return result;
+			return parameter.Destination.AsMemory(0, index);
 		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		static bool IsOrWithin(ushort value, ushort lower, ushort upper)
-			=> (uint)(value - lower) <= (uint)(upper - lower);
-
-		const string HexFormatString = "x4";
 
 		// ReSharper disable once TooManyArguments
 		// ReSharper disable once MethodTooLong
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		static int Escape(ushort current, int next, Span<char> destination, int index)
+		static int Escape(ushort current, int next, char[] destination, int index)
 		{
 			var i = index;
 
@@ -208,9 +198,10 @@ namespace Super.Serialization.Writing.Instructions
 					break;
 				default:
 				{
+					var span = destination.AsSpan();
 					destination[i++] = 'u';
 					{
-						i += current.TryFormat(destination.Slice(i), out var written, HexFormatString)
+						i += current.TryFormat(span.Slice(i), out var written, Format)
 							     ? written
 							     : 0;
 					}
@@ -219,7 +210,7 @@ namespace Super.Serialization.Writing.Instructions
 					{
 						destination[i++] = '\\';
 						destination[i++] = 'u';
-						i += next.TryFormat(destination.Slice(i), out var written, HexFormatString)
+						i += next.TryFormat(span.Slice(i), out var written, Format)
 							     ? written
 							     : 0;
 					}
@@ -236,14 +227,16 @@ namespace Super.Serialization.Writing.Instructions
 	{
 		public static DefaultStringInstruction Default { get; } = new DefaultStringInstruction();
 
-		DefaultStringInstruction() : this(StringInstruction.Default.Get, EscapeString.Default,
-		                                  DefaultEscapeFactor.Default) {}
+		DefaultStringInstruction()
+			: this(StringInstruction.Default, EscapeString.Default, DefaultEscapeFactor.Default) {}
 
-		readonly Func<Composition<ReadOnlyMemory<char>>, uint> _instruction;
-		readonly IEscapeString                                 _escape;
-		readonly uint                                          _factor;
+		readonly IInstruction<ReadOnlyMemory<char>> _instruction;
+		readonly IEscapeString                      _escape;
+		readonly uint                               _factor;
 
-		public DefaultStringInstruction(Func<Composition<ReadOnlyMemory<char>>, uint> instruction, IEscapeString escape,
+		// ReSharper disable once TooManyDependencies
+		public DefaultStringInstruction(IInstruction<ReadOnlyMemory<char>> instruction,
+		                                IEscapeString escape,
 		                                uint factor)
 		{
 			_instruction = instruction;
@@ -256,12 +249,16 @@ namespace Super.Serialization.Writing.Instructions
 			var index = EscapeIndex.Default.Get(parameter.Instance);
 			if (index.IsAssigned)
 			{
-				var escape = new Escape(parameter.Instance, index,
-				                        index.Instance + ((uint)parameter.Instance.Length - index) * _factor);
-				return _instruction(parameter.Using(_escape.Get(escape)));
+				using (var lease = Leases<char>.Default
+				                               .Session(index.Instance +
+				                                        ((uint)parameter.Instance.Length - index) * _factor))
+				{
+					return _instruction.Get(parameter.Replace(_escape.Get(new Escape(parameter.Instance, index,
+					                                                                 lease.Store))));
+				}
 			}
 
-			return _instruction(parameter);
+			return _instruction.Get(parameter);
 		}
 
 		public uint Get(ReadOnlyMemory<char> parameter) => (uint)parameter.Length * _factor;
