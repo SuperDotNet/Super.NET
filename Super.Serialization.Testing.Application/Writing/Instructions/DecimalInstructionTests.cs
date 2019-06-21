@@ -1,10 +1,11 @@
 ﻿using FluentAssertions;
+using Super.Serialization.Writing.Instructions;
 using System.Text.Json.Serialization;
 using Xunit;
 
-namespace Super.Serialization.Testing.Application
+namespace Super.Serialization.Testing.Application.Writing.Instructions
 {
-	public sealed class DecimalInstructionTests
+    public sealed class DecimalInstructionTests
 	{
 		[Fact]
 		void Verify()
@@ -23,7 +24,7 @@ namespace Super.Serialization.Testing.Application
 			Writer() : base(DecimalInstruction.Default) {}
 		}
 
-		public class Benchmarks : Benchmark<decimal>
+		public class Benchmarks : ComparisonBenchmark<decimal>
 		{
 			public Benchmarks() : base(DecimalInstruction.Default, -12.34567m) {}
 		}

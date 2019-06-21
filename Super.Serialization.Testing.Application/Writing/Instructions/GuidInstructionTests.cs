@@ -1,11 +1,12 @@
 ﻿using FluentAssertions;
+using Super.Serialization.Writing.Instructions;
 using System;
 using System.Text.Json.Serialization;
 using Xunit;
 
-namespace Super.Serialization.Testing.Application
+namespace Super.Serialization.Testing.Application.Writing.Instructions
 {
-	public sealed class GuidInstructionTests
+    public sealed class GuidInstructionTests
 	{
 		[Fact]
 		void Verify()
@@ -24,7 +25,7 @@ namespace Super.Serialization.Testing.Application
 			Writer() : base(GuidInstruction.Default.Quoted()) {}
 		}
 
-		public class Benchmarks : Benchmark<Guid>
+		public class Benchmarks : ComparisonBenchmark<Guid>
 		{
 			public Benchmarks() : base(GuidInstruction.Default.Quoted(), Guid.NewGuid()) {}
 		}

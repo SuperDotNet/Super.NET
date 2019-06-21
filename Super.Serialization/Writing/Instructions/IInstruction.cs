@@ -1,15 +1,13 @@
 ﻿using Super.Model.Results;
 using Super.Model.Selection;
-using Super.Runtime.Environment;
-using Super.Text;
 using System;
 using System.Buffers;
 using System.Buffers.Text;
 using System.Runtime.CompilerServices;
 
-namespace Super.Serialization
+namespace Super.Serialization.Writing.Instructions
 {
-	public interface IInstruction : ISelect<Composition, uint>, IResult<uint> {}
+    public interface IInstruction : ISelect<Composition, uint>, IResult<uint> {}
 
 	public class ContentInstruction : Instance<uint>, IInstruction
 	{
@@ -74,22 +72,6 @@ namespace Super.Serialization
 		}
 
 		public uint Get(T parameter) => _instruction.Get(parameter) + 2;
-	}
-
-	sealed class StringValueInstruction : IInstruction<string>
-	{
-		public static StringValueInstruction Default { get; } = new StringValueInstruction();
-
-		StringValueInstruction() : this(DefaultComponent<IUtf8>.Default.Get()) {}
-
-		readonly IUtf8 _utf8;
-
-		public StringValueInstruction(IUtf8 utf8) => _utf8 = utf8;
-
-		public uint Get(Composition<string> parameter)
-			=> _utf8.Get(new Utf8Input(parameter.Instance, parameter.Output, parameter.Index));
-
-		public uint Get(string parameter) => (uint)parameter.Length;
 	}
 
 	sealed class IntegerInstruction : IInstruction<uint>

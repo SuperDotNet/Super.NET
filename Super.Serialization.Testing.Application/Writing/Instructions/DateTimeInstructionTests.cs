@@ -1,11 +1,12 @@
 ﻿using FluentAssertions;
+using Super.Serialization.Writing.Instructions;
 using System;
 using System.Text.Json.Serialization;
 using Xunit;
 
-namespace Super.Serialization.Testing.Application
+namespace Super.Serialization.Testing.Application.Writing.Instructions
 {
-	public sealed class DateTimeInstructionTests
+    public sealed class DateTimeInstructionTests
 	{
 		[Fact]
 		void Verify()
@@ -24,7 +25,7 @@ namespace Super.Serialization.Testing.Application
 			Writer() : base(DateTimeInstruction.Default.Quoted()) {}
 		}
 
-		public class Benchmarks : Benchmark<DateTime>
+		public class Benchmarks : ComparisonBenchmark<DateTime>
 		{
 			public Benchmarks() : base(DateTimeInstruction.Default.Quoted(), new DateTime(1976, 6, 7, 23, 17, 36)) {}
 		}

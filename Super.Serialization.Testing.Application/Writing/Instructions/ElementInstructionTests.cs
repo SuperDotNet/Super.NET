@@ -1,15 +1,16 @@
 ﻿using BenchmarkDotNet.Attributes;
 using FluentAssertions;
 using Super.Model.Sequences;
+using Super.Serialization.Writing.Instructions;
 using Super.Serialization.Xml;
 using System;
 using System.IO;
 using System.Xml.Serialization;
 using Xunit;
 
-namespace Super.Serialization.Testing.Application
+namespace Super.Serialization.Testing.Application.Writing.Instructions
 {
-	public sealed class ElementInstructionTests
+    public sealed class ElementInstructionTests
 	{
 		[Fact]
 		void Verify()

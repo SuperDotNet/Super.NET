@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Super.Serialization.Writing.Instructions;
+using System;
 using System.Buffers;
 using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace Super.Serialization
 {
-	static class Extensions
+    static class Extensions
 	{
 		readonly static ArrayPool<byte> Pool = ArrayPool<byte>.Shared;
 

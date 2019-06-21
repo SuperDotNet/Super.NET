@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using FluentAssertions;
+using Super.Serialization.Writing.Instructions;
 using System.IO;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -7,7 +8,7 @@ using Xunit;
 
 namespace Super.Serialization.Testing.Application
 {
-	public sealed class StagedWriterTests
+    public sealed class StagedWriterTests
 	{
 		[Fact]
 		async Task Verify()

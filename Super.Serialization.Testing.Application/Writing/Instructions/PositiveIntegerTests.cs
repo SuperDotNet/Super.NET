@@ -1,9 +1,10 @@
 ﻿using FluentAssertions;
+using Super.Serialization.Writing.Instructions;
 using Xunit;
 
-namespace Super.Serialization.Testing.Application
+namespace Super.Serialization.Testing.Application.Writing.Instructions
 {
-	public class PositiveIntegerTests
+    public class PositiveIntegerTests
 	{
 		/*[Fact]
 		void Verify()

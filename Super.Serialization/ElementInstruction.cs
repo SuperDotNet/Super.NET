@@ -1,4 +1,6 @@
-﻿namespace Super.Serialization
+﻿using Super.Serialization.Writing.Instructions;
+
+namespace Super.Serialization
 {
 	class ElementInstruction<T> : IInstruction<T>
 	{

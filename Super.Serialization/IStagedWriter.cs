@@ -1,5 +1,6 @@
 ﻿using Super.Model.Selection;
 using Super.Model.Sequences;
+using Super.Serialization.Writing.Instructions;
 using System;
 using System.Buffers;
 using System.IO;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Super.Serialization
 {
-	public interface IStagedWriter<T> : ISelect<Input<T>, Task> {}
+    public interface IStagedWriter<T> : ISelect<Input<T>, Task> {}
 
 	public sealed class SingleStageWriter<T> : IStagedWriter<T>
 	{

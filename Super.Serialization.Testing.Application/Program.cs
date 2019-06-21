@@ -1,4 +1,5 @@
 ﻿using Super.Application.Hosting.BenchmarkDotNet;
+using Super.Serialization.Testing.Application.Writing.Instructions;
 
 namespace Super.Serialization.Testing.Application
 {
@@ -7,7 +8,7 @@ namespace Super.Serialization.Testing.Application
 		static void Main(params string[] arguments)
 		{
 			Configuration.Default.Get(arguments)
-			             .To(Run.A<GuidInstructionTests.Benchmarks>);
+			             .To(Run.A<DefaultStringInstructionTests.Benchmarks>);
 		}
 	}
 }

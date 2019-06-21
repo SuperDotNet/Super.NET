@@ -1,4 +1,5 @@
-﻿using Super.Text;
+﻿using JetBrains.Annotations;
+using Super.Text;
 using System;
 using System.Buffers;
 using System.Runtime.CompilerServices;
@@ -13,13 +14,14 @@ namespace Super.Platform
 		           LowSurrogateStart  = '\udc00',
 		           LowSurrogateEnd    = '\udfff';
 
+		[UsedImplicitly]
 		public static Utf8 Default { get; } = new Utf8();
 
 		Utf8() {}
 
 		public uint Get(Utf8Input parameter)
 		{
-			var status = Get(MemoryMarshal.AsBytes(parameter.Characters.AsSpan()),
+			var status = Get(MemoryMarshal.AsBytes(parameter.Characters.Span),
 			                 parameter.Destination.AsSpan().Slice((int)parameter.Start),
 			                 out var written);
 			return status == OperationStatus.Done
@@ -123,7 +125,7 @@ namespace Super.Platform
 						}
 						else
 						{
-							if (!IsInRangeInclusive(ch, HighSurrogateStart, LowSurrogateEnd))
+							if (!IsOrWithin(ch, HighSurrogateStart, LowSurrogateEnd))
 							{
 								chd = unchecked((sbyte)0xE0) | (ch >> 12);
 							}
@@ -136,7 +138,7 @@ namespace Super.Platform
 
 								chd = *pSrc;
 
-								if (!IsInRangeInclusive(chd, LowSurrogateStart, LowSurrogateEnd))
+								if (!IsOrWithin(chd, LowSurrogateStart, LowSurrogateEnd))
 								{
 									goto InvalidData;
 								}
@@ -195,7 +197,7 @@ namespace Super.Platform
 					}
 					else
 					{
-						if (!IsInRangeInclusive(ch, HighSurrogateStart, LowSurrogateEnd))
+						if (!IsOrWithin(ch, HighSurrogateStart, LowSurrogateEnd))
 						{
 							if (pAllocatedBufferEnd - pTarget <= 2)
 								goto DestinationFull;
@@ -217,7 +219,7 @@ namespace Super.Platform
 
 							chd = *pSrc;
 
-							if (!IsInRangeInclusive(chd, LowSurrogateStart, LowSurrogateEnd))
+							if (!IsOrWithin(chd, LowSurrogateStart, LowSurrogateEnd))
 							{
 								goto InvalidData;
 							}
@@ -265,7 +267,7 @@ namespace Super.Platform
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		static bool IsInRangeInclusive(int value, int lowerBound, int upperBound)
+		static bool IsOrWithin(int value, int lowerBound, int upperBound)
 			=> (uint)(value - lowerBound) <= (uint)(upperBound - lowerBound);
 	}
 }

@@ -1,13 +1,14 @@
 using BenchmarkDotNet.Attributes;
 using FluentAssertions;
 using Super.Model.Sequences;
+using Super.Serialization.Writing.Instructions;
 using System.Text;
 using System.Text.Json.Serialization;
 using Xunit;
 
 namespace Super.Serialization.Testing.Application
 {
-	public class WriterTests
+    public class WriterTests
 	{
 		[Fact]
 		public void Simple()

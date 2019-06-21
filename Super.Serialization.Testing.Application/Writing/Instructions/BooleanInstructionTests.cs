@@ -1,8 +1,9 @@
 ﻿using FluentAssertions;
+using Super.Serialization.Writing.Instructions;
 using System.Text.Json.Serialization;
 using Xunit;
 
-namespace Super.Serialization.Testing.Application
+namespace Super.Serialization.Testing.Application.Writing.Instructions
 {
 	public class BooleanInstructionTests
 	{
@@ -31,7 +32,7 @@ namespace Super.Serialization.Testing.Application
 			Writer() : base(BooleanInstruction.Default) {}
 		}
 
-		public class Benchmarks : Benchmark<bool>
+		public class Benchmarks : ComparisonBenchmark<bool>
 		{
 			public Benchmarks() : this(true) {}
 

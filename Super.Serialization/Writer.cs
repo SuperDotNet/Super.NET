@@ -1,6 +1,7 @@
 ﻿using Super.Model.Results;
 using Super.Model.Selection;
 using Super.Model.Sequences;
+using Super.Serialization.Writing.Instructions;
 using System;
 using System.Buffers;
 using System.Runtime.CompilerServices;
@@ -107,12 +108,12 @@ namespace Super.Serialization
 					var instruction = _instructions[i];
 					var size        = instruction.Get(parameter);
 					composition = composition.Index + size >= composition.Output.Length
-						              ? new Composition<T>(composition.Output.Copy(in size), parameter,
-						                                   composition.Index)
-						              : composition;
+									  ? new Composition<T>(composition.Output.Copy(in size), parameter,
+														   composition.Index)
+									  : composition;
 
 					composition = new Composition<T>(composition.Output, parameter,
-					                                 composition.Index + instruction.Get(composition));
+													 composition.Index + instruction.Get(composition));
 				}
 
 				var result = composition.Output.CopyInto(new byte[composition.Index], 0, composition.Index);
@@ -135,7 +136,7 @@ namespace Super.Serialization
 			: this(instruction, pool.Rent, pool.Return) {}
 
 		public SingleInstructionWriter(IInstruction<T> instruction, Func<int, byte[]> lease,
-		                               Action<byte[], bool> @return)
+									   Action<byte[], bool> @return)
 		{
 			_instruction = instruction;
 			_lease       = lease;
@@ -184,5 +185,8 @@ namespace Super.Serialization
 		public T Instance { get; }
 
 		public uint Index { get; }
+
+
+		public Composition<T> Using(T instance) => new Composition<T>(Output, instance, Index);
 	}
 }

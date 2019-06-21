@@ -1,10 +1,11 @@
 ﻿using FluentAssertions;
+using Super.Serialization.Writing.Instructions;
 using System.Text.Json.Serialization;
 using Xunit;
 
-namespace Super.Serialization.Testing.Application
+namespace Super.Serialization.Testing.Application.Writing.Instructions
 {
-	public sealed class Integer64InstructionTests
+    public sealed class Integer64InstructionTests
 	{
 		[Fact]
 		void Verify()
@@ -34,7 +35,7 @@ namespace Super.Serialization.Testing.Application
 			Writer() : base(Integer64Instruction.Default) {}
 		}
 
-		public class Benchmarks : Benchmark<ulong>
+		public class Benchmarks : ComparisonBenchmark<ulong>
 		{
 			public Benchmarks() : base(Writer.Default, 12345678910111213) {}
 		}
