@@ -9,14 +9,14 @@ using System.Text;
 
 namespace Super.Serialization
 {
-	public static class RangeExtension
+    public static class RangeExtension
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool IsOrBetween(this Range @this, int point)
+		public static bool IsOrContains(this Range @this, int point)
 			=> point >= @this.Start.Value && point <= @this.End.Value;
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool Between(this Range @this, int point) => point > @this.Start.Value && point < @this.End.Value;
+		public static bool Contains(this Range @this, int point) => point > @this.Start.Value && point < @this.End.Value;
 
 		public static Range Until(this Range @this, Range other) => new Range(@this.End, other.Start);
 	}
@@ -25,22 +25,20 @@ namespace Super.Serialization
 	{
 		public static Ranges Default { get; } = new Ranges();
 
-		Ranges() : this(new Range('\uDC00', '\uDFFF'), new Range('\uD800', '\uDBFF')) {}
+		Ranges() : this(new Range('\uD800', '\uDBFF'), new Range('\uDC00', '\uDFFF')) {}
 
-		public Ranges(Range low, Range high) : this(low, low.Until(high), high) {}
+		public Ranges(Range high, Range low) : this(high, low, new Range(high.Start, low.End)) {}
 
-		public Ranges(Range low, Range normal, Range high)
+		public Ranges(Range high, Range low, Range all)
 		{
-			Low    = low;
-			Normal = normal;
-			High   = high;
+			High = high;
+			Low = low;
+			All = all;
 		}
 
-		public Range Low { get; }
-
-		public Range Normal { get; }
-
 		public Range High { get; }
+		public Range Low { get; }
+		public Range All { get; }
 	}
 
 	public sealed class DefaultEncoding : Instance<Encoding>
@@ -142,12 +140,12 @@ namespace Super.Serialization
 					var instruction = _instructions[i];
 					var size        = instruction.Get(parameter);
 					composition = composition.Index + size >= composition.Output.Length
-						              ? new Composition<T>(composition.Output.Copy(in size), parameter,
-						                                   composition.Index)
-						              : composition;
+									  ? new Composition<T>(composition.Output.Copy(in size), parameter,
+														   composition.Index)
+									  : composition;
 
 					composition = new Composition<T>(composition.Output, parameter,
-					                                 composition.Index + instruction.Get(composition));
+													 composition.Index + instruction.Get(composition));
 				}
 
 				var result = composition.Output.CopyInto(new byte[composition.Index], 0, composition.Index);
@@ -170,7 +168,7 @@ namespace Super.Serialization
 			: this(instruction, pool.Rent, pool.Return) {}
 
 		public SingleInstructionWriter(IInstruction<T> instruction, Func<int, byte[]> lease,
-		                               Action<byte[], bool> @return)
+									   Action<byte[], bool> @return)
 		{
 			_instruction = instruction;
 			_lease       = lease;

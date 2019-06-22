@@ -8,7 +8,7 @@ namespace Super.Serialization.Testing.Application
 		static void Main(params string[] arguments)
 		{
 			Configuration.Default.Get(arguments)
-			             .To(Run.A<DefaultStringInstructionTests.Benchmarks>);
+			             .To(Run.A<StringValueInstructionTests.Benchmarks>);
 		}
 	}
 }

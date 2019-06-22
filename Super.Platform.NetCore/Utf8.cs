@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using Super.Text;
+﻿using Super.Text;
 using System;
 using System.Buffers;
 using System.Runtime.CompilerServices;
@@ -13,22 +12,26 @@ namespace Super.Platform
 		           HighSurrogateEnd   = '\udbff',
 		           LowSurrogateStart  = '\udc00',
 		           LowSurrogateEnd    = '\udfff';
-
-		[UsedImplicitly]
 		public static Utf8 Default { get; } = new Utf8();
 
 		Utf8() {}
 
 		public uint Get(Utf8Input parameter)
+			=> (uint)Get(parameter.Characters.Span, parameter.Destination.AsSpan().Slice((int)parameter.Start));
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static int Get(ReadOnlySpan<char> source, Span<byte> destination)
 		{
-			var status = Get(MemoryMarshal.AsBytes(parameter.Characters.Span),
-			                 parameter.Destination.AsSpan().Slice((int)parameter.Start),
-			                 out var written);
+			var status = Get(source, destination, out var result);
 			return status == OperationStatus.Done
-				       ? (uint)written
+				       ? result
 				       : throw new
-					         InvalidOperationException($"[{status}] Could not successfully convert value to Utf-8 data: {parameter.Characters}");
+					         InvalidOperationException($"[{status}] Could not successfully convert value to Utf-8 data: {source.ToString()}");
 		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static OperationStatus Get(ReadOnlySpan<char> source, Span<byte> destination, out int written)
+			=> Get(MemoryMarshal.AsBytes(source), destination, out written);
 
 		// ReSharper disable once CyclomaticComplexity
 		// ReSharper disable once MethodTooLong
@@ -39,7 +42,7 @@ namespace Super.Platform
 		/// <param name="destination"></param>
 		/// <param name="written"></param>
 		/// <returns></returns>
-		static unsafe OperationStatus Get(ReadOnlySpan<byte> source, Span<byte> destination, out int written)
+		public static unsafe OperationStatus Get(ReadOnlySpan<byte> source, Span<byte> destination, out int written)
 		{
 			fixed (byte* chars = &MemoryMarshal.GetReference(source))
 			fixed (byte* bytes = &MemoryMarshal.GetReference(destination))

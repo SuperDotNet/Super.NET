@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using Super.Serialization.Writing.Instructions;
-using System;
 using System.Text.Json.Serialization;
 using Xunit;
 
@@ -12,19 +11,19 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 		void Verify()
 		{
 			const string data = "Hello World!";
-			QuotedWriter.Default.Get(data.AsMemory()).Open().Should().Equal(JsonSerializer.ToUtf8Bytes(data));
+			QuotedWriter.Default.Get(data).Open().Should().Equal(JsonSerializer.ToUtf8Bytes(data));
 		}
 
-		sealed class QuotedWriter : SingleInstructionWriter<ReadOnlyMemory<char>>
+		sealed class QuotedWriter : SingleInstructionWriter<string>
 		{
 			public static QuotedWriter Default { get; } = new QuotedWriter();
 
 			QuotedWriter() : base(StringInstruction.Default.Quoted()) {}
 		}
 
-		public class Benchmarks : Benchmark<ReadOnlyMemory<char>>
+		public class Benchmarks : Benchmark<string>
 		{
-			public Benchmarks() : base(QuotedWriter.Default, "Hello World!".AsMemory()) {}
+			public Benchmarks() : base(QuotedWriter.Default, "Hello World!") {}
 		}
 	}
 }

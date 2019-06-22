@@ -1,7 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using FluentAssertions;
 using Super.Serialization.Writing.Instructions;
-using System;
 using System.Linq;
 using System.Text.Json.Serialization;
 using Xunit;
@@ -13,8 +12,8 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 		[Fact]
 		void Verify()
 		{
-			var content = string.Join('\n', Enumerable.Repeat("Hello World!", 10));
-			Writer.Default.Get(content.AsMemory())
+			var content = string.Join('\n', Enumerable.Repeat("Hello World!", 3));
+			Writer.Default.Get(content)
 			      .Open()
 			      .Should()
 			      .Equal(JsonSerializer.ToUtf8Bytes(content));
@@ -24,26 +23,26 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 		void VerifyNormal()
 		{
 			var content = string.Join('-', Enumerable.Repeat("Hello World!", 10));
-			Writer.Default.Get(content.AsMemory())
+			Writer.Default.Get(content)
 			      .Open()
 			      .Should()
 			      .Equal(JsonSerializer.ToUtf8Bytes(content));
 		}
 
-		sealed class Writer : SingleInstructionWriter<ReadOnlyMemory<char>>
+		sealed class Writer : SingleInstructionWriter<string>
 		{
 			public static Writer Default { get; } = new Writer();
 
-			Writer() : base(DefaultStringInstruction.Default.Quoted()) {}
+			Writer() : base(StringInstruction.Default.Quoted()) {}
 		}
 
-		public class Benchmarks : Benchmark<ReadOnlyMemory<char>>
+		public class Benchmarks : Benchmark<string>
 		{
 			readonly string _instance;
 
 			public Benchmarks() : this(string.Join('\n', Enumerable.Repeat("Hello World!", 2))) {}
 
-			public Benchmarks(string instance) : base(Writer.Default, instance.AsMemory()) => _instance = instance;
+			public Benchmarks(string instance) : base(Writer.Default, instance) => _instance = instance;
 
 			[Benchmark]
 			public byte[] Native() => JsonSerializer.ToUtf8Bytes(_instance);
