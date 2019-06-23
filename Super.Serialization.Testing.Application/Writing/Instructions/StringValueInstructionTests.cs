@@ -14,6 +14,14 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 			QuotedWriter.Default.Get(data).Open().Should().Equal(JsonSerializer.ToUtf8Bytes(data));
 		}
 
+		[Fact]
+		void VerifyUnicode()
+		{
+			var data = $"Hello Unicode: {(char)0xD800}{(char)0xDC00}";
+
+			QuotedWriter.Default.Get(data).Open().Should().Equal(JsonSerializer.ToUtf8Bytes(data));
+		}
+
 		sealed class QuotedWriter : SingleInstructionWriter<string>
 		{
 			public static QuotedWriter Default { get; } = new QuotedWriter();
@@ -23,7 +31,7 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 
 		public class Benchmarks : Benchmark<string>
 		{
-			public Benchmarks() : base(QuotedWriter.Default, "Hello World!") {}
+			public Benchmarks() : base(QuotedWriter.Default, $"Hello Unicode: {(char)0xD800}{(char)0xDC00}") {}
 		}
 	}
 }

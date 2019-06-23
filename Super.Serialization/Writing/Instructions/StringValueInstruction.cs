@@ -86,24 +86,6 @@ namespace Super.Serialization.Writing.Instructions
 		public bool Get(char parameter) => parameter > byte.MaxValue || _map[parameter] == 0;
 	}
 
-	/*public readonly struct Escape
-	{
-		public Escape(ReadOnlyMemory<char> source, uint start, byte[] destination)
-		{
-			Source      = source;
-			Start       = start;
-			Destination = destination;
-		}
-
-		public ReadOnlyMemory<char> Source { get; }
-
-		public byte[] Destination { get; }
-
-		public uint Start { get; }
-	}*/
-
-	/*public interface IEscapeString : ISelect<Composition<string>, uint> {}*/
-
 	public sealed class HexFormat : Instance<StandardFormat>
 	{
 		public static HexFormat Default { get; } = new HexFormat();
@@ -111,27 +93,9 @@ namespace Super.Serialization.Writing.Instructions
 		HexFormat() : base(new StandardFormat('x', 4)) {}
 	}
 
-	public readonly struct Utf16Surrogate
-	{
-		public Utf16Surrogate(ushort high, ushort low)
-		{
-			High = high;
-			Low  = low;
-		}
-
-		public ushort High { get; }
-
-		public ushort Low { get; }
-	}
-
 	public static class SpecialCharacters
 	{
-		public const byte Backspace = (byte)'b',
-		                  Line      = (byte)'n',
-		                  Return    = (byte)'r',
-		                  Feed      = (byte)'f',
-		                  Tab       = (byte)'t',
-		                  Slash     = (byte)'\\';
+		public const byte Slash = (byte)'\\';
 	}
 
 	public sealed class Maps : IArray<byte>
@@ -173,25 +137,23 @@ namespace Super.Serialization.Writing.Instructions
 
 	sealed class StringInstruction : IInstruction<string>
 	{
-		readonly static int Start = Ranges.Default.Low.Start.Value;
+		readonly static Range All   = Ranges.Default.All, Low = Ranges.Default.Low;
+		readonly static int   Start = Ranges.Default.Low.Start.Value;
 
 		public static StringInstruction Default { get; } = new StringInstruction();
 
-		StringInstruction() : this(EscapeIndex.Default, Ranges.Default.All, Maps.Default.Get(),
-		                           DefaultEscapeFactor.Default) {}
+		StringInstruction()
+			: this(Maps.Default.Get(), DefaultEscapeFactor.Default, HexFormat.Default.Get().ToString()) {}
 
-		readonly IEscapeIndex _index;
-		readonly Range        _range;
-		readonly Array<byte>  _map;
-		readonly uint         _factor;
+		readonly Array<byte> _map;
+		readonly uint        _factor;
+		readonly string      _format;
 
-		// ReSharper disable once TooManyDependencies
-		public StringInstruction(IEscapeIndex index, Range range, Array<byte> map, uint factor)
+		public StringInstruction(Array<byte> map, uint factor, string format)
 		{
-			_index  = index;
-			_range  = range;
 			_map    = map;
 			_factor = factor;
+			_format = format;
 		}
 
 		// ReSharper disable once ExcessiveIndentation
@@ -201,7 +163,7 @@ namespace Super.Serialization.Writing.Instructions
 
 			var current = (int)parameter.Index;
 			var amount  = 0;
-			var last    = 0;
+			var marker  = 0;
 			var result  = 0;
 
 			var length = parameter.Instance.Length;
@@ -209,40 +171,56 @@ namespace Super.Serialization.Writing.Instructions
 			{
 				var character = source[i];
 
-				if (_index.Get(character))
+				if (EscapeIndex.Default.Get(character))
 				{
-					var next = -1;
-					if (_range.IsOrContains(character))
+					var index = current + result;
+					var span  = parameter.Output.AsSpan(index);
+					var write = amount > 0 ? Utf8.Get(source.Slice(marker, amount), span) : 0;
+					var slice = span.Slice(write);
+
+					if (All.IsOrContains(character))
 					{
 						i++;
 
 						if (i >= length || character >= Start)
 						{
-							throw new InvalidOperationException($"{character} is not a valid escaped character.");
+							throw new InvalidOperationException($"{character} is not a valid unicode surrogate.");
 						}
 
-						if (!Ranges.Default.Low.IsOrContains(source[i]))
+						ushort low = source[i];
+						if (!Low.IsOrContains(low))
 						{
-							throw
-								new InvalidOperationException($"{source[i]} is not a valid an escaped character.");
+							throw new InvalidOperationException($"{character}{low} is not a valid unicode surrogate.");
 						}
 
-						next = source[i];
-					}
+						Span<char> allocated = stackalloc char[12]
+						{
+							'\\', 'u', '\0', '\0', '\0', '\0',
+							'\\', 'u', '\0', '\0', '\0', '\0'
+						};
 
-					var index = current + result;
-					var span  = parameter.Output.AsSpan(index);
-					var write = amount > 0 ? Utf8.Get(source.Slice(last, amount), span) : 0;
-					if (next == -1)
+						if (!((ushort)character).TryFormat(allocated.Slice(2), out _, _format))
+						{
+							throw new
+								InvalidOperationException($"Could not format high surrogate to Utf-8: {character}");
+						}
+
+						if (!low.TryFormat(allocated.Slice(8), out _, _format))
+						{
+							throw new InvalidOperationException($"Could not format low surrogate to Utf-8: {low}");
+						}
+
+						result += Utf8.Get(allocated, slice) + write;
+					}
+					else
 					{
-						var slice = span.Slice(write);
 						slice[0] =  SpecialCharacters.Slash;
 						slice[1] =  _map[character];
 						result   += write + 2;
 					}
 
+					marker = i + 1;
 					amount = 0;
-					last   = i + 1;
 				}
 				else
 				{
@@ -251,50 +229,10 @@ namespace Super.Serialization.Writing.Instructions
 			}
 
 			return (uint)(amount > 0
-				              ? result + Utf8.Get(source.Slice(last, amount), parameter.Output.AsSpan(current + result))
+				              ? result + Utf8.Get(source.Slice(marker, amount),
+				                                  parameter.Output.AsSpan(current + result))
 				              : result);
 		}
-
-/*
-		// ReSharper disable once TooManyArguments
-		// ReSharper disable once MethodTooLong
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		int Adjust(ushort current, int next, Span<byte> destination)
-		{
-
-			return 2;
-
-			/*switch (current)
-			{
-				default:
-				{
-					/*var i = index + 1;
-					destination[i++] = (byte)'u';
-					{
-						i += ;
-
-						/*i += current.TryFormat(span.Slice(i), out var written, Format)
-							     ? written
-							     : 0;#3#
-					}
-
-					if (next != -1)
-					{
-
-						destination[i++] = (byte)'\\';
-						destination[i++] = (byte)'u';
-						i += Utf8Formatter.TryFormat(current, destination.AsSpan().Slice(i), out var written, HexFormat.Default)
-							     ? written
-							     : throw new
-								       InvalidOperationException($"Could not successfully convert value to Utf-8 data: {current}");
-					}
-
-					return (uint)(i - index);#2#
-					throw new NotImplementedException();
-				}
-			}#1#
-		}
-*/
 
 		public uint Get(string parameter) => (uint)parameter.Length * _factor;
 	}
