@@ -29,7 +29,7 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 			QuotedWriter() : base(StringInstruction.Default.Quoted()) {}
 		}
 
-		public class Benchmarks : Benchmark<string>
+		public class Benchmarks : ComparisonBenchmark<string>
 		{
 			public Benchmarks() : base(QuotedWriter.Default, $"Hello Unicode: {(char)0xD800}{(char)0xDC00}") {}
 		}

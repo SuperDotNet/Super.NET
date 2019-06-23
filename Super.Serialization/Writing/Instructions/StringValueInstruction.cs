@@ -6,6 +6,7 @@ using Super.Model.Sequences;
 using Super.Platform;
 using System;
 using System.Buffers;
+using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -95,7 +96,7 @@ namespace Super.Serialization.Writing.Instructions
 
 	public static class SpecialCharacters
 	{
-		public const byte Slash = (byte)'\\';
+		public const byte Slash = (byte)'\\', Unicode = (byte)'u';
 	}
 
 	public sealed class Maps : IArray<byte>
@@ -143,13 +144,13 @@ namespace Super.Serialization.Writing.Instructions
 		public static StringInstruction Default { get; } = new StringInstruction();
 
 		StringInstruction()
-			: this(Maps.Default.Get(), DefaultEscapeFactor.Default, HexFormat.Default.Get().ToString()) {}
+			: this(Maps.Default.Get(), DefaultEscapeFactor.Default, HexFormat.Default) {}
 
-		readonly Array<byte> _map;
-		readonly uint        _factor;
-		readonly string      _format;
+		readonly Array<byte>    _map;
+		readonly uint           _factor;
+		readonly StandardFormat _format;
 
-		public StringInstruction(Array<byte> map, uint factor, string format)
+		public StringInstruction(Array<byte> map, uint factor, StandardFormat format)
 		{
 			_map    = map;
 			_factor = factor;
@@ -177,6 +178,7 @@ namespace Super.Serialization.Writing.Instructions
 					var span  = parameter.Output.AsSpan(index);
 					var write = amount > 0 ? Utf8.Get(source.Slice(marker, amount), span) : 0;
 					var slice = span.Slice(write);
+					slice[0] = SpecialCharacters.Slash;
 
 					if (All.IsOrContains(character))
 					{
@@ -193,31 +195,31 @@ namespace Super.Serialization.Writing.Instructions
 							throw new InvalidOperationException($"{character}{low} is not a valid unicode surrogate.");
 						}
 
-						Span<char> allocated = stackalloc char[12]
-						{
-							'\\', 'u', '\0', '\0', '\0', '\0',
-							'\\', 'u', '\0', '\0', '\0', '\0'
-						};
+						slice[1] = SpecialCharacters.Unicode;
 
-						if (!((ushort)character).TryFormat(allocated.Slice(2), out _, _format))
+						if (!Utf8Formatter.TryFormat(character, slice.Slice(2), out _, _format))
 						{
 							throw new
-								InvalidOperationException($"Could not format high surrogate to Utf-8: {character}");
+								InvalidOperationException($"Could not format unicode high surrogate: {character}");
 						}
 
-						if (!low.TryFormat(allocated.Slice(8), out _, _format))
+						slice[6] = SpecialCharacters.Slash;
+						slice[7] = SpecialCharacters.Unicode;
+
+						if (!Utf8Formatter.TryFormat(low, slice.Slice(8), out _, _format))
 						{
-							throw new InvalidOperationException($"Could not format low surrogate to Utf-8: {low}");
+							throw new InvalidOperationException($"Could not format unicode low surrogate: {low}");
 						}
 
-						result += Utf8.Get(allocated, slice) + write;
+						result += 12;
 					}
 					else
 					{
-						slice[0] =  SpecialCharacters.Slash;
 						slice[1] =  _map[character];
-						result   += write + 2;
+						result   += 2;
 					}
+
+					result += write;
 
 					marker = i + 1;
 					amount = 0;
