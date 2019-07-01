@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace Super.Serialization.Writing.Instructions
 {
-    public interface IInstruction : ISelect<Composition, uint>, IResult<uint> {}
+	public interface IInstruction : ISelect<Composition, uint>, IResult<uint> {}
 
 	public class ContentInstruction : Instance<uint>, IInstruction
 	{
@@ -85,8 +85,7 @@ namespace Super.Serialization.Writing.Instructions
 		public IntegerInstruction(uint size) => _size = size;
 
 		public uint Get(Composition<uint> parameter)
-			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
-			                           out var count)
+			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.View, out var count)
 				   ? (uint)count
 				   : throw new
 					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
@@ -105,8 +104,7 @@ namespace Super.Serialization.Writing.Instructions
 		public FullIntegerInstruction(uint size) => _size = size;
 
 		public uint Get(Composition<int> parameter)
-			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
-			                           out var count)
+			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.View, out var count)
 				   ? (uint)count
 				   : throw new
 					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
@@ -125,8 +123,7 @@ namespace Super.Serialization.Writing.Instructions
 		public ByteInstruction(uint size) => _size = size;
 
 		public uint Get(Composition<byte> parameter)
-			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
-			                           out var count)
+			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.View, out var count)
 				   ? (uint)count
 				   : throw new
 					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
@@ -145,8 +142,7 @@ namespace Super.Serialization.Writing.Instructions
 		public FullByteInstruction(uint size) => _size = size;
 
 		public uint Get(Composition<sbyte> parameter)
-			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
-			                           out var count)
+			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.View, out var count)
 				   ? (uint)count
 				   : throw new
 					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
@@ -165,8 +161,7 @@ namespace Super.Serialization.Writing.Instructions
 		public ShortInstruction(uint size) => _size = size;
 
 		public uint Get(Composition<ushort> parameter)
-			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
-			                           out var count)
+			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.View, out var count)
 				   ? (uint)count
 				   : throw new
 					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
@@ -185,8 +180,7 @@ namespace Super.Serialization.Writing.Instructions
 		public FullShortInstruction(uint size) => _size = size;
 
 		public uint Get(Composition<short> parameter)
-			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
-			                           out var count)
+			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.View, out var count)
 				   ? (uint)count
 				   : throw new
 					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
@@ -205,8 +199,7 @@ namespace Super.Serialization.Writing.Instructions
 		public Integer64Instruction(uint size) => _size = size;
 
 		public uint Get(Composition<ulong> parameter)
-			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
-			                           out var count)
+			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.View, out var count)
 				   ? (uint)count
 				   : throw new
 					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
@@ -225,8 +218,7 @@ namespace Super.Serialization.Writing.Instructions
 		public FullInteger64Instruction(uint size) => _size = size;
 
 		public uint Get(Composition<long> parameter)
-			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
-			                           out var count)
+			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.View, out var count)
 				   ? (uint)count
 				   : throw new
 					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
@@ -274,8 +266,7 @@ namespace Super.Serialization.Writing.Instructions
 		FloatInstruction() {}
 
 		public uint Get(Composition<float> parameter)
-			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
-			                           out var count)
+			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.View, out var count)
 				   ? (uint)count
 				   : throw new
 					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
@@ -290,8 +281,7 @@ namespace Super.Serialization.Writing.Instructions
 		DoubleInstruction() {}
 
 		public uint Get(Composition<double> parameter)
-			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
-			                           out var count)
+			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.View, out var count)
 				   ? (uint)count
 				   : throw new
 					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
@@ -306,8 +296,7 @@ namespace Super.Serialization.Writing.Instructions
 		DecimalInstruction() {}
 
 		public uint Get(Composition<decimal> parameter)
-			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
-			                           out var count)
+			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.View, out var count)
 				   ? (uint)count
 				   : throw new
 					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
@@ -322,8 +311,7 @@ namespace Super.Serialization.Writing.Instructions
 		GuidInstruction() {}
 
 		public uint Get(Composition<Guid> parameter)
-			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.Output.AsSpan((int)parameter.Index),
-			                           out var count)
+			=> Utf8Formatter.TryFormat(parameter.Instance, parameter.View, out var count)
 				   ? (uint)count
 				   : throw new
 					     InvalidOperationException($"Could not format '{parameter.Instance}' into its UTF-8 equivalent.");
@@ -353,8 +341,7 @@ namespace Super.Serialization.Writing.Instructions
 			if (format)
 			{
 				var result = _trimmer.Get(span.Slice(0, count));
-				span.Slice(0, (int)result)
-				    .CopyTo(parameter.Output.AsSpan((int)parameter.Index));
+				span.Slice(0, (int)result).CopyTo(parameter.View);
 				return result;
 			}
 
@@ -386,8 +373,7 @@ namespace Super.Serialization.Writing.Instructions
 			if (format)
 			{
 				var result = _trimmer.Get(span.Slice(0, count));
-				span.Slice(0, (int)result)
-				    .CopyTo(parameter.Output.AsSpan((int)parameter.Index));
+				span.Slice(0, (int)result).CopyTo(parameter.View);
 				return result;
 			}
 

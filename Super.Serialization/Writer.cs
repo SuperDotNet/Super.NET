@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Super.Serialization
 {
-    public static class RangeExtension
+	public static class RangeExtension
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool IsOrContains(this Range @this, int point)
@@ -211,6 +211,8 @@ namespace Super.Serialization
 			Instance = instance;
 			Index    = index;
 		}
+
+		public Span<byte> View => Output.AsSpan((int)Index);
 
 		public byte[] Output { get; }
 

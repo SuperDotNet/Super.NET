@@ -33,7 +33,7 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 		{
 			public static Writer Default { get; } = new Writer();
 
-			Writer() : base(StringInstruction.Default.Quoted()) {}
+			Writer() : base(EscapingStringInstruction.Default.Quoted()) {}
 		}
 
 		public class Benchmarks : Benchmark<string>

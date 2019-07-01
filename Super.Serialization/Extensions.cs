@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace Super.Serialization
 {
-    static class Extensions
+	static class Extensions
 	{
 		readonly static ArrayPool<byte> Pool = ArrayPool<byte>.Shared;
 
@@ -22,6 +22,7 @@ namespace Super.Serialization
 		public static Input<T> For<T>(this Stream @this, in T instance) => new Input<T>(@this, instance);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+
 		public static byte[] Copy(this byte[] @this, in uint size)
 		{
 			var result = Rent((int)checked(@this.Length + Math.Max(size, @this.Length)));
