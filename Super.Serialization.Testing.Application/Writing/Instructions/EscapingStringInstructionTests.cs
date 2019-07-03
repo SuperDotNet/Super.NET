@@ -17,9 +17,9 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 		[Fact]
 		void VerifyUnicode()
 		{
-			/*var data = $"Hello Unicode: {(char)0xD800}{(char)0xDC00}";
+			var data = $"Hello Unicode: {(char)0xD800}{(char)0xDC00}";
 
-			QuotedWriter.Default.Get(data).Open().Should().Equal(JsonSerializer.ToUtf8Bytes(data));*/
+			QuotedWriter.Default.Get(data).Open().Should().Equal(JsonSerializer.ToUtf8Bytes(data));
 
 		}
 
@@ -27,7 +27,7 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 		{
 			public static QuotedWriter Default { get; } = new QuotedWriter();
 
-			QuotedWriter() : base(EscapingStringInstruction.Default.Quoted()) {}
+			QuotedWriter() : base(new StringInstruction(AggressiveTextEncoder.Default).Quoted()) {}
 		}
 
 		public class Benchmarks : ComparisonBenchmark<string>

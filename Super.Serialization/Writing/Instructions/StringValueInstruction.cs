@@ -71,11 +71,11 @@ namespace Super.Serialization.Writing.Instructions
 		public const byte Slash = (byte)'\\', Unicode = (byte)'u';
 	}
 
-	public sealed class MapsJr : IArray<byte[]>
+	public sealed class Maps : IArray<byte[]>
 	{
-		public static MapsJr Default { get; } = new MapsJr();
+		public static Maps Default { get; } = new Maps();
 
-		MapsJr() : this(new Dictionary<byte, string>
+		Maps() : this(new Dictionary<byte, string>
 		{
 			{(byte)'\b', "\\b"},
 			{(byte)'\n', "\\n"},
@@ -88,10 +88,10 @@ namespace Super.Serialization.Writing.Instructions
 		readonly IReadOnlyDictionary<byte, byte[]> _source;
 		readonly uint                              _max;
 
-		public MapsJr(IReadOnlyDictionary<byte, string> source)
+		public Maps(IReadOnlyDictionary<byte, string> source)
 			: this(source.ToDictionary(x => x.Key, x => x.Value.Select(y => (byte)y).ToArray()), byte.MaxValue) {}
 
-		public MapsJr(IReadOnlyDictionary<byte, byte[]> source, uint max)
+		public Maps(IReadOnlyDictionary<byte, byte[]> source, uint max)
 		{
 			_source = source;
 			_max    = max;
@@ -109,7 +109,7 @@ namespace Super.Serialization.Writing.Instructions
 		}
 	}
 
-	public sealed class Maps : IArray<byte>
+	/*public sealed class Maps : IArray<byte>
 	{
 		public static Maps Default { get; } = new Maps();
 
@@ -144,20 +144,21 @@ namespace Super.Serialization.Writing.Instructions
 
 			return result;
 		}
-	}
+	}*/
 
-	public interface IEscapist : ISelect<EscapeInput, uint> {}
+	public interface ITextEncoder : ISelect<EscapeInput, uint> {}
 
-	sealed class Escapist : IEscapist
+	sealed class TextEncoder : ITextEncoder
 	{
-		public static Escapist Default { get; } = new Escapist();
+		public static TextEncoder Default { get; } = new TextEncoder();
 
-		Escapist() : this(MapsJr.Default.Get()) {}
+		TextEncoder() : this(Maps.Default.Get()) {}
 
 		readonly Array<byte[]> _tokens;
 
-		public Escapist(Array<byte[]> tokens) => _tokens  = tokens;
+		public TextEncoder(Array<byte[]> tokens) => _tokens = tokens;
 
+		// ReSharper disable once ExcessiveIndentation
 		public uint Get(EscapeInput parameter)
 		{
 			var source      = parameter.Source.Span;
@@ -168,58 +169,129 @@ namespace Super.Serialization.Writing.Instructions
 			for (var i = 0; i < length; i++)
 			{
 				var character = source[i];
+				if (character <= byte.MaxValue)
+				{
+					var tokens = _tokens[character];
+					if (tokens != null)
+					{
+						for (var j = 0; j < tokens.Length; j++)
+						{
+							destination[result + j] = tokens[j];
+						}
 
-				var step = Step(character, destination, result);
+						result += tokens.Length;
+						continue;
+					}
 
-				result += step > 0
-					          ? step
-					          : Rune(ref i, character, source, destination.Slice(result));
+					destination[result++] = (byte)character;
+					continue;
+				}
+
+				if (System.Text.Rune.TryCreate(character, out var single))
+				{
+					result += single.EncodeToUtf8(destination.Slice(result));
+					continue;
+				}
+
+				var check = i + 1 < source.Length;
+				if (check && System.Text.Rune.TryCreate(character, source[i + 1], out var @double))
+				{
+					i++;
+					result += @double.EncodeToUtf8(destination.Slice(result));
+					continue;
+				}
+
+				var next = check ? source[i + 1] : '\0';
+				throw new InvalidOperationException($"{character}{next} is not a valid unicode.");
 			}
 
 			return (uint)result;
 		}
+	}
 
-		// ReSharper disable once TooManyArguments
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		static int Rune(ref int index, char character, ReadOnlySpan<char> source, Span<byte> destination)
+	sealed class AggressiveTextEncoder : ITextEncoder
+	{
+		readonly static Range Low   = Ranges.Default.Low;
+		readonly static int   Start = Ranges.Default.Low.Start.Value;
+
+		public static AggressiveTextEncoder Default { get; } = new AggressiveTextEncoder();
+
+		AggressiveTextEncoder() : this(Maps.Default.Get(), HexFormat.Default) {}
+
+		readonly Array<byte[]> _tokens;
+		readonly StandardFormat _format;
+
+		public AggressiveTextEncoder(Array<byte[]> tokens, StandardFormat format)
 		{
-			if (System.Text.Rune.TryCreate(character, out var single))
-			{
-				return single.EncodeToUtf8(destination);
-			}
-
-			var check = index + 1 < source.Length;
-			if (check && System.Text.Rune.TryCreate(character, source[index + 1], out var @double))
-			{
-				index++;
-				return @double.EncodeToUtf8(destination);
-			}
-
-			var next = check ? source[index + 1] : '\0';
-			throw new InvalidOperationException($"{character}{next} is not a valid unicode.");
+			_tokens = tokens;
+			_format = format;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		int Step(char character, Span<byte> destination, int result)
+		// ReSharper disable once ExcessiveIndentation
+		public uint Get(EscapeInput parameter)
 		{
-			if (character <= byte.MaxValue)
+			var source      = parameter.Source.Span;
+			var destination = parameter.Destination.Span;
+			var result      = 0;
+
+			var length = source.Length;
+			for (var i = 0; i < length; i++)
 			{
-				var tokens = _tokens[character];
-				if (tokens != null)
+				var character = source[i];
+				if (character <= byte.MaxValue)
 				{
-					for (var j = 0; j < tokens.Length; j++)
+					var tokens = _tokens[character];
+					if (tokens != null)
 					{
-						destination[result + j] = tokens[j];
+						for (var j = 0; j < tokens.Length; j++)
+						{
+							destination[result + j] = tokens[j];
+						}
+
+						result += tokens.Length;
+						continue;
 					}
 
-					return tokens.Length;
+					destination[result++] = (byte)character;
+					continue;
 				}
 
-				destination[result] = (byte)character;
-				return 1;
+				i++;
+
+				var slice = destination.Slice(result);
+
+				if (i >= length || character >= Start)
+				{
+					throw new InvalidOperationException($"{character} is not a valid unicode surrogate.");
+				}
+
+				ushort low = source[i];
+				if (!Low.IsOrContains(low))
+				{
+					throw new InvalidOperationException($"{character}{low} is not a valid unicode surrogate.");
+				}
+
+				slice[0] = SpecialCharacters.Slash;
+				slice[1] = SpecialCharacters.Unicode;
+
+				if (!Utf8Formatter.TryFormat(character, slice.Slice(2), out _, _format))
+				{
+					throw new
+						InvalidOperationException($"Could not format unicode high surrogate: {character}");
+				}
+
+				slice[6] = SpecialCharacters.Slash;
+				slice[7] = SpecialCharacters.Unicode;
+
+				if (!Utf8Formatter.TryFormat(low, slice.Slice(8), out _, _format))
+				{
+					throw new InvalidOperationException($"Could not format unicode low surrogate: {low}");
+				}
+
+				result += 12;
 			}
 
-			return 0;
+			return (uint)result;
 		}
 	}
 
@@ -262,17 +334,19 @@ namespace Super.Serialization.Writing.Instructions
 	{
 		public static StringInstruction Default { get; } = new StringInstruction();
 
-		StringInstruction() : this(Escapist.Default, Allowed.Default, DefaultEscapeFactor.Default) {}
+		StringInstruction() : this(TextEncoder.Default, Allowed.Default, DefaultEscapeFactor.Default) {}
 
-		readonly IEscapist   _escapist;
-		readonly Array<byte> _map;
-		readonly uint        _factor;
+		readonly ITextEncoder _encoder;
+		readonly Array<byte>  _allowed;
+		readonly uint         _factor;
 
-		public StringInstruction(IEscapist escapist, Array<byte> map, uint factor)
+		public StringInstruction(ITextEncoder encoder) : this(encoder, Allowed.Default, DefaultEscapeFactor.Default) {}
+
+		public StringInstruction(ITextEncoder encoder, Array<byte> allowed, uint factor)
 		{
-			_escapist = escapist;
-			_map      = map;
-			_factor   = factor;
+			_encoder = encoder;
+			_allowed = allowed;
+			_factor  = factor;
 		}
 
 		public uint Get(Composition<string> parameter)
@@ -282,12 +356,12 @@ namespace Super.Serialization.Writing.Instructions
 			for (var i = 0; i < length; i++)
 			{
 				var character = instance[i];
-				if (character > byte.MaxValue || _map[character] == 0)
+				if (character > byte.MaxValue || _allowed[character] == 0)
 				{
 					var count = Utf8.Get(instance.AsSpan(0, i), parameter.View);
 					var input = new EscapeInput(instance.AsMemory(i),
 					                            parameter.Output.AsMemory((int)parameter.Index + count));
-					return (uint)count + _escapist.Get(input);
+					return (uint)count + _encoder.Get(input);
 				}
 			}
 
@@ -297,7 +371,7 @@ namespace Super.Serialization.Writing.Instructions
 		public uint Get(string parameter) => (uint)parameter.Length * _factor;
 	}
 
-	sealed class EscapingStringInstruction : IInstruction<string>
+	/*sealed class EscapingStringInstruction : IInstruction<string>
 	{
 		readonly static Range Low   = Ranges.Default.Low;
 		readonly static int   Start = Ranges.Default.Low.Start.Value;
@@ -400,5 +474,5 @@ namespace Super.Serialization.Writing.Instructions
 		}
 
 		public uint Get(string parameter) => (uint)parameter.Length * _factor;
-	}
+	}*/
 }

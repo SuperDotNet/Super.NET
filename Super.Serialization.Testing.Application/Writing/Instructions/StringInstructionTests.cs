@@ -54,7 +54,7 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 
 		public class Benchmarks : ComparisonBenchmark<string>
 		{
-			public Benchmarks() : base(Writer.Default, string.Join('\n', Enumerable.Repeat("Hello World!", 1000))) {}
+			public Benchmarks() : base(Writer.Default, string.Join('方', Enumerable.Repeat("Hello World!", 100))) {}
 		}
 	}
 }
