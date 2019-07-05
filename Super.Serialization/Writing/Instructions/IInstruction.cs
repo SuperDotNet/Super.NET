@@ -50,8 +50,6 @@ namespace Super.Serialization.Writing.Instructions
 		readonly IInstruction<T> _instruction;
 		readonly byte            _quote;
 
-		/*public QuotedInstruction(IInstruction<T> instruction) : this(instruction, DoubleQuote.Default) {}*/
-
 		public QuotedInstruction(IInstruction<T> instruction, byte quote)
 		{
 			_instruction = instruction;

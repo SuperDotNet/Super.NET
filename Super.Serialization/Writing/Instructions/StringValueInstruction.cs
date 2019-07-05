@@ -146,7 +146,7 @@ namespace Super.Serialization.Writing.Instructions
 		}
 	}*/
 
-	public interface ITextEncoder : ISelect<EscapeInput, uint> {}
+	public interface ITextEncoder : ISelect<EncoderInput, uint> {}
 
 	sealed class TextEncoder : ITextEncoder
 	{
@@ -159,7 +159,7 @@ namespace Super.Serialization.Writing.Instructions
 		public TextEncoder(Array<byte[]> tokens) => _tokens = tokens;
 
 		// ReSharper disable once ExcessiveIndentation
-		public uint Get(EscapeInput parameter)
+		public uint Get(EncoderInput parameter)
 		{
 			var source      = parameter.Source.Span;
 			var destination = parameter.Destination.Span;
@@ -209,26 +209,26 @@ namespace Super.Serialization.Writing.Instructions
 		}
 	}
 
-	sealed class AggressiveTextEncoder : ITextEncoder
+	sealed class VerboseTextEncoder : ITextEncoder
 	{
 		readonly static Range Low   = Ranges.Default.Low;
 		readonly static int   Start = Ranges.Default.Low.Start.Value;
 
-		public static AggressiveTextEncoder Default { get; } = new AggressiveTextEncoder();
+		public static VerboseTextEncoder Default { get; } = new VerboseTextEncoder();
 
-		AggressiveTextEncoder() : this(Maps.Default.Get(), HexFormat.Default) {}
+		VerboseTextEncoder() : this(Maps.Default.Get(), HexFormat.Default) {}
 
 		readonly Array<byte[]> _tokens;
 		readonly StandardFormat _format;
 
-		public AggressiveTextEncoder(Array<byte[]> tokens, StandardFormat format)
+		public VerboseTextEncoder(Array<byte[]> tokens, StandardFormat format)
 		{
 			_tokens = tokens;
 			_format = format;
 		}
 
 		// ReSharper disable once ExcessiveIndentation
-		public uint Get(EscapeInput parameter)
+		public uint Get(EncoderInput parameter)
 		{
 			var source      = parameter.Source.Span;
 			var destination = parameter.Destination.Span;
@@ -295,9 +295,9 @@ namespace Super.Serialization.Writing.Instructions
 		}
 	}
 
-	public readonly struct EscapeInput
+	public readonly struct EncoderInput
 	{
-		public EscapeInput(ReadOnlyMemory<char> source, Memory<byte> destination)
+		public EncoderInput(ReadOnlyMemory<char> source, Memory<byte> destination)
 		{
 			Source      = source;
 			Destination = destination;
@@ -359,7 +359,7 @@ namespace Super.Serialization.Writing.Instructions
 				if (character > byte.MaxValue || _allowed[character] == 0)
 				{
 					var count = Utf8.Get(instance.AsSpan(0, i), parameter.View);
-					var input = new EscapeInput(instance.AsMemory(i),
+					var input = new EncoderInput(instance.AsMemory(i),
 					                            parameter.Output.AsMemory((int)parameter.Index + count));
 					return (uint)count + _encoder.Get(input);
 				}

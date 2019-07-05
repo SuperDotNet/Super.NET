@@ -27,7 +27,7 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 		{
 			public static QuotedWriter Default { get; } = new QuotedWriter();
 
-			QuotedWriter() : base(new StringInstruction(AggressiveTextEncoder.Default).Quoted()) {}
+			QuotedWriter() : base(new StringInstruction(VerboseTextEncoder.Default).Quoted()) {}
 		}
 
 		public class Benchmarks : ComparisonBenchmark<string>
