@@ -12,7 +12,7 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 		[Fact]
 		void Verify()
 		{
-			string data = string.Join('-', Enumerable.Repeat("Hello World!", 1000));
+			var data = string.Join('-', Enumerable.Repeat("Hello World!", 1000));
 			Writer.Default.Get(data).Open().Should().Equal(JsonSerializer.ToUtf8Bytes(data));
 		}
 

@@ -29,6 +29,8 @@ namespace Super.Model.Sequences
 
 		public ref readonly T this[uint index] => ref _reference[index];
 
+		public ref readonly T this[int index] => ref _reference[index];
+
 		[Pure]
 		public T[] Copy() => Arrays<T>.Default.Get(_reference);
 
