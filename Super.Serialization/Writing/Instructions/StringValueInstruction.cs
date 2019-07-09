@@ -68,7 +68,63 @@ namespace Super.Serialization.Writing.Instructions
 		}
 	}
 
-	public interface ITextEncoder : ISelect<EncoderInput, uint> {}
+	/*public interface IDataEncoder : ISelect<DataEncoderInput, uint> {}
+
+	sealed class DataEncoder : IDataEncoder
+	{
+		public static DataEncoder Default { get; } = new DataEncoder();
+
+		DataEncoder() : this(Maps.Default.Get()) {}
+
+		readonly Array<byte[]> _tokens;
+
+		public DataEncoder(Array<byte[]> tokens) => _tokens = tokens;
+
+		public uint Get(DataEncoderInput parameter)
+		{
+			var source      = parameter.Source.Span;
+			var destination = parameter.Destination.Span;
+			var result      = 0;
+
+			var length = source.Length;
+			for (var i = 0; i < length; i++)
+			{
+				var element = source[i];
+				if (System.Text.Rune.TryCreate(element, out var single))
+				{
+					var tokens = _tokens[single.Value];
+					if (tokens != null)
+					{
+						for (var j = 0; j < tokens.Length; j++)
+						{
+							destination[result + j] = tokens[j];
+						}
+
+						result += tokens.Length;
+						continue;
+					}
+
+					if (single.Value < 128)
+					{
+						destination[result++] = element;
+					}
+					else
+					{
+						result += single.EncodeToUtf8(destination.Slice(result));
+					}
+				}
+				else
+				{
+					throw new InvalidOperationException("Invalid UTF-8 encountered.");
+				}
+
+			}
+
+			return (uint)result;
+		}
+	}*/
+
+	public interface ITextEncoder : ISelect<TextEncoderInput, uint> {}
 
 	sealed class TextEncoder : ITextEncoder
 	{
@@ -81,7 +137,7 @@ namespace Super.Serialization.Writing.Instructions
 		public TextEncoder(Array<byte[]> tokens) => _tokens = tokens;
 
 		// ReSharper disable once ExcessiveIndentation
-		public uint Get(EncoderInput parameter)
+		public uint Get(TextEncoderInput parameter)
 		{
 			var source      = parameter.Source.Span;
 			var destination = parameter.Destination.Span;
@@ -150,7 +206,7 @@ namespace Super.Serialization.Writing.Instructions
 		}
 
 		// ReSharper disable once ExcessiveIndentation
-		public uint Get(EncoderInput parameter)
+		public uint Get(TextEncoderInput parameter)
 		{
 			var source      = parameter.Source.Span;
 			var destination = parameter.Destination.Span;
@@ -217,9 +273,22 @@ namespace Super.Serialization.Writing.Instructions
 		}
 	}
 
-	public readonly struct EncoderInput
+	public readonly struct DataEncoderInput
 	{
-		public EncoderInput(ReadOnlyMemory<char> source, Memory<byte> destination)
+		public DataEncoderInput(ReadOnlyMemory<byte> source, Memory<byte> destination)
+		{
+			Source      = source;
+			Destination = destination;
+		}
+
+		public ReadOnlyMemory<byte> Source { get; }
+
+		public Memory<byte> Destination { get; }
+	}
+
+	public readonly struct TextEncoderInput
+	{
+		public TextEncoderInput(ReadOnlyMemory<char> source, Memory<byte> destination)
 		{
 			Source      = source;
 			Destination = destination;
@@ -235,21 +304,21 @@ namespace Super.Serialization.Writing.Instructions
 		public static Allowed Default { get; } = new Allowed();
 
 		Allowed() : base(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		                 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0,
-		                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1,
-		                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1,
-		                 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-		                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) {}
+						 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+						 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0,
+						 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1,
+						 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+						 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1,
+						 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+						 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+						 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+						 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+						 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+						 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+						 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+						 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+						 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+						 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) {}
 	}
 
 	sealed class StringInstruction : IInstruction<string>
@@ -281,8 +350,8 @@ namespace Super.Serialization.Writing.Instructions
 				if (character > byte.MaxValue || _allowed[character] == 0)
 				{
 					var count = Utf8.Get(instance.AsSpan(0, i), parameter.View);
-					var input = new EncoderInput(instance.AsMemory(i),
-					                             parameter.Output.AsMemory((int)parameter.Index + count));
+					var input = new TextEncoderInput(instance.AsMemory(i),
+													 parameter.Output.AsMemory((int)parameter.Index + count));
 					return (uint)count + _encoder.Get(input);
 				}
 			}
@@ -297,36 +366,15 @@ namespace Super.Serialization.Writing.Instructions
 	{
 		public static Base64Instruction Default { get; } = new Base64Instruction();
 
-		Base64Instruction() : this(TextEncoder.Default, Allowed.Default) {}
-
-		readonly ITextEncoder _encoder;
-		readonly Array<byte>  _allowed;
-
-		public Base64Instruction(ITextEncoder encoder) : this(encoder, Allowed.Default) {}
-
-		public Base64Instruction(ITextEncoder encoder, Array<byte> allowed)
-		{
-			_encoder = encoder;
-			_allowed = allowed;
-		}
+		Base64Instruction() {}
 
 		public uint Get(Composition<Array<byte>> parameter)
 		{
-			var instance = parameter.Instance.Open();
-			var length   = instance.Length;
-			/*for (var i = 0; i < length; i++)
+			var status = Base64.EncodeToUtf8(parameter.Instance.Open(), parameter.View, out _, out var result);
+			if (status != OperationStatus.Done)
 			{
-				var character = instance[i];
-				if (_allowed[character] == 0)
-				{
-					var count = Utf8.Get(instance.AsSpan(0, i), parameter.View);
-					var input = new EncoderInput(instance.AsMemory(i),
-					                             parameter.Output.AsMemory((int)parameter.Index + count));
-					return (uint)count + _encoder.Get(input);
-				}
-			}*/
-
-			Base64.EncodeToUtf8(instance, parameter.View, out _, out var result);
+				throw new InvalidOperationException($"[{status}] Could not successfully convert value to Utf-8 data: {parameter.Instance}");
+			}
 
 			return (uint)result;
 		}

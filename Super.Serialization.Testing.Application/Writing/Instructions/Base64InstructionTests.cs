@@ -8,10 +8,12 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 {
 	public class Base64InstructionTests
 	{
-		[Fact]
-		void Verify()
+		[Theory]
+		[InlineData("Hello World!")]
+		[InlineData("Hello\nWorld!")]
+		void Verify(string element)
 		{
-			var data = Encoder.Default.Get("Hello World!");
+			var data = Encoder.Default.Get(element);
 			Writer.Default.Get(data).Open().Should().Equal(JsonSerializer.ToUtf8Bytes(data));
 		}
 
