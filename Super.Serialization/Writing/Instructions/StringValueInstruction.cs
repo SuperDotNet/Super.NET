@@ -273,19 +273,6 @@ namespace Super.Serialization.Writing.Instructions
 		}
 	}
 
-	public readonly struct DataEncoderInput
-	{
-		public DataEncoderInput(ReadOnlyMemory<byte> source, Memory<byte> destination)
-		{
-			Source      = source;
-			Destination = destination;
-		}
-
-		public ReadOnlyMemory<byte> Source { get; }
-
-		public Memory<byte> Destination { get; }
-	}
-
 	public readonly struct TextEncoderInput
 	{
 		public TextEncoderInput(ReadOnlyMemory<char> source, Memory<byte> destination)
@@ -380,5 +367,73 @@ namespace Super.Serialization.Writing.Instructions
 		}
 
 		public uint Get(Array<byte> parameter) => (uint)Base64.GetMaxEncodedToUtf8Length((int)parameter.Length);
+	}
+
+	sealed class ArrayStart : Token
+	{
+		public static ArrayStart Default { get; } = new ArrayStart();
+
+		ArrayStart() : base('[') {}
+	}
+
+	sealed class ArrayFinish : Token
+	{
+		public static ArrayFinish Default { get; } = new ArrayFinish();
+
+		ArrayFinish() : base(']') {}
+	}
+
+	sealed class ArrayDelimiter : Token
+	{
+		public static ArrayDelimiter Default { get; } = new ArrayDelimiter();
+
+		ArrayDelimiter() : base(',') {}
+	}
+
+	sealed class ArrayInstruction<T> : IInstruction<Array<T>>
+	{
+		readonly IInstruction<T> _element;
+		readonly byte _start, _delimiter, _finish;
+
+		public ArrayInstruction(IInstruction<T> element)
+			: this(element, ArrayStart.Default, ArrayFinish.Default, ArrayDelimiter.Default) {}
+
+		// ReSharper disable once TooManyDependencies
+		public ArrayInstruction(IInstruction<T> element, byte start, byte finish, byte delimiter)
+		{
+			_element = element;
+			_start = start;
+			_finish = finish;
+			_delimiter = delimiter;
+		}
+
+		public uint Get(Composition<Array<T>> parameter)
+		{
+			var length = parameter.Instance.Length;
+			var last = length - 1;
+			var result = 0u;
+			parameter.Output[parameter.Index + result++] = _start;
+			for (var i = 0; i < length; i++)
+			{
+				result += _element.Get(new Composition<T>(parameter.Output, parameter.Instance[i], parameter.Index + result));
+				if (i != last)
+				{
+					parameter.Output[parameter.Index + result++] = _delimiter;
+				}
+			}
+			parameter.Output[parameter.Index + result++] = _finish;
+			return result;
+		}
+
+		public uint Get(Array<T> parameter)
+		{
+			var result = 2u;
+			var length = parameter.Length;
+			for (var i = 0; i < length; i++)
+			{
+				result += _element.Get(parameter[i]) + 1u;
+			}
+			return result;
+		}
 	}
 }

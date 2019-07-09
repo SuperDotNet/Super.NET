@@ -221,5 +221,7 @@ namespace Super.Serialization
 		public uint Index { get; }
 
 		public Composition<T> Replace(T instance) => new Composition<T>(Output, instance, Index);
+
+		/*public Composition<TOther> Replace<TOther>(TOther instance) => new Composition<TOther>(Output, instance, Index);*/
 	}
 }
