@@ -68,62 +68,6 @@ namespace Super.Serialization.Writing.Instructions
 		}
 	}
 
-	/*public interface IDataEncoder : ISelect<DataEncoderInput, uint> {}
-
-	sealed class DataEncoder : IDataEncoder
-	{
-		public static DataEncoder Default { get; } = new DataEncoder();
-
-		DataEncoder() : this(Maps.Default.Get()) {}
-
-		readonly Array<byte[]> _tokens;
-
-		public DataEncoder(Array<byte[]> tokens) => _tokens = tokens;
-
-		public uint Get(DataEncoderInput parameter)
-		{
-			var source      = parameter.Source.Span;
-			var destination = parameter.Destination.Span;
-			var result      = 0;
-
-			var length = source.Length;
-			for (var i = 0; i < length; i++)
-			{
-				var element = source[i];
-				if (System.Text.Rune.TryCreate(element, out var single))
-				{
-					var tokens = _tokens[single.Value];
-					if (tokens != null)
-					{
-						for (var j = 0; j < tokens.Length; j++)
-						{
-							destination[result + j] = tokens[j];
-						}
-
-						result += tokens.Length;
-						continue;
-					}
-
-					if (single.Value < 128)
-					{
-						destination[result++] = element;
-					}
-					else
-					{
-						result += single.EncodeToUtf8(destination.Slice(result));
-					}
-				}
-				else
-				{
-					throw new InvalidOperationException("Invalid UTF-8 encountered.");
-				}
-
-			}
-
-			return (uint)result;
-		}
-	}*/
-
 	public interface ITextEncoder : ISelect<TextEncoderInput, uint> {}
 
 	sealed class TextEncoder : ITextEncoder
@@ -291,21 +235,21 @@ namespace Super.Serialization.Writing.Instructions
 		public static Allowed Default { get; } = new Allowed();
 
 		Allowed() : base(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-						 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-						 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0,
-						 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1,
-						 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-						 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1,
-						 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-						 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-						 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-						 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-						 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-						 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-						 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-						 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-						 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-						 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) {}
+		                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		                 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0,
+		                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1,
+		                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1,
+		                 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+		                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) {}
 	}
 
 	sealed class StringInstruction : IInstruction<string>
@@ -338,7 +282,7 @@ namespace Super.Serialization.Writing.Instructions
 				{
 					var count = Utf8.Get(instance.AsSpan(0, i), parameter.View);
 					var input = new TextEncoderInput(instance.AsMemory(i),
-													 parameter.Output.AsMemory((int)parameter.Index + count));
+					                                 parameter.Output.AsMemory((int)parameter.Index + count));
 					return (uint)count + _encoder.Get(input);
 				}
 			}
@@ -360,7 +304,8 @@ namespace Super.Serialization.Writing.Instructions
 			var status = Base64.EncodeToUtf8(parameter.Instance.Open(), parameter.View, out _, out var result);
 			if (status != OperationStatus.Done)
 			{
-				throw new InvalidOperationException($"[{status}] Could not successfully convert value to Utf-8 data: {parameter.Instance}");
+				throw new
+					InvalidOperationException($"[{status}] Could not successfully convert value to Utf-8 data: {parameter.Instance}");
 			}
 
 			return (uint)result;
@@ -390,10 +335,87 @@ namespace Super.Serialization.Writing.Instructions
 		ArrayDelimiter() : base(',') {}
 	}
 
+	public interface IElementInstructions<T> : ISelect<uint, IInstruction<Array<T>>> {}
+
+	class ElementInstructions<T> : IElementInstructions<T>
+	{
+		readonly Array<IInstruction<Array<T>>> _instructions;
+
+		public ElementInstructions(Array<IInstruction<Array<T>>> instructions) => _instructions = instructions;
+
+		public IInstruction<Array<T>> Get(uint parameter) => _instructions[parameter];
+	}
+
+	sealed class ArrayElementInstruction<T> : IInstruction<Array<T>>
+	{
+		readonly IInstruction<T> _element;
+		readonly uint _index;
+
+		public ArrayElementInstruction(IInstruction<T> element, uint index)
+		{
+			_element = element;
+			_index = index;
+		}
+
+		public uint Get(Composition<Array<T>> parameter)
+			=> _element.Get(new Composition<T>(parameter.Output, parameter.Instance[_index], parameter.Index));
+
+		public uint Get(Array<T> parameter) => _element.Get(parameter[_index]);
+	}
+
+	sealed class ArrayInstructions<T> : IInstructions<Array<T>>
+	{
+		readonly static IInstruction<Array<T>> Start     = ArrayStart.Default.For<Array<T>>(),
+		                                       Delimiter = ArrayDelimiter.Default.For<Array<T>>(),
+		                                       Finish    = ArrayFinish.Default.For<Array<T>>();
+
+		readonly IStorage<IInstruction<Array<T>>> _storage;
+		readonly IInstruction<Array<T>>           _start, _delimiter, _finish;
+		readonly IElementInstructions<T>          _elements;
+
+		public ArrayInstructions(IElementInstructions<T> elements)
+			: this(Leases<IInstruction<Array<T>>>.Default, Start, elements, Delimiter, Finish) {}
+
+		// ReSharper disable once TooManyDependencies
+		public ArrayInstructions(IStorage<IInstruction<Array<T>>> storage,
+		                         IInstruction<Array<T>> start,
+		                         IElementInstructions<T> elements,
+		                         IInstruction<Array<T>> delimiter,
+		                         IInstruction<Array<T>> finish)
+		{
+			_storage   = storage;
+			_start     = start;
+			_elements  = elements;
+			_delimiter = delimiter;
+			_finish    = finish;
+		}
+
+		public Session<IInstruction<Array<T>>> Get(Array<T> parameter)
+		{
+			var result = _storage.Session(parameter.Length * 2 + 1);
+			var index  = 0u;
+			var length = parameter.Length;
+			var last   = length - 1;
+			result.Store[index++] = _start;
+			for (var i = 0u; i < length; i++)
+			{
+				result.Store[index++] = _elements.Get(i);
+				if (i != last)
+				{
+					result.Store[index++] = _delimiter;
+				}
+			}
+
+			result.Store[index] = _finish;
+
+			return result;
+		}
+	}
+
 	sealed class ArrayInstruction<T> : IInstruction<Array<T>>
 	{
 		readonly IInstruction<T> _element;
-		readonly byte _start, _delimiter, _finish;
+		readonly byte            _start, _delimiter, _finish;
 
 		public ArrayInstruction(IInstruction<T> element)
 			: this(element, ArrayStart.Default, ArrayFinish.Default, ArrayDelimiter.Default) {}
@@ -401,26 +423,28 @@ namespace Super.Serialization.Writing.Instructions
 		// ReSharper disable once TooManyDependencies
 		public ArrayInstruction(IInstruction<T> element, byte start, byte finish, byte delimiter)
 		{
-			_element = element;
-			_start = start;
-			_finish = finish;
+			_element   = element;
+			_start     = start;
+			_finish    = finish;
 			_delimiter = delimiter;
 		}
 
 		public uint Get(Composition<Array<T>> parameter)
 		{
 			var length = parameter.Instance.Length;
-			var last = length - 1;
+			var last   = length - 1;
 			var result = 0u;
 			parameter.Output[parameter.Index + result++] = _start;
 			for (var i = 0; i < length; i++)
 			{
-				result += _element.Get(new Composition<T>(parameter.Output, parameter.Instance[i], parameter.Index + result));
+				result += _element.Get(new Composition<T>(parameter.Output, parameter.Instance[i],
+				                                          parameter.Index + result));
 				if (i != last)
 				{
 					parameter.Output[parameter.Index + result++] = _delimiter;
 				}
 			}
+
 			parameter.Output[parameter.Index + result++] = _finish;
 			return result;
 		}
@@ -433,6 +457,7 @@ namespace Super.Serialization.Writing.Instructions
 			{
 				result += _element.Get(parameter[i]) + 1u;
 			}
+
 			return result;
 		}
 	}

@@ -16,7 +16,7 @@ namespace Super.Serialization.Writing.Instructions
 
 		public ContentInstruction(string content) : this(Encoder.Default.Get(content)) {}
 
-		public ContentInstruction(byte[] content) : this(content, (uint)content.Length) {}
+		public ContentInstruction(params byte[] content) : this(content, (uint)content.Length) {}
 
 		public ContentInstruction(byte[] content, uint length) : base(length)
 		{

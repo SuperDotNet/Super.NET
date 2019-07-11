@@ -16,7 +16,8 @@ namespace Super.Serialization
 			=> point >= @this.Start.Value && point <= @this.End.Value;
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool Contains(this Range @this, int point) => point > @this.Start.Value && point < @this.End.Value;
+		public static bool Contains(this Range @this, int point)
+			=> point > @this.Start.Value && point < @this.End.Value;
 
 		public static Range Until(this Range @this, Range other) => new Range(@this.End, other.Start);
 	}
@@ -32,8 +33,8 @@ namespace Super.Serialization
 		public Ranges(Range high, Range low, Range all)
 		{
 			High = high;
-			Low = low;
-			All = all;
+			Low  = low;
+			All  = all;
 		}
 
 		public Range High { get; }
@@ -114,6 +115,50 @@ namespace Super.Serialization
 		public Session<byte> Get() => Get(_size());
 	}
 
+	public class RuntimeWriter<T> : IWriter<T>
+	{
+		readonly IInstructions<T> _instructions;
+		readonly ISessions        _sessions;
+
+		public RuntimeWriter(IInstructions<T> instructions) : this(instructions, Sessions.Default) {}
+
+		public RuntimeWriter(IInstructions<T> instructions, ISessions sessions)
+		{
+			_instructions = instructions;
+			_sessions     = sessions;
+		}
+
+		public Array<byte> Get(T parameter)
+		{
+			using (var session = _sessions.Get())
+			{
+				var composition = new Composition<T>(session.Store, parameter);
+
+				using (var instructions = _instructions.Get(parameter))
+				{
+					for (var i = 0u; i < instructions.Size; i++)
+					{
+						var instruction = instructions.Store[i];
+						var size        = instruction.Get(parameter);
+						composition = composition.Index + size >= composition.Output.Length
+							              ? new Composition<T>(composition.Output.Copy(in size), parameter,
+							                                   composition.Index)
+							              : composition;
+
+						composition = new Composition<T>(composition.Output, parameter,
+						                                 composition.Index + instruction.Get(composition));
+					}
+
+					var result = composition.Output.CopyInto(new byte[composition.Index], 0, composition.Index);
+					composition.Output.Clear(composition.Index);
+					return result;
+				}
+			}
+		}
+	}
+
+	public interface IInstructions<T> : ISelect<T, Session<IInstruction<T>>> {}
+
 	public class Writer<T> : IWriter<T>
 	{
 		readonly Array<IInstruction<T>> _instructions;
@@ -140,12 +185,12 @@ namespace Super.Serialization
 					var instruction = _instructions[i];
 					var size        = instruction.Get(parameter);
 					composition = composition.Index + size >= composition.Output.Length
-									  ? new Composition<T>(composition.Output.Copy(in size), parameter,
-														   composition.Index)
-									  : composition;
+						              ? new Composition<T>(composition.Output.Copy(in size), parameter,
+						                                   composition.Index)
+						              : composition;
 
 					composition = new Composition<T>(composition.Output, parameter,
-													 composition.Index + instruction.Get(composition));
+					                                 composition.Index + instruction.Get(composition));
 				}
 
 				var result = composition.Output.CopyInto(new byte[composition.Index], 0, composition.Index);
@@ -168,7 +213,7 @@ namespace Super.Serialization
 			: this(instruction, pool.Rent, pool.Return) {}
 
 		public SingleInstructionWriter(IInstruction<T> instruction, Func<int, byte[]> lease,
-									   Action<byte[], bool> @return)
+		                               Action<byte[], bool> @return)
 		{
 			_instruction = instruction;
 			_lease       = lease;

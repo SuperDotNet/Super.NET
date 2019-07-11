@@ -16,13 +16,10 @@ namespace Super.Serialization
 
 		/*public static ICompose<T> Compose<T>(this IInstruction<T> @this) => new Compose<T>(@this);*/
 
-		public static IInstruction<T> For<T>(this IInstruction @this) => new Adapter<T>(@this);
-
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Input<T> For<T>(this Stream @this, in T instance) => new Input<T>(@this, instance);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-
 		public static byte[] Copy(this byte[] @this, in uint size)
 		{
 			var result = Rent((int)checked(@this.Length + Math.Max(size, @this.Length)));
@@ -35,6 +32,11 @@ namespace Super.Serialization
 
 			return result;
 		}
+
+
+		public static IInstruction<T> For<T>(this IToken @this) => new ContentInstruction(@this.Get()).For<T>();
+
+		public static IInstruction<T> For<T>(this IInstruction @this) => new Adapter<T>(@this);
 
 		public static IInstruction<T> Quoted<T>(this IInstruction<T> @this) => @this.Quoted(DoubleQuote.Default);
 
