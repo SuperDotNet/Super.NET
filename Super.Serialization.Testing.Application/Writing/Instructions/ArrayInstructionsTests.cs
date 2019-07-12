@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Super.Serialization.Testing.Application.Writing.Instructions
 {
-	public class ArrayInstructionsTests
+	public sealed class ArrayInstructionsTests
 	{
 		[Fact]
 		void Verify()
