@@ -5,8 +5,6 @@ using System;
 
 namespace Super.Diagnostics
 {
-	// ReSharper disable NotAccessedField.Local
-
 	public class LogRetryException : ICommand<(Exception, TimeSpan)>
 	{
 		readonly ILogger _logger;
@@ -15,7 +13,7 @@ namespace Super.Diagnostics
 
 		public void Execute((Exception, TimeSpan) parameter)
 		{
-			throw new NotImplementedException();
+			_logger.Error(parameter.Item1, "");
 		}
 	}
 
@@ -27,7 +25,7 @@ namespace Super.Diagnostics
 
 		public void Execute((DelegateResult<T>, TimeSpan, Context) parameter)
 		{
-			throw new NotImplementedException();
+			_logger.Error(parameter.Item1.Exception, "");
 		}
 	}
 }
