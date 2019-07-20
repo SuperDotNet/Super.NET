@@ -4,14 +4,13 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Super.Platform.NetCore\Super.Platform.NetCore.csproj" />
-    <ProjectReference Include="..\Super\Super.csproj" />
-  </ItemGroup>
   <Target Name="WorkaroundNetStandard" AfterTargets="ResolvePackageAssets">
     <ItemGroup>
       <TransitiveFrameworkReference Remove="NETStandard.Library" />
     </ItemGroup>
   </Target>
+  <ItemGroup>
+    <ProjectReference Include="..\Super.Composition\Super.Composition.csproj" />
+    <ProjectReference Include="..\Super.Platform.NetCore\Super.Platform.NetCore.csproj" />
+  </ItemGroup>
 </Project>

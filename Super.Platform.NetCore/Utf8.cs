@@ -1,12 +1,11 @@
-﻿using Super.Text;
-using System;
+﻿using System;
 using System.Buffers;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Super.Platform
 {
-	public sealed class Utf8 : IUtf8
+	public sealed class Utf8
 	{
 		const char HighSurrogateStart = '\ud800',
 		           HighSurrogateEnd   = '\udbff',
@@ -16,11 +15,8 @@ namespace Super.Platform
 
 		Utf8() {}
 
-		public uint Get(Utf8Input parameter)
-			=> (uint)Get(parameter.Characters.Span, parameter.Destination.AsSpan().Slice((int)parameter.Start));
-
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static int Get(ReadOnlySpan<char> source, Span<byte> destination)
+		public int Get(ReadOnlySpan<char> source, Span<byte> destination)
 		{
 			var status = Get(source, destination, out var result);
 			return status == OperationStatus.Done
@@ -30,7 +26,7 @@ namespace Super.Platform
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static OperationStatus Get(ReadOnlySpan<char> source, Span<byte> destination, out int written)
+		public OperationStatus Get(ReadOnlySpan<char> source, Span<byte> destination, out int written)
 			=> Get(MemoryMarshal.AsBytes(source), destination, out written);
 
 		// ReSharper disable once CyclomaticComplexity

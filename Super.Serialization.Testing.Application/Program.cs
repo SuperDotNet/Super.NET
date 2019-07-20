@@ -7,7 +7,8 @@ namespace Super.Serialization.Testing.Application
 	{
 		static void Main(params string[] arguments)
 		{
-			Configuration.Default.Get(arguments).To(Run.A<ArrayInstructionsTests.Benchmarks>);
+			Super.Application.Hosting.BenchmarkDotNet.Configuration.Default.Get(arguments)
+			     .To(Run.A<ArrayInstructionsTests.Benchmarks>);
 		}
 	}
 }

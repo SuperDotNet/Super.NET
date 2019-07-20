@@ -1,11 +1,10 @@
 ﻿using Super.Model.Selection;
-using System;
 
 namespace Super.Text
 {
 	public interface IFormatter<in T> : ISelect<T, string> {}
 
-	public interface IUtf8 : ISelect<Utf8Input, uint> {}
+	/*public interface IUtf8 : ISelect<Utf8Input, uint> {}
 
 	public readonly struct Utf8Input
 	{
@@ -21,5 +20,5 @@ namespace Super.Text
 		public byte[] Destination { get; }
 
 		public uint Start { get; }
-	}
+	}*/
 }

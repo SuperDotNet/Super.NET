@@ -280,14 +280,14 @@ namespace Super.Serialization.Writing.Instructions
 				var character = instance[i];
 				if (character > byte.MaxValue || _allowed[character] == 0)
 				{
-					var count = Utf8.Get(instance.AsSpan(0, i), parameter.View);
+					var count = Utf8.Default.Get(instance.AsSpan(0, i), parameter.View);
 					var input = new TextEncoderInput(instance.AsMemory(i),
 					                                 parameter.Output.AsMemory((int)parameter.Index + count));
 					return (uint)count + _encoder.Get(input);
 				}
 			}
 
-			return (uint)Utf8.Get(instance, parameter.View);
+			return (uint)Utf8.Default.Get(instance, parameter.View);
 		}
 
 		public uint Get(string parameter) => (uint)parameter.Length * _factor;
