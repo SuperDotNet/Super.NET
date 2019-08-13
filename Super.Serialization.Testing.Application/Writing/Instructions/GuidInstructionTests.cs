@@ -1,12 +1,12 @@
 ﻿using FluentAssertions;
 using Super.Serialization.Writing.Instructions;
 using System;
-using System.Text.Json.Serialization;
+using System.Text.Json;
 using Xunit;
 
 namespace Super.Serialization.Testing.Application.Writing.Instructions
 {
-    public sealed class GuidInstructionTests
+	public sealed class GuidInstructionTests
 	{
 		[Fact]
 		void Verify()
@@ -15,7 +15,7 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 			Writer.Default.Get(value)
 			      .Open()
 			      .Should()
-			      .Equal(JsonSerializer.ToUtf8Bytes(value));
+			      .Equal(JsonSerializer.SerializeToUtf8Bytes(value));
 		}
 
 		sealed class Writer : SingleInstructionWriter<Guid>

@@ -2,7 +2,7 @@
 using FluentAssertions;
 using Super.Serialization.Writing.Instructions;
 using System.Linq;
-using System.Text.Json.Serialization;
+using System.Text.Json;
 using Xunit;
 
 namespace Super.Serialization.Testing.Application.Writing.Instructions
@@ -16,7 +16,7 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 			Writer.Default.Get(content)
 			      .Open()
 			      .Should()
-			      .Equal(JsonSerializer.ToUtf8Bytes(content));
+			      .Equal(JsonSerializer.SerializeToUtf8Bytes(content));
 		}
 
 		[Fact]
@@ -26,7 +26,7 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 			Writer.Default.Get(content)
 			      .Open()
 			      .Should()
-			      .Equal(JsonSerializer.ToUtf8Bytes(content));
+			      .Equal(JsonSerializer.SerializeToUtf8Bytes(content));
 		}
 
 		sealed class Writer : SingleInstructionWriter<string>
@@ -45,7 +45,7 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 			public Benchmarks(string instance) : base(Writer.Default, instance) => _instance = instance;
 
 			[Benchmark]
-			public byte[] Native() => JsonSerializer.ToUtf8Bytes(_instance);
+			public byte[] Native() => JsonSerializer.SerializeToUtf8Bytes(_instance);
 		}
 	}
 }

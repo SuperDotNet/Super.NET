@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Super.Serialization.Writing.Instructions;
-using System.Text.Json.Serialization;
+using System.Text.Json;
 using Xunit;
 
 namespace Super.Serialization.Testing.Application.Writing.Instructions
@@ -13,7 +13,7 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 			Writer.Default.Get(true)
 			      .Open()
 			      .Should()
-			      .Equal(JsonSerializer.ToUtf8Bytes(true));
+			      .Equal(JsonSerializer.SerializeToUtf8Bytes(true));
 		}
 
 		[Fact]
@@ -22,7 +22,7 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 			Writer.Default.Get(false)
 			      .Open()
 			      .Should()
-			      .Equal(JsonSerializer.ToUtf8Bytes(false));
+			      .Equal(JsonSerializer.SerializeToUtf8Bytes(false));
 		}
 
 		sealed class Writer : SingleInstructionWriter<bool>

@@ -2,13 +2,13 @@
 using FluentAssertions;
 using Super.Serialization.Writing.Instructions;
 using System.IO;
-using System.Text.Json.Serialization;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace Super.Serialization.Testing.Application
 {
-    public sealed class StagedWriterTests
+	public sealed class StagedWriterTests
 	{
 		[Fact]
 		async Task Verify()
@@ -16,7 +16,7 @@ namespace Super.Serialization.Testing.Application
 			using (var stream = new MemoryStream())
 			{
 				await new SingleStageWriter<uint>(IntegerInstruction.Default).Get(stream.For(12345u));
-				stream.ToArray().Should().Equal(JsonSerializer.ToUtf8Bytes(12345u));
+				stream.ToArray().Should().Equal(JsonSerializer.SerializeToUtf8Bytes(12345u));
 			}
 		}
 
@@ -26,8 +26,8 @@ namespace Super.Serialization.Testing.Application
 			const uint parameter = 12345u;
 			using (var stream = new MemoryStream())
 			{
-				await JsonSerializer.WriteAsync(parameter, stream);
-				stream.ToArray().Should().Equal(JsonSerializer.ToUtf8Bytes(parameter));
+				await JsonSerializer.SerializeAsync(stream, parameter);
+				stream.ToArray().Should().Equal(JsonSerializer.SerializeToUtf8Bytes(parameter));
 			}
 		}
 
@@ -49,7 +49,7 @@ namespace Super.Serialization.Testing.Application
 			{
 				using (var stream = new MemoryStream())
 				{
-					await JsonSerializer.WriteAsync(_data, stream);
+					await JsonSerializer.SerializeAsync(stream, _data);
 					return stream.ToArray();
 				}
 			}

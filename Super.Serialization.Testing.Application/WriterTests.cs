@@ -3,12 +3,12 @@ using FluentAssertions;
 using Super.Model.Sequences;
 using Super.Serialization.Writing.Instructions;
 using System.Text;
-using System.Text.Json.Serialization;
+using System.Text.Json;
 using Xunit;
 
 namespace Super.Serialization.Testing.Application
 {
-    public class WriterTests
+	public class WriterTests
 	{
 		[Fact]
 		public void Simple()
@@ -16,7 +16,7 @@ namespace Super.Serialization.Testing.Application
 			const uint parameter = 12345u;
 			Encoding.UTF8.GetString(Writer.Default.Get(parameter))
 			        .Should()
-			        .Be(JsonSerializer.ToString(parameter));
+			        .Be(JsonSerializer.Serialize(parameter));
 		}
 
 		sealed class Writer : Writer<uint>
@@ -40,7 +40,7 @@ namespace Super.Serialization.Testing.Application
 			}
 
 			[Benchmark]
-			public byte[] Native() => JsonSerializer.ToUtf8Bytes(_data);
+			public byte[] Native() => JsonSerializer.SerializeToUtf8Bytes(_data);
 
 			[Benchmark(Baseline = true)]
 			public Array<byte> Array() => _writer.Get(_data);

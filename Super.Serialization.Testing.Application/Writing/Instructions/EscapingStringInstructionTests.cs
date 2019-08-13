@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Super.Serialization.Writing.Instructions;
-using System.Text.Json.Serialization;
+using System.Text.Json;
 using Xunit;
 
 namespace Super.Serialization.Testing.Application.Writing.Instructions
@@ -11,7 +11,7 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 		void Verify()
 		{
 			const string data = "Hello World!";
-			QuotedWriter.Default.Get(data).Open().Should().Equal(JsonSerializer.ToUtf8Bytes(data));
+			QuotedWriter.Default.Get(data).Open().Should().Equal(JsonSerializer.SerializeToUtf8Bytes(data));
 		}
 
 		[Fact]
@@ -19,7 +19,7 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 		{
 			var data = $"Hello Unicode: {(char)0xD800}{(char)0xDC00}";
 
-			QuotedWriter.Default.Get(data).Open().Should().Equal(JsonSerializer.ToUtf8Bytes(data));
+			QuotedWriter.Default.Get(data).Open().Should().Equal(JsonSerializer.SerializeToUtf8Bytes(data));
 
 		}
 

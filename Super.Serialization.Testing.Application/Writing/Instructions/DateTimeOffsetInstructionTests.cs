@@ -1,12 +1,12 @@
 ﻿using FluentAssertions;
 using Super.Serialization.Writing.Instructions;
 using System;
-using System.Text.Json.Serialization;
+using System.Text.Json;
 using Xunit;
 
 namespace Super.Serialization.Testing.Application.Writing.Instructions
 {
-    public sealed class DateTimeOffsetInstructionTests
+	public sealed class DateTimeOffsetInstructionTests
 	{
 		[Fact]
 		void Verify()
@@ -16,7 +16,7 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 			Writer.Default.Get(time)
 			      .Open()
 			      .Should()
-			      .Equal(JsonSerializer.ToUtf8Bytes(time));
+			      .Equal(JsonSerializer.SerializeToUtf8Bytes(time));
 		}
 
 		sealed class Writer : SingleInstructionWriter<DateTimeOffset>

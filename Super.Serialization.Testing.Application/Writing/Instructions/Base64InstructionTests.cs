@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Super.Model.Sequences;
 using Super.Serialization.Writing.Instructions;
-using System.Text.Json.Serialization;
+using System.Text.Json;
 using Xunit;
 
 namespace Super.Serialization.Testing.Application.Writing.Instructions
@@ -14,7 +14,7 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 		void Verify(string element)
 		{
 			var data = Encoder.Default.Get(element);
-			Writer.Default.Get(data).Open().Should().Equal(JsonSerializer.ToUtf8Bytes(data));
+			Writer.Default.Get(data).Open().Should().Equal(JsonSerializer.SerializeToUtf8Bytes(data));
 		}
 
 		sealed class Writer : SingleInstructionWriter<Array<byte>>, IWriter<byte[]>

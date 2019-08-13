@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
 using Super.Serialization.Writing.Instructions;
-using System.Text.Json.Serialization;
+using System.Text.Json;
 using Xunit;
 
 namespace Super.Serialization.Testing.Application.Writing.Instructions
 {
-    public sealed class ShortInstructionTests
+	public sealed class ShortInstructionTests
 	{
 		[Fact]
 		void Verify()
@@ -14,7 +14,7 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 			Writer.Default.Get(number)
 			      .Open()
 			      .Should()
-			      .Equal(JsonSerializer.ToUtf8Bytes(number));
+			      .Equal(JsonSerializer.SerializeToUtf8Bytes(number));
 		}
 
 		[Fact]
@@ -24,7 +24,7 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 			new SingleInstructionWriter<short>(FullShortInstruction.Default).Get(number)
 			                                                                .Open()
 			                                                                .Should()
-			                                                                .Equal(JsonSerializer.ToUtf8Bytes(number));
+			                                                                .Equal(JsonSerializer.SerializeToUtf8Bytes(number));
 		}
 
 		sealed class Writer : SingleInstructionWriter<ushort>

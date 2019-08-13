@@ -2,7 +2,7 @@
 using Super.Model.Sequences;
 using Super.Serialization.Writing.Instructions;
 using System.Linq;
-using System.Text.Json.Serialization;
+using System.Text.Json;
 using Xunit;
 
 namespace Super.Serialization.Testing.Application.Writing.Instructions
@@ -14,7 +14,7 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 		{
 			var instances = new[] {"Hello", "World!"};
 
-			Writer.Default.Get(instances).Open().Should().Equal(JsonSerializer.ToUtf8Bytes(instances));
+			Writer.Default.Get(instances).Open().Should().Equal(JsonSerializer.SerializeToUtf8Bytes(instances));
 		}
 
 		sealed class Writer : SingleInstructionWriter<Array<string>>, IWriter<string[]>

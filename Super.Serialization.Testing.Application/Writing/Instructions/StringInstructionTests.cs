@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Super.Serialization.Writing.Instructions;
 using System.Linq;
 using Xunit;
-using JsonSerializer = System.Text.Json.Serialization.JsonSerializer;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Super.Serialization.Testing.Application.Writing.Instructions
 {
@@ -13,14 +13,14 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 		void Verify()
 		{
 			var data = string.Join('-', Enumerable.Repeat("Hello World!", 1000));
-			Writer.Default.Get(data).Open().Should().Equal(JsonSerializer.ToUtf8Bytes(data));
+			Writer.Default.Get(data).Open().Should().Equal(JsonSerializer.SerializeToUtf8Bytes(data));
 		}
 
 		[Fact]
 		void VerifyEscape()
 		{
 			const string data = "Hello World!\nHello World Again!";
-			Writer.Default.Get(data).Open().Should().Equal(JsonSerializer.ToUtf8Bytes(data));
+			Writer.Default.Get(data).Open().Should().Equal(JsonSerializer.SerializeToUtf8Bytes(data));
 		}
 
 		[Fact]
@@ -31,7 +31,7 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 			Encoder.Default.Get(parameter)
 			       .Should()
 			       .Be(JsonConvert.ToString(data));
-			parameter.Should().NotEqual(JsonSerializer.ToUtf8Bytes(data));
+			parameter.Should().NotEqual(JsonSerializer.SerializeToUtf8Bytes(data));
 		}
 
 		[Fact]
@@ -42,7 +42,7 @@ namespace Super.Serialization.Testing.Application.Writing.Instructions
 			Encoder.Default.Get(parameter)
 			       .Should()
 			       .Be(JsonConvert.ToString(data));
-			parameter.Should().NotEqual(JsonSerializer.ToUtf8Bytes(data));
+			parameter.Should().NotEqual(JsonSerializer.SerializeToUtf8Bytes(data));
 		}
 
 		sealed class Writer : SingleInstructionWriter<string>

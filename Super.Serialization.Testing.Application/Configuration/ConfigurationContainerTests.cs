@@ -2,7 +2,7 @@
 
 namespace Super.Serialization.Testing.Application.Configuration
 {
-	public class ConfigurationContainerTests
+	public sealed class ConfigurationContainerTests
 	{
 		[Fact]
 		void Verify()

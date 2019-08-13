@@ -1,7 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Super.Model.Sequences;
 using Super.Serialization.Writing.Instructions;
-using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace Super.Serialization.Testing.Application
 {
@@ -37,6 +37,6 @@ namespace Super.Serialization.Testing.Application
 		public ComparisonBenchmark(IWriter<T> subject, T instance) : base(subject, instance) => _instance = instance;
 
 		[Benchmark]
-		public Array<byte> Compare() => JsonSerializer.ToUtf8Bytes(_instance);
+		public Array<byte> Compare() => JsonSerializer.SerializeToUtf8Bytes(_instance);
 	}
 }
