@@ -11,14 +11,13 @@ using Super.Reflection.Types;
 using Super.Runtime.Activation;
 using Super.Runtime.Environment;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Super.Composition
 {
 	class Services : ServiceContainer, IServices, IActivateUsing<ContainerOptions>
 	{
-		public Services() {}
+		public Services() : this(ContainerOptions.Default) {}
 
 		public Services(ContainerOptions options) : base(options) {}
 
@@ -50,22 +49,34 @@ namespace Super.Composition
 
 	sealed class InstanceRegistration<T> : IRegistration, IActivateUsing<T>
 	{
-		readonly T _instance;
+		readonly T      _instance;
+		readonly string _name;
 
-		public InstanceRegistration(T instance) => _instance = instance;
+		public InstanceRegistration(T instance) : this(instance, instance.GetType().AssemblyQualifiedName) {}
 
-		public IServiceRegistry Get(IServiceRegistry parameter)
-			=> parameter.RegisterInstance(_instance, _instance.GetType().AssemblyQualifiedName);
+		public InstanceRegistration(T instance, string name)
+		{
+			_instance = instance;
+			_name     = name;
+		}
+
+		public IServiceRegistry Get(IServiceRegistry parameter) => parameter.RegisterInstance(_instance, _name);
 	}
 
 	sealed class InstanceRegistration : IRegistration, IActivateUsing<object>
 	{
+		readonly Type   _type;
 		readonly object _instance;
 
-		public InstanceRegistration(object instance) => _instance = instance;
+		public InstanceRegistration(object instance) : this(instance.GetType(), instance) {}
 
-		public IServiceRegistry Get(IServiceRegistry parameter)
-			=> parameter.RegisterInstance(_instance.GetType(), _instance);
+		public InstanceRegistration(Type type, object instance)
+		{
+			_type     = type;
+			_instance = instance;
+		}
+
+		public IServiceRegistry Get(IServiceRegistry parameter) => parameter.RegisterInstance(_type, _instance);
 	}
 
 	sealed class Registration<TFrom, TTo> : ImplementationRegistration where TTo : class, TFrom
@@ -107,12 +118,10 @@ namespace Super.Composition
 		}
 
 		public IServiceRegistry Get(IServiceRegistry parameter)
-		{
-			return _candidates.Open()
-			                  .Where(_where(parameter))
-			                  .Aggregate(parameter, (repository, t) => repository.Register(t)
-			                                                                     .RegisterDependencies(t));
-		}
+			=> _candidates.Open()
+			              .Where(_where(parameter))
+			              .Aggregate(parameter, (repository, t) => repository.Register(t)
+			                                                                 .RegisterDependencies(t));
 	}
 
 	sealed class DependencyCandidates : ArrayStore<Type, Type>, IActivateUsing<Type>
@@ -152,7 +161,10 @@ namespace Super.Composition
 		                          .Out()
 		                          .Then()
 		                          .Activate<NotHave<Type>>()
-		                          .Select(DelegateSelector<Type, bool>.Default)) {}
+		                          .Get()
+		                          .AsDefined()
+		                          .Then()
+		                          .Delegate()) {}
 	}
 
 	sealed class ServiceTypeSelector : Select<ServiceRegistration, Type>
@@ -176,7 +188,7 @@ namespace Super.Composition
 		public Registration(Type type) : base(typeof(T), type) {}
 	}
 
-	class CompositeRegistration : IRegistration, IActivateUsing<IEnumerable<IRegistration>>
+	class CompositeRegistration : IRegistration, IActivateUsing<Array<IRegistration>>
 	{
 		readonly Array<IRegistration> _configurations;
 
@@ -186,30 +198,4 @@ namespace Super.Composition
 
 		public IServiceRegistry Get(IServiceRegistry parameter) => _configurations.Open().Alter(parameter);
 	}
-
-	/*
-	sealed class ServiceRegistration : Component<IRegistration>
-	{
-		public static ServiceRegistration Default { get; } = new ServiceRegistration();
-
-		ServiceRegistration() : base(Self<IServiceRegistry>.Default.To(I<DecoratedRegistration>.Default)) {}
-	}
-
-
-	public sealed class Services<T> : DecoratedSelect<T, IServices>, IServices<T>, IActivateUsing<IRegistration>
-	{
-		public static IServices<T> Default { get; } = new Services<T>();
-
-		Services() : this(ServiceRegistration.Default) {}
-
-		public Services(ISource<IRegistration> registration)
-			: base(Start.From<T>()
-			            .Activate<InstanceRegistration<T>>()
-			            .Yield()
-			            .Select(new AppendDelegatedValue<IRegistration>(registration))
-			            .Select(I<CompositeRegistration>.Default)
-			            .Select(ServiceOptions.Default.Select(I<Services>.Default).Select)
-			            .Cast(I<IServices>.Default)
-			            .Select(ServiceConfiguration.Default.Select(x => x.ToConfiguration()))) {}
-	}*/
 }

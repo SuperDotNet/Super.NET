@@ -1,15 +1,14 @@
-﻿using System.Collections.Generic;
-using Super.Model.Results;
-using Super.Model.Selection.Alterations;
+﻿using Super.Model.Selection.Alterations;
+using System;
 
 namespace Super.Model.Sequences.Collections
 {
-	public sealed class AppendDelegatedValue<T> : IAlteration<IEnumerable<T>>
+	public sealed class AppendDelegatedValue<T> : IAlteration<Array<T>>
 	{
-		readonly IResult<T> _item;
+		readonly Func<T> _item;
 
-		public AppendDelegatedValue(IResult<T> item) => _item = item;
+		public AppendDelegatedValue(Func<T> item) => _item = item;
 
-		public IEnumerable<T> Get(IEnumerable<T> parameter) => parameter.Append(_item.Get());
+		public Array<T> Get(Array<T> parameter) => parameter.Open().Append(_item()).Result();
 	}
 }

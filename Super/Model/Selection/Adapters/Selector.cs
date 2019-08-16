@@ -1,10 +1,11 @@
-﻿using System;
-using Super.Model.Commands;
+﻿using Super.Model.Commands;
 using Super.Model.Results;
+using Super.Model.Sequences;
 using Super.Runtime;
 using Super.Runtime.Activation;
 using Super.Runtime.Invocation;
 using Super.Runtime.Objects;
+using System;
 
 namespace Super.Model.Selection.Adapters
 {
@@ -32,6 +33,8 @@ namespace Super.Model.Selection.Adapters
 
 		public Selector<_, T> Configure(IAssign<_, T> configuration)
 			=> new Selector<_, T>(new Configuration<_, T>(_subject, configuration));
+
+		public Selector<_, Array<T>> Result() => Select(x => x.Yield().Result());
 
 		public Selector<_, T> Assigned() => Get().If(IsAssigned<_>.Default).Then();
 

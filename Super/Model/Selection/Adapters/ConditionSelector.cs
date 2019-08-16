@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Super.Model.Selection.Conditions;
+using System;
 using System.Linq;
-using Super.Model.Selection.Conditions;
 
 namespace Super.Model.Selection.Adapters
 {
@@ -22,5 +22,10 @@ namespace Super.Model.Selection.Adapters
 
 		public ConditionSelector<T> Inverse()
 			=> new ConditionSelector<T>(InverseSpecifications<T>.Default.Get(new Condition<T>(Get().Get)));
+	}
+
+	public class ConditionSelector<_, T> : SelectionSelector<_, T, bool>
+	{
+		public ConditionSelector(ISelect<_, ISelect<T, bool>> subject) : base(subject) {}
 	}
 }
