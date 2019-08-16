@@ -79,7 +79,7 @@ namespace Super.Composition
 		public IServiceRegistry Get(IServiceRegistry parameter) => parameter.RegisterInstance(_type, _instance);
 	}
 
-	sealed class Registration<TFrom, TTo> : ImplementationRegistration where TTo : class, TFrom
+	sealed class Registration<TFrom, TTo> : MappedRegistration where TTo : class, TFrom
 	{
 		public static Registration<TFrom, TTo> Default { get; } = new Registration<TFrom, TTo>();
 
@@ -91,7 +91,7 @@ namespace Super.Composition
 		public static RegisterWithDependencies<TFrom, TTo> Default { get; } =
 			new RegisterWithDependencies<TFrom, TTo>();
 
-		RegisterWithDependencies() : base(new ImplementationRegistration(typeof(TFrom), typeof(TTo)),
+		RegisterWithDependencies() : base(new MappedRegistration(typeof(TFrom), typeof(TTo)),
 		                                  RegisterDependencies<TTo>.Default) {}
 	}
 
@@ -114,7 +114,7 @@ namespace Super.Composition
 		public RegisterDependencies(Array<Type> candidates, Func<IServiceRegistry, Func<Type, bool>> where)
 		{
 			_candidates = candidates;
-			_where      = @where;
+			_where      = where;
 		}
 
 		public IServiceRegistry Get(IServiceRegistry parameter)
@@ -136,14 +136,14 @@ namespace Super.Composition
 		                                               .Out()) {}
 	}
 
-	class ImplementationRegistration : IRegistration
+	class MappedRegistration : IRegistration
 	{
 		readonly Type _from;
 		readonly Type _to;
 
-		public ImplementationRegistration(Type @from, Type @to)
+		public MappedRegistration(Type from, Type to)
 		{
-			_from = @from;
+			_from = from;
 			_to   = to;
 		}
 
@@ -183,7 +183,7 @@ namespace Super.Composition
 		public IServiceRegistry Get(IServiceRegistry parameter) => parameter.Register(_type);
 	}
 
-	sealed class Registration<T> : ImplementationRegistration
+	sealed class Registration<T> : MappedRegistration
 	{
 		public Registration(Type type) : base(typeof(T), type) {}
 	}
