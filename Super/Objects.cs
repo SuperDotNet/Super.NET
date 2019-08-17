@@ -31,7 +31,7 @@ namespace Super
 			return result;
 		}
 
-		public static TOut Return<T, TOut>(this T _, TOut result) => result;
+		public static TOut Then<T, TOut>(this T _, TOut result) => result;
 
 		public static TOut To<T, TOut>(this T @this, ISelect<T, TOut> select) => @this.To(select.Get);
 
