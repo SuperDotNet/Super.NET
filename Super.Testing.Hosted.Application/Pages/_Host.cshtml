@@ -7,13 +7,13 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Super.Testing.Hosted.Application</title>
+    <title>Super.NET Sample Application</title>
     <base href="~/" />
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link href="css/site.css" rel="stylesheet" />
 </head>
 <body>
-    <app>@(await Html.RenderComponentAsync<App>())</app>
+    <div class="application">@(await Html.RenderComponentAsync<Application>())</div>
 
     <script src="_framework/blazor.server.js"></script>
 </body>

@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Super.Model.Commands;
 using Super.Testing.Hosted.Application.Data;
+using System;
 
 namespace Super.Testing.Hosted.Application
 {
@@ -15,6 +18,12 @@ namespace Super.Testing.Hosted.Application
 			    .Build()
 			    .Run();
 		}
+
+		readonly Action<IEndpointRouteBuilder> _endpoints;
+
+		public Program() : this(EndpointConfiguration.Default.Execute) {}
+
+		public Program(Action<IEndpointRouteBuilder> endpoints) => _endpoints = endpoints;
 
 		// This method gets called by the runtime. Use this method to add services to the container.
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
@@ -43,11 +52,25 @@ namespace Super.Testing.Hosted.Application
 			app.UseHttpsRedirection()
 			   .UseStaticFiles()
 			   .UseRouting()
-			   .UseEndpoints(endpoints =>
-			                 {
-				                 endpoints.MapBlazorHub();
-				                 endpoints.MapFallbackToPage("/_Host");
-			                 });
+			   .UseEndpoints(_endpoints);
+		}
+
+		sealed class EndpointConfiguration : ICommand<IEndpointRouteBuilder>
+		{
+			public static EndpointConfiguration Default { get; } = new EndpointConfiguration();
+
+			EndpointConfiguration() : this("/_Host") {}
+
+			readonly string _fallback;
+
+			public EndpointConfiguration(string fallback) => _fallback = fallback;
+
+			public void Execute(IEndpointRouteBuilder parameter)
+			{
+				parameter.MapBlazorHub()
+				         .Then(parameter)
+				         .MapFallbackToPage(_fallback);
+			}
 		}
 	}
 }
