@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Super.Model.Commands;
-using Super.Testing.Hosted.Application.Data;
+using Super.Sample.Application.Data;
 using System;
 
-namespace Super.Testing.Hosted.Application
+namespace Super.Sample.Application
 {
 	sealed class ServiceConfiguration : ICommand<IServiceCollection>
 	{

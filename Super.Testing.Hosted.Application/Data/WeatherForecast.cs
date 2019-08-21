@@ -1,6 +1,6 @@
 using System;
 
-namespace Super.Testing.Hosted.Application.Data
+namespace Super.Sample.Application.Data
 {
 	public class WeatherForecast
 	{
