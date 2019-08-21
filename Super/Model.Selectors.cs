@@ -20,7 +20,7 @@ namespace Super
 	public static partial class ExtensionMethods
 	{
 		public static ISelect<TIn, IResult<TOut>> AsDefined<TIn, TOut>(this ISelect<TIn, IResult<TOut>> @this) => @this;
-		
+
 		public static ConditionSelector<_, T> Then<_, T>(this ISelect<_, ICondition<T>> @this)
 			=> new ConditionSelector<_, T>(@this);
 
@@ -41,6 +41,9 @@ namespace Super
 		public static CommandSelector Then(this ICommand @this) => new CommandSelector(@this);
 
 		public static CommandSelector<T> Then<T>(this ICommand<T> @this) => new CommandSelector<T>(@this);
+
+		public static CommandSelector<T> Then<T>(this ICommand<T> @this, params ICommand<T>[] others)
+			=> new CommandSelector<T>(@this).Then(others);
 
 		public static ResultInstanceSelector<None, T> Then<T>(this IResult<IResult<T>> @this)
 			=> new ResultInstanceSelector<None, T>(@this.ToSelect());

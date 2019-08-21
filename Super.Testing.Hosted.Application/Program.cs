@@ -9,9 +9,116 @@ using System;
 
 namespace Super.Testing.Hosted.Application
 {
-	public sealed class Program
+	sealed class ServiceConfiguration : ICommand<IServiceCollection>
 	{
-		public static void Main(string[] args)
+		public static ServiceConfiguration Default { get; } = new ServiceConfiguration();
+
+		ServiceConfiguration() {}
+
+		public void Execute(IServiceCollection parameter)
+		{
+			parameter.AddSingleton<WeatherForecastService>();
+		}
+	}
+
+	sealed class DefaultServiceConfiguration : ICommand<IServiceCollection>
+	{
+		public static DefaultServiceConfiguration Default { get; } = new DefaultServiceConfiguration();
+
+		DefaultServiceConfiguration() {}
+
+		public void Execute(IServiceCollection parameter)
+		{
+			parameter.AddRazorPages()
+			         .ThenWith(parameter)
+			         .AddServerSideBlazor();
+		}
+	}
+
+	sealed class ApplicationConfiguration : ICommand<(IApplicationBuilder Builder, IWebHostEnvironment Environment)>
+	{
+		public static ApplicationConfiguration Default { get; } = new ApplicationConfiguration();
+
+		ApplicationConfiguration() : this(EndpointConfiguration.Default.Execute) {}
+
+		readonly Action<IEndpointRouteBuilder> _endpoints;
+		readonly string                        _handler;
+
+		public ApplicationConfiguration(Action<IEndpointRouteBuilder> endpoints, string handler = "/Home/Error")
+		{
+			_endpoints = endpoints;
+			_handler   = handler;
+		}
+
+		public void Execute((IApplicationBuilder Builder, IWebHostEnvironment Environment) parameter)
+		{
+			var (builder, environment) = parameter;
+			var handle = environment.IsDevelopment()
+				             ? builder.UseDeveloperExceptionPage()
+				             : builder.UseExceptionHandler(_handler)
+				                      .UseHsts(); // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+
+			handle.UseHttpsRedirection()
+			      .UseStaticFiles()
+			      .UseRouting()
+			      .UseEndpoints(_endpoints);
+		}
+	}
+
+	sealed class EndpointConfiguration : ICommand<IEndpointRouteBuilder>
+	{
+		public static EndpointConfiguration Default { get; } = new EndpointConfiguration();
+
+		EndpointConfiguration() : this("/_Host") {}
+
+		readonly string _fallback;
+
+		public EndpointConfiguration(string fallback) => _fallback = fallback;
+
+		public void Execute(IEndpointRouteBuilder parameter)
+		{
+			parameter.MapBlazorHub()
+			         .ThenWith(parameter)
+			         .MapFallbackToPage(_fallback);
+		}
+	}
+
+	public interface IHostedApplication
+	{
+		// This method gets called by the runtime. Use this method to add services to the container.
+		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+		void ConfigureServices(IServiceCollection services);
+
+		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+		void Configure(IApplicationBuilder app, IWebHostEnvironment env);
+	}
+
+	public class HostedApplication : IHostedApplication
+	{
+		readonly Action<IServiceCollection>                                             _services;
+		readonly Action<(IApplicationBuilder Builder, IWebHostEnvironment Environment)> _application;
+
+		public HostedApplication(Action<IServiceCollection> services,
+		                         Action<(IApplicationBuilder Builder, IWebHostEnvironment Environment)> application)
+		{
+			_services    = services;
+			_application = application;
+		}
+
+		public void ConfigureServices(IServiceCollection services)
+		{
+			_services(services);
+		}
+
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+		{
+			_application((app, env));
+		}
+	}
+
+	public sealed class Program : HostedApplication
+	{
+		static void Main(string[] args)
 		{
 			Host.CreateDefaultBuilder(args)
 			    .ConfigureWebHostDefaults(x => x.UseStartup<Program>())
@@ -19,58 +126,7 @@ namespace Super.Testing.Hosted.Application
 			    .Run();
 		}
 
-		readonly Action<IEndpointRouteBuilder> _endpoints;
-
-		public Program() : this(EndpointConfiguration.Default.Execute) {}
-
-		public Program(Action<IEndpointRouteBuilder> endpoints) => _endpoints = endpoints;
-
-		// This method gets called by the runtime. Use this method to add services to the container.
-		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-		public void ConfigureServices(IServiceCollection services)
-		{
-			services.AddSingleton<WeatherForecastService>()
-			        .AddRazorPages()
-			        .Then(services)
-			        .AddServerSideBlazor();
-		}
-
-		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-		{
-			if (env.IsDevelopment())
-			{
-				app.UseDeveloperExceptionPage();
-			}
-			else
-			{
-				app.UseExceptionHandler("/Home/Error");
-				// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-				app.UseHsts();
-			}
-
-			app.UseHttpsRedirection()
-			   .UseStaticFiles()
-			   .UseRouting()
-			   .UseEndpoints(_endpoints);
-		}
-
-		sealed class EndpointConfiguration : ICommand<IEndpointRouteBuilder>
-		{
-			public static EndpointConfiguration Default { get; } = new EndpointConfiguration();
-
-			EndpointConfiguration() : this("/_Host") {}
-
-			readonly string _fallback;
-
-			public EndpointConfiguration(string fallback) => _fallback = fallback;
-
-			public void Execute(IEndpointRouteBuilder parameter)
-			{
-				parameter.MapBlazorHub()
-				         .Then(parameter)
-				         .MapFallbackToPage(_fallback);
-			}
-		}
+		public Program() : base(ServiceConfiguration.Default.Then(DefaultServiceConfiguration.Default),
+		                        ApplicationConfiguration.Default.Execute) {}
 	}
 }

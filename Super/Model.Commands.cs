@@ -43,9 +43,9 @@ namespace Super
 			return @this;
 		}
 
-		public static T Parameter<T>(this ICommand @this, T parameter) => @this.Parameter().Then(parameter);
+		public static T Parameter<T>(this ICommand @this, T parameter) => @this.Parameter().ThenWith(parameter);
 
-		public static T Parameter<T>(this ICommand<T> @this, T parameter) => @this.Pass(parameter).Then(parameter);
+		public static T Parameter<T>(this ICommand<T> @this, T parameter) => @this.Pass(parameter).ThenWith(parameter);
 
 		public static T Parameter<T>(this T @this) where T : class, ICommand
 		{

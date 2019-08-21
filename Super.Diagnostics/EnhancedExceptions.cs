@@ -1,4 +1,5 @@
-﻿using Super.Model.Selection.Stores;
+﻿using Super.Compose;
+using Super.Model.Selection.Stores;
 using System;
 using System.Diagnostics;
 
@@ -8,6 +9,6 @@ namespace Super.Diagnostics
 	{
 		public static EnhancedExceptions Default { get; } = new EnhancedExceptions();
 
-		EnhancedExceptions() : base(ReferenceTables<Exception, Exception>.Default.Get(x => x.Demystify())) {}
+		EnhancedExceptions() : base(Start.A.Selection<Exception>().AndOf<Exception>().Into.Table(x => x.Demystify())) {}
 	}
 }

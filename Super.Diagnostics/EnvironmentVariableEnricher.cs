@@ -1,7 +1,8 @@
 ﻿using Serilog;
 using Serilog.Configuration;
 
-namespace Super.Diagnostics {
+namespace Super.Diagnostics
+{
 	sealed class EnvironmentVariableEnricher : ILoggingEnrichmentConfiguration
 	{
 		readonly string _name;

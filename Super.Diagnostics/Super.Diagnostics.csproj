@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
@@ -6,6 +6,46 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Configuration\**" />
+    <EmbeddedResource Remove="Configuration\**" />
+    <None Remove="Configuration\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="ApplyProjectionsCommand.cs" />
+    <Compile Remove="ContextSelector.cs" />
+    <Compile Remove="DefaultLoggingLevel.cs" />
+    <Compile Remove="Exception.cs" />
+    <Compile Remove="ExceptionParameter.cs" />
+    <Compile Remove="Formats.cs" />
+    <Compile Remove="IFormats.cs" />
+    <Compile Remove="ILogMessage.cs" />
+    <Compile Remove="Implementations.cs" />
+    <Compile Remove="IPrimaryLogger.cs" />
+    <Compile Remove="IScalar.cs" />
+    <Compile Remove="IScalars.cs" />
+    <Compile Remove="Log.cs" />
+    <Compile Remove="LogException.cs" />
+    <Compile Remove="Logger.cs" />
+    <Compile Remove="LoggerDestructureSelector.cs" />
+    <Compile Remove="LoggerEnrichmentSelector.cs" />
+    <Compile Remove="LoggerSelector.cs" />
+    <Compile Remove="LoggerSinkDecoration.cs" />
+    <Compile Remove="LoggerSinkSelector.cs" />
+    <Compile Remove="Logging.cs" />
+    <Compile Remove="LoggingLevelController.cs" />
+    <Compile Remove="LogMessage.cs" />
+    <Compile Remove="Message.cs" />
+    <Compile Remove="PrimaryAssemblyEnricher.cs" />
+    <Compile Remove="PrimaryLogger.cs" />
+    <Compile Remove="ProjectionAwareSink.cs" />
+    <Compile Remove="ProjectionAwareSinkDecoration.cs" />
+    <Compile Remove="ProjectionEnricher.cs" />
+    <Compile Remove="ProjectionLogEvents.cs" />
+    <Compile Remove="PropertyFactories.cs" />
+    <Compile Remove="Scalar.cs" />
+    <Compile Remove="ScalarProperty.cs" />
+    <Compile Remove="Scalars.cs" />
     <Compile Remove="SeqConfiguration.cs" />
     <Compile Remove="TraceConfiguration.cs" />
   </ItemGroup>

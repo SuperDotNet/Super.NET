@@ -19,7 +19,7 @@ namespace Super.Runtime.Execution
 		                      ISelect<object, IDisposable> select)
 			: base(select.Then()
 			             .Terminate(A.Of<DisposeCommand>())
-			             .And(ExecutionContextStore.Default.AsCommand().Then().Input().Any().Get(),
+			             .Then(ExecutionContextStore.Default.AsCommand().Then().Input().Any().Get(),
 			                  A.Of<ClearResources>())
 			             .To(x => x.Get().ToSelect())
 			             .If(contains)

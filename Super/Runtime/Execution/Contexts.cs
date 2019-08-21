@@ -34,7 +34,7 @@ namespace Super.Runtime.Execution
 		{
 			var current = _store.Get();
 			var result = _dispose.Then()
-			                     .And(_command(current))
+			                     .Then(_command(current))
 			                     .Selector()
 			                     .To(I<Disposable>.Default);
 			_store.Execute(_context(parameter));
