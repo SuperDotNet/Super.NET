@@ -1,7 +1,7 @@
-﻿using System.Net.Http;
-using Super.Model.Selection.Stores;
+﻿using Super.Model.Selection.Stores;
+using System.Net.Http;
 
-namespace Super.Services
+namespace Super.Application.Services
 {
 	sealed class AssociatedHandlers : ReferenceValueTable<HttpClient, System.Net.Http.HttpClientHandler>
 	{

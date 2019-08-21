@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Super.Model.Selection.Stores;
+using System;
 using System.Collections.Concurrent;
 using System.Net.Http;
-using Super.Model.Selection.Stores;
 
-namespace Super.Services
+namespace Super.Application.Services
 {
 	sealed class ClientStore : EqualityStore<Uri, HttpClient>
 	{

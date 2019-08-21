@@ -37,7 +37,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Application.Hosting.A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application Hosting", "Application Hosting", "{D273BAB9-2B15-4EB3-905F-FE0D291BE1DE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Services", "Super.Services\Super.Services.csproj", "{9D58C0E1-D21D-4E46-A3A7-B7BBE43FC6C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Application.Services", "Super.Services\Super.Application.Services.csproj", "{9D58C0E1-D21D-4E46-A3A7-B7BBE43FC6C8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Application.Hosting.BenchmarkDotNet", "Super.Application.Hosting.BenchmarkDotNet\Super.Application.Hosting.BenchmarkDotNet.csproj", "{FEBB32A2-7B54-43C6-B345-96AD1DFAAA27}"
 EndProject
@@ -53,7 +53,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Composition", "Super.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Testing.Hosted.Application", "Super.Testing.Hosted.Application\Super.Testing.Hosted.Application.csproj", "{2AC43B1F-3B71-4857-82D0-46FF0F85277E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Super.Presentation", "Super.Presentation\Super.Presentation.csproj", "{11744BDF-D4AB-46CC-ADC8-DB9DFF6DAC29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Presentation", "Super.Presentation\Super.Presentation.csproj", "{11744BDF-D4AB-46CC-ADC8-DB9DFF6DAC29}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

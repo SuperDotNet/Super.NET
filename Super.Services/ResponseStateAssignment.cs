@@ -5,7 +5,7 @@ using System;
 using System.Net;
 using System.Net.Http;
 
-namespace Super.Services
+namespace Super.Application.Services
 {
 	class ResponseStateAssignment : IAssign<HttpRequest, HttpClient>
 	{

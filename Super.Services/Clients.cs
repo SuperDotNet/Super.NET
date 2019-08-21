@@ -3,7 +3,7 @@ using Super.Model.Selection.Stores;
 using System;
 using System.Net.Http;
 
-namespace Super.Services
+namespace Super.Application.Services
 {
 	sealed class Clients : ISelect<Uri, HttpClient>
 	{

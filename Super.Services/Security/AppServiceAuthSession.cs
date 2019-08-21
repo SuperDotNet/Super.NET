@@ -1,6 +1,6 @@
 ﻿using Super.Compose;
 
-namespace Super.Services.Security
+namespace Super.Application.Services.Security
 {
 	sealed class AppServiceAuthSession : ResponseState
 	{

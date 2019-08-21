@@ -26,7 +26,7 @@
     <ProjectReference Include="..\Super.Application.Hosting.BenchmarkDotNet\Super.Application.Hosting.BenchmarkDotNet.csproj" />
     <ProjectReference Include="..\Super.Application.Hosting.Console\Super.Application.Hosting.Console.csproj" />
     <ProjectReference Include="..\Super.Application.Hosting.xUnit\Super.Application.Hosting.xUnit.csproj" />
-    <ProjectReference Include="..\Super.Services\Super.Services.csproj" />
+    <ProjectReference Include="..\Super.Services\Super.Application.Services.csproj" />
     <ProjectReference Include="..\Super.Testing.Environment.Development\Super.Testing.Environment.Development.csproj" Condition="'$(Configuration)' == 'Debug'" />
     <ProjectReference Include="..\Super.Testing.Environment\Super.Testing.Environment.csproj" Condition="'$(Configuration)' == 'Release'" />
     <ProjectReference Include="..\Super.Testing.Objects\Super.Testing.Objects.csproj" />
@@ -37,10 +37,4 @@
   <ItemGroup>
     <Folder Include="Reflection\Members\" />
   </ItemGroup>
-
-  <Target Name="WorkaroundNetStandard" AfterTargets="ResolvePackageAssets">
-    <ItemGroup>
-      <TransitiveFrameworkReference Remove="NETStandard.Library" />
-    </ItemGroup>
-  </Target>
 </Project>

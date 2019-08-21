@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Super.Diagnostics\Super.Diagnostics.csproj" />
     <ProjectReference Include="..\Super\Super.csproj" />
   </ItemGroup>
 

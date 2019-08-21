@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-using Refit;
+﻿using Refit;
+using System.Threading.Tasks;
 
-namespace Super.Services.Security
+namespace Super.Application.Services.Security
 {
 	interface IAuthentication
 	{

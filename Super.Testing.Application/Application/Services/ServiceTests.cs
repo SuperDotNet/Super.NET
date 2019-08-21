@@ -1,9 +1,9 @@
-﻿using System;
-using FluentAssertions;
-using Super.Services;
+﻿using FluentAssertions;
+using Super.Application.Services;
+using System;
 using Xunit;
 
-namespace Super.Testing.Application.Services
+namespace Super.Testing.Application.Application.Services
 {
 	public sealed class ServiceTests
 	{

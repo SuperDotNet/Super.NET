@@ -2,7 +2,7 @@
 using Super.Model.Selection.Stores;
 using System;
 
-namespace Super.Services
+namespace Super.Application.Services
 {
 	sealed class ClientHandlers : EqualityStore<Uri, System.Net.Http.HttpClientHandler>
 	{

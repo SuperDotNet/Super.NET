@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Super.Services.Security
+namespace Super.Application.Services.Security
 {
 	public sealed class AuthenticationClaim
 	{

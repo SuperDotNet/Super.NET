@@ -1,10 +1,10 @@
-﻿using System;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Super.Compose;
 using Super.Model.Selection.Stores;
 using Super.Runtime;
+using System;
 
-namespace Super.Services.Security
+namespace Super.Application.Services.Security
 {
 	sealed class AuthenticationAddress : ReferenceValueStore<HttpRequest, Uri>
 	{

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Super.Model.Selection;
 
-namespace Super.Services
+namespace Super.Application.Services
 {
 	sealed class RequestStateValue : ISelect<IRequestCookieCollection, string>
 	{

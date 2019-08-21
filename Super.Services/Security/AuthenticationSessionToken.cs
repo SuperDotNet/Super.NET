@@ -1,6 +1,6 @@
 ﻿using Super.Runtime;
 
-namespace Super.Services.Security
+namespace Super.Application.Services.Security
 {
 	sealed class AuthenticationSessionToken : EnvironmentVariable
 	{

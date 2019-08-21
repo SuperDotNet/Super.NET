@@ -1,9 +1,9 @@
-﻿using System;
-using System.Net;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Super.Model.Selection;
+using System;
+using System.Net;
 
-namespace Super.Services
+namespace Super.Application.Services
 {
 	class ResponseState : ISelect<IRequestCookieCollection, Cookie>
 	{

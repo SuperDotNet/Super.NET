@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Super.Services
+namespace Super.Application.Services
 {
 	sealed class Request<T> : Select<Task<T>, T>
 	{

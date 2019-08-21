@@ -10,8 +10,9 @@
   <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
   <PackageReference Include="Serilog.Sinks.AzureWebJobsTraceWriter-preview" Version="2.0.3-alpha" />
 </ItemGroup>
+
 <ItemGroup>
-  <ProjectReference Include="..\Super.Services\Super.Services.csproj" />
+  <ProjectReference Include="..\Super.Services\Super.Application.Services.csproj" />
 </ItemGroup>
 
   </Project>
