@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Super.Application.Hosting.xUnit;
-using Super.Diagnostics.Logging;
+using Super.Diagnostics.Logging.Text;
 using Super.Runtime.Execution;
 using Xunit;
 

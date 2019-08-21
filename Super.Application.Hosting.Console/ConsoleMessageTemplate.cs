@@ -1,4 +1,4 @@
-﻿using Super.Diagnostics.Logging;
+﻿using Super.Diagnostics.Logging.Text;
 
 namespace Super.Application.Hosting.Console
 {

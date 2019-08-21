@@ -107,9 +107,8 @@ namespace Super
 		public static ISelect<TIn, TOut> ToSelect<TIn, TOut>(this Func<TIn, TOut> @this)
 			=> Selections<TIn, TOut>.Default.Get(@this);
 
-		public static ICondition<T> ToCondition<T>(this ISelect<T, bool> @this) => @this as ICondition<T> ??
-		                                                                           new Model.Selection.Conditions.
-			                                                                           Condition<T>(@this.Get);
+		public static ICondition<T> ToCondition<T>(this ISelect<T, bool> @this)
+			=> @this as ICondition<T> ?? new Model.Selection.Conditions.Condition<T>(@this.Get);
 
 		public static IConditional<TIn, TOut> ToConditional<TIn, TOut>(this ISelect<TIn, TOut> @this,
 		                                                               ICondition<TIn> condition)

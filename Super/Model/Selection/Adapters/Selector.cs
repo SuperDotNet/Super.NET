@@ -53,6 +53,8 @@ namespace Super.Model.Selection.Adapters
 		public Selector<_, T> Try<TException>() where TException : Exception
 			=> new Selector<_, T>(new Try<TException, _, T>(Get().Get));
 
+		public CommandSelector<_> Terminate() => new CommandSelector<_>(new InvokeParameterCommand<_, T>(Get().Get));
+
 		public CommandSelector<_> Terminate(ICommand<T> command)
 			=> new CommandSelector<_>(new SelectedParameterCommand<_, T>(command.Execute, _subject.Get));
 	}

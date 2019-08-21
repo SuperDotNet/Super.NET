@@ -5,10 +5,10 @@ using Super.Model.Results;
 
 namespace Super.Application.Services
 {
-	public sealed class DefaultPolicies : Instance<PolicyBuilder>
+	public sealed class DefaultPolicies : Result<PolicyBuilder>
 	{
 		public static DefaultPolicies Default { get; } = new DefaultPolicies();
 
-		DefaultPolicies() : base(ResourcePolicies.Default.Get(Policy.Handle<ApiException>())) {}
+		DefaultPolicies() : base(ResourcePolicies.Default.In(Policy.Handle<ApiException>)) {}
 	}
 }

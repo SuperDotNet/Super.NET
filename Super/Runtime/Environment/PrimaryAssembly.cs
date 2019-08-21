@@ -1,10 +1,10 @@
-﻿using System.Reflection;
-using Super.Compose;
+﻿using Super.Compose;
 using Super.Model.Results;
+using System.Reflection;
 
 namespace Super.Runtime.Environment
 {
-	sealed class PrimaryAssembly : Instance<Assembly>
+	public sealed class PrimaryAssembly : Instance<Assembly>
 	{
 		public static PrimaryAssembly Default { get; } = new PrimaryAssembly();
 

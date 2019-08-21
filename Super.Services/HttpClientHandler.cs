@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Serilog;
+using Super.Diagnostics.Logging;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,14 +10,14 @@ namespace Super.Application.Services
 	{
 		readonly ILogger _logger;
 
-		public HttpClientHandler() : this(new LoggerFactory().CreateLogger<HttpClientHandler>()) {}
+		public HttpClientHandler() : this(Log<HttpClientHandler>.Default) {}
 
 		public HttpClientHandler(ILogger logger) => _logger = logger;
 
 		protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
 		                                                       CancellationToken cancellationToken)
 		{
-			_logger.LogDebug("Resource request made for {Uri}.", request.RequestUri);
+			_logger.Debug("Resource request made for {Uri}.", request.RequestUri);
 			return base.SendAsync(request, cancellationToken);
 		}
 	}

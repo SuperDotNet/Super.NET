@@ -6,9 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Configuration\**" />
-    <EmbeddedResource Remove="Configuration\**" />
-    <None Remove="Configuration\**" />
+    <Compile Remove="Logging\Configuration\**" />
+    <EmbeddedResource Remove="Logging\Configuration\**" />
+    <None Remove="Logging\Configuration\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -48,6 +48,19 @@
     <Compile Remove="Scalars.cs" />
     <Compile Remove="SeqConfiguration.cs" />
     <Compile Remove="TraceConfiguration.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Logging\Configuration\DefaultLoggingConfiguration.cs" />
+    <Compile Include="Logging\Configuration\EnhancedExceptionStackTraceConfiguration.cs" />
+    <Compile Include="Logging\Configuration\EnrichmentConfiguration.cs" />
+    <Compile Include="Logging\Configuration\ILoggingConfiguration.cs" />
+    <Compile Include="Logging\Configuration\ILoggingEnrichmentConfiguration.cs" />
+    <Compile Include="Logging\Configuration\ILoggingSinkConfiguration.cs" />
+    <Compile Include="Logging\Configuration\LoggerConfigurations.cs" />
+    <Compile Include="Logging\Configuration\LoggingConfiguration.cs" />
+    <Compile Include="Logging\Configuration\LoggingLevelControllerConfiguration.cs" />
+    <Compile Include="Logging\Configuration\SinkConfiguration.cs" />
   </ItemGroup>
 
 
