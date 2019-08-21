@@ -35,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Application.Hosting.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Application.Hosting.AzureFunctions", "Super.Application.Hosting.AzureFunctions\Super.Application.Hosting.AzureFunctions.csproj", "{A1A8D1B0-5E4D-44BE-82C8-543940A81EEC}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application Hosting", "Application Hosting", "{D273BAB9-2B15-4EB3-905F-FE0D291BE1DE}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Hosting", "Hosting", "{D273BAB9-2B15-4EB3-905F-FE0D291BE1DE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Application.Services", "Super.Services\Super.Application.Services.csproj", "{9D58C0E1-D21D-4E46-A3A7-B7BBE43FC6C8}"
 EndProject
@@ -47,13 +47,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Serialization", "Supe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Serialization.Testing.Application", "Super.Serialization.Testing.Application\Super.Serialization.Testing.Application.csproj", "{D5B2ECB1-4D31-4FEC-A05B-90ADFBDC57A9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Presentation.Elements", "Super.Presentation.Elements\Super.Presentation.Elements.csproj", "{7B1C8733-24C2-4E02-9011-EA4C1A511FAF}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Composition", "Super.Composition\Super.Composition.csproj", "{60535189-644C-4D5F-86DA-09AF755999C1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Sample.Application", "Super.Testing.Hosted.Application\Super.Sample.Application.csproj", "{2AC43B1F-3B71-4857-82D0-46FF0F85277E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Presentation", "Super.Presentation\Super.Presentation.csproj", "{11744BDF-D4AB-46CC-ADC8-DB9DFF6DAC29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Super.Application.Presentation", "Super.Presentation\Super.Application.Presentation.csproj", "{11744BDF-D4AB-46CC-ADC8-DB9DFF6DAC29}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{1483120B-A63D-4E5A-81EE-8EEEFFA1C54D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -129,10 +129,6 @@ Global
 		{D5B2ECB1-4D31-4FEC-A05B-90ADFBDC57A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5B2ECB1-4D31-4FEC-A05B-90ADFBDC57A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5B2ECB1-4D31-4FEC-A05B-90ADFBDC57A9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7B1C8733-24C2-4E02-9011-EA4C1A511FAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7B1C8733-24C2-4E02-9011-EA4C1A511FAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7B1C8733-24C2-4E02-9011-EA4C1A511FAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7B1C8733-24C2-4E02-9011-EA4C1A511FAF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{60535189-644C-4D5F-86DA-09AF755999C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{60535189-644C-4D5F-86DA-09AF755999C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60535189-644C-4D5F-86DA-09AF755999C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -158,8 +154,12 @@ Global
 		{41861BF2-367F-4D62-9868-2B9AAD2EC5D2} = {D273BAB9-2B15-4EB3-905F-FE0D291BE1DE}
 		{BE168114-7861-45FC-B9FD-2A25F43275CD} = {D273BAB9-2B15-4EB3-905F-FE0D291BE1DE}
 		{A1A8D1B0-5E4D-44BE-82C8-543940A81EEC} = {D273BAB9-2B15-4EB3-905F-FE0D291BE1DE}
+		{D273BAB9-2B15-4EB3-905F-FE0D291BE1DE} = {1483120B-A63D-4E5A-81EE-8EEEFFA1C54D}
+		{9D58C0E1-D21D-4E46-A3A7-B7BBE43FC6C8} = {1483120B-A63D-4E5A-81EE-8EEEFFA1C54D}
 		{FEBB32A2-7B54-43C6-B345-96AD1DFAAA27} = {D273BAB9-2B15-4EB3-905F-FE0D291BE1DE}
 		{D5B2ECB1-4D31-4FEC-A05B-90ADFBDC57A9} = {273E561B-EB06-4B9D-B073-BFD88F87441C}
+		{2AC43B1F-3B71-4857-82D0-46FF0F85277E} = {1483120B-A63D-4E5A-81EE-8EEEFFA1C54D}
+		{11744BDF-D4AB-46CC-ADC8-DB9DFF6DAC29} = {1483120B-A63D-4E5A-81EE-8EEEFFA1C54D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D7E910BA-B9EE-40A8-9C18-08D091DA997F}

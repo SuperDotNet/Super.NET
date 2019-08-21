@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Super.Presentation.Elements\Super.Presentation.Elements.csproj" />
     <ProjectReference Include="..\Super\Super.csproj" />
   </ItemGroup>
 

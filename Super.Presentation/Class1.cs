@@ -1,6 +1,4 @@
-﻿namespace Super.Presentation
+﻿namespace Super.Application.Presentation
 {
-	public class Class1
-	{
-	}
+	public class Class1 {}
 }
