@@ -1,7 +1,7 @@
-using System;
 using Super.Model.Selection;
+using System;
 
-namespace Super.Model.Sequences
+namespace Super.Runtime
 {
 	public interface ISize : ISelect<Type, uint> {}
 }

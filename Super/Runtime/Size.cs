@@ -1,15 +1,31 @@
-using System;
+using JetBrains.Annotations;
 using Super.Model.Results;
-using Super.Model.Sequences;
 using Super.Reflection.Types;
-using Super.Runtime.Environment;
+using System;
+using System.Runtime.CompilerServices;
 
 namespace Super.Runtime
 {
-	sealed class Size<T> : FixedSelectedSingleton<Type, uint>
+	public sealed class Size : ISize
 	{
-		public static Size<T> Default { get; } = new Size<T>();
+		public static Size Default { get; } = new Size();
 
-		Size() : base(DefaultComponentLocator<ISize>.Default.Assume(), Type<T>.Instance) {}
+		Size() : this(new Generic<uint>(typeof(SizeOf<>))) {}
+
+		readonly IGeneric<uint> _generic;
+
+		public Size(IGeneric<uint> generic) => _generic = generic;
+
+		public uint Get(Type type) => _generic.Get(type).Invoke();
+
+		sealed class SizeOf<T> : IResult<uint>
+		{
+			[UsedImplicitly]
+			public static SizeOf<T> Instance { get; } = new SizeOf<T>();
+
+			SizeOf() {}
+
+			public uint Get() => (uint)Unsafe.SizeOf<T>();
+		}
 	}
 }

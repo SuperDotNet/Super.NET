@@ -1,9 +1,9 @@
+using Super.Model.Selection;
+using Super.Model.Selection.Alterations;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection;
-using Super.Model.Selection;
-using Super.Model.Selection.Alterations;
 
 namespace Super.Runtime.Environment
 {
@@ -11,7 +11,7 @@ namespace Super.Runtime.Environment
 	{
 		public static ComponentAssemblyNames Default { get; } = new ComponentAssemblyNames();
 
-		ComponentAssemblyNames() : this(EnvironmentAssemblyName.Default, PlatformAssemblyName.Default) {}
+		ComponentAssemblyNames() : this(EnvironmentAssemblyName.Default) {}
 
 		readonly Func<AssemblyName, IEnumerable<AssemblyName>> _expand;
 		readonly ImmutableArray<IAlteration<AssemblyName>>     _names;

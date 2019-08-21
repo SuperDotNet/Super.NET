@@ -1,16 +1,15 @@
-﻿using System.Collections.Immutable;
-using System.Linq;
+﻿using Super.Model.Sequences;
 
 namespace Super.Model.Selection.Alterations
 {
 	public class CompositeAlteration<T> : IAlteration<T>
 	{
-		readonly ImmutableArray<IAlteration<T>> _alterations;
+		readonly Array<IAlteration<T>> _alterations;
 
-		public CompositeAlteration(params IAlteration<T>[] alterations) : this(alterations.ToImmutableArray()) {}
+		public CompositeAlteration(params IAlteration<T>[] alterations) : this(alterations.Result()) {}
 
-		public CompositeAlteration(ImmutableArray<IAlteration<T>> alterations) => _alterations = alterations;
+		public CompositeAlteration(Array<IAlteration<T>> alterations) => _alterations = alterations;
 
-		public T Get(T parameter) => _alterations.ToArray().Alter(parameter);
+		public T Get(T parameter) => _alterations.Open().Alter(parameter);
 	}
 }

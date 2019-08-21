@@ -3,7 +3,7 @@ using System.Buffers;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace Super.Platform
+namespace Super.Text
 {
 	public sealed class Utf8
 	{
