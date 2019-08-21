@@ -11,25 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Diagnostics\Logging\**" />
-    <EmbeddedResource Remove="Diagnostics\Logging\**" />
-    <None Remove="Diagnostics\Logging\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="Logging.cs" />
-    <Compile Remove="Runtime\Invocation\DurableRetry.cs" />
-    <Compile Remove="Services.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="Diagnostics\Logging\OutputTemplate.cs" />
-    <Compile Include="Diagnostics\Logging\TemplateHeader.cs" />
-    <Compile Include="Diagnostics\Logging\TimestampFormat.cs" />
-    <Compile Include="Diagnostics\Logging\TimestampFormatter.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" />
     <PackageReference Include="ErrorProne.NET" Version="0.1.5898.41180" />
     <PackageReference Include="ErrorProne.NET.CoreAnalyzers" Version="0.1.2">
@@ -43,6 +24,5 @@
     <PackageReference Include="Humanizer.Core" Version="2.6.2" />
     <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" />
     <PackageReference Include="Polly" Version="7.1.0" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
   </ItemGroup>
 </Project>
