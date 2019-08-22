@@ -38,6 +38,6 @@ namespace Super.Diagnostics
 
 		public static IAlteration<LoggerConfiguration> ToConfiguration(
 			this ISelect<LoggerEnrichmentConfiguration, LoggerConfiguration> @this)
-			=> new EnrichmentConfiguration(@this.Get);
+			=> new EnrichmentConfigurator(@this.Get);
 	}
 }
