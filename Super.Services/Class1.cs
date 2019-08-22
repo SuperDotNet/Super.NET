@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,11 +23,11 @@ namespace Super.Application.Services
 		}
 	}
 
-	public sealed class ApplicationConfiguration : ICommand<(IApplicationBuilder Builder, IWebHostEnvironment Environment)>
+	public sealed class ApplicationConfiguration<T> : ICommand<(IApplicationBuilder Builder, IWebHostEnvironment Environment)> where T : IComponent
 	{
-		public static ApplicationConfiguration Default { get; } = new ApplicationConfiguration();
+		public static ApplicationConfiguration<T> Default { get; } = new ApplicationConfiguration<T>();
 
-		ApplicationConfiguration() : this(EndpointConfiguration.Default.Execute) {}
+		ApplicationConfiguration() : this(EndpointConfiguration<T>.Default.Execute) {}
 
 		readonly Action<IEndpointRouteBuilder> _endpoints;
 		readonly string                        _handler;
@@ -52,19 +53,23 @@ namespace Super.Application.Services
 		}
 	}
 
-	sealed class EndpointConfiguration : ICommand<IEndpointRouteBuilder>
+	sealed class EndpointConfiguration<T> : ICommand<IEndpointRouteBuilder> where T : IComponent
 	{
-		public static EndpointConfiguration Default { get; } = new EndpointConfiguration();
+		public static EndpointConfiguration<T> Default { get; } = new EndpointConfiguration<T>();
 
-		EndpointConfiguration() : this("/_Host") {}
+		EndpointConfiguration() : this("div#application", "/_Host") {}
 
-		readonly string _fallback;
+		readonly string _selector, _fallback;
 
-		public EndpointConfiguration(string fallback) => _fallback = fallback;
+		public EndpointConfiguration(string selector, string fallback)
+		{
+			_selector = selector;
+			_fallback = fallback;
+		}
 
 		public void Execute(IEndpointRouteBuilder parameter)
 		{
-			parameter.MapBlazorHub()
+			parameter.MapBlazorHub<T>(_selector)
 			         .ThenWith(parameter)
 			         .MapFallbackToPage(_fallback);
 		}

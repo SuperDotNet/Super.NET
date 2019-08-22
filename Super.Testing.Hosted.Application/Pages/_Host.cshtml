@@ -13,7 +13,7 @@
     <link href="css/site.css" rel="stylesheet" />
 </head>
 <body>
-    <div class="application">@(await Html.RenderComponentAsync<Application>())</div>
+    <div id="application">@(await Html.RenderStaticComponentAsync<Application>())</div>
 
     <script src="_framework/blazor.server.js"></script>
 </body>

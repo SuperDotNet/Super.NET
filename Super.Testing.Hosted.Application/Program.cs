@@ -7,7 +7,7 @@ using Super.Sample.Application.Data;
 
 namespace Super.Sample.Application
 {
-	public sealed class Program : HostedApplication
+	sealed class Program : HostedApplication
 	{
 		static void Main(string[] args)
 		{
@@ -18,19 +18,13 @@ namespace Super.Sample.Application
 		}
 
 		public Program() : base(ServiceConfiguration.Default.Then(DefaultServiceConfiguration.Default),
-		                        ApplicationConfiguration.Default.Execute) {}
+		                        ApplicationConfiguration<Application>.Default.Execute) {}
 	}
 
-	sealed class ServiceConfiguration : ICommand<IServiceCollection>
+	sealed class ServiceConfiguration : Command<IServiceCollection>
 	{
 		public static ServiceConfiguration Default { get; } = new ServiceConfiguration();
 
-		ServiceConfiguration() {}
-
-		public void Execute(IServiceCollection parameter)
-		{
-
-			parameter.AddSingleton<WeatherForecastService>();
-		}
+		ServiceConfiguration() : base(x => x.AddSingleton<WeatherForecastService>()) {}
 	}
 }

@@ -14,7 +14,7 @@ a {
   border-color: #1861ac;
 }
 
-div.application {
+div#application {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -122,7 +122,7 @@ div.application {
 }
 
 @media (min-width: 768px) {
-    div.application {
+    div#application {
         flex-direction: row;
     }
 
