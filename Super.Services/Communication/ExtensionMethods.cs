@@ -1,8 +1,8 @@
-﻿using Super.Model.Selection.Adapters;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using Super.Model.Selection.Adapters;
 
-namespace Super.Application.Services
+namespace Super.Application.Services.Communication
 {
 	public static class ExtensionMethods
 	{

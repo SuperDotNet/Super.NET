@@ -1,10 +1,10 @@
-﻿using Serilog;
-using Super.Diagnostics.Logging;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
+using Super.Diagnostics.Logging;
 
-namespace Super.Application.Services
+namespace Super.Application.Services.Communication
 {
 	class HttpClientHandler : System.Net.Http.HttpClientHandler
 	{

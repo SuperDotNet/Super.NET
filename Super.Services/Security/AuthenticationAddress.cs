@@ -3,6 +3,7 @@ using Super.Compose;
 using Super.Model.Selection.Stores;
 using Super.Runtime;
 using System;
+using Super.Application.Services.Communication;
 
 namespace Super.Application.Services.Security
 {

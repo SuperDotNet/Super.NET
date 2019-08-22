@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Super.Application.Services;
+using Super.Application.Services.Communication;
 using System;
 using Xunit;
 

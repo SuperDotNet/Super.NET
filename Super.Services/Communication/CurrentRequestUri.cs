@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Super.Model.Selection.Stores;
-using System;
 
-namespace Super.Application.Services
+namespace Super.Application.Services.Communication
 {
 	sealed class CurrentRequestUri : ReferenceValueTable<HttpRequest, Uri>
 	{

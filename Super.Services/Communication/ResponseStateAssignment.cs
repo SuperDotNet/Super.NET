@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
-using Super.Model.Commands;
-using Super.Runtime;
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Http;
+using Microsoft.AspNetCore.Http;
+using Super.Model.Commands;
+using Super.Runtime;
 
-namespace Super.Application.Services
+namespace Super.Application.Services.Communication
 {
 	class ResponseStateAssignment : IAssign<HttpRequest, HttpClient>
 	{

@@ -3,7 +3,7 @@ using Refit;
 using Super.Diagnostics;
 using Super.Model.Results;
 
-namespace Super.Application.Services
+namespace Super.Application.Services.Communication
 {
 	public sealed class DefaultPolicies : Result<PolicyBuilder>
 	{

@@ -4,6 +4,7 @@ using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using HttpClientHandler = Super.Application.Services.Communication.HttpClientHandler;
 
 namespace Super.Application.Services.Security
 {

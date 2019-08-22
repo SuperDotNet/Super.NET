@@ -1,8 +1,8 @@
-﻿using Super.Compose;
+﻿using System;
+using Super.Compose;
 using Super.Model.Selection.Stores;
-using System;
 
-namespace Super.Application.Services
+namespace Super.Application.Services.Communication
 {
 	sealed class ClientHandlers : EqualityStore<Uri, System.Net.Http.HttpClientHandler>
 	{

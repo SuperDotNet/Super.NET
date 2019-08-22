@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Super.Application.Services.Communication;
 using Super.Model.Selection;
 
 namespace Super.Application.Services.Security

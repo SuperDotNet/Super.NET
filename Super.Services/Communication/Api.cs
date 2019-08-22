@@ -1,8 +1,8 @@
-﻿using Refit;
+﻿using System.Net.Http;
+using Refit;
 using Super.Model.Selection;
-using System.Net.Http;
 
-namespace Super.Application.Services
+namespace Super.Application.Services.Communication
 {
 	public sealed class Api<T> : Select<HttpClient, T>
 	{

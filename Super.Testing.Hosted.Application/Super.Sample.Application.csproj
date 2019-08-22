@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Super.Services\Super.Application.Services.csproj" />
     <ProjectReference Include="..\Super\Super.csproj" />
   </ItemGroup>
 

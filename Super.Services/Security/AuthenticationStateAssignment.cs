@@ -1,4 +1,6 @@
-﻿namespace Super.Application.Services.Security
+﻿using Super.Application.Services.Communication;
+
+namespace Super.Application.Services.Security
 {
 	sealed class AuthenticationStateAssignment : ResponseStateAssignment
 	{

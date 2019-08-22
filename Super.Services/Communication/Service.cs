@@ -1,7 +1,7 @@
-﻿using Super.Model.Selection;
-using System;
+﻿using System;
+using Super.Model.Selection;
 
-namespace Super.Application.Services
+namespace Super.Application.Services.Communication
 {
 	public sealed class Service<T> : Select<Uri, T>
 	{

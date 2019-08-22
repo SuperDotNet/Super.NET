@@ -1,8 +1,8 @@
-﻿using Super.Model.Selection;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using Super.Model.Selection;
 
-namespace Super.Application.Services
+namespace Super.Application.Services.Communication
 {
 	sealed class Request<T> : Select<Task<T>, T>
 	{
