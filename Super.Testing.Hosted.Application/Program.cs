@@ -18,7 +18,7 @@ namespace Super.Sample.Application
 		}
 
 		public Program() : base(ServiceConfiguration.Default.Then(DefaultServiceConfiguration.Default),
-		                        ApplicationConfiguration<Application>.Default.Execute) {}
+		                        ApplicationConfiguration.Default.Execute) {}
 	}
 
 	sealed class ServiceConfiguration : Command<IServiceCollection>

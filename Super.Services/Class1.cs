@@ -1,33 +1,26 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Super.Model.Commands;
+using Super.Model.Results;
 using System;
 
 namespace Super.Application.Services
 {
-	public sealed class DefaultServiceConfiguration : ICommand<IServiceCollection>
+	/*public static class ApplicationConfiguration
 	{
-		public static DefaultServiceConfiguration Default { get; } = new DefaultServiceConfiguration();
+		public static Action<(IApplicationBuilder Builder, IWebHostEnvironment Environment)> For<T>()
+			where T : IComponent
+			=> ApplicationConfiguration<T>.Default.Execute;
+	}*/
 
-		DefaultServiceConfiguration() {}
-
-		public void Execute(IServiceCollection parameter)
-		{
-			parameter.AddRazorPages()
-			         .ThenWith(parameter)
-			         .AddServerSideBlazor();
-		}
-	}
-
-	public sealed class ApplicationConfiguration<T> : ICommand<(IApplicationBuilder Builder, IWebHostEnvironment Environment)> where T : IComponent
+	public sealed class ApplicationConfiguration : ICommand<(IApplicationBuilder Builder, IWebHostEnvironment Environment)>
 	{
-		public static ApplicationConfiguration<T> Default { get; } = new ApplicationConfiguration<T>();
+		public static ApplicationConfiguration Default { get; } = new ApplicationConfiguration();
 
-		ApplicationConfiguration() : this(EndpointConfiguration<T>.Default.Execute) {}
+		ApplicationConfiguration() : this(EndpointConfiguration.Default.Execute) {}
 
 		readonly Action<IEndpointRouteBuilder> _endpoints;
 		readonly string                        _handler;
@@ -53,11 +46,32 @@ namespace Super.Application.Services
 		}
 	}
 
-	sealed class EndpointConfiguration<T> : ICommand<IEndpointRouteBuilder> where T : IComponent
+	public sealed class DefaultServiceConfiguration : ICommand<IServiceCollection>
 	{
-		public static EndpointConfiguration<T> Default { get; } = new EndpointConfiguration<T>();
+		public static DefaultServiceConfiguration Default { get; } = new DefaultServiceConfiguration();
 
-		EndpointConfiguration() : this("div#application", "/_Host") {}
+		DefaultServiceConfiguration() {}
+
+		public void Execute(IServiceCollection parameter)
+		{
+			parameter.AddRazorPages()
+			         .ThenWith(parameter)
+			         .AddServerSideBlazor();
+		}
+	}
+
+	sealed class ApplicationSelector : Instance<string>
+	{
+		public static ApplicationSelector Default { get; } = new ApplicationSelector();
+
+		ApplicationSelector() : base("div#application") {}
+	}
+
+	sealed class EndpointConfiguration : ICommand<IEndpointRouteBuilder>
+	{
+		public static EndpointConfiguration Default { get; } = new EndpointConfiguration();
+
+		EndpointConfiguration() : this(ApplicationSelector.Default, "/_Host") {}
 
 		readonly string _selector, _fallback;
 
@@ -69,7 +83,7 @@ namespace Super.Application.Services
 
 		public void Execute(IEndpointRouteBuilder parameter)
 		{
-			parameter.MapBlazorHub<T>(_selector)
+			parameter.MapBlazorHub(_selector)
 			         .ThenWith(parameter)
 			         .MapFallbackToPage(_fallback);
 		}

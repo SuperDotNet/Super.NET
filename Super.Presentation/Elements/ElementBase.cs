@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.RenderTree;
+using Microsoft.AspNetCore.Components.Rendering;
 
 namespace Super.Application.Presentation.Elements
 {
@@ -22,7 +22,6 @@ namespace Super.Application.Presentation.Elements
 
 		protected override void BuildRenderTree(RenderTreeBuilder builder)
 		{
-
 			builder.OpenElement(0, Name(_name));
 			builder.AddAttribute(1, "class", StyleType);
 			builder.AddAttribute(2, "style", InlineStyle);
